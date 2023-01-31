@@ -1,0 +1,15 @@
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:ifeelefine/Common/utils.dart';
+import 'package:ifeelefine/Provider/prefencesUser.dart';
+import 'package:ifeelefine/Views/finishConfig_page.dart';
+
+final _prefs = PreferenceUser();
+
+class ConfigGeolocatorController extends GetxController {
+  Future<void> saveSendLocation(BuildContext context, bool senLocation) async {
+    _prefs.setAceptedSendLocation = senLocation;
+
+    mostrarAlerta(context, "Se guardo correctamente");
+  }
+}
