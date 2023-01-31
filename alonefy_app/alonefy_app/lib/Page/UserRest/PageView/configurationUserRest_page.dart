@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:ifeelefine/Common/colorsPalette.dart';
 
 import 'package:ifeelefine/Common/utils.dart';
 import 'package:ifeelefine/Model/restday.dart';
@@ -148,17 +149,7 @@ class _UserRestPageState extends State<UserRestPage> {
 
     return Scaffold(
       body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment(0, 1),
-            colors: <Color>[
-              Color.fromRGBO(21, 14, 3, 1),
-              Color.fromRGBO(115, 75, 24, 1),
-            ],
-            tileMode: TileMode.mirror,
-          ),
-        ),
+        decoration: decorationCustom(),
         width: size.width,
         height: size.height,
         child: SizedBox(
@@ -240,7 +231,7 @@ class _UserRestPageState extends State<UserRestPage> {
                                                   color: _selectedDays.contains(
                                                           tempNoSelectListDay[
                                                               i])
-                                                      ? Colors.amber
+                                                      ? ColorPalette.principal
                                                       : Colors.white,
                                                 ),
                                               ),
@@ -250,7 +241,7 @@ class _UserRestPageState extends State<UserRestPage> {
                                               Container(
                                                 color: _selectedDays.contains(
                                                         tempNoSelectListDay[i])
-                                                    ? Colors.amber
+                                                    ? ColorPalette.principal
                                                     : Colors.white,
                                                 height: _selectedDays.contains(
                                                         tempNoSelectListDay[i])
@@ -293,21 +284,26 @@ class _UserRestPageState extends State<UserRestPage> {
                           Colors.transparent,
                         ),
                       ),
-                      onPressed: (() {
+                      onPressed: (() async {
                         noSelectDay++;
                         tempList.add(noSelectDay);
                         if (tempDicRest.length == 7) {
-                          userRestVC.saveUserRestTime(context, tempDicRest);
+                          int id = await userRestVC.saveUserRestTime(
+                              context, tempDicRest);
                           // mostrarAlerta(
                           // context, "Seguardaron los datos correctamente");
+                          if (id != -1) {
+                            // ignore: use_build_context_synchronously
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const PreviewRestTimePage(
+                                  isMenu: false,
+                                ),
+                              ),
+                            );
+                          }
 
-                          //TODO: Colocar navegacion al preview de las horas de descanzo
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) =>
-                                    const PreviewRestTimePage()),
-                          );
                           setState(() {});
                           return;
                         } else if (tempDicRest.isEmpty &&
@@ -324,17 +320,21 @@ class _UserRestPageState extends State<UserRestPage> {
                             tempDicRest.add(restDay);
                           }
                           _selectedDays.clear();
-                          userRestVC.saveUserRestTime(context, tempDicRest);
-                          mostrarAlerta(
-                              context, "Se guardaron los datos correctamente");
-
-                          //TODO: Colocar navegacion al preview de las horas de descanzo
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) =>
-                                    const PreviewRestTimePage()),
-                          );
+                          int id = await userRestVC.saveUserRestTime(
+                              context, tempDicRest);
+                          // mostrarAlerta(
+                          // context, "Seguardaron los datos correctamente");
+                          if (id != -1) {
+                            // ignore: use_build_context_synchronously
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const PreviewRestTimePage(
+                                  isMenu: false,
+                                ),
+                              ),
+                            );
+                          }
                           setState(() {});
                           return;
                         }
@@ -359,9 +359,9 @@ class _UserRestPageState extends State<UserRestPage> {
                       }),
                       child: Container(
                         decoration: BoxDecoration(
-                          color: const Color.fromRGBO(219, 177, 42, 1),
+                          color: ColorPalette.principal,
                           border: Border.all(
-                            color: const Color.fromRGBO(219, 177, 42, 1),
+                            color: ColorPalette.principal,
                           ),
                           borderRadius:
                               const BorderRadius.all(Radius.circular(100)),

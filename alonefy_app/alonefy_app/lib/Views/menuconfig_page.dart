@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:ifeelefine/Common/colorsPalette.dart';
 import 'package:ifeelefine/Page/UserEdit/PageView/editUser_page.dart';
 
 import 'package:ifeelefine/Page/UserInactivityPage/PageView/configurationUserInactivity_page.dart';
 import 'package:ifeelefine/Page/UserRest/PageView/configurationUserRest_page.dart';
 import 'package:ifeelefine/Page/UserRest/PageView/previewRestTime.dart';
 import 'package:ifeelefine/Views/contact_page.dart';
-import 'package:ifeelefine/Views/geolocatos_page.dart';
+import 'package:ifeelefine/Views/geolocatos_test_page.dart';
 import 'package:ifeelefine/Page/UserConfig/PageView/userconfig_page.dart';
+import 'package:ifeelefine/Page/PermissionUser/Pageview/permission_page.dart';
 
 class menuConfigModel {
   late String name;
@@ -71,32 +73,44 @@ class _MenuConfigurationPageState extends State<MenuConfigurationPage> {
       case 1:
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => const PreviewRestTimePage()),
+          MaterialPageRoute(
+            builder: (context) => const PreviewRestTimePage(
+              isMenu: true,
+            ),
+          ),
         );
         break;
 
       case 2:
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => const UserInactivityPage()),
+          MaterialPageRoute(
+            builder: (context) => const UserInactivityPage(),
+          ),
         );
         break;
       case 3:
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => const ContactList()),
+          MaterialPageRoute(
+            builder: (context) => const ContactList(),
+          ),
         );
         break;
       case 4:
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => const ContactList()),
+          MaterialPageRoute(
+            builder: (context) => const ContactList(),
+          ),
         );
         break;
       case 5:
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => const GeolocatorWidget()),
+          MaterialPageRoute(
+            builder: (context) => const GeolocatorWidget(),
+          ),
         );
         break;
       case 6:
@@ -106,6 +120,12 @@ class _MenuConfigurationPageState extends State<MenuConfigurationPage> {
       case 8:
         break;
       case 9:
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const PermitionUserPage(),
+          ),
+        );
         break;
       default:
     }
@@ -125,8 +145,8 @@ class _MenuConfigurationPageState extends State<MenuConfigurationPage> {
             begin: Alignment.topCenter,
             end: Alignment(0, 1),
             colors: <Color>[
-              Color.fromRGBO(21, 14, 3, 1),
-              Color.fromRGBO(115, 75, 24, 1),
+              ColorPalette.principalView,
+              ColorPalette.secondView,
             ],
             tileMode: TileMode.mirror,
           ),

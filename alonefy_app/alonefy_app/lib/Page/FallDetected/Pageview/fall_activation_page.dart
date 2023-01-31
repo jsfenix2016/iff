@@ -6,21 +6,23 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ifeelefine/Common/Constant.dart';
 import 'package:ifeelefine/Common/colorsPalette.dart';
+import 'package:ifeelefine/Common/utils.dart';
 import 'package:ifeelefine/Page/FallDetected/Controller/fall_detectedController.dart';
 
 import 'package:ifeelefine/Page/HomePage/Pageview/home_page.dart';
+import 'package:ifeelefine/Utils/Widgets/elevatedButtonFilling.dart';
 
-class FallActivationPager extends StatefulWidget {
+class FallActivationPage extends StatefulWidget {
   /// Creates a new GeolocatorWidget.
-  const FallActivationPager({Key? key}) : super(key: key);
+  const FallActivationPage({Key? key}) : super(key: key);
 
   /// Utility method to create a page with the Baseflow templating.
 
   @override
-  _FallActivationPagerState createState() => _FallActivationPagerState();
+  _FallActivationPageState createState() => _FallActivationPageState();
 }
 
-class _FallActivationPagerState extends State<FallActivationPager> {
+class _FallActivationPageState extends State<FallActivationPage> {
   final FallDetectedController fallVC = Get.put(FallDetectedController());
 
   late bool isActive = false;
@@ -49,22 +51,12 @@ class _FallActivationPagerState extends State<FallActivationPager> {
       home: Scaffold(
         appBar: isMenu
             ? AppBar(
-                backgroundColor: const Color.fromARGB(255, 76, 52, 22),
-                title: const Text('detectar caidas'),
+                backgroundColor: ColorPalette.secondView,
+                title: const Text('Detectar caidas'),
               )
             : null,
         body: Container(
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment(0, 1),
-              colors: <Color>[
-                ColorPalette.principal,
-                ColorPalette.second,
-              ],
-              tileMode: TileMode.mirror,
-            ),
-          ),
+          decoration: decorationCustom(),
           width: size.width,
           height: size.height,
           child: Stack(
@@ -73,6 +65,20 @@ class _FallActivationPagerState extends State<FallActivationPager> {
                 child: Column(
                   mainAxisSize: MainAxisSize.max,
                   children: [
+                    Padding(
+                      padding: const EdgeInsets.only(top: 104.0),
+                      child: Text(
+                        'Detectar caidas.',
+                        textAlign: TextAlign.center,
+                        style: GoogleFonts.barlow(
+                          fontSize: 24.0,
+                          wordSpacing: 1,
+                          letterSpacing: 1.2,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
                     Stack(
                       children: [
                         SizedBox(
@@ -86,56 +92,25 @@ class _FallActivationPagerState extends State<FallActivationPager> {
                         ),
                       ],
                     ),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    SizedBox(
-                      child: Column(
-                        children: <Widget>[
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Text(
-                              'En caso de detectar movimientos fuertes se le notificara para verificar su estado.',
-                              textAlign: TextAlign.center,
-                              style: GoogleFonts.barlow(
-                                fontSize: 16.0,
-                                wordSpacing: 1,
-                                letterSpacing: 1.2,
-                                fontWeight: FontWeight.bold,
-                                color: const Color.fromRGBO(219, 177, 42, 1),
-                              ),
-                            ),
-                          ),
-                          // Add the image here
-
-                          Switch(
-                            value: isActive,
-                            onChanged: ((value) async {
-                              isActive = value;
-                              fallVC.saveDetectedFall(context, value);
-                              // geoVC.saveSendLocation(context, value);
-                              setState(() {});
-                            }),
-                          ),
-                        ],
-                      ),
-                    ),
                   ],
                 ),
               ),
               Positioned(
-                bottom: 0,
-                left: 130,
+                bottom: 40,
+                left: 70,
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: ElevatedButton(
-                    child: const Text(Constant.nextTxt),
-                    onPressed: () {
+                  child: ElevateButtonFilling(
+                    onChanged: (value) {
+                      fallVC.saveDetectedFall(context, value);
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => HomePage()),
+                        MaterialPageRoute(
+                          builder: (context) => const HomePage(),
+                        ),
                       );
                     },
+                    mensaje: 'Activar',
                   ),
                 ),
               ),

@@ -6,8 +6,9 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ifeelefine/Common/Constant.dart';
 import 'package:ifeelefine/Common/colorsPalette.dart';
+import 'package:ifeelefine/Common/utils.dart';
 import 'package:ifeelefine/Page/Geolocator/Controller/configGeolocatorController.dart';
-import 'package:ifeelefine/Views/finishConfig_page.dart';
+import 'package:ifeelefine/Page/FinishConfig/Pageview/finishConfig_page.dart';
 
 class ConfigGeolocator extends StatefulWidget {
   /// Creates a new GeolocatorWidget.
@@ -115,17 +116,7 @@ class _ConfigGeolocatorState extends State<ConfigGeolocator> {
               )
             : null,
         body: Container(
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment(0, 1),
-              colors: <Color>[
-                ColorPalette.principal,
-                ColorPalette.second,
-              ],
-              tileMode: TileMode.mirror,
-            ),
-          ),
+          decoration: decorationCustom(),
           width: size.width,
           height: size.height,
           child: Stack(

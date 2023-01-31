@@ -40,15 +40,6 @@ class _ListWeekDayState extends State<ListWeekDay> {
     "D",
   ];
 
-  final List<String> tempListDayRest = <String>[
-    "Lunes",
-    "Martes",
-    "Miercoles",
-    "Jueves",
-    "Viernes",
-    "Sabado",
-    "Domingo",
-  ];
   final List<String> _selectedDays = [];
   @override
   Widget build(BuildContext context) {
@@ -84,7 +75,7 @@ class _ListWeekDayState extends State<ListWeekDay> {
                                 tempNoSelectListDay.add(_ListDay[i]);
                               } else {
                                 _selectedDays.add(_ListDay[i]);
-                                // tempNoSelectListDay.remove(_ListDay[i]);
+
                                 RestDayBD restDay = RestDayBD(
                                     day: _ListDay[i],
                                     timeSleep: timeLblAM,

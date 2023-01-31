@@ -107,6 +107,18 @@ class HiveData {
     return 0;
   }
 
+  Future<bool> updateUserRestTime(RestDayBD user) async {
+    try {
+      Box<RestDayBD> box = await Hive.openBox<RestDayBD>('listRestDayBD');
+
+      box.put(user.day, user);
+
+      return true;
+    } catch (error) {
+      return false;
+    }
+  }
+
   Future<int> updateTimeRest(List<RestDayBD> activities) async {
     final Box<RestDayBD> box = await Hive.openBox<RestDayBD>('listRestDayBD');
     for (RestDayBD element in activities) {
@@ -117,7 +129,7 @@ class HiveData {
   }
 
   Future<List<RestDayBD>> get listUserRestDaybd async {
-    final box = await Hive.openBox<RestDayBD>('listActivityDayBD');
+    final box = await Hive.openBox<RestDayBD>('listRestDayBD');
     return box.values.toList();
   }
 

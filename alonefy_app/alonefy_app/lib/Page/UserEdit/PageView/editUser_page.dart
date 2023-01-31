@@ -172,17 +172,7 @@ class _UserEditPageState extends State<UserEditPage> {
       key: scaffoldKey,
       body: SingleChildScrollView(
         child: Container(
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment(0, 1),
-              colors: <Color>[
-                Color.fromRGBO(21, 14, 3, 1),
-                Color.fromRGBO(115, 75, 24, 1),
-              ],
-              tileMode: TileMode.mirror,
-            ),
-          ),
+          decoration: decorationCustom(),
           padding: const EdgeInsets.all(10.0),
           child: Form(
             key: formKey,

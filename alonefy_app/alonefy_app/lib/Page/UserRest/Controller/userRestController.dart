@@ -18,27 +18,15 @@ class UserRestController extends GetxController {
     }
   }
 
-  Future<bool> updateUserDate(BuildContext context, RestDayBD user) async {
-    try {
-      Box<RestDayBD> box = await Hive.openBox<RestDayBD>('listRestDayBD');
-
-      box.put(user.day, user);
-
-      validateSms = true.obs;
-      return true;
-    } catch (error) {
-      return false;
-    }
+  Future<bool> updateUserRestTime(BuildContext context, RestDayBD user) async {
+    return const HiveData().updateUserRestTime(user);
   }
 
   Future<List<RestDayBD>> getUserRest() async {
-    // RestDayBD person = RestDayBD(day: '', timeSleep: '', timeWakeup: '');
+    List<RestDayBD> box = await const HiveData().listUserRestDaybd;
 
-    final box = await Hive.openBox<RestDayBD>('listRestDayBD');
-
-    if (box.isEmpty == false) {
-      // person = box.getAt(0)!;
-      return box.values.toList();
+    if (box.isNotEmpty) {
+      return box.toList();
     } else {
       return [];
     }

@@ -1,6 +1,6 @@
 import 'package:hive_flutter/hive_flutter.dart';
 
-part 'restdaybd.g.dart';
+part 'Adapters/restdaybd.g.dart';
 
 @HiveType(typeId: 1)
 class RestDayBD extends HiveObject {

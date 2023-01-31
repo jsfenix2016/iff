@@ -1,44 +1,38 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'activitydaybd.dart';
+part of '../restdaybd.dart';
 
 // **************************************************************************
 // TypeAdapterGenerator
 // **************************************************************************
 
-class ActivityDayBDAdapter extends TypeAdapter<ActivityDayBD> {
+class RestDayBDAdapter extends TypeAdapter<RestDayBD> {
   @override
-  final int typeId = 3;
+  final int typeId = 1;
 
   @override
-  ActivityDayBD read(BinaryReader reader) {
+  RestDayBD read(BinaryReader reader) {
     final numOfFields = reader.readByte();
     final fields = <int, dynamic>{
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
-    return ActivityDayBD(
+    return RestDayBD(
       day: fields[0] as String,
       timeWakeup: fields[1] as String,
       timeSleep: fields[2] as String,
-      activity: fields[3] as String,
-      id: fields[4] as int,
     );
   }
 
   @override
-  void write(BinaryWriter writer, ActivityDayBD obj) {
+  void write(BinaryWriter writer, RestDayBD obj) {
     writer
-      ..writeByte(5)
+      ..writeByte(3)
       ..writeByte(0)
       ..write(obj.day)
       ..writeByte(1)
       ..write(obj.timeWakeup)
       ..writeByte(2)
-      ..write(obj.timeSleep)
-      ..writeByte(3)
-      ..write(obj.activity)
-      ..writeByte(4)
-      ..write(obj.id);
+      ..write(obj.timeSleep);
   }
 
   @override
@@ -47,7 +41,7 @@ class ActivityDayBDAdapter extends TypeAdapter<ActivityDayBD> {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is ActivityDayBDAdapter &&
+      other is RestDayBDAdapter &&
           runtimeType == other.runtimeType &&
           typeId == other.typeId;
 }

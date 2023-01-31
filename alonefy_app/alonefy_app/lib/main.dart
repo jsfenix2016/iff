@@ -5,6 +5,9 @@ import 'package:ifeelefine/Common/utils.dart';
 import 'package:ifeelefine/Data/hive_data.dart';
 import 'package:ifeelefine/Model/userPosition.dart';
 import 'package:ifeelefine/Model/userpositionbd.dart';
+import 'package:ifeelefine/Page/Onboarding/PageView/onboarding_page.dart';
+import 'package:ifeelefine/Page/UserRest/PageView/configurationUserRest_page.dart';
+import 'package:ifeelefine/Page/UserRest/PageView/previewRestTime.dart';
 import 'package:ifeelefine/Provider/prefencesUser.dart';
 import 'package:ifeelefine/Routes/routes.dart';
 import 'package:device_info_plus/device_info_plus.dart';
@@ -16,18 +19,21 @@ import 'package:get/get.dart';
 import 'package:ifeelefine/Page/UserInactivityPage/PageView/configurationUserInactivity_page.dart';
 import 'package:ifeelefine/Page/TermsAndConditions/PageView/conditionGeneral_page.dart';
 import 'package:ifeelefine/Page/Geolocator/PageView/configGeolocator_page.dart';
+import 'package:ifeelefine/Views/alerts_page.dart';
+import 'package:ifeelefine/Page/Alternative/Pageview/alternative_page.dart';
 import 'package:ifeelefine/Views/configuration2_page.dart';
 import 'package:ifeelefine/Views/configuration3_page.dart';
 import 'package:ifeelefine/Page/UseMobil/PageView/configurationUseMobile_page.dart';
 import 'package:ifeelefine/Page/FallDetected/Pageview/fall_activation_page.dart';
-import 'package:ifeelefine/Views/finishConfig_page.dart';
+import 'package:ifeelefine/Page/FinishConfig/Pageview/finishConfig_page.dart';
+import 'package:ifeelefine/Views/geolocatos_test_page.dart';
 import 'package:ifeelefine/Views/menuconfig_page.dart';
+import 'package:ifeelefine/Page/PermissionUser/Pageview/permission_page.dart';
 import 'package:ifeelefine/Views/protectuser_page.dart';
+import 'package:ifeelefine/Views/ringtone_page.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:all_sensors/all_sensors.dart';
-
-final _prefs = PreferenceUser();
 
 final List<UserPosition> tempPosition = <UserPosition>[];
 final List<String> tempMovUser = <String>[];
@@ -49,7 +55,7 @@ List<double> _accelData = List.filled(3, 0.0);
 List<double> _gyroData = List.filled(3, 0.0);
 StreamSubscription? _accelSubscription;
 StreamSubscription? _gyroSubscription;
-
+final _prefs = PreferenceUser();
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -61,8 +67,10 @@ Future<void> main() async {
   String initApp = _prefs.isFirstConfig == false ? 'onboarding' : 'home';
 
   runApp(
-    GetMaterialApp(
-      home: ConfigGeolocator(),
+    const GetMaterialApp(
+      home: PreviewRestTimePage(
+        isMenu: false,
+      ),
       debugShowCheckedModeBanner: false,
     ),
   );
@@ -424,151 +432,3 @@ class _MyAppState extends State<MyApp> {
     );
   }
 }
-
-
-
-
-//   String text = "Stop Service";
-
-//   List<double> _accelerometerValues = <double>[];
-//   List<double> _userAccelerometerValues = <double>[];
-//   bool _permissionDenied = false;
-//   final List<StreamSubscription<dynamic>> _streamSubscriptions =
-//       <StreamSubscription<dynamic>>[];
-//   @override
-//   void initState() {
-//     super.initState();
-
-//     // _streamSubscriptions
-//     //     .add(accelerometerEvents!.listen((AccelerometerEvent event) {
-//     //   setState(() {
-//     //     _accelerometerValues = <double>[event.x, event.y, event.z];
-//     //   });
-//     // }));
-
-//     // _streamSubscriptions
-//     //     .add(userAccelerometerEvents!.listen((UserAccelerometerEvent event) {
-//     //   setState(() {
-//     //     _userAccelerometerValues = <double>[event.x, event.y, event.z];
-//     //   });
-//     // }));
-//   }
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return MaterialApp(
-//       debugShowCheckedModeBanner: false,
-//       routes: appRoute,
-//       initialRoute: _prefs.onBoarding == false ? 'onboarding' : 'home',
-//       // home: Scaffold(
-//       //   appBar: AppBar(
-//       //     title: const Text('Service App'),
-//       //   ),
-//       //   body: Column(
-//       //     children: [
-//       //       StreamBuilder<Map<String, dynamic>?>(
-//       //         stream: FlutterBackgroundService().on('update'),
-//       //         builder: (context, snapshot) {
-//       //           if (!snapshot.hasData) {
-//       //             return const Center(
-//       //               child: CircularProgressIndicator(),
-//       //             );
-//       //           }
-
-//       //           final data = snapshot.data!;
-//       //           String? device = data["device"];
-//       //           DateTime? date = DateTime.tryParse(data["current_date"]);
-//       //           return Column(
-//       //             children: [
-//       //               Text(device ?? 'Unknown'),
-//       //               Text(date.toString()),
-//       //             ],
-//       //           );
-//       //         },
-//       //       ),
-//       //       ElevatedButton(
-//       //         child: const Text("Foreground Mode"),
-//       //         onPressed: () {
-//       //           FlutterBackgroundService().invoke("setAsForeground");
-//       //         },
-//       //       ),
-//       //       ElevatedButton(
-//       //         child: const Text("Background Mode"),
-//       //         onPressed: () {
-//       //           FlutterBackgroundService().invoke("setAsBackground");
-//       //         },
-//       //       ),
-//       //       ElevatedButton(
-//       //         child: Text(text),
-//       //         onPressed: () async {
-//       //           final service = FlutterBackgroundService();
-//       //           var isRunning = await service.isRunning();
-//       //           if (isRunning) {
-//       //             service.invoke("stopService");
-//       //           } else {
-//       //             service.startService();
-//       //           }
-
-//       //           if (!isRunning) {
-//       //             text = 'Stop Service';
-//       //           } else {
-//       //             text = 'Start Service';
-//       //           }
-//       //           setState(() {});
-//       //         },
-//       //       ),
-//       //       const Expanded(
-//       //         child: LogView(),
-//       //       ),
-//       //     ],
-//       //   ),
-//       //   floatingActionButton: FloatingActionButton(
-//       //     onPressed: () {},
-//       //     child: const Icon(Icons.play_arrow),
-//       //   ),
-//       // ),
-//     );
-//   }
-// }
-
-// class LogView extends StatefulWidget {
-//   const LogView({Key? key}) : super(key: key);
-
-//   @override
-//   State<LogView> createState() => _LogViewState();
-// }
-
-// class _LogViewState extends State<LogView> {
-//   late final Timer timer;
-//   List<String> logs = [];
-
-//   @override
-//   void initState() {
-//     super.initState();
-//     timer = Timer.periodic(const Duration(seconds: 1), (timer) async {
-//       final SharedPreferences sp = await SharedPreferences.getInstance();
-//       await sp.reload();
-//       logs = sp.getStringList('log') ?? [];
-//       if (mounted) {
-//         setState(() {});
-//       }
-//     });
-//   }
-
-//   @override
-//   void dispose() {
-//     timer.cancel();
-//     super.dispose();
-//   }
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return ListView.builder(
-//       itemCount: logs.length,
-//       itemBuilder: (context, index) {
-//         final log = logs.elementAt(index);
-//         return Text(log);
-//       },
-//     );
-//   }
-// }

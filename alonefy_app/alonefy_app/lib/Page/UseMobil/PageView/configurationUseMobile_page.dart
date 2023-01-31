@@ -7,6 +7,7 @@ import 'package:ifeelefine/Page/UseMobil/Controller/useMobileController.dart';
 import 'package:ifeelefine/Page/UserInactivityPage/PageView/configurationUserInactivity_page.dart';
 import 'package:ifeelefine/Utils/Widgets/customDropDown.dart';
 import 'package:flutter/material.dart';
+import 'package:ifeelefine/Utils/Widgets/elevateButtonCustomBorder.dart';
 import 'package:slidable_button/slidable_button.dart';
 import 'package:pay/pay.dart';
 
@@ -42,17 +43,7 @@ class _UserMobilePageState extends State<UserMobilePage> {
     final size = MediaQuery.of(context).size;
     return Scaffold(
       body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment(0, 1),
-            colors: <Color>[
-              Color.fromRGBO(21, 14, 3, 1),
-              Color.fromRGBO(115, 75, 24, 1),
-            ],
-            tileMode: TileMode.mirror,
-          ),
-        ),
+        decoration: decorationCustom(),
         width: size.width,
         height: size.height,
         child: Center(
@@ -75,14 +66,6 @@ class _UserMobilePageState extends State<UserMobilePage> {
               const SizedBox(
                 height: 50,
               ),
-              // CustomDropdownButtonWidgetWithDictionary(
-              //   instance: Constant.timeDic,
-              //   mensaje: "select time",
-              //   isVisible: true,
-              //   onChanged: (value) {
-              //     print(value);
-              //   },
-              // ),
               const SizedBox(
                 height: 20,
               ),
@@ -253,16 +236,8 @@ class _UserMobilePageState extends State<UserMobilePage> {
               SizedBox(
                 width: double.infinity,
                 child: Center(
-                  child: ElevatedButton(
-                    style: ButtonStyle(
-                      shadowColor: MaterialStateProperty.all<Color>(
-                        Colors.transparent,
-                      ),
-                      backgroundColor: MaterialStateProperty.all<Color>(
-                        Colors.transparent,
-                      ),
-                    ),
-                    onPressed: () {
+                  child: ElevateButtonCustomBorder(
+                    onChanged: (value) {
                       var e = useMobilVC.getTimeUseMobil();
 
                       Navigator.push(
@@ -271,27 +246,7 @@ class _UserMobilePageState extends State<UserMobilePage> {
                             builder: (context) => const UserInactivityPage()),
                       );
                     },
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: Colors.transparent,
-                        border: Border.all(
-                          color: const Color.fromRGBO(219, 177, 42, 1),
-                        ),
-                        borderRadius:
-                            const BorderRadius.all(Radius.circular(100)),
-                      ),
-                      height: 42,
-                      width: 200,
-                      child: const Center(
-                        child: Text(
-                          'Listo',
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16),
-                        ),
-                      ),
-                    ),
+                    mensaje: 'Listo',
                   ),
                 ),
               ),

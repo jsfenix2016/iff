@@ -1,5 +1,6 @@
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ifeelefine/Common/Constant.dart';
+import 'package:ifeelefine/Common/utils.dart';
 import 'package:ifeelefine/Page/HomePage/Pageview/home_page.dart';
 import 'package:flutter/material.dart';
 
@@ -17,17 +18,7 @@ class _FinishConfigPageState extends State<FinishConfigPage> {
       debugShowCheckedModeBanner: false,
       home: Scaffold(
         body: Container(
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment(0, 1),
-              colors: <Color>[
-                Color.fromRGBO(21, 14, 3, 1),
-                Color.fromRGBO(115, 75, 24, 1),
-              ],
-              tileMode: TileMode.mirror,
-            ),
-          ),
+          decoration: decorationCustom(),
           child: Stack(
             children: [
               Center(

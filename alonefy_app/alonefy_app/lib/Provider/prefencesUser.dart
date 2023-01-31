@@ -25,7 +25,7 @@ class PreferenceUser {
     return _prefs.getBool('firstConfig') ?? false;
   }
 
-  set FirstConfig(bool value) {
+  set firstConfig(bool value) {
     _prefs.setBool('firstConfig', value);
   }
 

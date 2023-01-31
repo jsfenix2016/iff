@@ -3,6 +3,7 @@ import 'package:ifeelefine/Common/Constant.dart';
 import 'package:ifeelefine/Common/colorsPalette.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:ifeelefine/Common/utils.dart';
 import 'package:ifeelefine/Model/activityDay.dart';
 import 'package:ifeelefine/Model/activitydaybd.dart';
 import 'package:ifeelefine/Page/UserInactivityPage/Controller/inactivityViewController.dart';
@@ -65,30 +66,35 @@ class _PreviewInactivityPageState extends State<PreviewInactivityPage> {
       // floatingActionButton: _createBottom(context),
       key: scaffoldKey,
       appBar: AppBar(
-        backgroundColor: Colors.blue,
+        backgroundColor: Colors.brown,
         title: const Center(child: Text("Previsualizar actividades")),
       ),
-      body: GroupedListView<ActivityDayBD, String>(
-        elements: lista,
-        groupBy: (ActivityDayBD event) => event.day,
-        groupSeparatorBuilder: (String day) => Padding(
-          padding: const EdgeInsets.all(16),
-          child: Text(day, style: Theme.of(context).textTheme.headline4),
+      body: Container(
+        decoration: decorationCustom(),
+        width: size.width,
+        height: size.height,
+        child: GroupedListView<ActivityDayBD, String>(
+          elements: lista,
+          groupBy: (ActivityDayBD event) => event.day,
+          groupSeparatorBuilder: (String day) => Padding(
+            padding: const EdgeInsets.all(16),
+            child: Text(day, style: Theme.of(context).textTheme.headline4),
+          ),
+          itemBuilder: (BuildContext context, ActivityDayBD event) {
+            var select = ActivityDay();
+            select.activity = event.activity;
+            select.timeSleep = event.timeSleep;
+            select.timeWakeup = event.timeWakeup;
+            select.day = event.day;
+            return ContainerTextEditTime(
+              day: event.day,
+              acti: select,
+              onChanged: (value) {
+                _selectOption(value);
+              },
+            );
+          },
         ),
-        itemBuilder: (BuildContext context, ActivityDayBD event) {
-          var select = ActivityDay();
-          select.activity = event.activity;
-          select.timeSleep = event.timeSleep;
-          select.timeWakeup = event.timeWakeup;
-          select.day = event.day;
-          return ContainerTextEditTime(
-            day: event.day,
-            acti: select,
-            onChanged: (value) {
-              _selectOption(value);
-            },
-          );
-        },
       ),
     );
   }

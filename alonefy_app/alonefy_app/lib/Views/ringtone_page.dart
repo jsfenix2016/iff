@@ -1,6 +1,7 @@
 // import 'package:flutter_ringtone_player/flutter_ringtone_player.dart';
 import 'package:ifeelefine/Common/Constant.dart';
 import 'package:ifeelefine/Common/colorsPalette.dart';
+import 'package:ifeelefine/Common/utils.dart';
 import 'package:ifeelefine/Page/UserConfig/Controller/userConfigController.dart';
 import 'package:ifeelefine/Model/user.dart';
 import 'package:ifeelefine/Model/userbd.dart';
@@ -60,26 +61,20 @@ class _RingTonePageState extends State<RingTonePage> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: Scaffold(
-        // floatingActionButton: _createBottom(context),
-        key: scaffoldKey,
-        appBar: AppBar(
-          backgroundColor: ColorPalette.principal,
-          title: const Center(child: Text(Constant.personalInformation)),
-          actions: <Widget>[
-            IconButton(
-              icon: const Icon(Icons.photo_size_select_actual),
-              onPressed: () {},
-            ),
-            IconButton(
-              icon: const Icon(Icons.camera_alt),
-              onPressed: () {},
-            ),
-          ],
-        ),
-        body: ListView.builder(
+    final Size size = MediaQuery.of(context).size;
+    return Scaffold(
+      extendBodyBehindAppBar: true,
+      key: scaffoldKey,
+      appBar: AppBar(
+        elevation: 0,
+        backgroundColor: Colors.transparent,
+        title: const Center(child: Text(Constant.personalInformation)),
+      ),
+      body: Container(
+        decoration: decorationCustom(),
+        width: size.width,
+        height: size.height,
+        child: ListView.builder(
           itemCount: ringtones.length,
           itemBuilder: (BuildContext context, int index) {
             return ListTile(
@@ -112,19 +107,6 @@ class _RingTonePageState extends State<RingTonePage> {
           },
         ),
       ),
-    );
-  }
-
-  Widget _createButtonPremium() {
-    return ElevatedButton.icon(
-      style: ButtonStyle(
-          backgroundColor:
-              MaterialStateProperty.all<Color>(ColorPalette.principal)),
-      label: const Text(Constant.userConfigPageButtonConfig),
-      icon: const Icon(
-        Icons.settings,
-      ),
-      onPressed: (_guardado) ? null : _submit,
     );
   }
 

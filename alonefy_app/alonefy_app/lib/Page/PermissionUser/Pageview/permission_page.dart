@@ -2,7 +2,9 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:ifeelefine/Common/colorsPalette.dart';
+import 'package:ifeelefine/Common/utils.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 class PermitionUserPage extends StatefulWidget {
@@ -109,25 +111,7 @@ class _PermitionUserPageState extends State<PermitionUserPage> {
       onPressed: (() {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => PermitionUserPage()),
-        );
-      }),
-    );
-  }
-
-  Widget _createButtonNext() {
-    return ElevatedButton.icon(
-      style: ButtonStyle(
-          backgroundColor:
-              MaterialStateProperty.all<Color>(ColorPalette.principal)),
-      label: const Text("Cancel"),
-      icon: const Icon(
-        Icons.cancel,
-      ),
-      onPressed: (() {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => PermitionUserPage()),
+          MaterialPageRoute(builder: (context) => const PermitionUserPage()),
         );
       }),
     );
@@ -136,20 +120,45 @@ class _PermitionUserPageState extends State<PermitionUserPage> {
   @override
   Widget build(BuildContext context) {
     final Size size = MediaQuery.of(context).size;
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: Scaffold(
-        appBar: AppBar(
-          title: const Text('Permisos que se usan en la app'),
+    return Scaffold(
+      extendBodyBehindAppBar: true,
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        title: Text(
+          'Permisos que se usan en la app',
+          textAlign: TextAlign.right,
+          style: GoogleFonts.barlow(
+            fontSize: 16.0,
+            wordSpacing: 1,
+            letterSpacing: 1.2,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ),
         ),
-        body: Stack(
+      ),
+      body: Container(
+        decoration: decorationCustom(),
+        child: Stack(
           children: [
             ListView.builder(
               itemCount: permissions.length,
               itemBuilder: (context, index) {
                 String permission = permissions[index];
                 return SwitchListTile(
-                  title: Text(permission),
+                  inactiveThumbColor: Colors.white,
+                  inactiveTrackColor: const Color.fromRGBO(169, 146, 125, 0.5),
+                  title: Text(
+                    permission,
+                    textAlign: TextAlign.right,
+                    style: GoogleFonts.barlow(
+                      fontSize: 16.0,
+                      wordSpacing: 1,
+                      letterSpacing: 1.2,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
                   value: permissionStatus[permission]!,
                   onChanged: (value) => togglePermission(permission),
                 );
@@ -167,10 +176,6 @@ class _PermitionUserPageState extends State<PermitionUserPage> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       mainAxisSize: MainAxisSize.max,
                       children: [
-                        _createButtonNext(),
-                        const SizedBox(
-                          width: 50,
-                        ),
                         _createButtonSave(),
                       ],
                     ),

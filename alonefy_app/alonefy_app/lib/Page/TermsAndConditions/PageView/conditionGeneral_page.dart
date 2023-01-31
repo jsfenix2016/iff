@@ -3,8 +3,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:ifeelefine/Common/Constant.dart';
 import 'package:ifeelefine/Common/utils.dart';
 import 'package:ifeelefine/Page/TermsAndConditions/Controller/terms_conditionController.dart';
-import 'package:ifeelefine/Views/finishConfig_page.dart';
-import 'package:ifeelefine/Page/HomePage/Pageview/home_page.dart';
 import 'package:flutter/material.dart';
 
 class ConditionGeneralPage extends StatefulWidget {
@@ -25,17 +23,7 @@ class _ConditionGeneralPageState extends State<ConditionGeneralPage> {
     final size = MediaQuery.of(context).size;
     return Scaffold(
       body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment(0, 1),
-            colors: <Color>[
-              Color.fromRGBO(21, 14, 3, 1),
-              Color.fromRGBO(115, 75, 24, 1),
-            ],
-            tileMode: TileMode.mirror,
-          ),
-        ),
+        decoration: decorationCustom(),
         width: size.width,
         height: size.height,
         child: Stack(
@@ -52,7 +40,7 @@ class _ConditionGeneralPageState extends State<ConditionGeneralPage> {
                     child: Column(
                       children: <Widget>[
                         Padding(
-                          padding: EdgeInsets.all(8.0),
+                          padding: const EdgeInsets.all(8.0),
                           child: Container(
                             width: 311,
                             height: 98,

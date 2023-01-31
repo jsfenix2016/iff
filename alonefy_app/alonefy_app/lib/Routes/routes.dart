@@ -4,7 +4,7 @@ import 'package:ifeelefine/Views/protectuser_page.dart';
 import 'package:flutter/material.dart';
 
 final Map<String, Widget Function(BuildContext)> appRoute = {
-  "home": (BuildContext context) => HomePage(),
+  "home": (BuildContext context) => const HomePage(),
   "onboarding": (BuildContext context) => OnboardingPage(),
-  "protect": (BuildContext context) => ProtectUserPage(),
+  "protect": (BuildContext context) => const ProtectUserPage(),
 };

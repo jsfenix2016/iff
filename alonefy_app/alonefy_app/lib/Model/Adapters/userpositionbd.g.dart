@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'userpositionbd.dart';
+part of '../userpositionbd.dart';
 
 // **************************************************************************
 // TypeAdapterGenerator

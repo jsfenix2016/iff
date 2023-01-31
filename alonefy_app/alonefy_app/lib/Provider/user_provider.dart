@@ -102,13 +102,6 @@ class UsuarioProvider {
     return bytesImage;
   }
 
-  Future<Image> buscarWEBImagen(String imgUrl) async {
-    final resp = await http
-        .get(Uri.parse("${Constant.baseApi}/imageWeb?imgName=$imgUrl"));
-
-    return Image.network(resp.body);
-  }
-
   Future<int> deleteUser(int id) async {
     // final resp = await http.delete(Uri.parse("url"));
     // print(json.decode(resp.body));

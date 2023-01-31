@@ -3,17 +3,19 @@ import 'dart:collection';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:ifeelefine/Common/Constant.dart';
 import 'package:ifeelefine/Common/colorsPalette.dart';
+import 'package:ifeelefine/Common/utils.dart';
 
 import 'package:ifeelefine/Model/restday.dart';
 import 'package:ifeelefine/Model/restdaybd.dart';
 import 'package:ifeelefine/Page/UseMobil/PageView/configurationUseMobile_page.dart';
 import 'package:ifeelefine/Page/UserRest/Controller/userRestController.dart';
-import 'package:collection/collection.dart';
+import 'package:ifeelefine/Utils/Widgets/elevateButtonCustomBorder.dart';
 
 class PreviewRestTimePage extends StatefulWidget {
-  const PreviewRestTimePage({super.key});
-
+  const PreviewRestTimePage({super.key, required this.isMenu});
+  final bool isMenu;
   @override
   State<PreviewRestTimePage> createState() => _PreviewRestTimePageState();
 }
@@ -74,29 +76,16 @@ class _PreviewRestTimePageState extends State<PreviewRestTimePage> {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     return Scaffold(
-      // floatingActionButton: _createBottom(context),
       key: scaffoldKey,
       extendBodyBehindAppBar: true,
-
-      // appBar: AppBar(
-      //   // surfaceTintColor: Colors.transparent,
-      //   // foregroundColor: Colors.transparent,
-      //   // shadowColor: Colors.transparent,
-      //   backgroundColor: const Color.fromARGB(255, 76, 52, 22),
-      //   title: const Center(child: Text("Horas de descanzo")),
-      // ),
+      appBar: widget.isMenu
+          ? AppBar(
+              backgroundColor: ColorPalette.secondView,
+              title: const Text('detectar caidas'),
+            )
+          : null,
       body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: const Alignment(0, 1),
-            colors: <Color>[
-              ColorPalette.principal,
-              ColorPalette.second,
-            ],
-            tileMode: TileMode.mirror,
-          ),
-        ),
+        decoration: decorationCustom(),
         width: size.width,
         height: size.height,
         child: ListView(
@@ -132,9 +121,12 @@ class _PreviewRestTimePageState extends State<PreviewRestTimePage> {
                     Row(
                       children: [
                         GestureDetector(
-                          onTap: () {
+                          onTap: () async {
                             indexSelect = index;
-                            displayTimePicker(context);
+
+                            timeLblAM =
+                                await displayTimePickerPM(context, 'timeSleep');
+                            setState(() {});
                           },
                           child: Container(
                             key: Key(selecDicActivity[index].day),
@@ -178,9 +170,11 @@ class _PreviewRestTimePageState extends State<PreviewRestTimePage> {
                           height: 10,
                         ),
                         GestureDetector(
-                          onTap: () {
+                          onTap: () async {
                             indexSelect = index;
-                            displayTimePickerPM(context);
+                            timeLblPM = await displayTimePickerPM(
+                                context, 'timeWakeup');
+                            setState(() {});
                           },
                           child: Padding(
                             padding: const EdgeInsets.all(8.0),
@@ -233,43 +227,16 @@ class _PreviewRestTimePageState extends State<PreviewRestTimePage> {
               child: SizedBox(
                 width: size.width,
                 child: Center(
-                  child: ElevatedButton(
-                    style: ButtonStyle(
-                      shadowColor: MaterialStateProperty.all<Color>(
-                        Colors.transparent,
-                      ),
-                      backgroundColor: MaterialStateProperty.all<Color>(
-                        Colors.transparent,
-                      ),
-                    ),
-                    onPressed: (() {
+                  child: ElevateButtonCustomBorder(
+                    onChanged: (value) {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => const UserMobilePage()),
+                          builder: (context) => const UserMobilePage(),
+                        ),
                       );
-                    }),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: const Color.fromRGBO(219, 177, 42, 1),
-                        border: Border.all(
-                          color: const Color.fromRGBO(219, 177, 42, 1),
-                        ),
-                        borderRadius:
-                            const BorderRadius.all(Radius.circular(100)),
-                      ),
-                      height: 42,
-                      width: 200,
-                      child: const Center(
-                        child: Text(
-                          'Continuar',
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 18),
-                        ),
-                      ),
-                    ),
+                    },
+                    mensaje: Constant.continueTxt,
                   ),
                 ),
               ),
@@ -280,12 +247,13 @@ class _PreviewRestTimePageState extends State<PreviewRestTimePage> {
     );
   }
 
-  Future displayTimePickerPM(BuildContext context) async {
+  Future<String> displayTimePickerPM(BuildContext context, String key) async {
     var time = await showTimePicker(
         context: context,
         initialTime: TimeOfDay.now(),
         builder: (context, childWidget) {
           return MediaQuery(
+              key: Key(key),
               data: MediaQuery.of(context).copyWith(
                   // Using 24-Hour format
                   alwaysUse24HourFormat: true),
@@ -293,40 +261,23 @@ class _PreviewRestTimePageState extends State<PreviewRestTimePage> {
               child: childWidget!);
         });
     if (time != null) {
-      // ignore: use_build_context_synchronously
-      timeLblPM = time.format(context);
       RestDayBD restDay = RestDayBD(
           day: selecDicActivity[indexSelect].day,
-          timeSleep: selecDicActivity[indexSelect].timeSleep,
-          timeWakeup: timeLblPM);
-      var update = restVC.updateUserDate(context, restDay);
-      getInactivity();
-    }
-  }
-
-  Future displayTimePicker(BuildContext context) async {
-    var time = await showTimePicker(
-        context: context,
-        initialTime: TimeOfDay.now(),
-        builder: (context, childWidget) {
-          return MediaQuery(
-              data: MediaQuery.of(context).copyWith(
-                  // Using 24-Hour format
-                  alwaysUse24HourFormat: true),
-              // If you want 12-Hour format, just change alwaysUse24HourFormat to false or remove all the builder argument
-              child: childWidget!);
-        });
-    if (time != null) {
+          timeSleep: key == 'timeSleep'
+              // ignore: use_build_context_synchronously
+              ? time.format(context)
+              : selecDicActivity[indexSelect].timeSleep,
+          timeWakeup: key == 'timeWakeup'
+              // ignore: use_build_context_synchronously
+              ? time.format(context)
+              : selecDicActivity[indexSelect].timeWakeup);
       // ignore: use_build_context_synchronously
-      timeLblAM = time.format(context);
-      // selecDicActivity[indexSelect].timeWakeup = timeLblAM;
-      RestDayBD restDay = RestDayBD(
-          day: selecDicActivity[indexSelect].day,
-          timeSleep: timeLblAM,
-          timeWakeup: selecDicActivity[indexSelect].timeWakeup);
-      var update = restVC.updateUserDate(context, restDay);
-
+      restVC.updateUserRestTime(context, restDay);
       getInactivity();
+
+      // ignore: use_build_context_synchronously
+      return time.format(context);
     }
+    return "";
   }
 }

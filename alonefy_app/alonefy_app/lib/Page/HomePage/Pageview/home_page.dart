@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:ifeelefine/Common/colorsPalette.dart';
 import 'package:ifeelefine/Common/utils.dart';
 import 'package:ifeelefine/Page/HomePage/Controller/homeController.dart';
 import 'package:ifeelefine/Page/UserConfig/Controller/userConfigController.dart';
@@ -236,17 +237,7 @@ class _HomePageState extends State<HomePage> {
       //   ],
       // ),
       body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment(0, 1),
-            colors: <Color>[
-              Color.fromRGBO(21, 14, 3, 1),
-              Color.fromRGBO(115, 75, 24, 1),
-            ],
-            tileMode: TileMode.mirror,
-          ),
-        ),
+        decoration: decorationCustom(),
         width: size.width,
         height: size.height,
         child: Stack(
@@ -256,7 +247,7 @@ class _HomePageState extends State<HomePage> {
               right: 16,
               child: IconButton(
                 iconSize: 40,
-                color: Colors.amber,
+                color: ColorPalette.principal,
                 onPressed: () {
                   Navigator.push(
                     context,

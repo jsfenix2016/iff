@@ -1,6 +1,6 @@
 import 'package:hive_flutter/hive_flutter.dart';
 
-part 'activitydaybd.g.dart';
+part 'Adapters/activitydaybd.g.dart';
 
 @HiveType(typeId: 3)
 class ActivityDayBD extends HiveObject {

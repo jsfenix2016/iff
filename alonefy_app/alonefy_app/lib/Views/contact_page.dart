@@ -8,7 +8,7 @@ import 'package:ifeelefine/Controllers/contactUserController.dart';
 import 'package:ifeelefine/Utils/Widgets/CustomDropdownButtonWidgetContact.dart';
 import 'package:ifeelefine/Utils/Widgets/customDropDown.dart';
 import 'package:ifeelefine/Page/UserInactivityPage/PageView/configurationUserInactivity_page.dart';
-import 'package:ifeelefine/Views/permission_page.dart';
+import 'package:ifeelefine/Page/PermissionUser/Pageview/permission_page.dart';
 import 'package:permission_handler/permission_handler.dart';
 // import 'package:permission_handler/permission_handler.dart';
 // import 'package:flutter_contacts/flutter_contacts.dart';
@@ -30,6 +30,10 @@ class _ContactListState extends State<ContactList> {
   List<Contact> _contacts2 = [];
   final List<Contact> _selectedContacts = [];
   var indexSelect = -1;
+
+  bool isPremium = false;
+  late String timeLblAM = "00:00 AM";
+  final _timeC = TextEditingController();
 
   Future _contactsPermissions() async {
     var status = await FlutterContacts.requestPermission();
@@ -414,9 +418,6 @@ class _ContactListState extends State<ContactList> {
     );
   }
 
-  bool isPremium = false;
-  late String timeLblAM = "00:00 AM";
-  final _timeC = TextEditingController();
   Future displayTimePicker(BuildContext context) async {
     var time = await showTimePicker(
         context: context,

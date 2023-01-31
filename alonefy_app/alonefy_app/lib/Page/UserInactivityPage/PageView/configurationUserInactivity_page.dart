@@ -6,6 +6,7 @@ import 'package:grouped_list/grouped_list.dart';
 // import 'package:grouped_list/grouped_list.dart';
 import 'package:ifeelefine/Common/Constant.dart';
 import 'package:ifeelefine/Common/colorsPalette.dart';
+import 'package:ifeelefine/Common/utils.dart';
 import 'package:ifeelefine/Model/activityDay.dart';
 import 'package:ifeelefine/Model/activitydaybd.dart';
 import 'package:ifeelefine/Page/UserInactivityPage/Controller/inactivityViewController.dart';
@@ -14,6 +15,7 @@ import 'package:ifeelefine/Utils/Widgets/containerTextEditAndTime.dart';
 import 'package:ifeelefine/Utils/Widgets/customDropDown.dart';
 import 'package:flutter/material.dart';
 import 'package:collection/collection.dart';
+import 'package:ifeelefine/Utils/Widgets/elevatedButtonFilling.dart';
 
 class UserInactivityPage extends StatefulWidget {
   const UserInactivityPage({super.key});
@@ -151,28 +153,24 @@ class _UserInactivityPageState extends State<UserInactivityPage> {
   }
 
   Widget _createButtonNext() {
-    return ElevatedButton.icon(
-      style: ButtonStyle(
-          backgroundColor:
-              MaterialStateProperty.all<Color>(ColorPalette.principal)),
-      label: const Text(Constant.nextTxt),
-      icon: const Icon(
-        Icons.next_plan,
-      ),
-      onPressed: (() async {
+    return ElevateButtonFilling(
+      onChanged: (value) async {
         if (selecDicActivity.isEmpty) {
           mostrarAlertaTwoButton(context,
               'No has agregado ninguna actividad,  ¿deseas continuar?');
         } else {
-          var a = await inactVC.saveInactivity(context, selecDicActivity);
-          print(a);
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => const PreviewInactivityPage()),
-          );
+          var id = await inactVC.saveInactivity(context, selecDicActivity);
+          if (id != -1) {
+            // ignore: use_build_context_synchronously
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => const PreviewInactivityPage()),
+            );
+          }
         }
-      }),
+      },
+      mensaje: Constant.nextTxt,
     );
   }
 
@@ -218,17 +216,7 @@ class _UserInactivityPageState extends State<UserInactivityPage> {
         ),
       ),
       body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment(0, 1),
-            colors: <Color>[
-              ColorPalette.principal,
-              ColorPalette.second,
-            ],
-            tileMode: TileMode.mirror,
-          ),
-        ),
+        decoration: decorationCustom(),
         width: size.width,
         height: size.height,
         child: Padding(

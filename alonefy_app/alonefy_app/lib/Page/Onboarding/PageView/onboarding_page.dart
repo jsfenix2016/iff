@@ -1,10 +1,12 @@
 import 'package:ifeelefine/Common/Constant.dart';
+import 'package:ifeelefine/Common/colorsPalette.dart';
+import 'package:ifeelefine/Common/utils.dart';
 
-import 'package:ifeelefine/Views/alternative_page.dart';
+import 'package:ifeelefine/Page/Alternative/Pageview/alternative_page.dart';
 
 import 'package:flutter/material.dart';
-import 'package:onboarding/onboarding.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:ifeelefine/Page/Onboarding/Widget/widgetColumnOnboarding.dart';
+import 'package:ifeelefine/Utils/Widgets/elevatedButtonFilling.dart';
 
 class OnboardingPage extends StatelessWidget {
   final _controller = PageController(
@@ -13,94 +15,6 @@ class OnboardingPage extends StatelessWidget {
 
   OnboardingPage({super.key});
 
-  final onboardingPagesList = [
-    PageModel(
-      widget: Column(
-        mainAxisSize: MainAxisSize.max,
-        children: [
-          Image.asset(
-            'assets/images/Mapsicle Map-2.png',
-            width: double.infinity,
-          ),
-          SizedBox(
-              width: double.infinity,
-              child: Text(Constant.onBoardingWelcome,
-                  style: GoogleFonts.barlow())),
-          const SizedBox(
-            height: 10,
-          ),
-          SizedBox(
-            width: double.infinity,
-            child: Text(
-              Constant.onBoardingWelcomeMessage,
-              style: GoogleFonts.barlow(),
-            ),
-          ),
-        ],
-      ),
-    ),
-    PageModel(
-      widget: Column(
-        children: [
-          Image.asset('assets/images/Mapsicle Map.png', color: pageImageColor),
-          const SizedBox(
-            height: 10,
-          ),
-          const Text(Constant.onBoardingPageTwoTitle, style: pageTitleStyle),
-          const SizedBox(
-            height: 20,
-          ),
-          const Text(
-            Constant.onBoardingPageTwoSubtitle,
-            style: pageInfoStyle,
-          )
-        ],
-      ),
-    ),
-    PageModel(
-      widget: Column(
-        children: [
-          Image.asset(
-            'assets/images/Mapsicle Map-3.png',
-            color: Colors.white,
-            width: 200,
-            height: 200,
-          ),
-          const SizedBox(
-            height: 10,
-          ),
-          const Text(Constant.onBoardingPageTreeTitle, style: pageTitleStyle),
-          const SizedBox(
-            height: 20,
-          ),
-          const Text(
-            Constant.onBoardingPageTreeSubtitle,
-            style: pageInfoStyle,
-          )
-        ],
-      ),
-    ),
-    PageModel(
-      widget: Column(
-        children: [
-          Image.asset('assets/images/Mapsicle Map-4.png',
-              color: pageImageColor),
-          const SizedBox(
-            height: 10,
-          ),
-          const Text(Constant.onBoardingPageFourTitle, style: pageTitleStyle),
-          const SizedBox(
-            height: 10,
-          ),
-          const Text(
-            Constant.onBoardingPageFourSubtitle,
-            style: pageInfoStyle,
-          ),
-        ],
-      ),
-    ),
-  ];
-// the index of the current page
   int _activePage = 0;
 
   // this list holds all the pages
@@ -115,17 +29,7 @@ class OnboardingPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment(0, 1),
-            colors: <Color>[
-              Color.fromRGBO(21, 14, 3, 1),
-              Color.fromRGBO(115, 75, 24, 1),
-            ], // Gradient from https://learnui.design/tools/gradient-generator.html
-            tileMode: TileMode.mirror,
-          ),
-        ),
+        decoration: decorationCustom(),
         child: Stack(
           children: [
             // the page view
@@ -164,8 +68,8 @@ class OnboardingPage extends StatelessWidget {
                                 // check if a dot is connected to the current page
                                 // if true, give it a different color
                                 backgroundColor: _activePage == index
-                                    ? Colors.amber
-                                    : Colors.grey,
+                                    ? ColorPalette.principal
+                                    : ColorPalette.dotbackground,
                               ),
                             ),
                           )),
@@ -180,30 +84,16 @@ class OnboardingPage extends StatelessWidget {
               child: SizedBox(
                 width: double.infinity,
                 child: Center(
-                  child: ElevatedButton(
-                    style: ButtonStyle(
-                      shadowColor: MaterialStateProperty.all<Color>(
-                        Colors.transparent,
-                      ),
-                      backgroundColor: MaterialStateProperty.all<Color>(
-                        Colors.transparent,
-                      ),
-                    ),
-                    child: Container(
-                        decoration: const BoxDecoration(
-                          color: Color.fromRGBO(219, 177, 42, 1),
-                          borderRadius: BorderRadius.all(Radius.circular(100)),
-                        ),
-                        height: 42,
-                        width: 200,
-                        child: const Center(child: Text(Constant.continueTxt))),
-                    onPressed: () {
+                  child: ElevateButtonFilling(
+                    onChanged: (value) {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => const AlternativePage()),
+                          builder: (context) => const AlternativePage(),
+                        ),
                       );
                     },
+                    mensaje: Constant.continueTxt,
                   ),
                 ),
               ),
@@ -213,25 +103,6 @@ class OnboardingPage extends StatelessWidget {
       ),
     );
   }
-
-  Widget _createButtonNext(BuildContext context) {
-    return ElevatedButton.icon(
-      style: ButtonStyle(
-          backgroundColor: MaterialStateProperty.all<Color>(
-        const Color.fromRGBO(219, 177, 42, 1),
-      )),
-      label: const Text(Constant.continueTxt),
-      icon: const Icon(
-        Icons.next_plan,
-      ),
-      onPressed: (() async {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => const AlternativePage()),
-        );
-      }),
-    );
-  }
 }
 
 class MyPage1Widget extends StatelessWidget {
@@ -239,50 +110,10 @@ class MyPage1Widget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisSize: MainAxisSize.max,
-      children: [
-        SizedBox(
-          child: Image.asset(
-            scale: 0.5,
-            fit: BoxFit.fill,
-            'assets/images/Mask group-2.png',
-            height: 430,
-            width: double.infinity,
-          ),
-        ),
-        SizedBox(
-          width: double.infinity,
-          child: Text(
-            Constant.onBoardingWelcome,
-            textAlign: TextAlign.center,
-            style: GoogleFonts.barlow(
-              fontSize: 22.0,
-              wordSpacing: 1,
-              letterSpacing: 1.2,
-              fontWeight: FontWeight.bold,
-              color: const Color.fromRGBO(219, 177, 42, 1),
-            ),
-          ),
-        ),
-        const SizedBox(
-          height: 10,
-        ),
-        SizedBox(
-          width: double.infinity,
-          child: Text(
-            Constant.onBoardingWelcomeMessage,
-            textAlign: TextAlign.center,
-            style: GoogleFonts.barlow(
-              fontSize: 22.0,
-              wordSpacing: 1,
-              letterSpacing: 1,
-              fontWeight: FontWeight.normal,
-              color: Colors.white,
-            ),
-          ),
-        ),
-      ],
+    return const WidgetColumnOnboarding(
+      img: 'assets/images/Mask group-2.png',
+      title: Constant.onBoardingWelcome,
+      subtitle: Constant.onBoardingWelcomeMessage,
     );
   }
 }
@@ -292,58 +123,10 @@ class MyPage2Widget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // final size = MediaQuery.of(context).size;
-    return Column(
-      mainAxisSize: MainAxisSize.max,
-      children: [
-        SizedBox(
-          child: Image.asset(
-            fit: BoxFit.fill,
-            scale: 0.5,
-            'assets/images/Mask group.png',
-            height: 430,
-            width: double.infinity,
-          ),
-        ),
-        const SizedBox(
-          height: 10,
-        ),
-        Center(
-          child: SizedBox(
-            width: 350,
-            child: Text(
-              Constant.onBoardingPageTwoTitle,
-              textAlign: TextAlign.center,
-              style: GoogleFonts.barlow(
-                fontSize: 22.0,
-                wordSpacing: 1,
-                letterSpacing: 1.2,
-                fontWeight: FontWeight.bold,
-                color: const Color.fromRGBO(219, 177, 42, 1),
-              ),
-            ),
-          ),
-        ),
-        const SizedBox(
-          height: 10,
-        ),
-        Center(
-          child: SizedBox(
-            width: 350,
-            child: Text(
-              Constant.onBoardingPageTwoSubtitle,
-              textAlign: TextAlign.center,
-              style: GoogleFonts.barlow(
-                fontSize: 22.0,
-                wordSpacing: 1,
-                letterSpacing: 1,
-                fontWeight: FontWeight.normal,
-                color: Colors.white,
-              ),
-            ),
-          ),
-        ),
-      ],
+    return const WidgetColumnOnboarding(
+      img: 'assets/images/Mask group.png',
+      title: Constant.onBoardingPageTwoTitle,
+      subtitle: Constant.onBoardingPageTwoSubtitle,
     );
   }
 }
@@ -353,57 +136,10 @@ class MyPage3Widget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisSize: MainAxisSize.max,
-      children: [
-        SizedBox(
-          child: Image.asset(
-            fit: BoxFit.fill,
-            scale: 0.5,
-            'assets/images/Mask group-3.png',
-            height: 420,
-            width: double.infinity,
-          ),
-        ),
-        const SizedBox(
-          height: 10,
-        ),
-        Center(
-          child: SizedBox(
-            width: 350,
-            child: Text(
-              Constant.onBoardingPageTreeTitle,
-              textAlign: TextAlign.center,
-              style: GoogleFonts.barlow(
-                fontSize: 22.0,
-                wordSpacing: 1,
-                letterSpacing: 1.2,
-                fontWeight: FontWeight.bold,
-                color: const Color.fromRGBO(219, 177, 42, 1),
-              ),
-            ),
-          ),
-        ),
-        const SizedBox(
-          height: 10,
-        ),
-        Center(
-          child: SizedBox(
-            width: 350,
-            child: Text(
-              Constant.onBoardingPageTreeSubtitle,
-              textAlign: TextAlign.center,
-              style: GoogleFonts.barlow(
-                fontSize: 22.0,
-                wordSpacing: 1,
-                letterSpacing: 1,
-                fontWeight: FontWeight.normal,
-                color: Colors.white,
-              ),
-            ),
-          ),
-        ),
-      ],
+    return const WidgetColumnOnboarding(
+      img: 'assets/images/Mask group-3.png',
+      title: Constant.onBoardingPageTreeTitle,
+      subtitle: Constant.onBoardingPageTreeSubtitle,
     );
   }
 }
@@ -413,57 +149,10 @@ class MyPage4Widget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisSize: MainAxisSize.max,
-      children: [
-        SizedBox(
-          child: Image.asset(
-            fit: BoxFit.fill,
-            scale: 0.5,
-            'assets/images/Mask group-4.png',
-            height: 400,
-            width: double.infinity,
-          ),
-        ),
-        const SizedBox(
-          height: 10,
-        ),
-        Center(
-          child: SizedBox(
-            width: 350,
-            child: Text(
-              Constant.onBoardingPageFourTitle,
-              textAlign: TextAlign.center,
-              style: GoogleFonts.barlow(
-                fontSize: 22.0,
-                wordSpacing: 1,
-                letterSpacing: 1,
-                fontWeight: FontWeight.bold,
-                color: const Color.fromRGBO(219, 177, 42, 1),
-              ),
-            ),
-          ),
-        ),
-        const SizedBox(
-          height: 10,
-        ),
-        Center(
-          child: SizedBox(
-            width: 350,
-            child: Text(
-              Constant.onBoardingPageFourSubtitle,
-              textAlign: TextAlign.center,
-              style: GoogleFonts.barlow(
-                fontSize: 22.0,
-                wordSpacing: 1,
-                letterSpacing: 1,
-                fontWeight: FontWeight.normal,
-                color: Colors.white,
-              ),
-            ),
-          ),
-        ),
-      ],
+    return const WidgetColumnOnboarding(
+      img: 'assets/images/Mask group-4.png',
+      title: Constant.onBoardingPageFourTitle,
+      subtitle: Constant.onBoardingPageFourSubtitle,
     );
   }
 }

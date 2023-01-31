@@ -6,6 +6,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:ifeelefine/Common/colorsPalette.dart';
 import 'package:ifeelefine/Model/activitydaybd.dart';
 import 'package:ifeelefine/Model/restdaybd.dart';
 import 'package:ifeelefine/Model/userPosition.dart';
@@ -165,6 +166,20 @@ void mostrarAlerta(BuildContext context, String mensaje) {
           ],
         );
       });
+}
+
+BoxDecoration decorationCustom() {
+  return const BoxDecoration(
+    gradient: LinearGradient(
+      begin: Alignment.topCenter,
+      end: Alignment(0, 1),
+      colors: <Color>[
+        ColorPalette.principalView,
+        ColorPalette.secondView,
+      ],
+      tileMode: TileMode.mirror,
+    ),
+  );
 }
 
 /// Determine the current position of the device.

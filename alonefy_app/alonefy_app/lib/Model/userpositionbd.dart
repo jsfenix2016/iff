@@ -1,6 +1,6 @@
 import 'package:hive_flutter/hive_flutter.dart';
 
-part 'userpositionbd.g.dart';
+part 'Adapters/userpositionbd.g.dart';
 
 @HiveType(typeId: 2)
 class UserPositionBD extends HiveObject {

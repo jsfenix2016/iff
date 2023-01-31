@@ -1,6 +1,6 @@
 import 'package:hive/hive.dart';
 
-part 'userbd.g.dart';
+part 'Adapters/userbd.g.dart';
 
 @HiveType(typeId: 0)
 class UserBD {
