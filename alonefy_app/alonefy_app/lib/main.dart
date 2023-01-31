@@ -1,14 +1,10 @@
 import 'dart:async';
 import 'dart:io';
 import 'dart:ui';
-import 'package:hive_flutter/hive_flutter.dart';
 import 'package:ifeelefine/Common/utils.dart';
 import 'package:ifeelefine/Data/hive_data.dart';
 import 'package:ifeelefine/Model/userPosition.dart';
 import 'package:ifeelefine/Model/userpositionbd.dart';
-import 'package:ifeelefine/Page/Onboarding/PageView/onboarding_page.dart';
-import 'package:ifeelefine/Page/UserEdit/PageView/editUser_page.dart';
-import 'package:ifeelefine/Page/UserRest/PageView/configurationUserRest_page.dart';
 import 'package:ifeelefine/Provider/prefencesUser.dart';
 import 'package:ifeelefine/Routes/routes.dart';
 import 'package:device_info_plus/device_info_plus.dart';
