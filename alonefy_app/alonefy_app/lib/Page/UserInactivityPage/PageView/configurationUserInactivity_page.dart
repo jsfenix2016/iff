@@ -3,7 +3,7 @@ import 'dart:collection';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:grouped_list/grouped_list.dart';
-// import 'package:grouped_list/grouped_list.dart';
+
 import 'package:ifeelefine/Common/Constant.dart';
 import 'package:ifeelefine/Common/colorsPalette.dart';
 import 'package:ifeelefine/Common/utils.dart';
@@ -187,7 +187,7 @@ class _UserInactivityPageState extends State<UserInactivityPage> {
               onPressed: () => Navigator.of(context).pop(),
             ),
             TextButton(
-              child: const Text("Continuar"),
+              child: const Text(Constant.continueTxt),
               onPressed: () => Navigator.of(context).pop(),
             )
           ],
@@ -205,14 +205,11 @@ class _UserInactivityPageState extends State<UserInactivityPage> {
       appBar: AppBar(
         elevation: 0,
         backgroundColor: Colors.transparent,
-        title: const Padding(
-          padding: EdgeInsets.only(top: 20.0, left: 8.0, right: 8.0),
-          child: Text(
-            'Actividades en la semana',
-            style: TextStyle(
-                color: Colors.white, fontWeight: FontWeight.bold, fontSize: 18),
-            textAlign: TextAlign.center,
-          ),
+        title: const Text(
+          'Actividades en la semana',
+          style: TextStyle(
+              color: Colors.white, fontWeight: FontWeight.bold, fontSize: 18),
+          textAlign: TextAlign.center,
         ),
       ),
       body: Container(
@@ -220,7 +217,7 @@ class _UserInactivityPageState extends State<UserInactivityPage> {
         width: size.width,
         height: size.height,
         child: Padding(
-          padding: const EdgeInsets.all(8.0),
+          padding: const EdgeInsets.all(18.0),
           child: Stack(
             children: [
               Column(

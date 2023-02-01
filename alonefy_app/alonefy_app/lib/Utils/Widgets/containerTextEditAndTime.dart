@@ -1,3 +1,4 @@
+import 'package:ifeelefine/Common/colorsPalette.dart';
 import 'package:ifeelefine/Model/activityDay.dart';
 
 import 'package:flutter/material.dart';
@@ -64,22 +65,25 @@ class _ContainerTextEditTime extends State<ContainerTextEditTime> {
   @override
   Widget build(BuildContext context) {
     return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(8),
+        color: Colors.white.withAlpha(20),
+      ),
       width: double.infinity,
       height: 100,
-      color: Colors.white,
       child: Column(
         children: [
           Row(
             children: [
               Expanded(
                 child: Container(
-                  color: Colors.white,
+                  color: Colors.transparent,
                   child: Padding(
                     padding: const EdgeInsets.all(3.0),
                     child: Text(
                       widget.day,
                       style: const TextStyle(
-                          color: Colors.black,
+                          color: ColorPalette.principal,
                           fontWeight: FontWeight.bold,
                           fontSize: 18),
                     ),
@@ -94,6 +98,7 @@ class _ContainerTextEditTime extends State<ContainerTextEditTime> {
                 child: Padding(
                   padding: const EdgeInsets.all(4.0),
                   child: TextFormField(
+                    style: const TextStyle(fontSize: 18, color: Colors.yellow),
                     autofocus: false,
                     onChanged: (text) {
                       activityAndInactivity.activity = text;
@@ -103,17 +108,25 @@ class _ContainerTextEditTime extends State<ContainerTextEditTime> {
                     },
                     onTap: () => {_selectOption(_day.text)},
                     controller: _day,
-                    decoration: InputDecoration(
-                        labelText: widget.acti.activity == ""
-                            ? "Actividad"
-                            : widget.acti.activity,
-                        border: const OutlineInputBorder()),
+                    decoration: const InputDecoration(
+                      focusedBorder: UnderlineInputBorder(
+                        borderSide: BorderSide(color: Colors.yellow),
+                        // borderRadius: BorderRadius.circular(100.0),
+                      ),
+                      enabledBorder: UnderlineInputBorder(
+                        borderSide: BorderSide(
+                            width: 1, color: Colors.yellow), //<-- SEE HERE
+                      ),
+                      hintStyle: TextStyle(color: Colors.yellow),
+                      filled: true,
+                      labelStyle: TextStyle(color: Colors.yellow),
+                    ),
                   ),
                 ),
               ),
               Container(
                 width: 70,
-                color: Colors.white,
+                color: Colors.transparent,
                 child: Center(
                   child: Padding(
                     padding: const EdgeInsets.all(6.0),
@@ -124,7 +137,7 @@ class _ContainerTextEditTime extends State<ContainerTextEditTime> {
                             ? "00:00 AM"
                             : widget.acti.timeWakeup,
                         style: const TextStyle(
-                            color: Colors.black,
+                            color: ColorPalette.principal,
                             fontWeight: FontWeight.bold,
                             fontSize: 18),
                       ),
@@ -140,7 +153,7 @@ class _ContainerTextEditTime extends State<ContainerTextEditTime> {
               ),
               Container(
                 width: 70,
-                color: Colors.white,
+                color: Colors.transparent,
                 child: Center(
                   child: Padding(
                     padding: const EdgeInsets.all(6.0),
@@ -150,7 +163,7 @@ class _ContainerTextEditTime extends State<ContainerTextEditTime> {
                             ? "00:00 PM"
                             : widget.acti.timeSleep,
                         style: const TextStyle(
-                            color: Colors.black,
+                            color: ColorPalette.principal,
                             fontWeight: FontWeight.bold,
                             fontSize: 18),
                       ),

@@ -11,6 +11,7 @@ import 'package:ifeelefine/Model/restday.dart';
 import 'package:ifeelefine/Model/restdaybd.dart';
 import 'package:ifeelefine/Page/UseMobil/PageView/configurationUseMobile_page.dart';
 import 'package:ifeelefine/Page/UserRest/Controller/userRestController.dart';
+import 'package:ifeelefine/Page/UserRest/Widgets/rowSelectTimer.dart';
 import 'package:ifeelefine/Utils/Widgets/elevateButtonCustomBorder.dart';
 
 class PreviewRestTimePage extends StatefulWidget {
@@ -118,105 +119,19 @@ class _PreviewRestTimePageState extends State<PreviewRestTimePage> {
                         ),
                       ),
                     ),
-                    Row(
-                      children: [
-                        GestureDetector(
-                          onTap: () async {
-                            indexSelect = index;
-
-                            timeLblAM =
-                                await displayTimePickerPM(context, 'timeSleep');
-                            setState(() {});
-                          },
-                          child: Container(
-                            key: Key(selecDicActivity[index].day),
-                            width: size.width / 2,
-                            height: 70,
-                            color: Colors.transparent,
-                            child: Column(
-                              mainAxisSize: MainAxisSize.max,
-                              children: [
-                                SizedBox(
-                                  child: Image.asset(
-                                    scale: 1,
-                                    fit: BoxFit.fill,
-                                    'assets/images/Group 979.png',
-                                    height: 24,
-                                    width: 44,
-                                  ),
-                                ),
-                                const SizedBox(
-                                  height: 10,
-                                ),
-                                SizedBox(
-                                  width: size.width,
-                                  child: Text(
-                                    selecDicActivity[index].timeSleep,
-                                    textAlign: TextAlign.center,
-                                    style: GoogleFonts.barlow(
-                                      fontSize: 30.0,
-                                      wordSpacing: 1,
-                                      letterSpacing: 1.2,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.white,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        GestureDetector(
-                          onTap: () async {
-                            indexSelect = index;
-                            timeLblPM = await displayTimePickerPM(
-                                context, 'timeWakeup');
-                            setState(() {});
-                          },
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Container(
-                              width: size.width / 2.5,
-                              height: 83,
-                              color: Colors.transparent,
-                              child: Column(
-                                mainAxisSize: MainAxisSize.max,
-                                children: [
-                                  SizedBox(
-                                    child: Image.asset(
-                                      scale: 1,
-                                      fit: BoxFit.fill,
-                                      'assets/images/Ellipse 185.png',
-                                      height: 30,
-                                      width: 29,
-                                    ),
-                                  ),
-                                  const SizedBox(
-                                    height: 10,
-                                  ),
-                                  SizedBox(
-                                    width: size.width,
-                                    child: Text(
-                                      selecDicActivity[index].timeWakeup,
-                                      textAlign: TextAlign.center,
-                                      style: GoogleFonts.barlow(
-                                        fontSize: 30.0,
-                                        wordSpacing: 1,
-                                        letterSpacing: 1.2,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.white,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
+                    RowSelectTimer(
+                      index: index,
+                      timeLblAM: selecDicActivity[index].timeWakeup, //AM
+                      timeLblPM: selecDicActivity[index].timeSleep, //PM
+                      onChanged: (value) {
+                        RestDayBD restDay = RestDayBD(
+                            day: selecDicActivity[value.id].day,
+                            timeSleep: value.timeSleep,
+                            timeWakeup: value.timeWakeup);
+                        // ignore: use_build_context_synchronously
+                        restVC.updateUserRestTime(context, restDay);
+                        getInactivity();
+                      },
                     ),
                   ],
                 );
@@ -247,37 +162,37 @@ class _PreviewRestTimePageState extends State<PreviewRestTimePage> {
     );
   }
 
-  Future<String> displayTimePickerPM(BuildContext context, String key) async {
-    var time = await showTimePicker(
-        context: context,
-        initialTime: TimeOfDay.now(),
-        builder: (context, childWidget) {
-          return MediaQuery(
-              key: Key(key),
-              data: MediaQuery.of(context).copyWith(
-                  // Using 24-Hour format
-                  alwaysUse24HourFormat: true),
-              // If you want 12-Hour format, just change alwaysUse24HourFormat to false or remove all the builder argument
-              child: childWidget!);
-        });
-    if (time != null) {
-      RestDayBD restDay = RestDayBD(
-          day: selecDicActivity[indexSelect].day,
-          timeSleep: key == 'timeSleep'
-              // ignore: use_build_context_synchronously
-              ? time.format(context)
-              : selecDicActivity[indexSelect].timeSleep,
-          timeWakeup: key == 'timeWakeup'
-              // ignore: use_build_context_synchronously
-              ? time.format(context)
-              : selecDicActivity[indexSelect].timeWakeup);
-      // ignore: use_build_context_synchronously
-      restVC.updateUserRestTime(context, restDay);
-      getInactivity();
+  // Future<String> displayTimePickerPM(BuildContext context, String key) async {
+  //   var time = await showTimePicker(
+  //       context: context,
+  //       initialTime: TimeOfDay.now(),
+  //       builder: (context, childWidget) {
+  //         return MediaQuery(
+  //             key: Key(key),
+  //             data: MediaQuery.of(context).copyWith(
+  //                 // Using 24-Hour format
+  //                 alwaysUse24HourFormat: true),
+  //             // If you want 12-Hour format, just change alwaysUse24HourFormat to false or remove all the builder argument
+  //             child: childWidget!);
+  //       });
+  //   if (time != null) {
+  //     RestDayBD restDay = RestDayBD(
+  //         day: selecDicActivity[indexSelect].day,
+  //         timeSleep: key == 'timeSleep'
+  //             // ignore: use_build_context_synchronously
+  //             ? time.format(context)
+  //             : selecDicActivity[indexSelect].timeSleep,
+  //         timeWakeup: key == 'timeWakeup'
+  //             // ignore: use_build_context_synchronously
+  //             ? time.format(context)
+  //             : selecDicActivity[indexSelect].timeWakeup);
+  //     // ignore: use_build_context_synchronously
+  //     restVC.updateUserRestTime(context, restDay);
+  //     getInactivity();
 
-      // ignore: use_build_context_synchronously
-      return time.format(context);
-    }
-    return "";
-  }
+  //     // ignore: use_build_context_synchronously
+  //     return time.format(context);
+  //   }
+  //   return "";
+  // }
 }

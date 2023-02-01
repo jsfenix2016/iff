@@ -1,3 +1,4 @@
+import 'package:ifeelefine/Common/colorsPalette.dart';
 import 'package:ifeelefine/Model/restday.dart';
 import 'package:flutter/material.dart';
 
@@ -23,11 +24,6 @@ class CustomDropdownButtonWidgetWithDictionary extends StatefulWidget {
 class _CustomDropdownButtonWidgetStateWithDictionary
     extends State<CustomDropdownButtonWidgetWithDictionary> {
   var select = RestDay();
-  void _selectOption(String value) {
-    setState(() {
-      widget.onChanged(select);
-    });
-  }
 
   @override
   void initState() {
@@ -44,11 +40,14 @@ class _CustomDropdownButtonWidgetStateWithDictionary
     return DropdownButton<String?>(
       underline: Container(
         height: 1,
-        color: Colors.amber,
+        color: ColorPalette.principal,
       ),
-      dropdownColor: Colors.brown,
-      iconEnabledColor: Colors.amber,
-      hint: Text(widget.mensaje),
+      dropdownColor: ColorPalette.secondView,
+      iconEnabledColor: ColorPalette.principal,
+      hint: Text(
+        widget.mensaje,
+        style: const TextStyle(fontSize: 18, color: ColorPalette.principal),
+      ),
       value: _selectedLocation.isEmpty
           ? widget.instance[_indexList]
           : _selectedLocation,
@@ -60,7 +59,7 @@ class _CustomDropdownButtonWidgetStateWithDictionary
               value: widget.instance[e],
               child: Text(
                 widget.instance[e] ?? "",
-                style: const TextStyle(fontSize: 18, color: Colors.amber),
+                style: const TextStyle(fontSize: 18, color: Colors.white),
               ),
             ),
           )
@@ -68,7 +67,7 @@ class _CustomDropdownButtonWidgetStateWithDictionary
       onChanged: (v) {
         setState(() {
           _selectedLocation = v.toString();
-          print(_selectedLocation);
+
           select.day = v.toString();
           widget.onChanged(select);
         });

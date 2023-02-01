@@ -75,8 +75,8 @@ class _UserMobilePageState extends State<UserMobilePage> {
                 height: 42,
                 width: 296,
                 buttonWidth: 60.0,
-                color: const Color.fromRGBO(202, 157, 11, 1),
-                buttonColor: const Color.fromRGBO(157, 123, 13, 1),
+                color: ColorPalette.principal,
+                buttonColor: ColorPalette.secondView,
                 dismissible: false,
                 label: Image.asset(
                   scale: 1,
@@ -149,83 +149,90 @@ class _UserMobilePageState extends State<UserMobilePage> {
                 height: 20,
               ),
               Container(
-                color: const Color.fromRGBO(169, 146, 125, 0.2),
+                color: Colors.transparent,
                 height: 200,
                 width: 290,
-                child: ListView(
+                child: Stack(
                   children: [
-                    ListView.builder(
-                      shrinkWrap: true,
-                      scrollDirection: Axis.vertical,
-                      physics: const NeverScrollableScrollPhysics(),
-                      padding:
-                          const EdgeInsets.only(left: 8, right: 8.0, top: 0),
-                      itemCount: Constant.timeDic.length,
-                      itemBuilder: (BuildContext context, int index) {
-                        return Row(
-                          mainAxisSize: MainAxisSize.max,
+                    SizedBox(
+                      child: Expanded(
+                        child: ListView(
                           children: [
-                            GestureDetector(
-                              onTap: () {
-                                indexSelect = index;
+                            ListView.builder(
+                              shrinkWrap: true,
+                              scrollDirection: Axis.vertical,
+                              physics: const NeverScrollableScrollPhysics(),
+                              padding: const EdgeInsets.only(
+                                  left: 8, right: 8.0, top: 0),
+                              itemCount: Constant.timeDic.length,
+                              itemBuilder: (BuildContext context, int index) {
+                                return Row(
+                                  mainAxisSize: MainAxisSize.max,
+                                  children: [
+                                    GestureDetector(
+                                      onTap: () {
+                                        indexSelect = index;
 
-                                setState(() {
-                                  // var time = Constant.timeDic[index.toString()]
-                                  //     ?.split(" ");
-
-                                  useMobilVC.saveTimeUseMobil(
-                                      context,
-                                      Constant.timeDic[index.toString()]
-                                          .toString());
-                                });
-                              },
-                              child: Padding(
-                                padding: const EdgeInsets.only(
-                                    left: 8.0, right: 8.0),
-                                child: Container(
-                                  key: const Key(""),
-                                  width: 250,
-                                  height: 80,
-                                  color: Colors.transparent,
-                                  child: Column(
-                                    children: [
-                                      Container(
-                                        width: 260,
-                                        height: 45,
-                                        color: indexSelect == index
-                                            ? Colors.amber.withAlpha(20)
-                                            : Colors.transparent,
-                                        child: Center(
-                                          child: Text(
-                                            Constant.timeDic[index.toString()]
-                                                .toString(),
-                                            textAlign: TextAlign.center,
-                                            style: GoogleFonts.barlow(
-                                              fontSize: 40.0,
-                                              wordSpacing: 1,
-                                              letterSpacing: 1,
-                                              fontWeight: FontWeight.bold,
-                                              color: Colors.white,
-                                            ),
+                                        setState(() {
+                                          useMobilVC.saveTimeUseMobil(
+                                              context,
+                                              Constant.timeDic[index.toString()]
+                                                  .toString());
+                                        });
+                                      },
+                                      child: Padding(
+                                        padding: const EdgeInsets.only(
+                                            left: 8.0, right: 8.0),
+                                        child: Container(
+                                          key: const Key(""),
+                                          width: 250,
+                                          height: 80,
+                                          color: Colors.transparent,
+                                          child: Column(
+                                            children: [
+                                              Container(
+                                                width: 260,
+                                                height: 45,
+                                                color: indexSelect == index
+                                                    ? Colors.amber.withAlpha(20)
+                                                    : Colors.transparent,
+                                                child: Center(
+                                                  child: Text(
+                                                    Constant.timeDic[
+                                                            index.toString()]
+                                                        .toString(),
+                                                    textAlign: TextAlign.center,
+                                                    style: GoogleFonts.barlow(
+                                                      fontSize: 40.0,
+                                                      wordSpacing: 1,
+                                                      letterSpacing: 1,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      color: Colors.white,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                              const SizedBox(
+                                                height: 20,
+                                              ),
+                                              Container(
+                                                color: Colors.white,
+                                                height: 1,
+                                                width: 250,
+                                              ),
+                                            ],
                                           ),
                                         ),
                                       ),
-                                      const SizedBox(
-                                        height: 20,
-                                      ),
-                                      Container(
-                                        color: Colors.white,
-                                        height: 1,
-                                        width: 250,
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
+                                    ),
+                                  ],
+                                );
+                              },
                             ),
                           ],
-                        );
-                      },
+                        ),
+                      ),
                     ),
                   ],
                 ),
@@ -238,7 +245,7 @@ class _UserMobilePageState extends State<UserMobilePage> {
                 child: Center(
                   child: ElevateButtonCustomBorder(
                     onChanged: (value) {
-                      var e = useMobilVC.getTimeUseMobil();
+                      useMobilVC.getTimeUseMobil();
 
                       Navigator.push(
                         context,

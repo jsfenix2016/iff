@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:ifeelefine/Common/Constant.dart';
 import 'package:ifeelefine/Common/colorsPalette.dart';
 
 import 'package:ifeelefine/Common/utils.dart';
@@ -11,6 +12,8 @@ import 'package:ifeelefine/Page/UserRest/Controller/userRestController.dart';
 
 import 'package:flutter/material.dart';
 import 'package:ifeelefine/Page/UserRest/PageView/previewRestTime.dart';
+import 'package:ifeelefine/Page/UserRest/Widgets/rowSelectTimer.dart';
+import 'package:ifeelefine/Utils/Widgets/elevatedButtonFilling.dart';
 
 class UserRestPage extends StatefulWidget {
   const UserRestPage({super.key});
@@ -62,91 +65,6 @@ class _UserRestPageState extends State<UserRestPage> {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
 
-    var rowTimeSelectorRest = Row(
-      children: [
-        GestureDetector(
-          onTap: () {
-            displayTimePicker(context);
-          },
-          child: Container(
-            width: size.width / 2,
-            height: 70,
-            color: Colors.transparent,
-            child: Column(
-              children: [
-                SizedBox(
-                  child: Image.asset(
-                    scale: 1,
-                    fit: BoxFit.fill,
-                    'assets/images/Group 979.png',
-                    height: 24,
-                    width: 44,
-                  ),
-                ),
-                const SizedBox(
-                  height: 10,
-                ),
-                SizedBox(
-                  width: double.infinity,
-                  child: Text(
-                    timeLblAM,
-                    textAlign: TextAlign.center,
-                    style: GoogleFonts.barlow(
-                      fontSize: 30.0,
-                      wordSpacing: 1,
-                      letterSpacing: 1.2,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-        GestureDetector(
-          onTap: () {
-            displayTimePickerPM(context);
-          },
-          child: Container(
-            width: size.width / 2,
-            height: 83,
-            color: Colors.transparent,
-            child: Column(
-              children: [
-                SizedBox(
-                  child: Image.asset(
-                    scale: 1,
-                    fit: BoxFit.fill,
-                    'assets/images/Ellipse 185.png',
-                    height: 30,
-                    width: 29,
-                  ),
-                ),
-                const SizedBox(
-                  height: 10,
-                ),
-                SizedBox(
-                  width: double.infinity,
-                  child: Text(
-                    timeLblPM,
-                    textAlign: TextAlign.center,
-                    style: GoogleFonts.barlow(
-                      fontSize: 30.0,
-                      wordSpacing: 1,
-                      letterSpacing: 1.2,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ],
-    );
-
     return Scaffold(
       body: Container(
         decoration: decorationCustom(),
@@ -158,22 +76,29 @@ class _UserRestPageState extends State<UserRestPage> {
               ListView(
                 children: [
                   Positioned(
-                    top: 100,
-                    child: Container(
-                      color: Colors.transparent,
-                      width: size.width,
-                      child: Text(
-                        '¿A qué hora te acuestas y te levantas?',
-                        textAlign: TextAlign.center,
-                        style: GoogleFonts.barlow(
-                          fontSize: 24.0,
-                          wordSpacing: 1,
-                          letterSpacing: 1.2,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
+                    top: 0,
+                    child: Padding(
+                      padding: const EdgeInsets.only(
+                          top: 128.0, left: 50, right: 50, bottom: 30),
+                      child: Container(
+                        color: Colors.transparent,
+                        width: size.width,
+                        child: Text(
+                          Constant.hoursSleepAndWakeup,
+                          textAlign: TextAlign.center,
+                          style: GoogleFonts.barlow(
+                            fontSize: 24.0,
+                            wordSpacing: 1,
+                            letterSpacing: 1.2,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
                         ),
                       ),
                     ),
+                  ),
+                  const SizedBox(
+                    height: 20,
                   ),
                   for (var i = 0; i < 1; i++)
                     Positioned(
@@ -189,6 +114,7 @@ class _UserRestPageState extends State<UserRestPage> {
                           itemCount: 1,
                           itemBuilder: (context, index) {
                             return Column(
+                              mainAxisSize: MainAxisSize.max,
                               key: Key(index.toString()),
                               children: [
                                 Row(
@@ -204,8 +130,6 @@ class _UserRestPageState extends State<UserRestPage> {
                                               tempNoSelectListDay[i])) {
                                             _selectedDays
                                                 .remove(tempNoSelectListDay[i]);
-                                            // tempNoSelectListDay
-                                            // .add(tempListDay[i]);
                                           } else {
                                             _selectedDays
                                                 .add(tempNoSelectListDay[i]);
@@ -216,51 +140,79 @@ class _UserRestPageState extends State<UserRestPage> {
                                         },
                                         child: Container(
                                           width: size.width / 7,
+                                          height: 50,
                                           color: Colors.transparent,
-                                          child: Column(
-                                            mainAxisSize: MainAxisSize.max,
-                                            children: [
-                                              Text(
-                                                tempNoSelectListDay[i],
-                                                textAlign: TextAlign.center,
-                                                style: GoogleFonts.barlow(
-                                                  fontSize: 20.0,
-                                                  wordSpacing: 1,
-                                                  letterSpacing: 1,
-                                                  fontWeight: FontWeight.normal,
-                                                  color: _selectedDays.contains(
-                                                          tempNoSelectListDay[
-                                                              i])
-                                                      ? ColorPalette.principal
-                                                      : Colors.white,
+                                          child: Center(
+                                            child: Stack(
+                                              children: [
+                                                Container(
+                                                  decoration: BoxDecoration(
+                                                    border: _selectedDays.contains(
+                                                            tempNoSelectListDay[
+                                                                i])
+                                                        ? null
+                                                        : Border.all(
+                                                            color: _selectedDays
+                                                                    .contains(
+                                                                        tempNoSelectListDay[
+                                                                            i])
+                                                                ? ColorPalette
+                                                                    .principal
+                                                                : Colors.white,
+                                                            width: 1,
+                                                          ),
+                                                    color: _selectedDays.contains(
+                                                            tempNoSelectListDay[
+                                                                i])
+                                                        ? ColorPalette.principal
+                                                        : null,
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            100),
+                                                  ),
+                                                  height: 38,
+                                                  width: 38.59,
+                                                  child: Center(
+                                                    child: Text(
+                                                      tempNoSelectListDay[i],
+                                                      textAlign:
+                                                          TextAlign.center,
+                                                      style: GoogleFonts.barlow(
+                                                        fontSize: 20.0,
+                                                        wordSpacing: 1,
+                                                        letterSpacing: 1,
+                                                        fontWeight: _selectedDays
+                                                                .contains(
+                                                                    tempNoSelectListDay[
+                                                                        i])
+                                                            ? FontWeight.bold
+                                                            : FontWeight.normal,
+                                                        color: _selectedDays
+                                                                .contains(
+                                                                    tempNoSelectListDay[
+                                                                        i])
+                                                            ? Colors.black
+                                                            : Colors.white,
+                                                      ),
+                                                    ),
+                                                  ),
                                                 ),
-                                              ),
-                                              const SizedBox(
-                                                height: 7,
-                                              ),
-                                              Container(
-                                                color: _selectedDays.contains(
-                                                        tempNoSelectListDay[i])
-                                                    ? ColorPalette.principal
-                                                    : Colors.white,
-                                                height: _selectedDays.contains(
-                                                        tempNoSelectListDay[i])
-                                                    ? 3
-                                                    : 1,
-                                                width: 50,
-                                              ),
-                                            ],
+                                              ],
+                                            ),
                                           ),
                                         ),
                                       ),
                                   ],
                                 ),
-                                const SizedBox(
-                                  height: 20,
-                                ),
-                                Positioned(
-                                  top: (250),
-                                  child: rowTimeSelectorRest,
+                                RowSelectTimer(
+                                  index: index,
+                                  timeLblAM: timeLblAM, //AM
+                                  timeLblPM: timeLblPM, //PM
+                                  onChanged: (value) {
+                                    timeLblAM = value.timeWakeup;
+                                    timeLblPM = value.timeSleep;
+                                    setState(() {});
+                                  },
                                 ),
                               ],
                             );
@@ -275,109 +227,11 @@ class _UserRestPageState extends State<UserRestPage> {
                 child: SizedBox(
                   width: size.width,
                   child: Center(
-                    child: ElevatedButton(
-                      style: ButtonStyle(
-                        shadowColor: MaterialStateProperty.all<Color>(
-                          Colors.transparent,
-                        ),
-                        backgroundColor: MaterialStateProperty.all<Color>(
-                          Colors.transparent,
-                        ),
-                      ),
-                      onPressed: (() async {
-                        noSelectDay++;
-                        tempList.add(noSelectDay);
-                        if (tempDicRest.length == 7) {
-                          int id = await userRestVC.saveUserRestTime(
-                              context, tempDicRest);
-                          // mostrarAlerta(
-                          // context, "Seguardaron los datos correctamente");
-                          if (id != -1) {
-                            // ignore: use_build_context_synchronously
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => const PreviewRestTimePage(
-                                  isMenu: false,
-                                ),
-                              ),
-                            );
-                          }
-
-                          setState(() {});
-                          return;
-                        } else if (tempDicRest.isEmpty &&
-                            _selectedDays.length == 7) {
-                          for (var element in _selectedDays) {
-                            tempNoSelectListDay.remove(element);
-                          }
-                          for (var element in _selectedDays) {
-                            RestDayBD restDay = RestDayBD(
-                                day: diaConvert(element),
-                                timeSleep: timeLblPM,
-                                timeWakeup: timeLblAM);
-
-                            tempDicRest.add(restDay);
-                          }
-                          _selectedDays.clear();
-                          int id = await userRestVC.saveUserRestTime(
-                              context, tempDicRest);
-                          // mostrarAlerta(
-                          // context, "Seguardaron los datos correctamente");
-                          if (id != -1) {
-                            // ignore: use_build_context_synchronously
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => const PreviewRestTimePage(
-                                  isMenu: false,
-                                ),
-                              ),
-                            );
-                          }
-                          setState(() {});
-                          return;
-                        }
-                        if (_selectedDays.length < 7) {
-                          for (var element in _selectedDays) {
-                            tempNoSelectListDay.remove(element);
-                          }
-                          for (var element in _selectedDays) {
-                            RestDayBD restDay = RestDayBD(
-                                day: diaConvert(element),
-                                timeSleep: timeLblPM,
-                                timeWakeup: timeLblAM);
-
-                            tempDicRest.add(restDay);
-                          }
-                          _selectedDays.clear();
-
-                          mostrarAlerta(context,
-                              "debes seleccionar los dias restantes antes de continuar");
-                          setState(() {});
-                        }
-                      }),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: ColorPalette.principal,
-                          border: Border.all(
-                            color: ColorPalette.principal,
-                          ),
-                          borderRadius:
-                              const BorderRadius.all(Radius.circular(100)),
-                        ),
-                        height: 42,
-                        width: 200,
-                        child: const Center(
-                          child: Text(
-                            'Continuar',
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 18),
-                          ),
-                        ),
-                      ),
+                    child: ElevateButtonFilling(
+                      onChanged: (value) {
+                        btnContinue();
+                      },
+                      mensaje: Constant.continueTxt,
                     ),
                   ),
                 ),
@@ -389,458 +243,61 @@ class _UserRestPageState extends State<UserRestPage> {
     );
   }
 
-  Future displayTimePickerPM(BuildContext context) async {
-    var time = await showTimePicker(
-        context: context,
-        initialTime: TimeOfDay.now(),
-        builder: (context, childWidget) {
-          return MediaQuery(
-              data: MediaQuery.of(context).copyWith(
-                  // Using 24-Hour format
-                  alwaysUse24HourFormat: true),
-              // If you want 12-Hour format, just change alwaysUse24HourFormat to false or remove all the builder argument
-              child: childWidget!);
-        });
-    if (time != null) {
-      // ignore: use_build_context_synchronously
-      timeLblPM = time.format(context);
-      // if (time.hour <= 11) {
-      //   TimeOfDay timeOfDay = const TimeOfDay(hour: 12, minute: 00);
-      //   // ignore: use_build_context_synchronously
-      //   timeLblPM = timeOfDay.format(context);
-      // } else {
-      //   // ignore: use_build_context_synchronously
-      //   timeLblPM = time.format(context);
-      // }
+  void btnContinue() async {
+    noSelectDay++;
+    tempList.add(noSelectDay);
 
-      // "${time.hour}:${time.minute}";
+    if (tempDicRest.length == 7) {
+      SaveAndContinueScreen();
+      return;
+    }
+    if (tempDicRest.isEmpty && _selectedDays.length == 7) {
+      await processSelectedInfo();
+      SaveAndContinueScreen();
+      setState(() {});
+      return;
+    }
+    if (_selectedDays.length < 7) {
+      await processSelectedInfo();
+      if (tempDicRest.length == 7) {
+        SaveAndContinueScreen();
+        return;
+      }
+      // ignore: use_build_context_synchronously
+      mostrarAlerta(
+          context, "debes seleccionar los dias restantes antes de continuar");
       setState(() {});
     }
   }
 
-  Future displayTimePicker(BuildContext context) async {
-    var time = await showTimePicker(
-        context: context,
-        initialTime: TimeOfDay.now(),
-        builder: (context, childWidget) {
-          return MediaQuery(
-              data: MediaQuery.of(context).copyWith(
-                  // Using 24-Hour format
-                  alwaysUse24HourFormat: true),
-              // If you want 12-Hour format, just change alwaysUse24HourFormat to false or remove all the builder argument
-              child: childWidget!);
-        });
-    if (time != null) {
-      // ignore: use_build_context_synchronously
-      timeLblAM = time.format(context);
-      // if (time.hour > 11) {
-      //   TimeOfDay timeOfDay = const TimeOfDay(hour: 13, minute: 0);
-      //   // ignore: use_build_context_synchronously
+  void SaveAndContinueScreen() async {
+    int id = await userRestVC.saveUserRestTime(context, tempDicRest);
 
-      //   // timeLblAM = _timeC.text;
-      // } else {
-      //   // ignore: use_build_context_synchronously
-      //   timeLblAM = time.format(context);
-      //   // timeLblAM = _timeC.text;
-      // }
-      setState(() {});
+    if (id != -1) {
+      // ignore: use_build_context_synchronously
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const PreviewRestTimePage(
+            isMenu: false,
+          ),
+        ),
+      );
     }
   }
 
-  // Widget _createButtonNext() {
-  //   return ElevatedButton.icon(
-  //     style: ButtonStyle(
-  //         backgroundColor:
-  //             MaterialStateProperty.all<Color>(ColorPalette.principal)),
-  //     label: const Text(Constant.nextTxt),
-  //     icon: const Icon(
-  //       Icons.next_plan,
-  //     ),
-  //     onPressed: (() {
-  //       Navigator.push(
-  //         context,
-  //         MaterialPageRoute(builder: (context) => const UserInactivityPage()),
-  //       );
-  //     }),
-  //   );
-  // }
+  Future processSelectedInfo() async {
+    for (var element in _selectedDays) {
+      tempNoSelectListDay.remove(element);
+    }
+    for (var element in _selectedDays) {
+      RestDayBD restDay = RestDayBD(
+          day: diaConvert(element),
+          timeSleep: timeLblPM,
+          timeWakeup: timeLblAM);
+
+      tempDicRest.add(restDay);
+    }
+    _selectedDays.clear();
+  }
 }
-
-// class ScheduleSelector extends StatefulWidget {
-//   @override
-//   _ScheduleSelectorState createState() => _ScheduleSelectorState();
-// }
-
-// class _ScheduleSelectorState extends State<ScheduleSelector> {
-//   List<String> _selectedDays = [];
-//   List<String> _days = [
-//     'Lunes',
-//     'Martes',
-//     'Miercoles',
-//     'Jueves',
-//     'Viernes',
-//     'Sabado',
-//     'Domingo'
-//   ];
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Column(
-//       children: <Widget>[
-//         for (var i = 0; i < _days.length; i++)
-//           CheckboxListTile(
-//             value: _selectedDays.contains(_days[i]),
-//             onChanged: (value) {
-//               setState(() {
-//                 if (_selectedDays.contains(_days[i])) {
-//                   _selectedDays.remove(_days[i]);
-//                 } else {
-//                   _selectedDays.add(_days[i]);
-//                 }
-//               });
-//             },
-//             title: Text(_days[i]),
-//           ),
-//         if (_selectedDays.length < 7)
-//           ElevatedButton(
-//             style: ButtonStyle(
-//               shadowColor: MaterialStateProperty.all<Color>(
-//                 Colors.transparent,
-//               ),
-//               backgroundColor: MaterialStateProperty.all<Color>(
-//                 Colors.transparent,
-//               ),
-//             ),
-//             child: Container(
-//                 decoration: const BoxDecoration(
-//                   color: Color.fromRGBO(219, 177, 42, 1),
-//                   borderRadius: BorderRadius.all(Radius.circular(100)),
-//                 ),
-//                 height: 42,
-//                 width: 200,
-//                 child: const Center(child: Text('Seleccionar dias restantes'))),
-//             onPressed: () {},
-//           ),
-//         if (_selectedDays.length == 7)
-//           ElevatedButton(
-//             style: ButtonStyle(
-//               shadowColor: MaterialStateProperty.all<Color>(
-//                 Colors.transparent,
-//               ),
-//               backgroundColor: MaterialStateProperty.all<Color>(
-//                 Colors.transparent,
-//               ),
-//             ),
-//             child: Container(
-//                 decoration: const BoxDecoration(
-//                   color: Color.fromRGBO(219, 177, 42, 1),
-//                   borderRadius: BorderRadius.all(Radius.circular(100)),
-//                 ),
-//                 height: 42,
-//                 width: 200,
-//                 child: const Center(child: Text('Continuar'))),
-//             onPressed: () {},
-//           ),
-//       ],
-//     );
-//   }
-// }
-
-// var children2 = [
-//   GestureDetector(
-//     onTap: () {
-//       print("object");
-//       setState(() {
-//         if (_selectedDays.contains(tempListDay[0])) {
-//           _selectedDays.remove(tempListDay[0]);
-//           tempNoSelectListDay.add(tempListDay[0]);
-//         } else {
-//           _selectedDays.add(tempListDay[0]);
-//           tempNoSelectListDay.remove(tempListDay[0]);
-//         }
-//       });
-//     },
-//     child: Container(
-//       width: size.width / 7,
-//       color: Colors.transparent,
-//       child: Column(
-//         children: [
-//           Text(
-//             'L',
-//             textAlign: TextAlign.center,
-//             style: GoogleFonts.barlow(
-//               fontSize: 20.0,
-//               wordSpacing: 1,
-//               letterSpacing: 1,
-//               fontWeight: FontWeight.normal,
-//               color: _selectedDays.contains(tempListDay[0])
-//                   ? Colors.amber
-//                   : Colors.white,
-//             ),
-//           ),
-//           Container(
-//             color: _selectedDays.contains(tempListDay[0])
-//                 ? Colors.amber
-//                 : Colors.white,
-//             height: _selectedDays.contains(tempListDay[0]) ? 3 : 1,
-//             width: 50,
-//           ),
-//         ],
-//       ),
-//     ),
-//   ),
-//   GestureDetector(
-//     onTap: () {
-//       print("object");
-//       setState(() {
-//         if (_selectedDays.contains(tempListDay[1])) {
-//           _selectedDays.remove(tempListDay[1]);
-//           tempNoSelectListDay.add(tempListDay[1]);
-//         } else {
-//           _selectedDays.add(tempListDay[1]);
-//           tempNoSelectListDay.remove(tempListDay[1]);
-//         }
-//       });
-//     },
-//     child: Container(
-//       width: size.width / 7,
-//       color: Colors.transparent,
-//       child: Column(
-//         children: [
-//           Text(
-//             'M',
-//             textAlign: TextAlign.center,
-//             style: GoogleFonts.barlow(
-//               fontSize: 20.0,
-//               wordSpacing: 1,
-//               letterSpacing: 1,
-//               fontWeight: FontWeight.normal,
-//               color: _selectedDays.contains(tempListDay[1])
-//                   ? Colors.amber
-//                   : Colors.white,
-//             ),
-//           ),
-//           Container(
-//             color: _selectedDays.contains(tempListDay[1])
-//                 ? Colors.amber
-//                 : Colors.white,
-//             height: _selectedDays.contains(tempListDay[1]) ? 3 : 1,
-//             width: 50,
-//           ),
-//         ],
-//       ),
-//     ),
-//   ),
-//   GestureDetector(
-//     onTap: () {
-//       print("object");
-//       setState(() {
-//         if (_selectedDays.contains(tempListDay[2])) {
-//           _selectedDays.remove(tempListDay[2]);
-//           tempNoSelectListDay.add(tempListDay[2]);
-//         } else {
-//           _selectedDays.add(tempListDay[2]);
-//           tempNoSelectListDay.remove(tempListDay[2]);
-//         }
-//       });
-//     },
-//     child: Container(
-//       width: size.width / 7,
-//       color: Colors.transparent,
-//       child: Column(
-//         children: [
-//           Text(
-//             'X',
-//             textAlign: TextAlign.center,
-//             style: GoogleFonts.barlow(
-//               fontSize: 20.0,
-//               wordSpacing: 1,
-//               letterSpacing: 1,
-//               fontWeight: FontWeight.normal,
-//               color: _selectedDays.contains(tempListDay[2])
-//                   ? Colors.amber
-//                   : Colors.white,
-//             ),
-//           ),
-//           Container(
-//             color: _selectedDays.contains(tempListDay[2])
-//                 ? Colors.amber
-//                 : Colors.white,
-//             height: _selectedDays.contains(tempListDay[2]) ? 3 : 1,
-//             width: 50,
-//           ),
-//         ],
-//       ),
-//     ),
-//   ),
-//   GestureDetector(
-//     onTap: () {
-//       print("object");
-//       setState(() {
-//         if (_selectedDays.contains(tempListDay[3])) {
-//           _selectedDays.remove(tempListDay[3]);
-//           tempNoSelectListDay.add(tempListDay[3]);
-//         } else {
-//           _selectedDays.add(tempListDay[3]);
-//           tempNoSelectListDay.remove(tempListDay[3]);
-//         }
-//       });
-//     },
-//     child: Container(
-//       width: size.width / 7,
-//       color: Colors.transparent,
-//       child: Column(
-//         children: [
-//           Text(
-//             'J',
-//             textAlign: TextAlign.center,
-//             style: GoogleFonts.barlow(
-//               fontSize: 20.0,
-//               wordSpacing: 1,
-//               letterSpacing: 1,
-//               fontWeight: FontWeight.normal,
-//               color: _selectedDays.contains(tempListDay[3])
-//                   ? Colors.amber
-//                   : Colors.white,
-//             ),
-//           ),
-//           Container(
-//             color: _selectedDays.contains(tempListDay[3])
-//                 ? Colors.amber
-//                 : Colors.white,
-//             height: _selectedDays.contains(tempListDay[3]) ? 3 : 1,
-//             width: 50,
-//           ),
-//         ],
-//       ),
-//     ),
-//   ),
-//   GestureDetector(
-//     onTap: () {
-//       print("object");
-//       setState(() {
-//         if (_selectedDays.contains(tempListDay[4])) {
-//           _selectedDays.remove(tempListDay[4]);
-//           tempNoSelectListDay.add(tempListDay[4]);
-//         } else {
-//           _selectedDays.add(tempListDay[4]);
-//           tempNoSelectListDay.remove(tempListDay[4]);
-//         }
-//       });
-//     },
-//     child: Container(
-//       width: size.width / 7,
-//       color: Colors.transparent,
-//       child: Column(
-//         children: [
-//           Text(
-//             'V',
-//             textAlign: TextAlign.center,
-//             style: GoogleFonts.barlow(
-//               fontSize: 20.0,
-//               wordSpacing: 1,
-//               letterSpacing: 1,
-//               fontWeight: FontWeight.normal,
-//               color: _selectedDays.contains(tempListDay[4])
-//                   ? Colors.amber
-//                   : Colors.white,
-//             ),
-//           ),
-//           Container(
-//             color: _selectedDays.contains(tempListDay[4])
-//                 ? Colors.amber
-//                 : Colors.white,
-//             height: _selectedDays.contains(tempListDay[4]) ? 3 : 1,
-//             width: 50,
-//           ),
-//         ],
-//       ),
-//     ),
-//   ),
-//   GestureDetector(
-//     onTap: () {
-//       print("object");
-//       setState(() {
-//         if (_selectedDays.contains(tempListDay[5])) {
-//           _selectedDays.remove(tempListDay[5]);
-//           tempNoSelectListDay.add(tempListDay[5]);
-//         } else {
-//           _selectedDays.add(tempListDay[5]);
-//           tempNoSelectListDay.remove(tempListDay[5]);
-//         }
-//       });
-//     },
-//     child: Container(
-//       width: size.width / 7,
-//       color: Colors.transparent,
-//       child: Column(
-//         children: [
-//           Text(
-//             'S',
-//             textAlign: TextAlign.center,
-//             style: GoogleFonts.barlow(
-//               fontSize: 20.0,
-//               wordSpacing: 1,
-//               letterSpacing: 1,
-//               fontWeight: FontWeight.normal,
-//               color: _selectedDays.contains(tempListDay[5])
-//                   ? Colors.amber
-//                   : Colors.white,
-//             ),
-//           ),
-//           Container(
-//             color: _selectedDays.contains(tempListDay[5])
-//                 ? Colors.amber
-//                 : Colors.white,
-//             height: _selectedDays.contains(tempListDay[5]) ? 3 : 1,
-//             width: 50,
-//           ),
-//         ],
-//       ),
-//     ),
-//   ),
-//   GestureDetector(
-//     onTap: () {
-//       print("object");
-//       setState(() {
-//         if (_selectedDays.contains(tempListDay[6])) {
-//           _selectedDays.remove(tempListDay[6]);
-//           tempNoSelectListDay.add(tempListDay[6]);
-//         } else {
-//           _selectedDays.add(tempListDay[6]);
-//           tempNoSelectListDay.remove(tempListDay[6]);
-//         }
-//       });
-//     },
-//     child: Container(
-//       width: size.width / 7,
-//       color: Colors.transparent,
-//       child: Center(
-//         child: Column(
-//           children: [
-//             Text(
-//               'D',
-//               textAlign: TextAlign.center,
-//               style: GoogleFonts.barlow(
-//                 fontSize: 20.0,
-//                 wordSpacing: 1,
-//                 letterSpacing: 1,
-//                 fontWeight: FontWeight.normal,
-//                 color: _selectedDays.contains(tempListDay[6])
-//                     ? Colors.amber
-//                     : Colors.white,
-//               ),
-//             ),
-//             Container(
-//               color: _selectedDays.contains(tempListDay[6])
-//                   ? Colors.amber
-//                   : Colors.white,
-//               height: _selectedDays.contains(tempListDay[6]) ? 3 : 1,
-//               width: 50,
-//             )
-//           ],
-//         ),
-//       ),
-//     ),
-//   ),
-// ];

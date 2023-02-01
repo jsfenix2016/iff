@@ -68,9 +68,7 @@ Future<void> main() async {
 
   runApp(
     const GetMaterialApp(
-      home: PreviewRestTimePage(
-        isMenu: false,
-      ),
+      home: UserMobilePage(),
       debugShowCheckedModeBanner: false,
     ),
   );

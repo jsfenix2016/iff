@@ -16,6 +16,7 @@ class Constant {
   static const codeSms = 'Codigo de sms';
   static const codeSmsPlaceholder = 'Ingresa un codigo sms';
   static const continueTxt = 'Continuar';
+  static const saveBtn = 'Guardar';
   static const nextTxt = 'Siguiente';
   static const age = 'Edad';
   static const onBoardingWelcome = 'Bienvenido a IFeelFine Personal Protección';
@@ -42,7 +43,11 @@ class Constant {
   static const userConfigPageButtonConfig = 'Configurar';
 
   static const hoursRest = 'A que horas duermes';
+  static const hoursSleepAndWakeup = '¿A qué hora te acuestas y te levantas?';
   static const casefallText = 'En caso de alerta desea compartir su ubicación';
+
+  static const permissionApp = 'Permisos que se usan en la app';
+
   static const Map<String, String> gender = {
     '0': 'Hombre',
     '1': 'Mujer',

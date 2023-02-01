@@ -151,6 +151,26 @@ Future inicializeHiveBD() async {
   }
 }
 
+Future<String> displayTimePicker(BuildContext context, String key) async {
+  var time = await showTimePicker(
+      context: context,
+      initialTime: TimeOfDay.now(),
+      builder: (context, childWidget) {
+        return MediaQuery(
+            key: Key(key),
+            data: MediaQuery.of(context).copyWith(
+                // Using 24-Hour format
+                alwaysUse24HourFormat: true),
+            // If you want 12-Hour format, just change alwaysUse24HourFormat to false or remove all the builder argument
+            child: childWidget!);
+      });
+  if (time != null) {
+    // ignore: use_build_context_synchronously
+    return time.format(context);
+  }
+  return "00:00";
+}
+
 void mostrarAlerta(BuildContext context, String mensaje) {
   showDialog(
       context: context,
