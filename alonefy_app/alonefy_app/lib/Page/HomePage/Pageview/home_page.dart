@@ -25,7 +25,7 @@ import 'package:avatar_glow/avatar_glow.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 
-// final _prefs = PreferenceUser();
+final _prefs = PreferenceUser();
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -139,9 +139,10 @@ class _HomePageState extends State<HomePage> {
   Widget _mostrarFoto() {
     if (foto != null || userbd != null && userbd!.pathImage != "") {
       return GestureDetector(
-        onTap: () {
-          getImageGallery(ImageSource.gallery);
-        },
+        onTap: (() async {
+          var result = await cameraPermissions(_prefs.getAcceptedCamera, context);
+          if (result) getImageGallery(ImageSource.gallery);
+        }),
         child: Container(
           width: 100,
           height: 100,
@@ -170,9 +171,10 @@ class _HomePageState extends State<HomePage> {
       );
     } else {
       return GestureDetector(
-        onTap: () {
-          getImageGallery(ImageSource.gallery);
-        },
+        onTap: (() async {
+          var result = await cameraPermissions(_prefs.getAcceptedCamera, context);
+          if (result) getImageGallery(ImageSource.gallery);
+        }),
         child: Container(
           width: 100,
           height: 100,

@@ -26,7 +26,6 @@ class _ContactListState extends State<ContactList> {
   late List<Contact> _contacts = [];
   final ContactUserController userVC = Get.put(ContactUserController());
   final TextEditingController _controller = TextEditingController();
-  bool _permissionDenied = false;
   List<Contact> _contacts2 = [];
   final List<Contact> _selectedContacts = [];
   var indexSelect = -1;
@@ -45,10 +44,9 @@ class _ContactListState extends State<ContactList> {
       //   print("object");
     }
     PermissionStatus permission = await Permission.contacts.status;
-    if (permission != PermissionStatus.granted &&
-        permission != PermissionStatus.denied) {
+    if (permission != PermissionStatus.granted) {
       Map<Permission, PermissionStatus> permissionStatus =
-          await [Permission.contacts].request();
+      await [Permission.contacts].request();
       return permissionStatus[Permission.contacts] ??
           PermissionStatus.restricted;
     } else {
@@ -75,7 +73,7 @@ class _ContactListState extends State<ContactList> {
     // if (permissionStatus == PermissionStatus.limited ||
     //     permissionStatus == PermissionStatus.granted) {
     // } else if (permissionStatus == PermissionStatus.denied) {
-    _getContacts();
+    if (permissionStatus.isGranted) _getContacts();
     //   checkPermission();
     // } else if (permissionStatus == PermissionStatus.permanentlyDenied) {
     // } else if (permissionStatus == PermissionStatus.restricted) {}
@@ -214,10 +212,10 @@ class _ContactListState extends State<ContactList> {
                         ),
                       ),
                       onDismissed: ((direction) => {
-                            setState(() {
-                              _selectedContacts.removeAt(index);
-                            })
-                          }),
+                        setState(() {
+                          _selectedContacts.removeAt(index);
+                        })
+                      }),
                       key: UniqueKey(),
                       child: Container(
                         color: Colors.white,
@@ -300,42 +298,42 @@ class _ContactListState extends State<ContactList> {
                                               ),
                                               isPremium
                                                   ? CustomDropdownButtonWidgetWithDictionary(
-                                                      instance:
-                                                          Constant.timeDic,
-                                                      mensaje: "10 min",
-                                                      isVisible: true,
-                                                      onChanged: (value) {
-                                                        print(value);
-                                                      },
-                                                    )
+                                                instance:
+                                                Constant.timeDic,
+                                                mensaje: "10 min",
+                                                isVisible: true,
+                                                onChanged: (value) {
+                                                  print(value);
+                                                },
+                                              )
                                                   : Expanded(
-                                                      child: Container(
-                                                        color: Colors.white,
-                                                        child: Center(
-                                                          child: Padding(
-                                                            padding:
-                                                                const EdgeInsets
-                                                                    .all(3.0),
-                                                            child: InkWell(
-                                                              child: const Text(
-                                                                '10 min',
-                                                                style: TextStyle(
-                                                                    color: Colors
-                                                                        .black,
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .bold,
-                                                                    fontSize:
-                                                                        18),
-                                                              ),
-                                                              onTap: () =>
-                                                                  displayTimePicker(
-                                                                      context),
-                                                            ),
-                                                          ),
+                                                child: Container(
+                                                  color: Colors.white,
+                                                  child: Center(
+                                                    child: Padding(
+                                                      padding:
+                                                      const EdgeInsets
+                                                          .all(3.0),
+                                                      child: InkWell(
+                                                        child: const Text(
+                                                          '10 min',
+                                                          style: TextStyle(
+                                                              color: Colors
+                                                                  .black,
+                                                              fontWeight:
+                                                              FontWeight
+                                                                  .bold,
+                                                              fontSize:
+                                                              18),
                                                         ),
+                                                        onTap: () =>
+                                                            displayTimePicker(
+                                                                context),
                                                       ),
                                                     ),
+                                                  ),
+                                                ),
+                                              ),
                                             ],
                                           ),
                                         ),
@@ -357,42 +355,42 @@ class _ContactListState extends State<ContactList> {
                                               ),
                                               isPremium
                                                   ? CustomDropdownButtonWidgetWithDictionary(
-                                                      instance:
-                                                          Constant.timeDic,
-                                                      mensaje: "15 min",
-                                                      isVisible: true,
-                                                      onChanged: (value) {
-                                                        print(value);
-                                                      },
-                                                    )
+                                                instance:
+                                                Constant.timeDic,
+                                                mensaje: "15 min",
+                                                isVisible: true,
+                                                onChanged: (value) {
+                                                  print(value);
+                                                },
+                                              )
                                                   : Expanded(
-                                                      child: Container(
-                                                        color: Colors.white,
-                                                        child: Center(
-                                                          child: Padding(
-                                                            padding:
-                                                                const EdgeInsets
-                                                                    .all(3.0),
-                                                            child: InkWell(
-                                                              child: const Text(
-                                                                "15 min",
-                                                                style: TextStyle(
-                                                                    color: Colors
-                                                                        .black,
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .bold,
-                                                                    fontSize:
-                                                                        18),
-                                                              ),
-                                                              onTap: () =>
-                                                                  displayTimePicker(
-                                                                      context),
-                                                            ),
-                                                          ),
+                                                child: Container(
+                                                  color: Colors.white,
+                                                  child: Center(
+                                                    child: Padding(
+                                                      padding:
+                                                      const EdgeInsets
+                                                          .all(3.0),
+                                                      child: InkWell(
+                                                        child: const Text(
+                                                          "15 min",
+                                                          style: TextStyle(
+                                                              color: Colors
+                                                                  .black,
+                                                              fontWeight:
+                                                              FontWeight
+                                                                  .bold,
+                                                              fontSize:
+                                                              18),
                                                         ),
+                                                        onTap: () =>
+                                                            displayTimePicker(
+                                                                context),
                                                       ),
                                                     ),
+                                                  ),
+                                                ),
+                                              ),
                                             ],
                                           ),
                                         ),
@@ -425,7 +423,7 @@ class _ContactListState extends State<ContactList> {
         builder: (context, childWidget) {
           return MediaQuery(
               data: MediaQuery.of(context).copyWith(
-                  // Using 24-Hour format
+                // Using 24-Hour format
                   alwaysUse24HourFormat: true),
               // If you want 12-Hour format, just change alwaysUse24HourFormat to false or remove all the builder argument
               child: childWidget!);
@@ -448,7 +446,7 @@ class _ContactListState extends State<ContactList> {
     return ElevatedButton.icon(
       style: ButtonStyle(
           backgroundColor:
-              MaterialStateProperty.all<Color>(ColorPalette.principal)),
+          MaterialStateProperty.all<Color>(ColorPalette.principal)),
       label: const Text("Siguiente"),
       icon: const Icon(
         Icons.next_plan,
@@ -467,7 +465,7 @@ class _ContactListState extends State<ContactList> {
     return ElevatedButton.icon(
       style: ButtonStyle(
           backgroundColor:
-              MaterialStateProperty.all<Color>(ColorPalette.principal)),
+          MaterialStateProperty.all<Color>(ColorPalette.principal)),
       label: const Text("Solicitar autorización"),
       icon: const Icon(
         Icons.next_plan,

@@ -77,6 +77,22 @@ class PreferenceUser {
     _prefs.setBool('AceptedSendLocation', value);
   }
 
+  get getAcceptedSendLocation {
+    return PreferencePermission.values[_prefs.getInt('AcceptedSendLocation') ?? 0];
+  }
+
+  set setAcceptedSendLocation(PreferencePermission permission) {
+    _prefs.setInt('AcceptedSendLocation', permission.index);
+  }
+
+  get getAcceptedCamera {
+    return PreferencePermission.values[_prefs.getInt('AcceptedCamera') ?? 0];
+  }
+
+  set setAcceptedCamera(PreferencePermission permission) {
+    _prefs.setInt('AcceptedCamera', permission.index);
+  }
+
   get getDetectedFall {
     return _prefs.getBool('DetectedFall') ?? false;
   }
@@ -116,4 +132,12 @@ class PreferenceUser {
   set setEnableIFF(bool value) {
     _prefs.setBool('EnableIFF', value);
   }
+}
+
+enum PreferencePermission {
+  init,
+  denied,
+  deniedForever,
+  allow,
+  noAccepted
 }

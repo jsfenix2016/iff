@@ -1,5 +1,8 @@
 import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:flutter/material.dart';
+import 'package:ifeelefine/Common/utils.dart';
+import 'package:ifeelefine/Provider/prefencesUser.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class ContactDropdownButton extends StatefulWidget {
   const ContactDropdownButton({super.key, required this.onChanged});
@@ -13,6 +16,7 @@ class _ContactDropdownButtonState extends State<ContactDropdownButton> {
   List<Contact> _contacts = [];
   final List<Contact> _selectedContacts = [];
   late int indexTem = -1;
+
   @override
   void initState() {
     super.initState();
@@ -21,7 +25,12 @@ class _ContactDropdownButtonState extends State<ContactDropdownButton> {
   }
 
   void _getContacts() async {
-    if (!await FlutterContacts.requestPermission(readonly: true)) {
+    PermissionStatus permission = await Permission.contacts.request();
+
+    if (permission.isPermanentlyDenied) {
+      showPermissionDialog(context);
+    } else if (permission.isDenied) {
+
     } else {
       // Retrieve the list of contacts from the device
       var contacts = await FlutterContacts.getContacts();

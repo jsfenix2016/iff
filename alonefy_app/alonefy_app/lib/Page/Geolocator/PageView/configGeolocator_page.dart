@@ -11,6 +11,8 @@ import 'package:ifeelefine/Page/Geolocator/Controller/configGeolocatorController
 import 'package:ifeelefine/Page/FinishConfig/Pageview/finishConfig_page.dart';
 import 'package:ifeelefine/Utils/Widgets/elevatedButtonFilling.dart';
 
+import '../../../Provider/prefencesUser.dart';
+
 class ConfigGeolocator extends StatefulWidget {
   /// Creates a new GeolocatorWidget.
   const ConfigGeolocator({Key? key}) : super(key: key);
@@ -26,7 +28,8 @@ class _ConfigGeolocatorState extends State<ConfigGeolocator> {
       Get.put(ConfigGeolocatorController());
 
   late bool isActive = false;
-
+  final _prefs = PreferenceUser();
+  PreferencePermission preferencePermission = PreferencePermission.init;
   /// Determine the current position of the device.
   ///
   /// When the location services are not enabled or permissions
@@ -74,6 +77,15 @@ class _ConfigGeolocatorState extends State<ConfigGeolocator> {
     return await Geolocator.getCurrentPosition();
   }
 
+  Future<Position> getCurrentPosition() async {
+    if (_prefs.getAcceptedSendLocation == PreferencePermission.allow) {
+      return await Geolocator.getCurrentPosition();
+    } else {
+      return Future.error(
+          'Location permissions are denied or you are not a premium user');
+    }
+  }
+
   Future _checkPermission() async {
     LocationPermission permission;
     bool serviceEnabled;
@@ -83,24 +95,76 @@ class _ConfigGeolocatorState extends State<ConfigGeolocator> {
       // Location services are not enabled don't continue
       // accessing the position and request users of the
       // App to enable the location services.
-      isActive = false;
+      setState(() {
+        isActive = false;
+      });
       return Future.error('Location services are disabled.');
     }
 
-    permission = await Geolocator.checkPermission();
+    permission = await Geolocator.requestPermission();
 
-    if (permission == LocationPermission.denied) {
-      isActive = false;
-    } else if (permission == LocationPermission.deniedForever) {
-      isActive = false;
+    if (permission == LocationPermission.deniedForever && preferencePermission == PreferencePermission.init) {
+      setState(() {
+        isActive = false;
+      });
     } else {
-      isActive = true;
+      if (permission == LocationPermission.denied || permission == LocationPermission.deniedForever) {
+        setState(() {
+          isActive = false;
+        });
+
+        switch(preferencePermission) {
+          case PreferencePermission.init:
+            _prefs.setAcceptedSendLocation = PreferencePermission.denied;
+            break;
+          case PreferencePermission.denied:
+            _prefs.setAcceptedSendLocation = PreferencePermission.deniedForever;
+            break;
+          case PreferencePermission.deniedForever:
+            _prefs.setAcceptedSendLocation = PreferencePermission.deniedForever;
+            if (permission == LocationPermission.deniedForever) {
+              showPermissionDialog(context);
+            }
+            break;
+          case PreferencePermission.allow:
+            _prefs.setAcceptedSendLocation = PreferencePermission.deniedForever;
+            break;
+          case PreferencePermission.noAccepted:
+            _prefs.setAcceptedSendLocation = PreferencePermission.deniedForever;
+            break;
+        }
+      } else {
+        _prefs.setAcceptedSendLocation = PreferencePermission.allow;
+
+        setState(() {
+          isActive = true;
+        });
+      }
+
+      preferencePermission = _prefs.getAcceptedSendLocation;
+    }
+  }
+
+  Future _isActivePermission() async {
+    LocationPermission permission = await Geolocator.checkPermission();
+
+    if (preferencePermission == PreferencePermission.allow
+        && (permission == LocationPermission.whileInUse || permission == LocationPermission.always)) {
+      setState(() {
+        isActive = true;
+      });
+    } else {
+      setState(() {
+        isActive = false;
+      });
     }
   }
 
   @override
   void initState() {
     super.initState();
+    preferencePermission = _prefs.getAcceptedSendLocation;
+    _isActivePermission();
   }
 
   bool isMenu = false;
@@ -175,11 +239,18 @@ class _ConfigGeolocatorState extends State<ConfigGeolocator> {
 
                           Switch(
                             value: isActive,
-                            onChanged: ((value) {
-                              isActive = value;
+                            onChanged: ((value) async {
+                              setState(() {
+                                isActive = value;
+                              });
                               if (value) {
-                                _checkPermission();
+                                await _checkPermission();
+                                getCurrentPosition();
+                              } else {
+                                _prefs.setAcceptedSendLocation = PreferencePermission.noAccepted;
                               }
+
+                              // geoVC.saveSendLocation(context, value);
                             }),
                           ),
                         ],
