@@ -235,7 +235,7 @@ class _UserConfigPageState extends State<UserConfigPage> {
                         child: DecoratedBox(
                           decoration: BoxDecoration(
                             border: Border.all(
-                              color: Colors.yellow,
+                              color: ColorPalette.principal,
                               width: 1,
                             ),
                             borderRadius: BorderRadius.circular(100),
@@ -247,14 +247,16 @@ class _UserConfigPageState extends State<UserConfigPage> {
                               hint: Padding(
                                 padding: const EdgeInsets.all(8.0),
                                 child: Text(
-                                  (userbd != null && userbd!.age != "")
-                                      ? userbd!.age
+                                  (user != null && user!.age != "")
+                                      ? user!.age
                                       : Constant.age,
                                   style: const TextStyle(
-                                      fontSize: 18, color: Colors.yellow),
+                                      fontSize: 18,
+                                      color: ColorPalette.principal),
                                 ),
                               ),
-                              iconEnabledColor: Colors.yellow, //Ico
+                              dropdownColor: Colors.brown,
+                              iconEnabledColor: ColorPalette.principal, //Ico
                               value: ages[0],
                               isExpanded: true,
                               items: ages.keys
@@ -268,7 +270,7 @@ class _UserConfigPageState extends State<UserConfigPage> {
                                           ages[e] ?? "",
                                           style: const TextStyle(
                                               fontSize: 18,
-                                              color: Colors.amber),
+                                              color: ColorPalette.principal),
                                         ),
                                       ),
                                     ),
@@ -276,8 +278,8 @@ class _UserConfigPageState extends State<UserConfigPage> {
                                   .toList(),
                               onChanged: (v) {
                                 print(v);
-                                // userbd!.gender = v.toString();
-                                userbd!.age = v.toString();
+
+                                user!.age = v.toString();
                                 setState(() {});
                               },
                             ),
@@ -289,7 +291,7 @@ class _UserConfigPageState extends State<UserConfigPage> {
                         child: DecoratedBox(
                           decoration: BoxDecoration(
                             border: Border.all(
-                              color: Colors.yellow,
+                              color: ColorPalette.principal,
                               width: 1,
                             ),
                             borderRadius: BorderRadius.circular(100),
@@ -304,10 +306,11 @@ class _UserConfigPageState extends State<UserConfigPage> {
                                 child: Text(
                                   "Selecciona el pais",
                                   style: TextStyle(
-                                      fontSize: 18, color: Colors.yellow),
+                                      fontSize: 18,
+                                      color: ColorPalette.principal),
                                 ),
                               ),
-                              iconEnabledColor: Colors.yellow, //Ico
+                              iconEnabledColor: ColorPalette.principal, //Ico
                               value: selectCountry.isEmpty
                                   ? _country[0]
                                   : selectCountry,
@@ -323,7 +326,7 @@ class _UserConfigPageState extends State<UserConfigPage> {
                                           e,
                                           style: const TextStyle(
                                               fontSize: 18,
-                                              color: Colors.yellow),
+                                              color: ColorPalette.principal),
                                         ),
                                       ),
                                     ),
@@ -354,7 +357,7 @@ class _UserConfigPageState extends State<UserConfigPage> {
                         child: DecoratedBox(
                           decoration: BoxDecoration(
                             border: Border.all(
-                              color: Colors.yellow,
+                              color: ColorPalette.principal,
                               width: 1,
                             ),
                             borderRadius: BorderRadius.circular(100),
@@ -373,12 +376,13 @@ class _UserConfigPageState extends State<UserConfigPage> {
                                     child: Text(
                                       "Selecciona la ciudad",
                                       style: TextStyle(
-                                          fontSize: 18, color: Colors.yellow),
+                                          fontSize: 18,
+                                          color: ColorPalette.principal),
                                     ),
                                   ),
                                 ),
                               ),
-                              iconEnabledColor: Colors.yellow, //Ico
+                              iconEnabledColor: ColorPalette.principal, //Ico
                               value: selectState.isEmpty
                                   ? _states[0]
                                   : selectState,
@@ -394,7 +398,7 @@ class _UserConfigPageState extends State<UserConfigPage> {
                                           e,
                                           style: const TextStyle(
                                               fontSize: 18,
-                                              color: Colors.yellow),
+                                              color: ColorPalette.principal),
                                         ),
                                       ),
                                     ),
@@ -424,7 +428,7 @@ class _UserConfigPageState extends State<UserConfigPage> {
                             ),
                             child: Container(
                               decoration: const BoxDecoration(
-                                color: Color.fromRGBO(219, 177, 42, 1),
+                                color: ColorPalette.principal,
                                 borderRadius:
                                     BorderRadius.all(Radius.circular(100)),
                               ),
@@ -443,7 +447,10 @@ class _UserConfigPageState extends State<UserConfigPage> {
                                 ),
                               ),
                             ),
-                            onPressed: () {},
+                            onPressed: () async {
+                              isValidSms = await userVC.validateSmsUser(context,
+                                  int.parse(user!.telephone), user!.name);
+                            },
                           ),
                         ),
                       ),
@@ -470,7 +477,7 @@ class _UserConfigPageState extends State<UserConfigPage> {
                               decoration: BoxDecoration(
                                 color: Colors.transparent,
                                 border: Border.all(
-                                  color: const Color.fromRGBO(219, 177, 42, 1),
+                                  color: ColorPalette.principal,
                                 ),
                                 borderRadius: const BorderRadius.all(
                                     Radius.circular(100)),
@@ -517,18 +524,18 @@ class _UserConfigPageState extends State<UserConfigPage> {
               textCapitalization: TextCapitalization.sentences,
               decoration: InputDecoration(
                   focusedBorder: OutlineInputBorder(
-                    borderSide: const BorderSide(color: Colors.yellow),
+                    borderSide: const BorderSide(color: ColorPalette.principal),
                     borderRadius: BorderRadius.circular(100.0),
                   ),
                   enabledBorder: OutlineInputBorder(
                     borderSide: const BorderSide(
-                        width: 1, color: Colors.yellow), //<-- SEE HERE
+                        width: 1, color: ColorPalette.principal), //<-- SEE HERE
                     borderRadius: BorderRadius.circular(100.0),
                   ),
-                  hintStyle: const TextStyle(color: Colors.yellow),
+                  hintStyle: const TextStyle(color: ColorPalette.principal),
                   hintText: code,
                   labelText: Constant.codeEmail,
-                  labelStyle: const TextStyle(color: Colors.yellow)),
+                  labelStyle: const TextStyle(color: ColorPalette.principal)),
               onSaved: (value) => value,
               validator: (value) {
                 return Constant.codeEmailPlaceholder;
@@ -567,18 +574,18 @@ class _UserConfigPageState extends State<UserConfigPage> {
               textCapitalization: TextCapitalization.sentences,
               decoration: InputDecoration(
                   focusedBorder: OutlineInputBorder(
-                    borderSide: const BorderSide(color: Colors.yellow),
+                    borderSide: const BorderSide(color: ColorPalette.principal),
                     borderRadius: BorderRadius.circular(100.0),
                   ),
                   enabledBorder: OutlineInputBorder(
                     borderSide: const BorderSide(
-                        width: 1, color: Colors.yellow), //<-- SEE HERE
+                        width: 1, color: ColorPalette.principal), //<-- SEE HERE
                     borderRadius: BorderRadius.circular(100.0),
                   ),
-                  hintStyle: const TextStyle(color: Colors.yellow),
+                  hintStyle: const TextStyle(color: ColorPalette.principal),
                   hintText: code,
                   labelText: Constant.codeSms,
-                  labelStyle: const TextStyle(color: Colors.yellow)),
+                  labelStyle: const TextStyle(color: ColorPalette.principal)),
               onSaved: (value) => {num = int.parse(value!)},
               validator: (value) {
                 return Constant.codeSmsPlaceholder;
@@ -595,8 +602,6 @@ class _UserConfigPageState extends State<UserConfigPage> {
                   ? const Icon(Icons.check_circle_outline_sharp)
                   : const Icon(Icons.check),
               onPressed: (() async => {
-                    isValidSms = await userVC.validateSmsUser(
-                        context, int.parse(user!.telephone), user!.name),
                     if (isValidSms == true)
                       {(context as Element).markNeedsBuild()}
                   }),
@@ -619,25 +624,25 @@ class _UserConfigPageState extends State<UserConfigPage> {
           onChanged: (value) {
             user?.name = value;
           },
-          style: const TextStyle(color: Colors.amber),
+          style: const TextStyle(color: ColorPalette.principal),
           key: Key(name),
           initialValue: name,
           textCapitalization: TextCapitalization.sentences,
           decoration: InputDecoration(
             focusedBorder: OutlineInputBorder(
-              borderSide: const BorderSide(color: Colors.yellow),
+              borderSide: const BorderSide(color: ColorPalette.principal),
               borderRadius: BorderRadius.circular(100.0),
             ),
             enabledBorder: OutlineInputBorder(
               borderSide: const BorderSide(
-                  width: 1, color: Colors.yellow), //<-- SEE HERE
+                  width: 1, color: ColorPalette.principal), //<-- SEE HERE
               borderRadius: BorderRadius.circular(100.0),
             ),
-            hintStyle: const TextStyle(color: Colors.yellow),
+            hintStyle: const TextStyle(color: ColorPalette.principal),
             filled: true,
             hintText: name,
             labelText: Constant.nameUser,
-            labelStyle: const TextStyle(color: Colors.yellow),
+            labelStyle: const TextStyle(color: ColorPalette.principal),
           ),
           onSaved: (value) => {
             user?.name = value!,
@@ -668,19 +673,19 @@ class _UserConfigPageState extends State<UserConfigPage> {
           hintText: userbd == null ? lastName : userbd?.lastname,
           labelText: Constant.lastName,
           focusedBorder: OutlineInputBorder(
-            borderSide: const BorderSide(color: Colors.yellow),
+            borderSide: const BorderSide(color: ColorPalette.principal),
             borderRadius: BorderRadius.circular(100.0),
           ),
           enabledBorder: OutlineInputBorder(
-            borderSide:
-                const BorderSide(width: 1, color: Colors.yellow), //<-- SEE HERE
+            borderSide: const BorderSide(
+                width: 1, color: ColorPalette.principal), //<-- SEE HERE
             borderRadius: BorderRadius.circular(100.0),
           ),
-          hintStyle: const TextStyle(color: Colors.yellow),
+          hintStyle: const TextStyle(color: ColorPalette.principal),
           filled: true,
-          labelStyle: const TextStyle(color: Colors.yellow),
+          labelStyle: const TextStyle(color: ColorPalette.principal),
         ),
-        style: const TextStyle(color: Colors.amber),
+        style: const TextStyle(color: ColorPalette.principal),
         onSaved: (value) => {
           user?.lastname = value!,
         },
@@ -706,19 +711,19 @@ class _UserConfigPageState extends State<UserConfigPage> {
           hintText: userbd == null ? email : userbd?.email,
           labelText: Constant.email,
           focusedBorder: OutlineInputBorder(
-            borderSide: const BorderSide(color: Colors.yellow),
+            borderSide: const BorderSide(color: ColorPalette.principal),
             borderRadius: BorderRadius.circular(100.0),
           ),
           enabledBorder: OutlineInputBorder(
-            borderSide:
-                const BorderSide(width: 1, color: Colors.yellow), //<-- SEE HERE
+            borderSide: const BorderSide(
+                width: 1, color: ColorPalette.principal), //<-- SEE HERE
             borderRadius: BorderRadius.circular(100.0),
           ),
-          hintStyle: const TextStyle(color: Colors.yellow),
+          hintStyle: const TextStyle(color: ColorPalette.principal),
           filled: true,
-          labelStyle: const TextStyle(color: Colors.yellow),
+          labelStyle: const TextStyle(color: ColorPalette.principal),
         ),
-        style: const TextStyle(color: Colors.amber),
+        style: const TextStyle(color: ColorPalette.principal),
         onSaved: (value) => {
           user!.email = value!,
         },
@@ -744,19 +749,19 @@ class _UserConfigPageState extends State<UserConfigPage> {
           hintText: phone,
           labelText: Constant.telephone,
           focusedBorder: OutlineInputBorder(
-            borderSide: const BorderSide(color: Colors.yellow),
+            borderSide: const BorderSide(color: ColorPalette.principal),
             borderRadius: BorderRadius.circular(100.0),
           ),
           enabledBorder: OutlineInputBorder(
-            borderSide:
-                const BorderSide(width: 1, color: Colors.yellow), //<-- SEE HERE
+            borderSide: const BorderSide(
+                width: 1, color: ColorPalette.principal), //<-- SEE HERE
             borderRadius: BorderRadius.circular(100.0),
           ),
-          hintStyle: const TextStyle(color: Colors.yellow),
+          hintStyle: const TextStyle(color: ColorPalette.principal),
           filled: true,
-          labelStyle: const TextStyle(color: Colors.yellow),
+          labelStyle: const TextStyle(color: ColorPalette.principal),
         ),
-        style: const TextStyle(color: Colors.amber),
+        style: const TextStyle(color: ColorPalette.principal),
         onSaved: (value) => {
           print(value),
           user?.telephone = value!,
@@ -868,14 +873,14 @@ class _UserConfigPageState extends State<UserConfigPage> {
       return;
     }
 
-    Uint8List? bytes;
-    String img64 = "";
-    if (foto?.path != "") {
-      bytes = foto?.readAsBytesSync();
-      img64 = base64Encode(bytes!);
-    } else {
-      img64 = userbd!.pathImage;
-    }
+    // Uint8List? bytes;
+    // String img64 = "";
+    // if (foto?.path != "") {
+    //   bytes = foto?.readAsBytesSync();
+    //   img64 = base64Encode(bytes!);
+    // } else {
+    //   img64 = userbd!.pathImage;
+    // }
 
     UserBD person = UserBD(
         idUser: '0',
@@ -886,7 +891,7 @@ class _UserConfigPageState extends State<UserConfigPage> {
         gender: user!.gender,
         maritalStatus: user!.maritalStatus,
         styleLife: user!.styleLife,
-        pathImage: img64,
+        pathImage: "",
         age: user!.age,
         country: user!.country,
         city: user!.city);

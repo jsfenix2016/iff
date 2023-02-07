@@ -82,7 +82,7 @@ class _PreviewRestTimePageState extends State<PreviewRestTimePage> {
       appBar: widget.isMenu
           ? AppBar(
               backgroundColor: ColorPalette.secondView,
-              title: const Text('detectar caidas'),
+              title: const Text('Horas de sueño'),
             )
           : null,
       body: Container(

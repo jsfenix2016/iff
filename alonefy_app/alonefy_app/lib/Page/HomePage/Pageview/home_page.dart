@@ -6,6 +6,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:ifeelefine/Common/colorsPalette.dart';
 import 'package:ifeelefine/Common/utils.dart';
 import 'package:ifeelefine/Page/HomePage/Controller/homeController.dart';
+import 'package:ifeelefine/Page/RiskDate/Pageview/editRiskDatePage.dart';
 import 'package:ifeelefine/Page/UserConfig/Controller/userConfigController.dart';
 import 'package:ifeelefine/Model/user.dart';
 import 'package:ifeelefine/Model/userbd.dart';
@@ -24,7 +25,7 @@ import 'package:avatar_glow/avatar_glow.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 
-final _prefs = PreferenceUser();
+// final _prefs = PreferenceUser();
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -67,7 +68,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future getUserData() async {
-    await _prefs.initPrefs();
+    // await _prefs.initPrefs();
     userbd = await userVC.getUserDate();
     if (userbd != null) {
       user = User(
@@ -340,7 +341,13 @@ class _HomePageState extends State<HomePage> {
                       child: FloatingActionButton(
                         backgroundColor: Colors.transparent,
                         elevation: 0.1,
-                        onPressed: () {},
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const EditRiskPage()),
+                          );
+                        },
                         child: Container(
                           decoration: const BoxDecoration(
                               image: DecorationImage(
@@ -369,8 +376,7 @@ class _HomePageState extends State<HomePage> {
                                 right: 7,
                                 top: 5,
                                 child: Visibility(
-                                  visible:
-                                      _prefs.isNotConfigUser ? false : true,
+                                  visible: true,
                                   child: Container(
                                     decoration: const BoxDecoration(
                                         borderRadius: BorderRadius.all(

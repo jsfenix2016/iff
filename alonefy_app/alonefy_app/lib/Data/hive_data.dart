@@ -18,7 +18,6 @@ class HiveData {
     final Box<UserBD> box = await Hive.openBox<UserBD>('userBD');
 
     box.put(user.idUser, user);
-    box.close();
   }
 
   Future<UserBD> get getuserbd async {

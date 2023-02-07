@@ -6,9 +6,11 @@ import 'package:get/get.dart';
 import 'package:ifeelefine/Common/utils.dart';
 import 'package:ifeelefine/Model/activityDay.dart';
 import 'package:ifeelefine/Model/activitydaybd.dart';
+import 'package:ifeelefine/Page/FallDetected/Pageview/fall_activation_page.dart';
 import 'package:ifeelefine/Page/UserInactivityPage/Controller/inactivityViewController.dart';
 import 'package:ifeelefine/Utils/Widgets/containerTextEditAndTime.dart';
 import 'package:collection/collection.dart';
+import 'package:ifeelefine/Utils/Widgets/elevatedButtonFilling.dart';
 
 class PreviewInactivityPage extends StatefulWidget {
   const PreviewInactivityPage({super.key});
@@ -59,11 +61,23 @@ class _PreviewInactivityPageState extends State<PreviewInactivityPage> {
     setState(() {});
   }
 
+  Widget _createButtonNext() {
+    return ElevateButtonFilling(
+      onChanged: (value) async {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const FallActivationPage()),
+        );
+      },
+      mensaje: Constant.nextTxt,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     return Scaffold(
-      // floatingActionButton: _createBottom(context),
+      floatingActionButton: _createButtonNext(),
       key: scaffoldKey,
       appBar: AppBar(
         backgroundColor: Colors.brown,

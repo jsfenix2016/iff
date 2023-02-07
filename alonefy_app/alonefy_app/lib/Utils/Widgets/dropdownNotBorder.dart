@@ -1,9 +1,8 @@
-import 'package:ifeelefine/Common/colorsPalette.dart';
-import 'package:ifeelefine/Model/restday.dart';
 import 'package:flutter/material.dart';
+import 'package:ifeelefine/Common/colorsPalette.dart';
 
-class CustomDropdownMaritalState extends StatefulWidget {
-  const CustomDropdownMaritalState(
+class DropdownNotBorder extends StatefulWidget {
+  const DropdownNotBorder(
       {Key? key,
       required this.instance,
       required this.mensaje,
@@ -13,16 +12,14 @@ class CustomDropdownMaritalState extends StatefulWidget {
 
   final bool isVisible;
   final ValueChanged<String> onChanged;
-  final Map<String, String> instance;
+  final List<String> instance;
   final String mensaje;
   @override
   // ignore: library_private_types_in_public_api
-  _CustomDropdownMaritalStateState createState() =>
-      _CustomDropdownMaritalStateState();
+  _DropdownNotBorderState createState() => _DropdownNotBorderState();
 }
 
-class _CustomDropdownMaritalStateState
-    extends State<CustomDropdownMaritalState> {
+class _DropdownNotBorderState extends State<DropdownNotBorder> {
   late int _indexList;
 
   var _selectedLocation = '';
@@ -46,15 +43,15 @@ class _CustomDropdownMaritalStateState
       child: DecoratedBox(
         decoration: BoxDecoration(
           border: Border.all(
-            color: ColorPalette.principal,
-            width: 1,
-          ),
-          borderRadius: BorderRadius.circular(100),
+              color: ColorPalette.principal, width: 1, style: BorderStyle.none),
         ),
         child: SizedBox(
           height: 52,
           child: DropdownButton<String?>(
-            underline: Container(),
+            underline: Container(
+              height: 1,
+              color: ColorPalette.principal,
+            ),
             hint: Padding(
               padding: const EdgeInsets.all(8.0),
               child: Text(
@@ -64,28 +61,26 @@ class _CustomDropdownMaritalStateState
               ),
             ),
             dropdownColor: Colors.brown,
-            iconEnabledColor: ColorPalette.principal, //Ico
+            iconEnabledColor: ColorPalette.principal,
             value: _selectedLocation.isEmpty
                 ? widget.instance[_indexList]
                 : _selectedLocation,
             isExpanded: true,
-            items: widget.instance.keys
-                .toList()
+            items: widget.instance
                 .map(
                   (e) => DropdownMenuItem<String>(
-                    value: widget.instance[e],
+                    value: e,
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Text(
-                        widget.instance[e] ?? "",
-                        style: const TextStyle(
-                            fontSize: 18, color: ColorPalette.principal),
+                        e,
+                        style:
+                            const TextStyle(fontSize: 18, color: Colors.yellow),
                       ),
                     ),
                   ),
                 )
                 .toList(),
-
             onChanged: (v) {
               setState(() {
                 _selectedLocation = v.toString();

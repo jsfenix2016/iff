@@ -2,6 +2,7 @@ class Constant {
   static const baseApi = '';
   static const personalInformation = 'Datos personales';
   static const selectGender = 'Selecciona el genero';
+  static const selectCity = 'Selecciona la ciudad';
   static const maritalStatus = 'Estado civil';
   static const styleLive = 'Estilo de vida';
   static const telephone = 'Telefono';
@@ -19,7 +20,7 @@ class Constant {
   static const saveBtn = 'Guardar';
   static const nextTxt = 'Siguiente';
   static const age = 'Edad';
-  static const onBoardingWelcome = 'Bienvenido a IFeelFine Personal Protección';
+  static const onBoardingWelcome = 'Bienvenida/o a I’m fine';
   static const onBoardingWelcomeMessage =
       'Si vives feliz solo o sola además, quieres sentirte protegido/a';
 
@@ -36,7 +37,7 @@ class Constant {
       'Si vives feliz solo o sola pero ademas quieres sentirte protegido/a mientras estas en casa o de viaje';
 
   static const alternativePageButtonPersonalizar = 'Personalizar ajustes';
-  static const alternativePageButtonInit = 'Comenzar a usar IFeelFine';
+  static const alternativePageButtonInit = 'Comenzar a usar IFF';
 
   static const userConfigPageButtonFree = 'Gratuito 30 dias';
   static const userConfigPageButtonProtection = 'Protección 360';

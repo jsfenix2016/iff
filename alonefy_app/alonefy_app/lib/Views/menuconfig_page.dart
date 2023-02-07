@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ifeelefine/Common/colorsPalette.dart';
+import 'package:ifeelefine/Page/Disamble/Pageview/disambleIfeelfine_page.dart';
+import 'package:ifeelefine/Page/FallDetected/Pageview/fall_activation_page.dart';
+import 'package:ifeelefine/Page/Geolocator/PageView/configGeolocator_page.dart';
+import 'package:ifeelefine/Page/UseMobil/PageView/configurationUseMobile_page.dart';
 import 'package:ifeelefine/Page/UserEdit/PageView/editUser_page.dart';
 
 import 'package:ifeelefine/Page/UserInactivityPage/PageView/configurationUserInactivity_page.dart';
@@ -10,6 +14,7 @@ import 'package:ifeelefine/Views/contact_page.dart';
 import 'package:ifeelefine/Views/geolocatos_test_page.dart';
 import 'package:ifeelefine/Page/UserConfig/PageView/userconfig_page.dart';
 import 'package:ifeelefine/Page/PermissionUser/Pageview/permission_page.dart';
+import 'package:ifeelefine/Views/ringtone_page.dart';
 
 class menuConfigModel {
   late String name;
@@ -101,7 +106,7 @@ class _MenuConfigurationPageState extends State<MenuConfigurationPage> {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => const ContactList(),
+            builder: (context) => const FallActivationPage(),
           ),
         );
         break;
@@ -114,10 +119,28 @@ class _MenuConfigurationPageState extends State<MenuConfigurationPage> {
         );
         break;
       case 6:
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const ConfigGeolocator(),
+          ),
+        );
         break;
       case 7:
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const UserMobilePage(),
+          ),
+        );
         break;
       case 8:
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const RingTonePage(),
+          ),
+        );
         break;
       case 9:
         Navigator.push(
@@ -126,6 +149,20 @@ class _MenuConfigurationPageState extends State<MenuConfigurationPage> {
             builder: (context) => const PermitionUserPage(),
           ),
         );
+        break;
+      case 10:
+        break;
+      case 11:
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const DesactivePage(
+              isMenu: true,
+            ),
+          ),
+        );
+        break;
+      case 12:
         break;
       default:
     }

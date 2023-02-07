@@ -19,7 +19,7 @@ class FallActivationPage extends StatefulWidget {
   /// Utility method to create a page with the Baseflow templating.
 
   @override
-  _FallActivationPageState createState() => _FallActivationPageState();
+  State<FallActivationPage> createState() => _FallActivationPageState();
 }
 
 class _FallActivationPageState extends State<FallActivationPage> {
@@ -103,12 +103,6 @@ class _FallActivationPageState extends State<FallActivationPage> {
                   child: ElevateButtonFilling(
                     onChanged: (value) {
                       fallVC.saveDetectedFall(context, value);
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const HomePage(),
-                        ),
-                      );
                     },
                     mensaje: 'Activar',
                   ),

@@ -9,6 +9,7 @@ import 'package:ifeelefine/Common/colorsPalette.dart';
 import 'package:ifeelefine/Common/utils.dart';
 import 'package:ifeelefine/Page/Geolocator/Controller/configGeolocatorController.dart';
 import 'package:ifeelefine/Page/FinishConfig/Pageview/finishConfig_page.dart';
+import 'package:ifeelefine/Utils/Widgets/elevatedButtonFilling.dart';
 
 class ConfigGeolocator extends StatefulWidget {
   /// Creates a new GeolocatorWidget.
@@ -17,7 +18,7 @@ class ConfigGeolocator extends StatefulWidget {
   /// Utility method to create a page with the Baseflow templating.
 
   @override
-  _ConfigGeolocatorState createState() => _ConfigGeolocatorState();
+  State<ConfigGeolocator> createState() => _ConfigGeolocatorState();
 }
 
 class _ConfigGeolocatorState extends State<ConfigGeolocator> {
@@ -179,9 +180,6 @@ class _ConfigGeolocatorState extends State<ConfigGeolocator> {
                               if (value) {
                                 _checkPermission();
                               }
-
-                              // geoVC.saveSendLocation(context, value);
-                              // setState(() {});
                             }),
                           ),
                         ],
@@ -191,19 +189,19 @@ class _ConfigGeolocatorState extends State<ConfigGeolocator> {
                 ),
               ),
               Positioned(
-                bottom: 0,
-                left: 130,
+                bottom: 40,
+                left: 70,
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: ElevatedButton(
-                    child: const Text(Constant.nextTxt),
-                    onPressed: () {
+                  child: ElevateButtonFilling(
+                    onChanged: (value) {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
                             builder: (context) => const FinishConfigPage()),
                       );
                     },
+                    mensaje: Constant.nextTxt,
                   ),
                 ),
               ),

@@ -100,4 +100,20 @@ class PreferenceUser {
   set setUserNotification(bool value) {
     _prefs.setBool('UserNotification', value);
   }
+
+  get getDisambleIFF {
+    return _prefs.getString('DisambleIFF') ?? "";
+  }
+
+  set setDisambleIFF(String value) {
+    _prefs.setString('DisambleIFF', value);
+  }
+
+  get getEnableIFF {
+    return _prefs.getBool('EnableIFF') ?? true;
+  }
+
+  set setEnableIFF(bool value) {
+    _prefs.setBool('EnableIFF', value);
+  }
 }

@@ -68,7 +68,7 @@ class _RingTonePageState extends State<RingTonePage> {
       appBar: AppBar(
         elevation: 0,
         backgroundColor: Colors.transparent,
-        title: const Center(child: Text(Constant.personalInformation)),
+        title: const Center(child: Text("Cambiar tono")),
       ),
       body: Container(
         decoration: decorationCustom(),

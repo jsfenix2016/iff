@@ -1,11 +1,13 @@
 import 'dart:async';
 import 'dart:io';
 import 'dart:ui';
+import 'package:geolocator/geolocator.dart';
 import 'package:ifeelefine/Common/utils.dart';
 import 'package:ifeelefine/Data/hive_data.dart';
 import 'package:ifeelefine/Model/userPosition.dart';
 import 'package:ifeelefine/Model/userpositionbd.dart';
 import 'package:ifeelefine/Page/Onboarding/PageView/onboarding_page.dart';
+import 'package:ifeelefine/Page/RiskDate/Pageview/riskDatePage.dart';
 import 'package:ifeelefine/Page/UserRest/PageView/configurationUserRest_page.dart';
 import 'package:ifeelefine/Page/UserRest/PageView/previewRestTime.dart';
 import 'package:ifeelefine/Provider/prefencesUser.dart';
@@ -26,6 +28,7 @@ import 'package:ifeelefine/Views/configuration3_page.dart';
 import 'package:ifeelefine/Page/UseMobil/PageView/configurationUseMobile_page.dart';
 import 'package:ifeelefine/Page/FallDetected/Pageview/fall_activation_page.dart';
 import 'package:ifeelefine/Page/FinishConfig/Pageview/finishConfig_page.dart';
+import 'package:ifeelefine/Page/Disamble/Pageview/disambleIfeelfine_page.dart';
 import 'package:ifeelefine/Views/geolocatos_test_page.dart';
 import 'package:ifeelefine/Views/menuconfig_page.dart';
 import 'package:ifeelefine/Page/PermissionUser/Pageview/permission_page.dart';
@@ -55,6 +58,7 @@ List<double> _accelData = List.filled(3, 0.0);
 List<double> _gyroData = List.filled(3, 0.0);
 StreamSubscription? _accelSubscription;
 StreamSubscription? _gyroSubscription;
+Duration dismbleTime = Duration();
 final _prefs = PreferenceUser();
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -62,13 +66,16 @@ Future<void> main() async {
   userMov = UserPosition(mov: [], time: now);
   await _prefs.initPrefs();
   await inicializeHiveBD();
+
   await initializeService();
 
   String initApp = _prefs.isFirstConfig == false ? 'onboarding' : 'home';
 
   runApp(
-    const GetMaterialApp(
-      home: UserMobilePage(),
+    GetMaterialApp(
+      home: MyApp(
+        initApp: initApp,
+      ),
       debugShowCheckedModeBanner: false,
     ),
   );
@@ -142,10 +149,61 @@ Future<void> main() async {
 //   await setData(data);
 // }
 
+Future<Position> _determinePosition() async {
+  bool serviceEnabled;
+  LocationPermission permission;
+  if (_prefs.getAceptedSendLocation) {
+    Geolocator.openAppSettings();
+  }
+  // Test if location services are enabled.
+  serviceEnabled = await Geolocator.isLocationServiceEnabled();
+  if (!serviceEnabled) {
+    // Location services are not enabled don't continue
+    // accessing the position and request users of the
+    // App to enable the location services.
+    _prefs.setAceptedSendLocation = false;
+    return Future.error('Location services are disabled.');
+  }
+
+  permission = await Geolocator.checkPermission();
+  if (permission == LocationPermission.denied) {
+    permission = await Geolocator.requestPermission();
+    if (permission == LocationPermission.denied) {
+      // Permissions are denied, next time you could try
+      // requesting permissions again (this is also where
+      // Android's shouldShowRequestPermissionRationale
+      // returned true. According to Android guidelines
+      // your App should show an explanatory UI now.
+      _prefs.setAceptedSendLocation = false;
+      return Future.error('Location permissions are denied');
+    }
+  }
+
+  if (permission == LocationPermission.deniedForever) {
+    // Permissions are denied forever, handle appropriately.
+    _prefs.setAceptedSendLocation = false;
+    return Future.error(
+        'Location permissions are permanently denied, we cannot request permissions.');
+  }
+
+  // When we reach here, permissions are granted and we can
+  // continue accessing the position of the device.
+
+  return await Geolocator.getCurrentPosition();
+}
+
 Future<void> initializeService() async {
-  // Fired whenever a location is recorded
+  if (_prefs.getEnableIFF == false) {
+    Timer(await disambleIFF(_prefs.getDisambleIFF), () {
+      _prefs.setEnableIFF = true;
+    });
+
+    return;
+  }
+
   if (_prefs.getAceptedSendLocation || _prefs.getDetectedFall) {
     final service = FlutterBackgroundService();
+    _determinePosition();
 
     /// OPTIONAL, using custom notification channel id
     const AndroidNotificationChannel channel = AndroidNotificationChannel(
@@ -153,6 +211,7 @@ Future<void> initializeService() async {
       'MY FOREGROUND SERVICE', // title
       description:
           'This channel is used for important notifications.', // description
+      playSound: true,
       importance: Importance.low, // importance must be at low or higher level
     );
 
@@ -298,6 +357,13 @@ Future<int> saveUserPosition(DateTime user) async {
 
 @pragma('vm:entry-point')
 void onStart(ServiceInstance service) async {
+  if (_prefs.getEnableIFF == false) {
+    Timer(await disambleIFF(_prefs.getDisambleIFF), () {
+      _prefs.setEnableIFF = true;
+    });
+
+    return;
+  }
   // Only available for flutter 3.0.0 and later
   DartPluginRegistrant.ensureInitialized();
 
@@ -361,7 +427,7 @@ void onStart(ServiceInstance service) async {
         }
       }
     }
-    accelerometer();
+    // accelerometer();
 
     /// you can see this log in logcat
     print('FLUTTER BACKGROUND SERVICE: ${DateTime.now()}');

@@ -131,6 +131,46 @@ Future<File> procesarImagen(ImageSource origen) async {
   return file;
 }
 
+Future<Duration> disambleIFF(String time) async {
+  var disambleTemp = const Duration();
+
+  switch (time) {
+    case "":
+      disambleTemp = const Duration(seconds: 5);
+      break;
+    case "1 hora":
+      disambleTemp = const Duration(hours: 1);
+      break;
+    case "2 horas":
+      disambleTemp = const Duration(hours: 2);
+      break;
+    case "3 horas":
+      disambleTemp = const Duration(hours: 3);
+      break;
+    case "8 horas":
+      disambleTemp = const Duration(hours: 8);
+      break;
+    case "24 horas":
+      disambleTemp = const Duration(hours: 24);
+      break;
+    case "1 semana":
+      disambleTemp = const Duration(hours: 168);
+      break;
+    case "1 mes":
+      disambleTemp = const Duration(hours: 672);
+      break;
+    case "1 año":
+      disambleTemp = const Duration(hours: 8064);
+      break;
+    case "Siempre":
+      disambleTemp = const Duration(hours: 80640);
+      break;
+
+    default:
+  }
+  return disambleTemp;
+}
+
 Future inicializeHiveBD() async {
   Directory appDocDirectory = await getApplicationDocumentsDirectory();
   await Hive.initFlutter(appDocDirectory.path);

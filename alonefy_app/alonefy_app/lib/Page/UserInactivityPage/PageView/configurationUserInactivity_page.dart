@@ -9,6 +9,7 @@ import 'package:ifeelefine/Common/colorsPalette.dart';
 import 'package:ifeelefine/Common/utils.dart';
 import 'package:ifeelefine/Model/activityDay.dart';
 import 'package:ifeelefine/Model/activitydaybd.dart';
+import 'package:ifeelefine/Page/FallDetected/Pageview/fall_activation_page.dart';
 import 'package:ifeelefine/Page/UserInactivityPage/Controller/inactivityViewController.dart';
 import 'package:ifeelefine/Page/UserInactivityPage/PageView/previewInactivityPage.dart';
 import 'package:ifeelefine/Utils/Widgets/containerTextEditAndTime.dart';
@@ -188,7 +189,14 @@ class _UserInactivityPageState extends State<UserInactivityPage> {
             ),
             TextButton(
               child: const Text(Constant.continueTxt),
-              onPressed: () => Navigator.of(context).pop(),
+              onPressed: () => {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const FallActivationPage(),
+                  ),
+                ),
+              },
             )
           ],
         );

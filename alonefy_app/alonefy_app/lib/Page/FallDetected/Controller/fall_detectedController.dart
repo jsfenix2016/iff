@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ifeelefine/Common/utils.dart';
+import 'package:ifeelefine/Page/TermsAndConditions/PageView/conditionGeneral_page.dart';
 import 'package:ifeelefine/Provider/prefencesUser.dart';
-import 'package:ifeelefine/Page/FinishConfig/Pageview/finishConfig_page.dart';
 
 final _prefs = PreferenceUser();
 
@@ -14,7 +14,7 @@ class FallDetectedController extends GetxController {
 
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => const FinishConfigPage()),
+      MaterialPageRoute(builder: (context) => const ConditionGeneralPage()),
     );
   }
 }

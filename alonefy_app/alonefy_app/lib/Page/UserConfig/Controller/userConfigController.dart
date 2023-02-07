@@ -48,12 +48,8 @@ class UserConfigCOntroller extends GetxController {
       // Map info
 
       Box<UserBD> box = await Hive.openBox<UserBD>('userBD');
-
-      box.putAt(0, user);
-
-      // ignore: use_build_context_synchronously
-      // mostrarAlerta(context, "Ususario o password incorrecto".tr);
-      validateSms = true.obs;
+      // await box.put(user.idUser, user);
+      await box.putAt(int.parse(user.idUser), user);
       return true;
     } catch (error) {
       return false;

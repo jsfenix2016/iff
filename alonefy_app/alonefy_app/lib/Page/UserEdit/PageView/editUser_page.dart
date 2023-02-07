@@ -16,6 +16,7 @@ import 'package:ifeelefine/Model/userbd.dart';
 import 'package:ifeelefine/Page/UserRest/PageView/configurationUserRest_page.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:ifeelefine/Utils/Widgets/dropdownNotBorder.dart';
 
 class UserEditPage extends StatefulWidget {
   const UserEditPage({super.key});
@@ -34,6 +35,8 @@ class _UserEditPageState extends State<UserEditPage> {
   UserBD? userbd;
   late bool istrayed;
 
+  late bool selectOther = false;
+
   late Image imgNew;
 
   final formKey = GlobalKey<FormState>();
@@ -42,16 +45,20 @@ class _UserEditPageState extends State<UserEditPage> {
 
   final scaffoldKey = GlobalKey<ScaffoldState>();
   late File? foto = File("");
-
-  var isValidEmail = false;
-  var isValidSms = false;
+  late int indexState = 0;
+  late int indexCountry = 0;
+  late String selectState = "";
+  late String selectCountry = "";
   final List<String> _states = ["Seleccionar estado"];
   final List<String> _country = ["Seleccionar pais"];
   final String _selectedCountry = "Choose Country";
+  List<dynamic> countryres = [];
+  List<dynamic> stateTemp = [];
   Map<String, String> ages = {};
 
   @override
   void initState() {
+    getCounty();
     user = User(
         idUser: 0,
         name: "",
@@ -67,7 +74,7 @@ class _UserEditPageState extends State<UserEditPage> {
         city: '');
 
     super.initState();
-    getCounty();
+
     getUserData();
     _getAge();
   }
@@ -84,8 +91,42 @@ class _UserEditPageState extends State<UserEditPage> {
     return jsonDecode(res);
   }
 
-  List<dynamic> countryres = [];
-  List<dynamic> stateTemp = [];
+  Future refreshContry() async {
+    indexCountry = _country.indexWhere((item) => item == user!.country);
+    print(indexCountry);
+    if (indexCountry < 0) indexCountry = 0;
+    selectCountry = _country[indexCountry];
+    print(selectCountry);
+
+    for (var element in countryres) {
+      var model = StatusModel.StatusModel();
+      model.name = element['name'];
+      model.emoji = element['emoji'];
+      var states = element['state'];
+      if (!mounted) break;
+
+      if (selectCountry.contains(("${model.emoji!}  ${model.name!}"))) {
+        if (stateTemp.isNotEmpty) {
+          stateTemp.clear();
+        }
+        stateTemp.add(states);
+        if (states.length > 1) {
+          filterState();
+        } else {
+          indexState = 0;
+        }
+      }
+    }
+    setState(() {});
+  }
+
+  Future SelectDropState() async {
+    indexState = _states.indexWhere((item) => item == user!.city);
+    print(indexState);
+    if (indexState < 0) indexState = 0;
+    selectState = _states[indexState];
+  }
+
   Future getCounty() async {
     countryres = await getResponse() as List;
     for (var data in countryres) {
@@ -97,17 +138,57 @@ class _UserEditPageState extends State<UserEditPage> {
         _country.add("${model.emoji!}  ${model.name!}");
       });
     }
-    // getState();
+
+    indexCountry = _country.indexWhere((item) => item == user!.country);
+    print(indexCountry);
+    if (indexCountry < 0) indexCountry = 0;
+    selectCountry = _country[indexCountry];
+    print(selectCountry);
+
+    for (var i in _country) {
+      if (i == user!.country) {
+        for (var element in countryres) {
+          var model = StatusModel.StatusModel();
+          model.name = element['name'];
+          model.emoji = element['emoji'];
+          if (!mounted) break;
+
+          if (i.contains(("${model.emoji!}  ${model.name!}"))) {
+            if (stateTemp.isNotEmpty) {
+              stateTemp.removeLast();
+            }
+            stateTemp.add(element['state']);
+
+            filterState();
+            break;
+          }
+        }
+
+        break;
+      }
+    }
+    indexState = _states.indexWhere((item) => item == user!.city);
+    print(indexState);
+    if (indexState < 0) indexState = 0;
+    selectState = _states[indexState];
+    print(selectCountry);
+
     return _country;
   }
 
   Future filterState() async {
+    if (_states.isNotEmpty) {
+      _states.clear();
+    }
+
     for (var f in stateTemp) {
       if (!mounted) continue;
+
       f.forEach((data) {
         _states.add("${data['name']}");
       });
     }
+
     setState(() {});
     return _states;
   }
@@ -122,12 +203,14 @@ class _UserEditPageState extends State<UserEditPage> {
     var states = takestate as List;
     for (var f in states) {
       if (!mounted) continue;
-      setState(() {
-        var name = f.map((item) => item.name).toList();
-        for (var statename in name) {
-          _states.add(statename.toString());
-        }
-      });
+      setState(
+        () {
+          var name = f.map((item) => item.name).toList();
+          for (var statename in name) {
+            _states.add(statename.toString());
+          }
+        },
+      );
     }
 
     return _states;
@@ -149,6 +232,9 @@ class _UserEditPageState extends State<UserEditPage> {
           age: userbd!.age.toString(),
           country: userbd!.country,
           city: userbd!.city);
+
+      selectCountry = userbd!.country;
+      selectState = userbd!.city;
     }
 
     setState(() {});
@@ -195,7 +281,7 @@ class _UserEditPageState extends State<UserEditPage> {
                       child: DecoratedBox(
                         decoration: BoxDecoration(
                           border: Border.all(
-                              color: Colors.yellow,
+                              color: ColorPalette.principal,
                               width: 1,
                               style: BorderStyle.none),
                         ),
@@ -204,7 +290,7 @@ class _UserEditPageState extends State<UserEditPage> {
                           child: DropdownButton<String?>(
                             underline: Container(
                               height: 1,
-                              color: Colors.yellow,
+                              color: ColorPalette.principal,
                             ),
                             hint: Padding(
                               padding: const EdgeInsets.all(8.0),
@@ -213,10 +299,11 @@ class _UserEditPageState extends State<UserEditPage> {
                                     ? userbd!.gender
                                     : Constant.selectGender,
                                 style: const TextStyle(
-                                    fontSize: 18, color: Colors.yellow),
+                                    fontSize: 18,
+                                    color: ColorPalette.principal),
                               ),
                             ),
-                            iconEnabledColor: Colors.yellow, //Ico
+                            iconEnabledColor: ColorPalette.principal, //Ico
                             value: Constant.gender[0],
                             isExpanded: true,
                             items: Constant.gender.keys
@@ -233,7 +320,6 @@ class _UserEditPageState extends State<UserEditPage> {
                                 )
                                 .toList(),
                             onChanged: (v) {
-                              print(v);
                               userbd!.gender = v.toString();
                               setState(() {});
                             },
@@ -246,7 +332,7 @@ class _UserEditPageState extends State<UserEditPage> {
                       child: DecoratedBox(
                         decoration: BoxDecoration(
                           border: Border.all(
-                              color: Colors.yellow,
+                              color: ColorPalette.principal,
                               width: 1,
                               style: BorderStyle.none),
                         ),
@@ -255,7 +341,7 @@ class _UserEditPageState extends State<UserEditPage> {
                           child: DropdownButton<String?>(
                             underline: Container(
                               height: 1,
-                              color: Colors.yellow,
+                              color: ColorPalette.principal,
                             ),
                             hint: Padding(
                               padding: const EdgeInsets.all(8.0),
@@ -264,10 +350,11 @@ class _UserEditPageState extends State<UserEditPage> {
                                     ? userbd!.maritalStatus
                                     : Constant.maritalStatus,
                                 style: const TextStyle(
-                                    fontSize: 18, color: Colors.yellow),
+                                    fontSize: 18,
+                                    color: ColorPalette.principal),
                               ),
                             ),
-                            iconEnabledColor: Colors.yellow, //Ico
+                            iconEnabledColor: ColorPalette.principal, //Ico
                             value: Constant.maritalState[0],
                             isExpanded: true,
                             items: Constant.maritalState.keys
@@ -284,7 +371,6 @@ class _UserEditPageState extends State<UserEditPage> {
                                 )
                                 .toList(),
                             onChanged: (v) {
-                              print(v);
                               // userbd!.gender = v.toString();
                               userbd!.maritalStatus = v.toString();
                               setState(() {});
@@ -299,28 +385,30 @@ class _UserEditPageState extends State<UserEditPage> {
                       child: DecoratedBox(
                         decoration: BoxDecoration(
                           border: Border.all(
-                              color: Colors.yellow,
+                              color: ColorPalette.principal,
                               width: 1,
                               style: BorderStyle.none),
                         ),
                         child: SizedBox(
                           height: 52,
                           child: DropdownButton<String?>(
+                            key: const Key("styleLife"),
                             underline: Container(
                               height: 1,
-                              color: Colors.yellow,
+                              color: ColorPalette.principal,
                             ),
                             hint: Padding(
                               padding: const EdgeInsets.all(8.0),
                               child: Text(
-                                (userbd != null && userbd!.styleLife != "")
-                                    ? userbd!.styleLife
+                                (user != null && user!.styleLife != "")
+                                    ? user!.styleLife
                                     : Constant.styleLive,
                                 style: const TextStyle(
-                                    fontSize: 18, color: Colors.yellow),
+                                    fontSize: 18,
+                                    color: ColorPalette.principal),
                               ),
                             ),
-                            iconEnabledColor: Colors.yellow, //Ico
+                            iconEnabledColor: ColorPalette.principal, //Ico
                             value: Constant.lifeStyle[0],
                             isExpanded: true,
                             items: Constant.lifeStyle.keys
@@ -337,9 +425,8 @@ class _UserEditPageState extends State<UserEditPage> {
                                 )
                                 .toList(),
                             onChanged: (v) {
-                              print(v);
                               // userbd!.gender = v.toString();
-                              userbd!.styleLife = v.toString();
+                              user!.styleLife = v.toString();
                               setState(() {});
                             },
                           ),
@@ -352,28 +439,31 @@ class _UserEditPageState extends State<UserEditPage> {
                       child: DecoratedBox(
                         decoration: BoxDecoration(
                           border: Border.all(
-                              color: Colors.yellow,
+                              color: ColorPalette.principal,
                               width: 1,
                               style: BorderStyle.none),
                         ),
                         child: SizedBox(
                           height: 52,
                           child: DropdownButton<String?>(
+                            key: const Key("age"),
                             underline: Container(
                               height: 1,
-                              color: Colors.yellow,
+                              color: ColorPalette.principal,
                             ),
                             hint: Padding(
                               padding: const EdgeInsets.all(8.0),
                               child: Text(
-                                (userbd != null && userbd!.age != "")
-                                    ? userbd!.age
+                                (user != null && user!.age != "")
+                                    ? user!.age
                                     : Constant.age,
                                 style: const TextStyle(
-                                    fontSize: 18, color: Colors.yellow),
+                                    fontSize: 18,
+                                    color: ColorPalette.principal),
                               ),
                             ),
-                            iconEnabledColor: Colors.yellow, //Ico
+                            dropdownColor: Colors.brown,
+                            iconEnabledColor: ColorPalette.principal, //Ico
                             value: ages[0],
                             isExpanded: true,
                             items: ages.keys
@@ -381,18 +471,20 @@ class _UserEditPageState extends State<UserEditPage> {
                                 .map(
                                   (e) => DropdownMenuItem<String>(
                                     value: ages[e],
-                                    child: Text(
-                                      ages[e] ?? "",
-                                      style: const TextStyle(
-                                          fontSize: 18, color: Colors.black),
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Text(
+                                        ages[e] ?? "",
+                                        style: const TextStyle(
+                                            fontSize: 18,
+                                            color: ColorPalette.principal),
+                                      ),
                                     ),
                                   ),
                                 )
                                 .toList(),
                             onChanged: (v) {
-                              print(v);
-                              // userbd!.gender = v.toString();
-                              userbd!.age = v.toString();
+                              user!.age = v.toString();
                               setState(() {});
                             },
                           ),
@@ -404,55 +496,56 @@ class _UserEditPageState extends State<UserEditPage> {
                       child: DecoratedBox(
                         decoration: BoxDecoration(
                           border: Border.all(
-                              color: Colors.yellow,
+                              color: ColorPalette.principal,
                               width: 1,
                               style: BorderStyle.none),
                         ),
                         child: SizedBox(
                           height: 52,
                           child: DropdownButton<String?>(
+                            key: const Key("country"),
                             underline: Container(
                               height: 1,
-                              color: Colors.yellow,
+                              color: ColorPalette.principal,
                             ),
                             dropdownColor: Colors.brown,
-                            hint: const Padding(
-                              padding: EdgeInsets.all(8.0),
+                            hint: Padding(
+                              padding: const EdgeInsets.all(8.0),
                               child: Text(
-                                "Selecciona el pais",
-                                style: TextStyle(
-                                    fontSize: 18, color: Colors.yellow),
+                                (user != null && user!.country != "")
+                                    ? user!.country
+                                    : selectCountry,
+                                style: const TextStyle(
+                                    fontSize: 18,
+                                    color: ColorPalette.principal),
                               ),
                             ),
-                            iconEnabledColor: Colors.yellow, //Ico
-                            value: _country[0],
+                            iconEnabledColor: ColorPalette.principal, //Ico
+                            value: _country[indexCountry],
                             isExpanded: true,
 
                             items: _country
                                 .map(
                                   (e) => DropdownMenuItem<String>(
                                     value: e,
-                                    child: Text(
-                                      e,
-                                      style: const TextStyle(
-                                          fontSize: 18, color: Colors.yellow),
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Text(
+                                        e,
+                                        style: const TextStyle(
+                                            fontSize: 18,
+                                            color: ColorPalette.principal),
+                                      ),
                                     ),
                                   ),
                                 )
                                 .toList(),
                             onChanged: (v) {
-                              for (var element in countryres) {
-                                var model = StatusModel.StatusModel();
-                                model.name = element['name'];
-                                model.emoji = element['emoji'];
-                                if (!mounted) return;
-
-                                if (v!.contains(
-                                    ("${model.emoji!}  ${model.name!}"))) {
-                                  stateTemp.add(element['state']);
-                                }
-                              }
-                              filterState();
+                              selectCountry = v!;
+                              user?.country = v;
+                              // user!.city = "";
+                              // indexState = 0;
+                              refreshContry();
                             },
                           ),
                         ),
@@ -463,44 +556,64 @@ class _UserEditPageState extends State<UserEditPage> {
                       child: DecoratedBox(
                         decoration: BoxDecoration(
                           border: Border.all(
-                              color: Colors.yellow,
+                              color: ColorPalette.principal,
                               width: 1,
                               style: BorderStyle.none),
                         ),
                         child: SizedBox(
                           height: 52,
                           child: DropdownButton<String?>(
+                            key: const Key("city"),
                             underline: Container(
                               height: 1,
-                              color: Colors.yellow,
+                              color: ColorPalette.principal,
                             ),
                             dropdownColor: Colors.brown,
-                            hint: const Padding(
-                              padding: EdgeInsets.all(8.0),
-                              child: Text(
-                                "Selecciona la ciudad",
-                                style: TextStyle(
-                                    fontSize: 18, color: Colors.yellow),
+                            hint: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Text(
+                                    (user != null && user!.city != "")
+                                        ? user!.city
+                                        : selectState,
+                                    style: const TextStyle(
+                                        fontSize: 18,
+                                        color: ColorPalette.principal),
+                                  ),
+                                ),
                               ),
                             ),
-                            iconEnabledColor: Colors.yellow, //Ico
-                            value: _states[0],
+                            iconEnabledColor: ColorPalette.principal, //Ico
+                            value: _states[indexState],
                             isExpanded: true,
 
                             items: _states
                                 .map(
                                   (e) => DropdownMenuItem<String>(
                                     value: e,
-                                    child: Text(
-                                      e,
-                                      style: const TextStyle(
-                                          fontSize: 18, color: Colors.yellow),
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Text(
+                                        e,
+                                        style: const TextStyle(
+                                            fontSize: 18,
+                                            color: ColorPalette.principal),
+                                      ),
                                     ),
                                   ),
                                 )
                                 .toList(),
                             onChanged: (v) {
-                              // userbd!.country = v.toString();
+                              user?.city = v.toString();
+                              selectState = v!;
+                              // selectOther = false;
+                              // int index =
+                              //     _states.indexWhere((item) => item == v);
+                              // indexState = index;
+                              SelectDropState();
                               setState(() {});
                             },
                           ),
@@ -555,108 +668,6 @@ class _UserEditPageState extends State<UserEditPage> {
     );
   }
 
-  // Widget _crearTxtCodigoMail(String code) {
-  //   return Padding(
-  //     padding: const EdgeInsets.only(left: 5.0, right: 5.0),
-  //     child: Row(
-  //       crossAxisAlignment: CrossAxisAlignment.start,
-  //       children: [
-  //         Expanded(
-  //           child: TextFormField(
-  //             initialValue: code,
-  //             textCapitalization: TextCapitalization.sentences,
-  //             decoration: InputDecoration(
-  //                 focusedBorder: OutlineInputBorder(
-  //                   borderSide: const BorderSide(color: Colors.yellow),
-  //                   borderRadius: BorderRadius.circular(100.0),
-  //                 ),
-  //                 enabledBorder: OutlineInputBorder(
-  //                   borderSide: const BorderSide(
-  //                       width: 1, color: Colors.yellow), //<-- SEE HERE
-  //                   borderRadius: BorderRadius.circular(100.0),
-  //                 ),
-  //                 hintStyle: const TextStyle(color: Colors.yellow),
-  //                 hintText: code,
-  //                 labelText: Constant.codeEmail,
-  //                 labelStyle: const TextStyle(color: Colors.yellow)),
-  //             onSaved: (value) => value,
-  //             validator: (value) {
-  //               return Constant.codeEmailPlaceholder;
-  //             },
-  //             onChanged: (value) {},
-  //           ),
-  //         ),
-  //         Expanded(
-  //           flex: 0,
-  //           child: IconButton(
-  //             icon: isValidEmail
-  //                 ? const Icon(Icons.check_circle_outline_sharp)
-  //                 : const Icon(Icons.check),
-  //             onPressed: (() async => {
-  //                   isValidEmail = await userVC.validateEmailUser(context),
-  //                   if (isValidEmail == true) {setState(() {})}
-  //                 }),
-  //           ),
-  //         ),
-  //       ],
-  //     ),
-  //   );
-  // }
-
-  // Widget _crearSmSTxtCodigoMail(String code) {
-  //   int num = 0;
-  //   return Padding(
-  //     padding: const EdgeInsets.only(left: 5.0, right: 5.0),
-  //     child: Row(
-  //       crossAxisAlignment: CrossAxisAlignment.start,
-  //       children: [
-  //         Expanded(
-  //           child: TextFormField(
-  //             keyboardType: TextInputType.number,
-  //             initialValue: code,
-  //             textCapitalization: TextCapitalization.sentences,
-  //             decoration: InputDecoration(
-  //                 focusedBorder: OutlineInputBorder(
-  //                   borderSide: const BorderSide(color: Colors.yellow),
-  //                   borderRadius: BorderRadius.circular(100.0),
-  //                 ),
-  //                 enabledBorder: OutlineInputBorder(
-  //                   borderSide: const BorderSide(
-  //                       width: 1, color: Colors.yellow), //<-- SEE HERE
-  //                   borderRadius: BorderRadius.circular(100.0),
-  //                 ),
-  //                 hintStyle: const TextStyle(color: Colors.yellow),
-  //                 hintText: code,
-  //                 labelText: Constant.codeSms,
-  //                 labelStyle: const TextStyle(color: Colors.yellow)),
-  //             onSaved: (value) => {num = int.parse(value!)},
-  //             validator: (value) {
-  //               return Constant.codeSmsPlaceholder;
-  //             },
-  //             onChanged: (value) {
-  //               num = int.parse(value);
-  //             },
-  //           ),
-  //         ),
-  //         Expanded(
-  //           flex: 0,
-  //           child: IconButton(
-  //             icon: isValidSms
-  //                 ? const Icon(Icons.check_circle_outline_sharp)
-  //                 : const Icon(Icons.check),
-  //             onPressed: (() async => {
-  //                   isValidSms = await userVC.validateSmsUser(
-  //                       context, int.parse(user!.telephone), user!.name),
-  //                   if (isValidSms == true)
-  //                     {(context as Element).markNeedsBuild()}
-  //                 }),
-  //           ),
-  //         ),
-  //       ],
-  //     ),
-  //   );
-  // }
-
   Widget _crearNombre(String name) {
     if (userbd != null) {
       name = userbd!.name;
@@ -669,25 +680,25 @@ class _UserEditPageState extends State<UserEditPage> {
           onChanged: (value) {
             user?.name = value;
           },
-          style: const TextStyle(color: Colors.amber),
+          style: const TextStyle(color: ColorPalette.principal),
           key: Key(name),
           initialValue: name,
           textCapitalization: TextCapitalization.sentences,
           decoration: InputDecoration(
-            suffixIcon: const Icon(Icons.edit, color: Colors.amber),
+            suffixIcon: const Icon(Icons.edit, color: ColorPalette.principal),
             focusedBorder: const UnderlineInputBorder(
-              borderSide: BorderSide(color: Colors.yellow),
+              borderSide: BorderSide(color: ColorPalette.principal),
               // borderRadius: BorderRadius.circular(100.0),
             ),
             enabledBorder: const UnderlineInputBorder(
-              borderSide:
-                  BorderSide(width: 1, color: Colors.yellow), //<-- SEE HERE
+              borderSide: BorderSide(
+                  width: 1, color: ColorPalette.principal), //<-- SEE HERE
             ),
-            hintStyle: const TextStyle(color: Colors.yellow),
+            hintStyle: const TextStyle(color: ColorPalette.principal),
             filled: true,
             hintText: name,
             labelText: Constant.nameUser,
-            labelStyle: const TextStyle(color: Colors.yellow),
+            labelStyle: const TextStyle(color: ColorPalette.principal),
           ),
           onSaved: (value) => {
             user?.name = value!,
@@ -717,19 +728,19 @@ class _UserEditPageState extends State<UserEditPage> {
         decoration: InputDecoration(
           hintText: userbd == null ? lastName : userbd?.lastname,
           labelText: Constant.lastName,
-          suffixIcon: const Icon(Icons.edit, color: Colors.amber),
+          suffixIcon: const Icon(Icons.edit, color: ColorPalette.principal),
           focusedBorder: const UnderlineInputBorder(
-            borderSide: BorderSide(color: Colors.yellow),
+            borderSide: BorderSide(color: ColorPalette.principal),
           ),
           enabledBorder: const UnderlineInputBorder(
-            borderSide:
-                BorderSide(width: 1, color: Colors.yellow), //<-- SEE HERE
+            borderSide: BorderSide(
+                width: 1, color: ColorPalette.principal), //<-- SEE HERE
           ),
-          hintStyle: const TextStyle(color: Colors.yellow),
+          hintStyle: const TextStyle(color: ColorPalette.principal),
           filled: true,
-          labelStyle: const TextStyle(color: Colors.yellow),
+          labelStyle: const TextStyle(color: ColorPalette.principal),
         ),
-        style: const TextStyle(color: Colors.amber),
+        style: const TextStyle(color: ColorPalette.principal),
         onSaved: (value) => {
           user?.lastname = value!,
         },
@@ -754,19 +765,19 @@ class _UserEditPageState extends State<UserEditPage> {
         decoration: InputDecoration(
           hintText: userbd == null ? email : userbd?.email,
           labelText: Constant.email,
-          suffixIcon: const Icon(Icons.edit, color: Colors.amber),
+          suffixIcon: const Icon(Icons.edit, color: ColorPalette.principal),
           focusedBorder: const UnderlineInputBorder(
-            borderSide: BorderSide(color: Colors.yellow),
+            borderSide: BorderSide(color: ColorPalette.principal),
           ),
           enabledBorder: const UnderlineInputBorder(
-            borderSide:
-                BorderSide(width: 1, color: Colors.yellow), //<-- SEE HERE
+            borderSide: BorderSide(
+                width: 1, color: ColorPalette.principal), //<-- SEE HERE
           ),
-          hintStyle: const TextStyle(color: Colors.yellow),
+          hintStyle: const TextStyle(color: ColorPalette.principal),
           filled: true,
-          labelStyle: const TextStyle(color: Colors.yellow),
+          labelStyle: const TextStyle(color: ColorPalette.principal),
         ),
-        style: const TextStyle(color: Colors.amber),
+        style: const TextStyle(color: ColorPalette.principal),
         onSaved: (value) => {
           user?.lastname = value!,
         },
@@ -791,19 +802,19 @@ class _UserEditPageState extends State<UserEditPage> {
         decoration: InputDecoration(
           hintText: '+34$phone',
           labelText: Constant.telephone,
-          suffixIcon: const Icon(Icons.edit, color: Colors.amber),
+          suffixIcon: const Icon(Icons.edit, color: ColorPalette.principal),
           focusedBorder: const UnderlineInputBorder(
-            borderSide: BorderSide(color: Colors.yellow),
+            borderSide: BorderSide(color: ColorPalette.principal),
           ),
           enabledBorder: const UnderlineInputBorder(
-            borderSide:
-                BorderSide(width: 1, color: Colors.yellow), //<-- SEE HERE
+            borderSide: BorderSide(
+                width: 1, color: ColorPalette.principal), //<-- SEE HERE
           ),
-          hintStyle: const TextStyle(color: Colors.yellow),
+          hintStyle: const TextStyle(color: ColorPalette.principal),
           filled: true,
-          labelStyle: const TextStyle(color: Colors.yellow),
+          labelStyle: const TextStyle(color: ColorPalette.principal),
         ),
-        style: const TextStyle(color: Colors.yellow),
+        style: const TextStyle(color: ColorPalette.principal),
         onSaved: (value) => {
           user?.telephone = value!,
         },
@@ -814,94 +825,15 @@ class _UserEditPageState extends State<UserEditPage> {
     );
   }
 
-  // Widget _genderTXT(String gender) {
-  //   if (userbd != null) {
-  //     gender = userbd!.gender;
-  //   }
-  //   return Padding(
-  //     padding: const EdgeInsets.only(left: 3.0, right: 3.0),
-  //     child: TextFormField(
-  //       keyboardType: TextInputType.number,
-  //       onChanged: (value) {
-  //         user?.telephone = value;
-  //       },
-  //       key: Key(gender),
-  //       initialValue: gender,
-  //       textCapitalization: TextCapitalization.sentences,
-  //       decoration: InputDecoration(
-  //         hintText: gender,
-  //         labelText: Constant.telephone,
-  //         suffixIcon: const Icon(Icons.edit, color: Colors.amber),
-  //         focusedBorder: const UnderlineInputBorder(
-  //           borderSide: BorderSide(color: Colors.yellow),
-  //         ),
-  //         enabledBorder: const UnderlineInputBorder(
-  //           borderSide:
-  //               BorderSide(width: 1, color: Colors.yellow), //<-- SEE HERE
-  //         ),
-  //         hintStyle: const TextStyle(color: Colors.yellow),
-  //         filled: true,
-  //         labelStyle: const TextStyle(color: Colors.yellow),
-  //       ),
-  //       style: const TextStyle(color: Colors.yellow),
-  //       onSaved: (value) => {
-  //         user?.telephone = value!,
-  //       },
-  //       validator: (value) {
-  //         return Constant.telephonePlaceholder;
-  //       },
-  //     ),
-  //   );
-  // }
-
-  // Widget _createButtonFree() {
-  //   return ElevatedButton.icon(
-  //     style: ButtonStyle(
-  //         backgroundColor:
-  //             MaterialStateProperty.all<Color>(ColorPalette.principal)),
-  //     label: const Text(Constant.userConfigPageButtonFree),
-  //     icon: const Icon(
-  //       Icons.security,
-  //     ),
-  //     onPressed: (_guardado) ? null : _submit,
-  //   );
-  // }
-
-  // Widget _createButtonPremium() {
-  //   return ElevatedButton.icon(
-  //     style: ButtonStyle(
-  //         backgroundColor:
-  //             MaterialStateProperty.all<Color>(ColorPalette.principal)),
-  //     label: const Text(Constant.userConfigPageButtonConfig),
-  //     icon: const Icon(
-  //       Icons.settings,
-  //     ),
-  //     onPressed: (_guardado) ? null : _submit,
-  //   );
-  // }
-
-  // Widget _crearBotonVerificate() {
-  //   return ElevatedButton.icon(
-  //     style: ButtonStyle(
-  //         backgroundColor:
-  //             MaterialStateProperty.all<Color>(ColorPalette.principal)),
-  //     label: const Text("Verificar"),
-  //     icon: const Icon(
-  //       Icons.save,
-  //     ),
-  //     onPressed: (_guardado) ? null : _submit,
-  //   );
-  // }
-
   void _submit() async {
-    Uint8List? bytes;
-    String img64 = "";
-    if (foto?.path != "") {
-      bytes = foto?.readAsBytesSync();
-      img64 = base64Encode(bytes!);
-    } else {
-      img64 = userbd!.pathImage;
-    }
+    // Uint8List? bytes;
+    // String img64 = "";
+    // if (foto?.path != "") {
+    //   bytes = foto?.readAsBytesSync();
+    //   img64 = base64Encode(bytes!);
+    // } else {
+    //   img64 = userbd!.pathImage;
+    // }
 
     UserBD person = UserBD(
         idUser: '0',
@@ -912,7 +844,7 @@ class _UserEditPageState extends State<UserEditPage> {
         gender: user!.gender,
         maritalStatus: user!.maritalStatus,
         styleLife: user!.styleLife,
-        pathImage: img64,
+        pathImage: userbd!.pathImage,
         age: user!.age.toString(),
         country: user!.country,
         city: user!.city);

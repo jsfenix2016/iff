@@ -4,6 +4,8 @@ import 'dart:io' show Platform;
 import 'package:baseflow_plugin_template/baseflow_plugin_template.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:ifeelefine/Common/Constant.dart';
+import 'package:ifeelefine/Page/Onboarding/Widget/widgetColumnOnboarding.dart';
 
 /// Defines the main theme color.
 final MaterialColor themeMaterialColor =
@@ -143,80 +145,11 @@ class _GeolocatorWidgetState extends State<GeolocatorWidget> {
       height: 10,
     );
 
-    return BaseflowPluginExample(
-        pluginName: 'Geolocator',
-        githubURL: 'https://github.com/Baseflow/flutter-geolocator',
-        pubDevURL: 'https://pub.dev/packages/geolocator',
-        appBarActions: [
-          _createActions()
-        ],
-        pages: [
-          ExamplePage(
-            Icons.location_on,
-            (context) => Scaffold(
-              backgroundColor: Theme.of(context).backgroundColor,
-              body: ListView.builder(
-                itemCount: _positionItems.length,
-                itemBuilder: (context, index) {
-                  final positionItem = _positionItems[index];
-
-                  if (positionItem.type == _PositionItemType.log) {
-                    return ListTile(
-                      title: Text(positionItem.displayValue,
-                          textAlign: TextAlign.center,
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                          )),
-                    );
-                  } else {
-                    return Card(
-                      child: ListTile(
-                        tileColor: themeMaterialColor,
-                        title: Text(
-                          positionItem.displayValue,
-                          style: const TextStyle(color: Colors.white),
-                        ),
-                      ),
-                    );
-                  }
-                },
-              ),
-              floatingActionButton: Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  FloatingActionButton(
-                    child: (_positionStreamSubscription == null ||
-                            _positionStreamSubscription!.isPaused)
-                        ? const Icon(Icons.play_arrow)
-                        : const Icon(Icons.pause),
-                    onPressed: () {
-                      positionStreamStarted = !positionStreamStarted;
-                      _toggleListening();
-                    },
-                    tooltip: (_positionStreamSubscription == null)
-                        ? 'Start position updates'
-                        : _positionStreamSubscription!.isPaused
-                            ? 'Resume'
-                            : 'Pause',
-                    backgroundColor: _determineButtonColor(),
-                  ),
-                  sizedBox,
-                  FloatingActionButton(
-                    child: const Icon(Icons.my_location),
-                    onPressed: _getCurrentPosition,
-                  ),
-                  sizedBox,
-                  FloatingActionButton(
-                    child: const Icon(Icons.bookmark),
-                    onPressed: _getLastKnownPosition,
-                  ),
-                ],
-              ),
-            ),
-          )
-        ]);
+    return const WidgetColumnOnboarding(
+      img: 'assets/images/Mask group-4.png',
+      title: Constant.onBoardingPageFourTitle,
+      subtitle: Constant.onBoardingPageFourSubtitle,
+    );
   }
 
   Future<void> _getCurrentPosition() async {

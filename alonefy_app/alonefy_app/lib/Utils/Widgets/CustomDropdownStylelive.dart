@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ifeelefine/Common/colorsPalette.dart';
 
 class CustomDropdownStylelive extends StatefulWidget {
   const CustomDropdownStylelive(
@@ -43,7 +44,7 @@ class _CustomDropdownyStyleliveState extends State<CustomDropdownStylelive> {
       child: DecoratedBox(
         decoration: BoxDecoration(
           border: Border.all(
-            color: Colors.yellow,
+            color: ColorPalette.principal,
             width: 1,
           ),
           borderRadius: BorderRadius.circular(100),
@@ -52,12 +53,13 @@ class _CustomDropdownyStyleliveState extends State<CustomDropdownStylelive> {
           underline: Container(), //empty line
           style: const TextStyle(fontSize: 18, color: Colors.black),
           dropdownColor: Colors.brown,
-          iconEnabledColor: Colors.yellow, //Icon color
+          iconEnabledColor: ColorPalette.principal, //Icon color
           hint: Padding(
             padding: const EdgeInsets.all(8.0),
             child: Text(
               widget.mensaje,
-              style: const TextStyle(fontSize: 18, color: Colors.yellow),
+              style:
+                  const TextStyle(fontSize: 18, color: ColorPalette.principal),
             ),
           ),
           value: _selectedLocation.isEmpty
@@ -73,8 +75,8 @@ class _CustomDropdownyStyleliveState extends State<CustomDropdownStylelive> {
                     padding: const EdgeInsets.all(8.0),
                     child: Text(
                       widget.instance[e] ?? "",
-                      style:
-                          const TextStyle(fontSize: 18, color: Colors.yellow),
+                      style: const TextStyle(
+                          fontSize: 18, color: ColorPalette.principal),
                     ),
                   ),
                 ),

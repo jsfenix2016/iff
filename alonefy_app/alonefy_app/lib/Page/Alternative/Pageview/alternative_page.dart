@@ -68,7 +68,7 @@ class _AlternativePagePageState extends State<AlternativePage> {
                         ),
                       );
                     },
-                    mensaje: Constant.alternativePageButtonPersonalizar,
+                    mensaje: Constant.alternativePageButtonInit,
                   ),
                   const SizedBox(
                     height: 50,
