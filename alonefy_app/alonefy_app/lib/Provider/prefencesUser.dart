@@ -116,4 +116,12 @@ class PreferenceUser {
   set setEnableIFF(bool value) {
     _prefs.setBool('EnableIFF', value);
   }
+
+  set setDisambleIFFForActivity(int value) {
+    _prefs.setInt('DisambleForActivity', value);
+  }
+
+  get getDisambleIFFForActivity {
+    return _prefs.getInt('DisambleForActivity') ?? 5;
+  }
 }

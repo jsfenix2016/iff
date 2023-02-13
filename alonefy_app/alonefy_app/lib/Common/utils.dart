@@ -4,11 +4,14 @@ import 'dart:ffi';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:ifeelefine/Common/colorsPalette.dart';
 import 'package:ifeelefine/Model/activitydaybd.dart';
+import 'package:ifeelefine/Model/contact.dart';
 import 'package:ifeelefine/Model/restdaybd.dart';
+import 'package:ifeelefine/Model/user.dart';
 import 'package:ifeelefine/Model/userPosition.dart';
 import 'package:ifeelefine/Model/userbd.dart';
 import 'package:ifeelefine/Model/userpositionbd.dart';
@@ -131,46 +134,6 @@ Future<File> procesarImagen(ImageSource origen) async {
   return file;
 }
 
-Future<Duration> disambleIFF(String time) async {
-  var disambleTemp = const Duration();
-
-  switch (time) {
-    case "":
-      disambleTemp = const Duration(seconds: 5);
-      break;
-    case "1 hora":
-      disambleTemp = const Duration(hours: 1);
-      break;
-    case "2 horas":
-      disambleTemp = const Duration(hours: 2);
-      break;
-    case "3 horas":
-      disambleTemp = const Duration(hours: 3);
-      break;
-    case "8 horas":
-      disambleTemp = const Duration(hours: 8);
-      break;
-    case "24 horas":
-      disambleTemp = const Duration(hours: 24);
-      break;
-    case "1 semana":
-      disambleTemp = const Duration(hours: 168);
-      break;
-    case "1 mes":
-      disambleTemp = const Duration(hours: 672);
-      break;
-    case "1 año":
-      disambleTemp = const Duration(hours: 8064);
-      break;
-    case "Siempre":
-      disambleTemp = const Duration(hours: 80640);
-      break;
-
-    default:
-  }
-  return disambleTemp;
-}
-
 Future inicializeHiveBD() async {
   Directory appDocDirectory = await getApplicationDocumentsDirectory();
   await Hive.initFlutter(appDocDirectory.path);
@@ -188,6 +151,9 @@ Future inicializeHiveBD() async {
 
   if (!Hive.isAdapterRegistered(RestDayBDAdapter().typeId)) {
     Hive.registerAdapter(RestDayBDAdapter());
+  }
+  if (!Hive.isAdapterRegistered(ContactBDAdapter().typeId)) {
+    Hive.registerAdapter(ContactBDAdapter());
   }
 }
 
@@ -228,17 +194,52 @@ void mostrarAlerta(BuildContext context, String mensaje) {
       });
 }
 
+Future getResponse() async {
+  var res = await rootBundle
+      .loadString('packages/country_state_city_picker/lib/assets/country.json');
+
+  return jsonDecode(res);
+}
+
+User initUser() {
+  return User(
+      idUser: 0,
+      name: "",
+      lastname: "",
+      email: "",
+      telephone: "",
+      gender: "",
+      maritalStatus: "",
+      styleLife: "",
+      pathImage: "",
+      age: '',
+      country: '',
+      city: '');
+}
+
 BoxDecoration decorationCustom() {
   return const BoxDecoration(
     gradient: LinearGradient(
       begin: Alignment.topCenter,
-      end: Alignment(0, 1),
+      end: Alignment(0, 2),
       colors: <Color>[
         ColorPalette.principalView,
         ColorPalette.secondView,
       ],
       tileMode: TileMode.mirror,
     ),
+  );
+}
+
+LinearGradient linerGradientButtonFilling() {
+  return const LinearGradient(
+    begin: Alignment.centerLeft,
+    end: Alignment(1, 0),
+    colors: <Color>[
+      Color.fromRGBO(202, 157, 11, 1),
+      Color.fromRGBO(219, 177, 42, 1),
+    ],
+    tileMode: TileMode.mirror,
   );
 }
 

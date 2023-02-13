@@ -17,7 +17,7 @@ class UserPositionBDAdapter extends TypeAdapter<UserPositionBD> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return UserPositionBD(
-      mov: (fields[0] as List).cast<double>(),
+      typeAction: fields[0] as String,
       time: fields[1] as DateTime,
       movRureUser: fields[2] as DateTime,
     );
@@ -28,7 +28,7 @@ class UserPositionBDAdapter extends TypeAdapter<UserPositionBD> {
     writer
       ..writeByte(3)
       ..writeByte(0)
-      ..write(obj.mov)
+      ..write(obj.typeAction)
       ..writeByte(1)
       ..write(obj.time)
       ..writeByte(2)

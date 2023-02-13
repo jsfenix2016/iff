@@ -25,8 +25,8 @@ class InactivityViewController extends GetxController {
       ActivityDayBD temp = ActivityDayBD(
           day: element.day,
           activity: element.activity,
-          timeSleep: element.timeSleep,
-          timeWakeup: element.timeWakeup,
+          timeStart: element.timeStart,
+          timeFinish: element.timeFinish,
           id: element.id);
       listActivitybd.add(temp);
     }
@@ -46,8 +46,8 @@ class InactivityViewController extends GetxController {
     ActivityDayBD temp = ActivityDayBD(
         day: activity.day,
         activity: activity.activity,
-        timeSleep: activity.timeSleep,
-        timeWakeup: activity.timeWakeup,
+        timeStart: activity.timeStart,
+        timeFinish: activity.timeFinish,
         id: activity.id);
     await const HiveData().deleteActivities(temp);
     return 0;

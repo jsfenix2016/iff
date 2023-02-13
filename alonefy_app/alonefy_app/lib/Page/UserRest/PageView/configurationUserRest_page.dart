@@ -286,18 +286,21 @@ class _UserRestPageState extends State<UserRestPage> {
     }
   }
 
+  int countInser = 0;
   Future processSelectedInfo() async {
     for (var element in _selectedDays) {
       tempNoSelectListDay.remove(element);
     }
     for (var element in _selectedDays) {
       RestDayBD restDay = RestDayBD(
-          day: diaConvert(element),
-          timeSleep: timeLblPM,
-          timeWakeup: timeLblAM);
+        day: diaConvert(element),
+        timeSleep: timeLblPM,
+        timeWakeup: timeLblAM,
+      );
 
       tempDicRest.add(restDay);
     }
     _selectedDays.clear();
+    countInser++;
   }
 }

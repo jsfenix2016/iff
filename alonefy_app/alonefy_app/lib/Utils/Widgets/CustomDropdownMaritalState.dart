@@ -59,8 +59,7 @@ class _CustomDropdownMaritalStateState
               padding: const EdgeInsets.all(8.0),
               child: Text(
                 widget.mensaje,
-                style: const TextStyle(
-                    fontSize: 18, color: ColorPalette.principal),
+                style: const TextStyle(color: Colors.white, fontSize: 18),
               ),
             ),
             dropdownColor: Colors.brown,
@@ -78,8 +77,8 @@ class _CustomDropdownMaritalStateState
                       padding: const EdgeInsets.all(8.0),
                       child: Text(
                         widget.instance[e] ?? "",
-                        style: const TextStyle(
-                            fontSize: 18, color: ColorPalette.principal),
+                        style:
+                            const TextStyle(color: Colors.white, fontSize: 18),
                       ),
                     ),
                   ),

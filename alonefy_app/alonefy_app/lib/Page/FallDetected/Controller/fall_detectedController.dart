@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:ifeelefine/Common/utils.dart';
 import 'package:ifeelefine/Page/TermsAndConditions/PageView/conditionGeneral_page.dart';
 import 'package:ifeelefine/Provider/prefencesUser.dart';
+import 'package:ifeelefine/Views/contact_page.dart';
 
 final _prefs = PreferenceUser();
 
@@ -14,7 +15,11 @@ class FallDetectedController extends GetxController {
 
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => const ConditionGeneralPage()),
+      MaterialPageRoute(
+        builder: (context) => const ContactList(
+          isMenu: false,
+        ),
+      ),
     );
   }
 }

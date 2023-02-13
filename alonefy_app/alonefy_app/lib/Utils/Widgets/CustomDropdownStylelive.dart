@@ -58,8 +58,13 @@ class _CustomDropdownyStyleliveState extends State<CustomDropdownStylelive> {
             padding: const EdgeInsets.all(8.0),
             child: Text(
               widget.mensaje,
-              style:
-                  const TextStyle(fontSize: 18, color: ColorPalette.principal),
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 18.0,
+                wordSpacing: 1,
+                letterSpacing: 0.001,
+                fontWeight: FontWeight.normal,
+              ),
             ),
           ),
           value: _selectedLocation.isEmpty
@@ -76,7 +81,12 @@ class _CustomDropdownyStyleliveState extends State<CustomDropdownStylelive> {
                     child: Text(
                       widget.instance[e] ?? "",
                       style: const TextStyle(
-                          fontSize: 18, color: ColorPalette.principal),
+                        color: Colors.white,
+                        fontSize: 18.0,
+                        wordSpacing: 1,
+                        letterSpacing: 0.001,
+                        fontWeight: FontWeight.normal,
+                      ),
                     ),
                   ),
                 ),

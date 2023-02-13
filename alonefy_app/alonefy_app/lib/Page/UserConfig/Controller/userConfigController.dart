@@ -35,7 +35,8 @@ class UserConfigCOntroller extends GetxController {
     }
   }
 
-  Future<int> saveUserData(BuildContext context, UserBD user) async {
+  Future<int> saveUserData(
+      BuildContext context, UserBD user, String uuid) async {
     try {
       return const HiveData().saveUser(user);
     } catch (error) {
@@ -48,7 +49,7 @@ class UserConfigCOntroller extends GetxController {
       // Map info
 
       Box<UserBD> box = await Hive.openBox<UserBD>('userBD');
-      // await box.put(user.idUser, user);
+
       await box.putAt(int.parse(user.idUser), user);
       return true;
     } catch (error) {
@@ -74,6 +75,7 @@ class UserConfigCOntroller extends GetxController {
     Box<UserBD> box = await Hive.openBox<UserBD>('userBD');
     if (box.isEmpty == false) {
       person = box.getAt(0)!;
+
       return person;
     } else {
       return person;

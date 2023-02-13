@@ -27,18 +27,7 @@ class _WidgetColumnOnboardingState extends State<WidgetColumnOnboarding> {
     return Column(
       mainAxisSize: MainAxisSize.max,
       children: [
-        SizedBox(
-          child: Image.asset(
-            fit: BoxFit.fill,
-            scale: 0.5,
-            widget.img,
-            height: 430,
-            width: double.infinity,
-          ),
-        ),
-        const SizedBox(
-          height: 10,
-        ),
+        SafeArea(child: Container()),
         Center(
           child: SizedBox(
             width: 350,
@@ -54,6 +43,18 @@ class _WidgetColumnOnboardingState extends State<WidgetColumnOnboarding> {
               ),
             ),
           ),
+        ),
+        SizedBox(
+          child: Image.asset(
+            fit: BoxFit.fill,
+            scale: 0.5,
+            widget.img,
+            height: 430,
+            width: double.infinity,
+          ),
+        ),
+        const SizedBox(
+          height: 10,
         ),
         const SizedBox(
           height: 10,

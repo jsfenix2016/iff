@@ -1,19 +1,19 @@
-import 'dart:ffi';
-
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ifeelefine/Common/Constant.dart';
-import 'package:ifeelefine/Common/colorsPalette.dart';
+
 import 'package:ifeelefine/Common/utils.dart';
 import 'package:ifeelefine/Page/Geolocator/Controller/configGeolocatorController.dart';
-import 'package:ifeelefine/Page/FinishConfig/Pageview/finishConfig_page.dart';
+
+import 'package:ifeelefine/Page/TermsAndConditions/PageView/conditionGeneral_page.dart';
 import 'package:ifeelefine/Utils/Widgets/elevatedButtonFilling.dart';
 
 class ConfigGeolocator extends StatefulWidget {
   /// Creates a new GeolocatorWidget.
-  const ConfigGeolocator({Key? key}) : super(key: key);
+  const ConfigGeolocator({Key? key, required this.isMenu}) : super(key: key);
+  final bool isMenu;
 
   /// Utility method to create a page with the Baseflow templating.
 
@@ -195,11 +195,12 @@ class _ConfigGeolocatorState extends State<ConfigGeolocator> {
                   padding: const EdgeInsets.all(8.0),
                   child: ElevateButtonFilling(
                     onChanged: (value) {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const FinishConfigPage()),
-                      );
+                      if (!widget.isMenu)
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => ConditionGeneralPage()),
+                        );
                     },
                     mensaje: Constant.nextTxt,
                   ),

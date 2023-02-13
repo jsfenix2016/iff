@@ -59,7 +59,8 @@ class _CustomDropdownButtonWidgetStateWithDictionary
               value: widget.instance[e],
               child: Text(
                 widget.instance[e] ?? "",
-                style: const TextStyle(fontSize: 18, color: Colors.white),
+                style: const TextStyle(
+                    fontSize: 18, color: ColorPalette.principal),
               ),
             ),
           )

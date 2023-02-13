@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:ifeelefine/Common/colorsPalette.dart';
 
 class ElevateButtonCustomBorder extends StatefulWidget {
@@ -47,7 +48,16 @@ class _ElevateButtonCustomBorderState extends State<ElevateButtonCustomBorder> {
         height: 42,
         width: 200,
         child: Center(
-          child: Text(widget.mensaje),
+          child: Text(
+            widget.mensaje,
+            style: GoogleFonts.barlow(
+              fontSize: 16.0,
+              wordSpacing: 1,
+              letterSpacing: 0.005,
+              fontWeight: FontWeight.normal,
+              color: Colors.white,
+            ),
+          ),
         ),
       ),
     );

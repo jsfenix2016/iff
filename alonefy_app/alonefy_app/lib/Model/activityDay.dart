@@ -2,7 +2,7 @@
 class ActivityDay {
   late int id;
   late String day;
-  late String timeWakeup;
-  late String timeSleep;
+  late String timeStart;
+  late String timeFinish;
   late String activity;
 }

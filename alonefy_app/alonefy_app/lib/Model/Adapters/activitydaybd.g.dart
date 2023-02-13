@@ -18,8 +18,8 @@ class ActivityDayBDAdapter extends TypeAdapter<ActivityDayBD> {
     };
     return ActivityDayBD(
       day: fields[0] as String,
-      timeWakeup: fields[1] as String,
-      timeSleep: fields[2] as String,
+      timeFinish: fields[1] as String,
+      timeStart: fields[2] as String,
       activity: fields[3] as String,
       id: fields[4] as int,
     );
@@ -32,9 +32,9 @@ class ActivityDayBDAdapter extends TypeAdapter<ActivityDayBD> {
       ..writeByte(0)
       ..write(obj.day)
       ..writeByte(1)
-      ..write(obj.timeWakeup)
+      ..write(obj.timeFinish)
       ..writeByte(2)
-      ..write(obj.timeSleep)
+      ..write(obj.timeStart)
       ..writeByte(3)
       ..write(obj.activity)
       ..writeByte(4)

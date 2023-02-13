@@ -98,7 +98,9 @@ class _MenuConfigurationPageState extends State<MenuConfigurationPage> {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => const ContactList(),
+            builder: (context) => const ContactList(
+              isMenu: true,
+            ),
           ),
         );
         break;
@@ -122,7 +124,9 @@ class _MenuConfigurationPageState extends State<MenuConfigurationPage> {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => const ConfigGeolocator(),
+            builder: (context) => const ConfigGeolocator(
+              isMenu: true,
+            ),
           ),
         );
         break;
@@ -207,7 +211,7 @@ class _MenuConfigurationPageState extends State<MenuConfigurationPage> {
                           Center(
                             child: Container(
                               decoration: const BoxDecoration(
-                                color: Color.fromRGBO(169, 146, 125, 0.8),
+                                color: Colors.transparent,
                                 borderRadius:
                                     BorderRadius.all(Radius.circular(8)),
                               ),

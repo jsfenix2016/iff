@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ifeelefine/Common/colorsPalette.dart';
+import 'package:ifeelefine/Common/utils.dart';
 
 class ElevateButtonFilling extends StatefulWidget {
   const ElevateButtonFilling(
@@ -37,9 +38,10 @@ class _ElevateButtonFillingState extends State<ElevateButtonFilling> {
         _selectOption(true);
       },
       child: Container(
-        decoration: const BoxDecoration(
-          color: ColorPalette.principal,
-          borderRadius: BorderRadius.all(Radius.circular(100)),
+        decoration: BoxDecoration(
+          gradient: linerGradientButtonFilling(),
+          // color: ColorPalette.principal,
+          borderRadius: const BorderRadius.all(Radius.circular(100)),
         ),
         height: 42,
         width: 200,
@@ -49,9 +51,9 @@ class _ElevateButtonFillingState extends State<ElevateButtonFilling> {
             style: GoogleFonts.barlow(
               fontSize: 16.0,
               wordSpacing: 1,
-              letterSpacing: 1.2,
-              fontWeight: FontWeight.normal,
-              color: Colors.white,
+              letterSpacing: 1,
+              fontWeight: FontWeight.bold,
+              color: Colors.black,
             ),
           ),
         ),

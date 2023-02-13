@@ -7,6 +7,7 @@ import 'package:ifeelefine/Common/colorsPalette.dart';
 import 'package:ifeelefine/Common/utils.dart';
 import 'package:ifeelefine/Page/HomePage/Controller/homeController.dart';
 import 'package:ifeelefine/Page/RiskDate/Pageview/editRiskDatePage.dart';
+import 'package:ifeelefine/Page/RiskDate/Pageview/riskDatePage.dart';
 import 'package:ifeelefine/Page/UserConfig/Controller/userConfigController.dart';
 import 'package:ifeelefine/Model/user.dart';
 import 'package:ifeelefine/Model/userbd.dart';
@@ -118,18 +119,8 @@ class _HomePageState extends State<HomePage> {
       });
     }
 
-    // UserBD userbd = UserBD(
-    //     idUser: '0',
-    //     name: user!.name,
-    //     lastname: user!.lastname,
-    //     telephone: user!.telephone,
-    //     gender: user!.gender,
-    //     maritalStatus: user!.maritalStatus,
-    //     styleLife: user!.styleLife,
-    //     pathImage: "");
-
-    var req = await homeVC.changeImage(context, foto, user!);
-    if (req) {
+    if (foto != null) {
+      var req = await homeVC.changeImage(context, foto, user!);
       mostrarAlerta(context, "Se guardo la imagen correctamente".tr);
     } else {
       mostrarAlerta(context, "Hubo un error, intente mas tarde".tr);
@@ -200,6 +191,17 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
+  Future<DateTimeRange?> widgeDate(BuildContext context) async {
+    DateTimeRange? newDate = await showDateRangePicker(
+      context: context,
+      firstDate: DateTime(2017, 1),
+      lastDate: DateTime(2022, 7),
+      helpText: 'Select a date',
+    );
+
+    return newDate;
+  }
+
   Image getImage(String urlImage) {
     Uint8List bytesImages = const Base64Decoder().convert(urlImage);
 
@@ -219,30 +221,14 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       extendBodyBehindAppBar: true,
       key: _scaffoldKey,
-      // appBar: AppBar(
-      //   elevation: 0,
-      //   backgroundColor: Colors.transparent,
-      //   actionsIconTheme:
-      //       const IconThemeData(color: Colors.transparent, size: 36),
-      //   actions: [
-      //     IconButton(
-      //       color: Colors.amber,
-      //       onPressed: () {
-      //         Navigator.push(
-      //           context,
-      //           MaterialPageRoute(builder: (context) => const AlertsPage()),
-      //         );
-      //       },
-      //       icon: const Icon(Icons.notifications),
-      //     ),
-      //   ],
-      // ),
       body: Container(
         decoration: decorationCustom(),
         width: size.width,
         height: size.height,
         child: Stack(
           children: <Widget>[
+            // Call when you want the date time range picker to be shown
+
             Positioned(
               top: 44,
               right: 16,
@@ -269,7 +255,7 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
             Positioned(
-              top: 55,
+              top: 75,
               child: Container(
                 width: size.width,
                 color: Colors.transparent,
@@ -409,25 +395,117 @@ class _HomePageState extends State<HomePage> {
                               ),
                             ],
                           ),
+                          IconButton(
+                            iconSize: 40,
+                            color: ColorPalette.principal,
+                            onPressed: () {
+                              setBottomBarIndex(2);
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => const AlertsPage()),
+                              );
+                            },
+                            icon: Container(
+                              height: 39,
+                              width: 35.7,
+                              decoration: const BoxDecoration(
+                                image: DecorationImage(
+                                  image: AssetImage(
+                                      'assets/images/actividad 1.png'),
+                                  fit: BoxFit.fill,
+                                ),
+                                color: Colors.transparent,
+                              ),
+                            ),
+                          ),
+                          // IconButton(
+                          //   icon: Icon(
+                          //     Icons.add_alert,
+                          //     color: currentIndex == 3
+                          //         ? Colors.orange
+                          //         : Colors.grey.shade400,
+                          //   ),
+                          //   onPressed: () {
+                          //     Navigator.push(
+                          //       context,
+                          //       MaterialPageRoute(
+                          //           builder: (context) =>
+                          //               const UserInactivityPage()),
+                          //     );
+                          //     setBottomBarIndex(3);
+                          //   },
+                          // ),
                           Container(
                             width: size.width * 0.20,
                           ),
                           IconButton(
-                              icon: Icon(
-                                Icons.add_alert,
-                                color: currentIndex == 3
-                                    ? Colors.orange
-                                    : Colors.grey.shade400,
+                            iconSize: 40,
+                            color: ColorPalette.principal,
+                            onPressed: () {
+                              setBottomBarIndex(3);
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => const RiskPage()),
+                              );
+                            },
+                            icon: Container(
+                              height: 39,
+                              width: 35.7,
+                              decoration: const BoxDecoration(
+                                image: DecorationImage(
+                                  image: AssetImage(
+                                      'assets/images/cita-de-riesgo 1.png'),
+                                  fit: BoxFit.fill,
+                                ),
+                                color: Colors.transparent,
                               ),
-                              onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          const UserInactivityPage()),
-                                );
-                                setBottomBarIndex(3);
-                              }),
+                            ),
+                          ),
+                          // IconButton(
+                          //   icon: Icon(
+                          //     Icons.add_alert,
+                          //     color: currentIndex == 3
+                          //         ? Colors.orange
+                          //         : Colors.grey.shade400,
+                          //   ),
+                          //   onPressed: () {
+                          //     Navigator.push(
+                          //       context,
+                          //       MaterialPageRoute(
+                          //           builder: (context) =>
+                          //               const UserInactivityPage()),
+                          //     );
+                          //     setBottomBarIndex(4);
+                          //   },
+                          // ),
+
+                          IconButton(
+                            iconSize: 40,
+                            color: ColorPalette.principal,
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        const UserInactivityPage()),
+                              );
+                              setBottomBarIndex(4);
+                            },
+                            icon: Container(
+                              height: 39,
+                              width: 35.7,
+                              decoration: const BoxDecoration(
+                                image: DecorationImage(
+                                  image: AssetImage(
+                                      'assets/images/zona-riesgo 1.png'),
+                                  fit: BoxFit.fill,
+                                ),
+                                color: Colors.transparent,
+                              ),
+                            ),
+                          ),
                         ],
                       ),
                     )

@@ -45,21 +45,29 @@ class _AlternativePagePageState extends State<AlternativePage> {
                     ),
                   ),
                   Text(
-                    "I'm fine!",
+                    "I'm fine",
                     textAlign: TextAlign.center,
                     style: GoogleFonts.barlow(
-                      fontSize: 44.0,
+                      fontSize: 44.5,
                       wordSpacing: 1,
-                      letterSpacing: 1,
-                      fontWeight: FontWeight.normal,
+                      letterSpacing: 0.001,
+                      fontWeight: FontWeight.w100,
                       color: ColorPalette.principal,
                     ),
                   ),
                   const SizedBox(
                     height: 100,
                   ),
-                  ElevateButtonFilling(
-                    onChanged: (value) {
+                  ElevatedButton(
+                    style: ButtonStyle(
+                      shadowColor: MaterialStateProperty.all<Color>(
+                        Colors.transparent,
+                      ),
+                      backgroundColor: MaterialStateProperty.all<Color>(
+                        Colors.transparent,
+                      ),
+                    ),
+                    onPressed: () {
                       _prefs.firstConfig = true;
                       Navigator.push(
                         context,
@@ -68,7 +76,45 @@ class _AlternativePagePageState extends State<AlternativePage> {
                         ),
                       );
                     },
-                    mensaje: Constant.alternativePageButtonInit,
+                    child: Container(
+                      decoration: BoxDecoration(
+                        gradient: linerGradientButtonFilling(),
+                        // color: ColorPalette.principal,
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(100)),
+                      ),
+                      height: 42,
+                      width: 200,
+                      child: Padding(
+                        padding: const EdgeInsets.only(left: 9.0, right: 8),
+                        child: Row(
+                          children: [
+                            Center(
+                              child: Text(
+                                Constant.alternativePageButtonInit,
+                                style: GoogleFonts.barlow(
+                                  fontSize: 16.0,
+                                  wordSpacing: 1,
+                                  letterSpacing: 0.001,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black,
+                                ),
+                              ),
+                            ),
+                            Text(
+                              " I'm fine",
+                              style: GoogleFonts.barlow(
+                                fontSize: 16.0,
+                                wordSpacing: 1,
+                                letterSpacing: 0.001,
+                                fontWeight: FontWeight.normal,
+                                color: Colors.black,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
                   ),
                   const SizedBox(
                     height: 50,

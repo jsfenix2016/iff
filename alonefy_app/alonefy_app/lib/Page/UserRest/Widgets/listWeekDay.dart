@@ -77,9 +77,10 @@ class _ListWeekDayState extends State<ListWeekDay> {
                                 _selectedDays.add(_ListDay[i]);
 
                                 RestDayBD restDay = RestDayBD(
-                                    day: _ListDay[i],
-                                    timeSleep: timeLblAM,
-                                    timeWakeup: timeLblPM);
+                                  day: _ListDay[i],
+                                  timeSleep: timeLblAM,
+                                  timeWakeup: timeLblPM,
+                                );
                                 tempDicRest.add(restDay);
                               }
                             },
@@ -247,11 +248,7 @@ class _ListWeekDayState extends State<ListWeekDay> {
 
       for (var element in _selectedDays) {}
 
-      tempDicRest.forEach((element) {});
-      RestDayBD restDay = RestDayBD(
-          day: _ListDay[indexSelect],
-          timeSleep: timeLblAM,
-          timeWakeup: timeLblPM);
+      for (var element in tempDicRest) {}
     }
   }
 
@@ -285,10 +282,10 @@ class _ListWeekDayState extends State<ListWeekDay> {
         //     timeWakeup: timeLblPM);
         // tempDicRest.add(restDay);
       }
-      RestDayBD restDay = RestDayBD(
-          day: _ListDay[indexSelect],
-          timeSleep: timeLblAM,
-          timeWakeup: timeLblPM);
+      // RestDayBD restDay = RestDayBD(
+      //     day: _ListDay[indexSelect],
+      //     timeSleep: timeLblAM,
+      //     timeWakeup: timeLblPM);
       // tempDicRest.add(restDay);
 
       setState(() {});

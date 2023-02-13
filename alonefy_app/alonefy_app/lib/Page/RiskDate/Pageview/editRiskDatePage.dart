@@ -391,8 +391,8 @@ class _EditRiskPageState extends State<EditRiskPage> {
                     ),
                   ),
                   Container(
-                    height: 90,
-                    color: Colors.green,
+                    height: 20,
+                    color: Colors.transparent,
                   ),
                   Container(
                     height: 290,

@@ -28,7 +28,7 @@ class _RowContactState extends State<RowContact> {
   late String timeLblAM = "00:00 AM";
   List<ActivityDay> listTemp = [];
   ActivityDay activityAndInactivity = ActivityDay();
-  late FocusNode myFocusNode;
+  // late FocusNode myFocusNode;
 
   void _sendRestDay(ActivityDay rest) {
     setState(() {});
@@ -42,7 +42,7 @@ class _RowContactState extends State<RowContact> {
   @override
   void dispose() {
     // Clean up the focus node when the Form is disposed.
-    myFocusNode.dispose();
+    // myFocusNode.dispose();
     super.dispose();
   }
 

@@ -2,6 +2,7 @@ import 'package:ifeelefine/Common/Constant.dart';
 import 'package:ifeelefine/Common/colorsPalette.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:ifeelefine/Common/utils.dart';
 
 class AlertsPage extends StatefulWidget {
   const AlertsPage({super.key});
@@ -40,11 +41,11 @@ class _AlertsPageState extends State<AlertsPage> {
       // floatingActionButton: _createBottom(context),
       key: scaffoldKey,
       appBar: AppBar(
-        backgroundColor: Colors.blue,
+        backgroundColor: Colors.brown,
         title: const Center(child: Text("Alertas")),
       ),
       body: Container(
-        color: Colors.white,
+        decoration: decorationCustom(),
         child: Center(
           child: ListView.builder(
             shrinkWrap: true,

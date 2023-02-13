@@ -5,10 +5,12 @@ part 'Adapters/userpositionbd.g.dart';
 @HiveType(typeId: 2)
 class UserPositionBD extends HiveObject {
   UserPositionBD(
-      {required this.mov, required this.time, required this.movRureUser});
+      {required this.typeAction,
+      required this.time,
+      required this.movRureUser});
 
   @HiveField(0)
-  late List<double> mov;
+  late String typeAction;
 
   @HiveField(1)
   late DateTime time;

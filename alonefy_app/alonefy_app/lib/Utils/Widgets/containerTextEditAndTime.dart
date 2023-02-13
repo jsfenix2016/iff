@@ -13,6 +13,7 @@ class ContainerTextEditTime extends StatefulWidget {
   final String day;
   final ActivityDay acti;
   final ValueChanged<ActivityDay> onChanged;
+
   @override
   // ignore: library_private_types_in_public_api
   _ContainerTextEditTime createState() => _ContainerTextEditTime();
@@ -22,8 +23,8 @@ class _ContainerTextEditTime extends State<ContainerTextEditTime> {
   late String timeLblAM = "00:00 AM";
   List<ActivityDay> listTemp = [];
   ActivityDay activityAndInactivity = ActivityDay();
-  late FocusNode myFocusNode;
 
+  String activityTemp = "";
   void _selectOption(String value) {
     print(value);
     activityAndInactivity.activity = value;
@@ -37,15 +38,16 @@ class _ContainerTextEditTime extends State<ContainerTextEditTime> {
   void initState() {
     super.initState();
     activityAndInactivity.day = widget.day;
-    activityAndInactivity.timeWakeup = "00:00 AM";
-    activityAndInactivity.timeSleep = "00:00 PM";
-    myFocusNode = FocusNode();
+    activityAndInactivity.timeStart = "00:00 AM";
+    activityAndInactivity.timeFinish = "00:00 PM";
+    // activityAndInactivity.activity = widget.acti.activity;
+    activityTemp = widget.acti.activity;
   }
 
   @override
   void dispose() {
     // Clean up the focus node when the Form is disposed.
-    myFocusNode.dispose();
+
     super.dispose();
   }
 
@@ -98,12 +100,13 @@ class _ContainerTextEditTime extends State<ContainerTextEditTime> {
                 child: Padding(
                   padding: const EdgeInsets.all(4.0),
                   child: TextFormField(
+                    key: Key(activityTemp),
                     style: const TextStyle(fontSize: 18, color: Colors.yellow),
                     autofocus: false,
                     onChanged: (text) {
                       activityAndInactivity.activity = text;
-                      activityAndInactivity.timeSleep = _timeCAM.text;
-                      activityAndInactivity.timeWakeup = _timeC.text;
+                      activityAndInactivity.timeStart = _timeCAM.text;
+                      activityAndInactivity.timeFinish = _timeC.text;
                       widget.onChanged(activityAndInactivity);
                     },
                     onTap: () => {_selectOption(_day.text)},
@@ -133,9 +136,9 @@ class _ContainerTextEditTime extends State<ContainerTextEditTime> {
                     child: InkWell(
                       key: const Key("timeWakeup"),
                       child: Text(
-                        widget.acti.timeWakeup == ""
+                        widget.acti.timeFinish == ""
                             ? "00:00 AM"
-                            : widget.acti.timeWakeup,
+                            : widget.acti.timeFinish,
                         style: const TextStyle(
                             color: ColorPalette.principal,
                             fontWeight: FontWeight.bold,
@@ -159,9 +162,9 @@ class _ContainerTextEditTime extends State<ContainerTextEditTime> {
                     padding: const EdgeInsets.all(6.0),
                     child: InkWell(
                       child: Text(
-                        widget.acti.timeSleep == ""
+                        widget.acti.timeStart == ""
                             ? "00:00 PM"
-                            : widget.acti.timeSleep,
+                            : widget.acti.timeStart,
                         style: const TextStyle(
                             color: ColorPalette.principal,
                             fontWeight: FontWeight.bold,
@@ -211,9 +214,9 @@ class _ContainerTextEditTime extends State<ContainerTextEditTime> {
     if (time != null) {
       _timeC.text = time.format(context);
       timeLblAM = _timeC.text;
-
+      activityAndInactivity.day = widget.day;
       activityAndInactivity.activity = _day.text;
-      activityAndInactivity.timeSleep = _timeC.text;
+      activityAndInactivity.timeFinish = _timeC.text;
 
       widget.onChanged(activityAndInactivity);
     }
@@ -234,9 +237,9 @@ class _ContainerTextEditTime extends State<ContainerTextEditTime> {
     if (time != null) {
       _timeCAM.text = time.format(context);
 
+      activityAndInactivity.day = widget.day;
       activityAndInactivity.activity = _day.text;
-
-      activityAndInactivity.timeWakeup = _timeCAM.text;
+      activityAndInactivity.timeFinish = _timeCAM.text;
       widget.onChanged(activityAndInactivity);
     }
   }

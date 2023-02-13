@@ -49,6 +49,7 @@ class _RowSelectTimerState extends State<RowSelectTimer> {
                   restDay.timeWakeup = _timeLblAM;
                   restDay.timeSleep = widget.timeLblPM;
                   restDay.id = widget.index;
+                  // restDay.index = widget.index;
                   widget.onChanged(restDay);
                   setState(() {});
                 },

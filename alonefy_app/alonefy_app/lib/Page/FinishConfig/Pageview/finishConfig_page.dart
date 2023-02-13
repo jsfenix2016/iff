@@ -96,22 +96,6 @@ class _FinishConfigPageState extends State<FinishConfigPage> {
                   ],
                 ),
               ),
-              // Positioned(
-              //   bottom: 0,
-              //   right: 30,
-              //   child: Padding(
-              //     padding: const EdgeInsets.all(0.0),
-              //     child: ElevatedButton(
-              //       child: const Text(Constant.continueTxt),
-              //       onPressed: () {
-              //         Navigator.push(
-              //           context,
-              //           MaterialPageRoute(builder: (context) => HomePage()),
-              //         );
-              //       },
-              //     ),
-              //   ),
-              // ),
             ],
           ),
         ),

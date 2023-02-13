@@ -6,8 +6,8 @@ part 'Adapters/activitydaybd.g.dart';
 class ActivityDayBD extends HiveObject {
   ActivityDayBD(
       {required this.day,
-      required this.timeWakeup,
-      required this.timeSleep,
+      required this.timeStart,
+      required this.timeFinish,
       required this.activity,
       required this.id});
 
@@ -15,10 +15,10 @@ class ActivityDayBD extends HiveObject {
   final String day;
 
   @HiveField(1)
-  final String timeWakeup;
+  final String timeStart;
 
   @HiveField(2)
-  final String timeSleep;
+  final String timeFinish;
 
   @HiveField(3)
   final String activity;

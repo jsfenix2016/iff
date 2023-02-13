@@ -97,8 +97,8 @@ class _PreviewInactivityPageState extends State<PreviewInactivityPage> {
           itemBuilder: (BuildContext context, ActivityDayBD event) {
             var select = ActivityDay();
             select.activity = event.activity;
-            select.timeSleep = event.timeSleep;
-            select.timeWakeup = event.timeWakeup;
+            select.timeStart = event.timeStart;
+            select.timeFinish = event.timeFinish;
             select.day = event.day;
             return ContainerTextEditTime(
               day: event.day,

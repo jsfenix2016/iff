@@ -1,12 +1,13 @@
-import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_contacts/flutter_contacts.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class ContactDropdownButton extends StatefulWidget {
   const ContactDropdownButton({super.key, required this.onChanged});
   final ValueChanged<Contact> onChanged;
 
   @override
-  _ContactDropdownButtonState createState() => _ContactDropdownButtonState();
+  State<ContactDropdownButton> createState() => _ContactDropdownButtonState();
 }
 
 class _ContactDropdownButtonState extends State<ContactDropdownButton> {
@@ -24,11 +25,15 @@ class _ContactDropdownButtonState extends State<ContactDropdownButton> {
     if (!await FlutterContacts.requestPermission(readonly: true)) {
     } else {
       // Retrieve the list of contacts from the device
-      var contacts = await FlutterContacts.getContacts();
+      // var contacts = await FlutterContacts.getContacts();
+      var contacts = await FlutterContacts.getContacts(
+          withProperties: true, withPhoto: true);
+
+      // Get contact with specific ID (fully fetched)
+
       // Set the list of contacts in the state
-      setState(() {
-        _contacts = contacts;
-      });
+      _contacts = contacts;
+      setState(() {});
     }
   }
 
@@ -63,7 +68,15 @@ class _ContactDropdownButtonState extends State<ContactDropdownButton> {
           }
         },
         hint: indexTem == -1
-            ? const Text('Select contact')
+            ? Text('Select contact',
+                textAlign: TextAlign.left,
+                style: GoogleFonts.barlow(
+                  fontSize: 14.0,
+                  wordSpacing: 1,
+                  letterSpacing: 1,
+                  fontWeight: FontWeight.normal,
+                  color: Colors.white,
+                ))
             : Text(_contacts[indexTem].displayName),
       ),
     );

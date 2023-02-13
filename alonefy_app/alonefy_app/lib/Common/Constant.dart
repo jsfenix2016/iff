@@ -1,5 +1,6 @@
 class Constant {
   static const baseApi = '';
+  static const baseApiMessageBird = 'https://rest.messagebird.com/';
   static const personalInformation = 'Datos personales';
   static const selectGender = 'Selecciona el genero';
   static const selectCity = 'Selecciona la ciudad';
@@ -37,7 +38,7 @@ class Constant {
       'Si vives feliz solo o sola pero ademas quieres sentirte protegido/a mientras estas en casa o de viaje';
 
   static const alternativePageButtonPersonalizar = 'Personalizar ajustes';
-  static const alternativePageButtonInit = 'Comenzar a usar IFF';
+  static const alternativePageButtonInit = 'Comenzar a usar';
 
   static const userConfigPageButtonFree = 'Gratuito 30 dias';
   static const userConfigPageButtonProtection = 'Protección 360';

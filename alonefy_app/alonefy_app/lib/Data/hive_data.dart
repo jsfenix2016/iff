@@ -22,19 +22,57 @@ class HiveData {
 
   Future<UserBD> get getuserbd async {
     final Box<UserBD> box = await Hive.openBox<UserBD>('userBD');
-    return box.values.first;
+    UserBD person = UserBD(
+        idUser: '-1',
+        name: 'javier',
+        lastname: 'santana',
+        email: '',
+        telephone: '',
+        gender: '',
+        maritalStatus: '',
+        styleLife: '',
+        pathImage: '',
+        age: '18',
+        country: '',
+        city: '');
+
+    if (box.isEmpty == false) {
+      person = box.getAt(0)!;
+      return person;
+    } else {
+      return person;
+    }
   }
 
   Future<List<ContactBD>> get listUserContactbd async {
-    final Box<List<ContactBD>> box =
-        await Hive.openBox<List<ContactBD>>('listUserContactBD');
-    return box.values.first;
+    final Box<ContactBD> box = await Hive.openBox<ContactBD>('contactBD');
+    late final List<ContactBD> allMovTime = [];
+    var a = box.values.toList();
+    var contactBD = ContactBD(0, "", null, null, "", "", "", '');
+    for (var element in a) {
+      contactBD.id = element.id;
+      contactBD.displayName = element.displayName;
+
+      contactBD.phones = element.phones;
+      contactBD.photo = element.thumbnail;
+      contactBD.timeSendSMS = element.timeSendSMS;
+      contactBD.timeCall = element.timeCall;
+      allMovTime.add(contactBD);
+    }
+
+    return allMovTime;
   }
 
   Future<int> saveUserContact(ContactBD user) async {
     final Box<ContactBD> box = await Hive.openBox<ContactBD>('contactBD');
 
     return box.add(user);
+  }
+
+  Future<void> deleteUserContact(ContactBD user) async {
+    final Box<ContactBD> box = await Hive.openBox<ContactBD>('contactBD');
+
+    return box.delete(user.id);
   }
 
   Future<int> saveUserPositionBD(UserPositionBD user) async {
@@ -47,6 +85,7 @@ class HiveData {
   Future<List<ContactBD>> get listUserPositionbd async {
     final Box<List<ContactBD>> box =
         await Hive.openBox<List<ContactBD>>('listUserContactBD');
+
     return box.values.first;
   }
 

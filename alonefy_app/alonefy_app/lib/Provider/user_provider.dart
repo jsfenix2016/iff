@@ -15,14 +15,14 @@ class UsuarioProvider {
 
     try {
       final resp = await http.post(
-          Uri.parse("https://rest.messagebird.com/verify"),
+          Uri.parse("${Constant.baseApiMessageBird}verify"),
           headers: headersData,
           body: authData);
 
       Map<String, dynamic> decodeResp = json.decode(resp.body);
 
-      if (decodeResp['id'] == null) {
-        return {"ok": false, "mesaje": "error"};
+      if (decodeResp['errors'] == null) {
+        return {"ok": false, "mesaje": decodeResp['description']};
       }
 
       if (decodeResp['id'] != null) {
@@ -43,9 +43,38 @@ class UsuarioProvider {
 
     try {
       final resp = await http.post(
-          Uri.parse("https://rest.messagebird.com/verify"),
+          Uri.parse("${Constant.baseApiMessageBird}verify"),
           headers: headersData,
           body: authData);
+
+      Map<String, dynamic> decodeResp = json.decode(resp.body);
+
+      // print(decodeResp);
+      if (decodeResp['id'] == null) {
+        return {"ok": false, "mesaje": "error"};
+      }
+
+      if (decodeResp['id'] != null) {
+        return {"ok": true, "token": decodeResp['id']};
+      } else {
+        return {"ok": false, "mesaje": decodeResp['id']};
+      }
+    } catch (error) {
+      return {"ko": false, "mesaje": error.toString()};
+    }
+  }
+
+  Future<Map<String, dynamic>> sendSMS(Map<dynamic, dynamic> data) async {
+    // final authData = {"recipient": "$num", "originator": (name), 'body': ""};
+    final headersData = {
+      "Authorization": "AccessKey slL8Vl8b2QKT0P54RC2rRjBqL"
+    };
+
+    try {
+      final resp = await http.post(
+          Uri.parse("${Constant.baseApiMessageBird}messages"),
+          headers: headersData,
+          body: data);
 
       Map<String, dynamic> decodeResp = json.decode(resp.body);
 

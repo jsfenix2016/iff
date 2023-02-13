@@ -4,10 +4,11 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:ifeelefine/Common/utils.dart';
+
 import 'package:ifeelefine/Page/UserConfig/Controller/userConfigController.dart';
 import 'package:ifeelefine/Model/user.dart';
 import 'package:ifeelefine/Model/userbd.dart';
+import 'package:uuid/uuid.dart';
 
 class HomeController extends GetxController {
   final UserConfigCOntroller userVC = Get.put(UserConfigCOntroller());
@@ -39,7 +40,7 @@ class HomeController extends GetxController {
         await userVC.updateUserDate(context, userbd);
       } else {
         userbd.idUser = "0";
-        await userVC.saveUserData(context, userbd);
+        await userVC.saveUserData(context, userbd, const Uuid().v1());
       }
 
       return true;

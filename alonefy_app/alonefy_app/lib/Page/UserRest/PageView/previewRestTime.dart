@@ -9,7 +9,8 @@ import 'package:ifeelefine/Common/utils.dart';
 
 import 'package:ifeelefine/Model/restday.dart';
 import 'package:ifeelefine/Model/restdaybd.dart';
-import 'package:ifeelefine/Page/UseMobil/PageView/configurationUseMobile_page.dart';
+
+import 'package:ifeelefine/Page/UserInactivityPage/PageView/configurationUserInactivity_page.dart';
 import 'package:ifeelefine/Page/UserRest/Controller/userRestController.dart';
 import 'package:ifeelefine/Page/UserRest/Widgets/rowSelectTimer.dart';
 import 'package:ifeelefine/Utils/Widgets/elevateButtonCustomBorder.dart';
@@ -125,9 +126,10 @@ class _PreviewRestTimePageState extends State<PreviewRestTimePage> {
                       timeLblPM: selecDicActivity[index].timeSleep, //PM
                       onChanged: (value) {
                         RestDayBD restDay = RestDayBD(
-                            day: selecDicActivity[value.id].day,
-                            timeSleep: value.timeSleep,
-                            timeWakeup: value.timeWakeup);
+                          day: selecDicActivity[value.id].day,
+                          timeSleep: value.timeSleep,
+                          timeWakeup: value.timeWakeup,
+                        );
                         // ignore: use_build_context_synchronously
                         restVC.updateUserRestTime(context, restDay);
                         getInactivity();
@@ -147,7 +149,7 @@ class _PreviewRestTimePageState extends State<PreviewRestTimePage> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => const UserMobilePage(),
+                          builder: (context) => const UserInactivityPage(),
                         ),
                       );
                     },
@@ -161,38 +163,4 @@ class _PreviewRestTimePageState extends State<PreviewRestTimePage> {
       ),
     );
   }
-
-  // Future<String> displayTimePickerPM(BuildContext context, String key) async {
-  //   var time = await showTimePicker(
-  //       context: context,
-  //       initialTime: TimeOfDay.now(),
-  //       builder: (context, childWidget) {
-  //         return MediaQuery(
-  //             key: Key(key),
-  //             data: MediaQuery.of(context).copyWith(
-  //                 // Using 24-Hour format
-  //                 alwaysUse24HourFormat: true),
-  //             // If you want 12-Hour format, just change alwaysUse24HourFormat to false or remove all the builder argument
-  //             child: childWidget!);
-  //       });
-  //   if (time != null) {
-  //     RestDayBD restDay = RestDayBD(
-  //         day: selecDicActivity[indexSelect].day,
-  //         timeSleep: key == 'timeSleep'
-  //             // ignore: use_build_context_synchronously
-  //             ? time.format(context)
-  //             : selecDicActivity[indexSelect].timeSleep,
-  //         timeWakeup: key == 'timeWakeup'
-  //             // ignore: use_build_context_synchronously
-  //             ? time.format(context)
-  //             : selecDicActivity[indexSelect].timeWakeup);
-  //     // ignore: use_build_context_synchronously
-  //     restVC.updateUserRestTime(context, restDay);
-  //     getInactivity();
-
-  //     // ignore: use_build_context_synchronously
-  //     return time.format(context);
-  //   }
-  //   return "";
-  // }
 }

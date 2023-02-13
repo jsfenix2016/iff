@@ -98,8 +98,8 @@ class _UserInactivityPageState extends State<UserInactivityPage> {
         lista.add(value[i]);
         var select = ActivityDay();
         select.activity = value[i].activity;
-        select.timeSleep = value[i].timeSleep;
-        select.timeWakeup = value[i].timeWakeup;
+        select.timeStart = value[i].timeStart;
+        select.timeFinish = value[i].timeFinish;
         select.day = value[i].day;
         select.id = value[i].id;
         selecDicActivity.add(select);
@@ -122,8 +122,8 @@ class _UserInactivityPageState extends State<UserInactivityPage> {
   void addItemToList() {
     var select = ActivityDay();
     select.activity = "Actividad";
-    select.timeSleep = "00:00 PM";
-    select.timeWakeup = "00:00 AM";
+    select.timeStart = "00:00 PM";
+    select.timeFinish = "00:00 AM";
     select.day = daySelect;
     select.id = 0;
     selecDicActivity.insert(0, select);
@@ -269,13 +269,13 @@ class _UserInactivityPageState extends State<UserInactivityPage> {
                               ? "Actividad"
                               : selecDicActivity[index].activity;
 
-                          selecDicActivity[index].timeSleep == "00: 00 PM"
+                          selecDicActivity[index].timeStart == "00: 00 PM"
                               ? "00: 00 PM"
-                              : selecDicActivity[index].timeSleep;
+                              : selecDicActivity[index].timeStart;
 
-                          selecDicActivity[index].timeWakeup == "00: 00 AM"
+                          selecDicActivity[index].timeFinish == "00: 00 AM"
                               ? "00: 00 AM"
-                              : selecDicActivity[index].timeWakeup;
+                              : selecDicActivity[index].timeFinish;
                           return InkWell(
                             onTap: () {},
                             child: Dismissible(
@@ -298,10 +298,10 @@ class _UserInactivityPageState extends State<UserInactivityPage> {
                                   selecDicActivity[index].day = value.day;
                                   selecDicActivity[index].activity =
                                       value.activity;
-                                  selecDicActivity[index].timeSleep =
-                                      value.timeSleep;
-                                  selecDicActivity[index].timeWakeup =
-                                      value.timeWakeup;
+                                  selecDicActivity[index].timeStart =
+                                      value.timeStart;
+                                  selecDicActivity[index].timeFinish =
+                                      value.timeFinish;
 
                                   _selectOption(value);
                                 },
