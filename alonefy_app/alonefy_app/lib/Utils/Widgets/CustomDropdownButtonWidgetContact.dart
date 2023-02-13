@@ -1,19 +1,22 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_contacts/flutter_contacts.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter/material.dart';
+import 'package:ifeelefine/Common/utils.dart';
+import 'package:ifeelefine/Provider/prefencesUser.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class ContactDropdownButton extends StatefulWidget {
   const ContactDropdownButton({super.key, required this.onChanged});
   final ValueChanged<Contact> onChanged;
 
   @override
-  State<ContactDropdownButton> createState() => _ContactDropdownButtonState();
+  _ContactDropdownButtonState createState() => _ContactDropdownButtonState();
 }
 
 class _ContactDropdownButtonState extends State<ContactDropdownButton> {
   List<Contact> _contacts = [];
   final List<Contact> _selectedContacts = [];
   late int indexTem = -1;
+
   @override
   void initState() {
     super.initState();
@@ -22,18 +25,19 @@ class _ContactDropdownButtonState extends State<ContactDropdownButton> {
   }
 
   void _getContacts() async {
-    if (!await FlutterContacts.requestPermission(readonly: true)) {
+    PermissionStatus permission = await Permission.contacts.request();
+
+    if (permission.isPermanentlyDenied) {
+      showPermissionDialog(context);
+    } else if (permission.isDenied) {
+
     } else {
       // Retrieve the list of contacts from the device
-      // var contacts = await FlutterContacts.getContacts();
-      var contacts = await FlutterContacts.getContacts(
-          withProperties: true, withPhoto: true);
-
-      // Get contact with specific ID (fully fetched)
-
+      var contacts = await FlutterContacts.getContacts();
       // Set the list of contacts in the state
-      _contacts = contacts;
-      setState(() {});
+      setState(() {
+        _contacts = contacts;
+      });
     }
   }
 
@@ -68,15 +72,7 @@ class _ContactDropdownButtonState extends State<ContactDropdownButton> {
           }
         },
         hint: indexTem == -1
-            ? Text('Select contact',
-                textAlign: TextAlign.left,
-                style: GoogleFonts.barlow(
-                  fontSize: 14.0,
-                  wordSpacing: 1,
-                  letterSpacing: 1,
-                  fontWeight: FontWeight.normal,
-                  color: Colors.white,
-                ))
+            ? const Text('Select contact')
             : Text(_contacts[indexTem].displayName),
       ),
     );

@@ -98,9 +98,7 @@ class _MenuConfigurationPageState extends State<MenuConfigurationPage> {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => const ContactList(
-              isMenu: true,
-            ),
+            builder: (context) => const ContactList(),
           ),
         );
         break;

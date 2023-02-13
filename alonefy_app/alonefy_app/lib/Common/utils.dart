@@ -19,6 +19,7 @@ import 'package:ifeelefine/Provider/prefencesUser.dart';
 
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 // import 'package:flutter_pay/flutter_pay.dart';
 final _prefs = PreferenceUser();
@@ -289,3 +290,46 @@ Future<Position> determinePosition() async {
 
   return await Geolocator.getCurrentPosition();
 }
+
+Future<bool> cameraPermissions(PreferencePermission acceptedCamera, BuildContext context) async {
+  PermissionStatus permission = await Permission.camera.status;
+  PreferencePermission prefsCamera = acceptedCamera;
+
+  if (permission == PermissionStatus.denied && prefsCamera == PreferencePermission.deniedForever) {
+    showPermissionDialog(context);
+    return false;
+  } else if (permission == PermissionStatus.denied) {
+    Map<Permission, PermissionStatus> permissionStatus = await [Permission.camera].request();
+    if (permissionStatus[Permission.camera] == PermissionStatus.permanentlyDenied) {
+      _prefs.setAcceptedCamera = PreferencePermission.deniedForever;
+    }
+
+    return permissionStatus[Permission.camera] == PermissionStatus.granted;
+  } else {
+    return true;
+  }
+
+}
+
+void showPermissionDialog(BuildContext context) {
+  showDialog(
+    context: context,
+    builder: (context) {
+      return AlertDialog(
+        title: const Text("Abrir permisos"),
+        content: const Text("Para que se puedan mostrar los contactos, deberás dar permisos desde los ajustes de la aplicación."),
+        actions: <Widget>[
+          TextButton(
+            child: const Text("Cerrar"),
+            onPressed: () => Navigator.of(context).pop(),
+          ),
+          TextButton(
+            child: const Text("Abrir"),
+            onPressed: () => openAppSettings(),
+          )
+        ],
+      );
+    },
+  );
+}
+

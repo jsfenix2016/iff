@@ -1,63 +1,162 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_contacts/flutter_contacts.dart';
 
 import 'package:get/get.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:ifeelefine/Common/Constant.dart';
 import 'package:ifeelefine/Common/colorsPalette.dart';
-import 'package:ifeelefine/Common/utils.dart';
 import 'package:ifeelefine/Controllers/contactUserController.dart';
-import 'package:ifeelefine/Page/Geolocator/PageView/configGeolocator_page.dart';
 import 'package:ifeelefine/Utils/Widgets/CustomDropdownButtonWidgetContact.dart';
+import 'package:ifeelefine/Utils/Widgets/customDropDown.dart';
+import 'package:ifeelefine/Page/UserInactivityPage/PageView/configurationUserInactivity_page.dart';
+import 'package:ifeelefine/Page/PermissionUser/Pageview/permission_page.dart';
+import 'package:permission_handler/permission_handler.dart';
+// import 'package:permission_handler/permission_handler.dart';
+// import 'package:flutter_contacts/flutter_contacts.dart';
+// import 'package:contacts_service/contacts_service.dart';
 
 class ContactList extends StatefulWidget {
-  const ContactList({super.key, required this.isMenu});
-  final bool isMenu;
+  const ContactList({super.key});
+
   @override
   // ignore: library_private_types_in_public_api
-  State<ContactList> createState() => _ContactListState();
+  _ContactListState createState() => _ContactListState();
 }
 
 class _ContactListState extends State<ContactList> {
+  late List<Contact> _contacts = [];
   final ContactUserController userVC = Get.put(ContactUserController());
-
+  final TextEditingController _controller = TextEditingController();
+  List<Contact> _contacts2 = [];
   final List<Contact> _selectedContacts = [];
   var indexSelect = -1;
 
   bool isPremium = false;
-  // late String timeLblAM = "00:00 AM";
-  late String timeSMS = "5 min";
-  late String timeCall = '10 min';
+  late String timeLblAM = "00:00 AM";
   final _timeC = TextEditingController();
+
+  Future _contactsPermissions() async {
+    var status = await FlutterContacts.requestPermission();
+    print(status);
+    if (await Permission.contacts.request().isGranted) {
+      //   // Either the permission was already granted before or the user just granted it.
+      //   print("object");
+      // } else {
+      //   print("object");
+    }
+    PermissionStatus permission = await Permission.contacts.status;
+    if (permission != PermissionStatus.granted) {
+      Map<Permission, PermissionStatus> permissionStatus =
+      await [Permission.contacts].request();
+      return permissionStatus[Permission.contacts] ??
+          PermissionStatus.restricted;
+    } else {
+      return permission;
+    }
+  }
+
+  //Function to import contacts
+  getContacts() async {
+    // PermissionStatus contactsPermissionsStatus = await _contactsPermissions();
+    // if (contactsPermissionsStatus == PermissionStatus.granted) {
+    //   List<Contact> _contacts =
+    //       (await ContactsService.getContacts(withThumbnails: false)).toList();
+    //   setState(() {
+    //     _contacts = _contacts;
+    //   });
+    // }
+  }
+
+  Future checkPermission() async {
+    _contactsPermissions();
+    final PermissionStatus permissionStatus = await Permission.contacts.status;
+    print("permission  - $permissionStatus");
+    // if (permissionStatus == PermissionStatus.limited ||
+    //     permissionStatus == PermissionStatus.granted) {
+    // } else if (permissionStatus == PermissionStatus.denied) {
+    if (permissionStatus.isGranted) _getContacts();
+    //   checkPermission();
+    // } else if (permissionStatus == PermissionStatus.permanentlyDenied) {
+    // } else if (permissionStatus == PermissionStatus.restricted) {}
+    try {
+      if (permissionStatus.isDenied || permissionStatus.isPermanentlyDenied) {
+        await Permission.contacts.request();
+      }
+    } catch (e) {
+      print('e ${e.toString()}');
+    }
+  }
+
+  // Future<List<Contact>> _fetchContacts() async {
+  //   PermissionStatus permission = await Permission.contacts.status;
+  //   if (permission != PermissionStatus.granted &&
+  //       permission != PermissionStatus.denied) {
+  //     return _selectedContacts;
+  //   }
+  //   if (await FlutterContacts.requestPermission()) {
+  //     print("object");
+  //     return _selectedContacts;
+  //   }
+  //   if (!await FlutterContacts.requestPermission(readonly: true)) {
+  //     setState(() => _permissionDenied = true);
+  //     return _selectedContacts;
+  //   } else {
+  //     final contacts = await FlutterContacts.getContacts();
+  //     setState(() {
+  //       _contacts = contacts;
+  //     });
+
+  //     return _contacts;
+  //   }
+  // }
 
   @override
   void initState() {
+    // _getContacts();
+    // TODO: implement initState
     super.initState();
+
+    // _fetchContacts();
   }
+
+  void _getContacts() async {
+    // List<Contact> contacts = await FlutterContacts.getContacts(
+    // withProperties: true, withPhoto: true);
+
+    _contacts2 = await FlutterContacts.getContacts();
+    print(_contacts2);
+  }
+
+  // CupertinoPicker _buildContactPicker() {
+  //   return CupertinoPicker(
+  //     itemExtent: 32.0,
+  //     onSelectedItemChanged: (int index) {
+  //       setState(() {
+  //         _selectedContacts.add(_contacts2[index]);
+  //       });
+  //     },
+  //     children: _contacts2.map((Contact contact) {
+  //       return Text(contact.displayName);
+  //     }).toList(),
+  //   );
+  // }
 
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
-    return Scaffold(
-      appBar: widget.isMenu
-          ? AppBar(
-              backgroundColor: ColorPalette.secondView,
-              title: const Center(child: Text("Contactos")),
-            )
-          : null,
-      body: Container(
-        decoration: decorationCustom(),
-        width: size.width,
-        height: size.height,
-        child: Column(
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: Scaffold(
+        appBar: AppBar(
+          backgroundColor: ColorPalette.principal,
+          title: const Center(child: Text("Contactos")),
+        ),
+        body: Column(
           children: [
             const Padding(
               padding: EdgeInsets.only(top: 20.0, left: 8.0, right: 8.0),
               child: Text(
                 "Selecciona un contacto para solicitarle autorización de envio de sms y de llamadas.",
                 style: TextStyle(
-                    color: Colors.white,
+                    color: Colors.black,
                     fontWeight: FontWeight.bold,
                     fontSize: 18),
                 textAlign: TextAlign.center,
@@ -76,6 +175,9 @@ class _ContactListState extends State<ContactList> {
                 },
               ),
             ),
+            // const CircularProgressIndicator(
+            //   backgroundColor: Colors.amber,
+            // ),
             Expanded(
               child: ListView.builder(
                 itemCount: _selectedContacts.length,
@@ -86,51 +188,47 @@ class _ContactListState extends State<ContactList> {
                   return GestureDetector(
                     onTap: () {
                       indexSelect = index;
-
-                      // if (!isPremium) {
-                      //   isPremium = true;
-                      // } else {
-                      //   isPremium = false;
-                      // }
+                      //TODO:OPEN MARKET
+                      if (!isPremium) {
+                        isPremium = true;
+                      } else {
+                        isPremium = false;
+                      }
                       setState(() {});
+
+                      // Navigator.pushNamed(context, "product",
+                      //     arguments: tempListDay[index]);
                     },
                     child: Dismissible(
                       background: Container(
                         color: Colors.red,
                         height: 80,
                         width: double.infinity,
-                        child: Center(
+                        child: const Center(
                           child: Text(
                             "Delete",
-                            textAlign: TextAlign.center,
-                            style: GoogleFonts.barlow(
-                              fontSize: 16.0,
-                              wordSpacing: 1,
-                              letterSpacing: 1,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
-                            ),
+                            style: TextStyle(fontSize: 18),
                           ),
                         ),
                       ),
                       onDismissed: ((direction) => {
-                            setState(() {
-                              _selectedContacts.removeAt(index);
-                            })
-                          }),
+                        setState(() {
+                          _selectedContacts.removeAt(index);
+                        })
+                      }),
                       key: UniqueKey(),
                       child: Container(
-                        color: Colors.transparent,
-                        height: 300,
+                        color: Colors.white,
+                        height: 230,
                         width: double.infinity,
                         margin: const EdgeInsets.all(2),
                         child: Center(
                           child: Container(
                             margin: const EdgeInsets.all(5),
                             width: double.infinity,
-                            height: 300,
+                            height: 215,
                             decoration: BoxDecoration(
-                              color: ColorPalette.backgroundSwitch,
+                              color: Colors.white,
                               borderRadius: BorderRadius.circular(5.0),
                               boxShadow: const <BoxShadow>[
                                 BoxShadow(
@@ -161,13 +259,10 @@ class _ContactListState extends State<ContactList> {
                                                 .displayName
                                                 .toString(),
                                             textAlign: TextAlign.center,
-                                            style: GoogleFonts.barlow(
-                                              fontSize: 16.0,
-                                              wordSpacing: 1,
-                                              letterSpacing: 1,
-                                              fontWeight: FontWeight.bold,
-                                              color: Colors.white,
-                                            ),
+                                            style: const TextStyle(
+                                                color: Colors.black,
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 20),
                                           ),
                                         ],
                                       ),
@@ -175,11 +270,11 @@ class _ContactListState extends State<ContactList> {
                                     onTap: () {
                                       var cont = _selectedContacts[index];
                                       print(cont.displayName);
-                                      // if (!isPremium) {
-                                      //   isPremium = true;
-                                      // } else {
-                                      //   isPremium = false;
-                                      // }
+                                      if (!isPremium) {
+                                        isPremium = true;
+                                      } else {
+                                        isPremium = false;
+                                      }
                                       setState(() {});
                                     },
                                   ),
@@ -191,156 +286,54 @@ class _ContactListState extends State<ContactList> {
                                     children: [
                                       Expanded(
                                         child: SizedBox(
-                                          height: 160,
+                                          height: 90,
                                           child: Column(
                                             children: [
-                                              Padding(
-                                                padding:
-                                                    const EdgeInsets.all(8.0),
+                                              const Padding(
+                                                padding: EdgeInsets.all(8.0),
                                                 child: Text(
                                                   'Enviar sms en:',
                                                   textAlign: TextAlign.center,
-                                                  style: GoogleFonts.barlow(
-                                                    fontSize: 16.0,
-                                                    wordSpacing: 1,
-                                                    letterSpacing: 1,
-                                                    fontWeight: FontWeight.bold,
-                                                    color: Colors.white,
+                                                ),
+                                              ),
+                                              isPremium
+                                                  ? CustomDropdownButtonWidgetWithDictionary(
+                                                instance:
+                                                Constant.timeDic,
+                                                mensaje: "10 min",
+                                                isVisible: true,
+                                                onChanged: (value) {
+                                                  print(value);
+                                                },
+                                              )
+                                                  : Expanded(
+                                                child: Container(
+                                                  color: Colors.white,
+                                                  child: Center(
+                                                    child: Padding(
+                                                      padding:
+                                                      const EdgeInsets
+                                                          .all(3.0),
+                                                      child: InkWell(
+                                                        child: const Text(
+                                                          '10 min',
+                                                          style: TextStyle(
+                                                              color: Colors
+                                                                  .black,
+                                                              fontWeight:
+                                                              FontWeight
+                                                                  .bold,
+                                                              fontSize:
+                                                              18),
+                                                        ),
+                                                        onTap: () =>
+                                                            displayTimePicker(
+                                                                context),
+                                                      ),
+                                                    ),
                                                   ),
                                                 ),
                                               ),
-                                              !isPremium
-                                                  ? Container(
-                                                      height: 50,
-                                                      color: Colors.transparent,
-                                                      child: Center(
-                                                        child: Padding(
-                                                          padding:
-                                                              const EdgeInsets
-                                                                  .all(3.0),
-                                                          child: InkWell(
-                                                            child: Text(
-                                                              '5 min',
-                                                              textAlign:
-                                                                  TextAlign
-                                                                      .center,
-                                                              style: GoogleFonts
-                                                                  .barlow(
-                                                                fontSize: 22.0,
-                                                                wordSpacing: 1,
-                                                                letterSpacing:
-                                                                    1,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .bold,
-                                                                color: Colors
-                                                                    .white,
-                                                              ),
-                                                            ),
-                                                            onTap: () =>
-                                                                mostrarAlerta(
-                                                                    context,
-                                                                    'Activar premium para modificar el tiempo de envio de sms y llamada '),
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    )
-                                                  : Container(
-                                                      color: Colors.transparent,
-                                                      height: 100,
-                                                      width: 220,
-                                                      child: Stack(
-                                                        children: [
-                                                          SizedBox(
-                                                            child: Expanded(
-                                                              child: ListView(
-                                                                children: [
-                                                                  ListView
-                                                                      .builder(
-                                                                    shrinkWrap:
-                                                                        true,
-                                                                    scrollDirection:
-                                                                        Axis.vertical,
-                                                                    physics:
-                                                                        const NeverScrollableScrollPhysics(),
-                                                                    padding: const EdgeInsets
-                                                                            .only(
-                                                                        left: 8,
-                                                                        right:
-                                                                            8.0,
-                                                                        top: 0),
-                                                                    itemCount: Constant
-                                                                        .timeDic
-                                                                        .length,
-                                                                    itemBuilder:
-                                                                        (BuildContext
-                                                                                context,
-                                                                            int index) {
-                                                                      return Row(
-                                                                        mainAxisSize:
-                                                                            MainAxisSize.max,
-                                                                        children: [
-                                                                          GestureDetector(
-                                                                            onTap:
-                                                                                () {
-                                                                              indexSelect = index;
-
-                                                                              setState(() {
-                                                                                timeSMS = Constant.timeDic[index.toString()].toString();
-                                                                              });
-                                                                            },
-                                                                            child:
-                                                                                Padding(
-                                                                              padding: const EdgeInsets.only(left: 8.0, right: 8.0),
-                                                                              child: Container(
-                                                                                key: const Key(""),
-                                                                                width: 120,
-                                                                                height: 80,
-                                                                                color: Colors.transparent,
-                                                                                child: Column(
-                                                                                  children: [
-                                                                                    Container(
-                                                                                      width: 260,
-                                                                                      height: 45,
-                                                                                      color: indexSelect == index ? Colors.amber.withAlpha(20) : Colors.transparent,
-                                                                                      child: Center(
-                                                                                        child: Text(
-                                                                                          Constant.timeDic[index.toString()].toString(),
-                                                                                          textAlign: TextAlign.center,
-                                                                                          style: GoogleFonts.barlow(
-                                                                                            fontSize: 40.0,
-                                                                                            wordSpacing: 1,
-                                                                                            letterSpacing: 1,
-                                                                                            fontWeight: FontWeight.bold,
-                                                                                            color: Colors.white,
-                                                                                          ),
-                                                                                        ),
-                                                                                      ),
-                                                                                    ),
-                                                                                    const SizedBox(
-                                                                                      height: 20,
-                                                                                    ),
-                                                                                    Container(
-                                                                                      color: Colors.white,
-                                                                                      height: 1,
-                                                                                      width: 250,
-                                                                                    ),
-                                                                                  ],
-                                                                                ),
-                                                                              ),
-                                                                            ),
-                                                                          ),
-                                                                        ],
-                                                                      );
-                                                                    },
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                            ),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    ),
                                             ],
                                           ),
                                         ),
@@ -350,156 +343,54 @@ class _ContactListState extends State<ContactList> {
                                       ),
                                       Expanded(
                                         child: SizedBox(
-                                          height: 160,
+                                          height: 90,
                                           child: Column(
                                             children: [
-                                              Padding(
-                                                padding:
-                                                    const EdgeInsets.all(8.0),
+                                              const Padding(
+                                                padding: EdgeInsets.all(8.0),
                                                 child: Text(
                                                   'Llamadas en:',
                                                   textAlign: TextAlign.center,
-                                                  style: GoogleFonts.barlow(
-                                                    fontSize: 16.0,
-                                                    wordSpacing: 1,
-                                                    letterSpacing: 1,
-                                                    fontWeight: FontWeight.bold,
-                                                    color: Colors.white,
+                                                ),
+                                              ),
+                                              isPremium
+                                                  ? CustomDropdownButtonWidgetWithDictionary(
+                                                instance:
+                                                Constant.timeDic,
+                                                mensaje: "15 min",
+                                                isVisible: true,
+                                                onChanged: (value) {
+                                                  print(value);
+                                                },
+                                              )
+                                                  : Expanded(
+                                                child: Container(
+                                                  color: Colors.white,
+                                                  child: Center(
+                                                    child: Padding(
+                                                      padding:
+                                                      const EdgeInsets
+                                                          .all(3.0),
+                                                      child: InkWell(
+                                                        child: const Text(
+                                                          "15 min",
+                                                          style: TextStyle(
+                                                              color: Colors
+                                                                  .black,
+                                                              fontWeight:
+                                                              FontWeight
+                                                                  .bold,
+                                                              fontSize:
+                                                              18),
+                                                        ),
+                                                        onTap: () =>
+                                                            displayTimePicker(
+                                                                context),
+                                                      ),
+                                                    ),
                                                   ),
                                                 ),
                                               ),
-                                              !isPremium
-                                                  ? Container(
-                                                      height: 50,
-                                                      color: Colors.transparent,
-                                                      child: Center(
-                                                        child: Padding(
-                                                          padding:
-                                                              const EdgeInsets
-                                                                  .all(3.0),
-                                                          child: InkWell(
-                                                            child: Text(
-                                                              '10 min',
-                                                              textAlign:
-                                                                  TextAlign
-                                                                      .center,
-                                                              style: GoogleFonts
-                                                                  .barlow(
-                                                                fontSize: 22.0,
-                                                                wordSpacing: 1,
-                                                                letterSpacing:
-                                                                    1,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .bold,
-                                                                color: Colors
-                                                                    .white,
-                                                              ),
-                                                            ),
-                                                            onTap: () =>
-                                                                mostrarAlerta(
-                                                                    context,
-                                                                    'Activar premium para modificar el tiempo de envio de sms y llamada '),
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    )
-                                                  : Container(
-                                                      color: Colors.transparent,
-                                                      height: 100,
-                                                      width: 220,
-                                                      child: Stack(
-                                                        children: [
-                                                          SizedBox(
-                                                            child: Expanded(
-                                                              child: ListView(
-                                                                children: [
-                                                                  ListView
-                                                                      .builder(
-                                                                    shrinkWrap:
-                                                                        true,
-                                                                    scrollDirection:
-                                                                        Axis.vertical,
-                                                                    physics:
-                                                                        const NeverScrollableScrollPhysics(),
-                                                                    padding: const EdgeInsets
-                                                                            .only(
-                                                                        left: 8,
-                                                                        right:
-                                                                            8.0,
-                                                                        top: 0),
-                                                                    itemCount: Constant
-                                                                        .timeDic
-                                                                        .length,
-                                                                    itemBuilder:
-                                                                        (BuildContext
-                                                                                context,
-                                                                            int index) {
-                                                                      return Row(
-                                                                        mainAxisSize:
-                                                                            MainAxisSize.max,
-                                                                        children: [
-                                                                          GestureDetector(
-                                                                            onTap:
-                                                                                () {
-                                                                              indexSelect = index;
-
-                                                                              setState(() {
-                                                                                timeCall = Constant.timeDic[index.toString()].toString();
-                                                                              });
-                                                                            },
-                                                                            child:
-                                                                                Padding(
-                                                                              padding: const EdgeInsets.only(left: 8.0, right: 8.0),
-                                                                              child: Container(
-                                                                                key: const Key(""),
-                                                                                width: 120,
-                                                                                height: 80,
-                                                                                color: Colors.transparent,
-                                                                                child: Column(
-                                                                                  children: [
-                                                                                    Container(
-                                                                                      width: 260,
-                                                                                      height: 45,
-                                                                                      color: indexSelect == index ? Colors.amber.withAlpha(20) : Colors.transparent,
-                                                                                      child: Center(
-                                                                                        child: Text(
-                                                                                          Constant.timeDic[index.toString()].toString(),
-                                                                                          textAlign: TextAlign.center,
-                                                                                          style: GoogleFonts.barlow(
-                                                                                            fontSize: 40.0,
-                                                                                            wordSpacing: 1,
-                                                                                            letterSpacing: 1,
-                                                                                            fontWeight: FontWeight.bold,
-                                                                                            color: Colors.white,
-                                                                                          ),
-                                                                                        ),
-                                                                                      ),
-                                                                                    ),
-                                                                                    const SizedBox(
-                                                                                      height: 20,
-                                                                                    ),
-                                                                                    Container(
-                                                                                      color: Colors.white,
-                                                                                      height: 1,
-                                                                                      width: 250,
-                                                                                    ),
-                                                                                  ],
-                                                                                ),
-                                                                              ),
-                                                                            ),
-                                                                          ),
-                                                                        ],
-                                                                      );
-                                                                    },
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                            ),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    ),
                                             ],
                                           ),
                                         ),
@@ -525,58 +416,47 @@ class _ContactListState extends State<ContactList> {
     );
   }
 
-  // Future displayTimePicker(BuildContext context) async {
-  //   var time = await showTimePicker(
-  //       context: context,
-  //       initialTime: TimeOfDay.now(),
-  //       builder: (context, childWidget) {
-  //         return MediaQuery(
-  //             data: MediaQuery.of(context).copyWith(
-  //                 // Using 24-Hour format
-  //                 alwaysUse24HourFormat: true),
-  //             // If you want 12-Hour format, just change alwaysUse24HourFormat to false or remove all the builder argument
-  //             child: childWidget!);
-  //       });
-  //   if (time != null) {
-  //     setState(() {
-  //       if (time.hour > 11) {
-  //         TimeOfDay timeOfDay = const TimeOfDay(hour: 0, minute: 0);
-  //         _timeC.text = timeOfDay.format(context);
-  //         timeLblAM = _timeC.text;
-  //       } else {
-  //         _timeC.text = time.format(context);
-  //         timeLblAM = _timeC.text;
-  //       }
-  //     });
-  //   }
-  // }
+  Future displayTimePicker(BuildContext context) async {
+    var time = await showTimePicker(
+        context: context,
+        initialTime: TimeOfDay.now(),
+        builder: (context, childWidget) {
+          return MediaQuery(
+              data: MediaQuery.of(context).copyWith(
+                // Using 24-Hour format
+                  alwaysUse24HourFormat: true),
+              // If you want 12-Hour format, just change alwaysUse24HourFormat to false or remove all the builder argument
+              child: childWidget!);
+        });
+    if (time != null) {
+      setState(() {
+        if (time.hour > 11) {
+          TimeOfDay timeOfDay = const TimeOfDay(hour: 0, minute: 0);
+          _timeC.text = timeOfDay.format(context);
+          timeLblAM = _timeC.text;
+        } else {
+          _timeC.text = time.format(context);
+          timeLblAM = _timeC.text;
+        }
+      });
+    }
+  }
 
   Widget _createButtonNext() {
     return ElevatedButton.icon(
       style: ButtonStyle(
           backgroundColor:
-              MaterialStateProperty.all<Color>(ColorPalette.principal)),
-      label: widget.isMenu ? const Text("Guardar") : const Text("Siguiente"),
+          MaterialStateProperty.all<Color>(ColorPalette.principal)),
+      label: const Text("Siguiente"),
       icon: const Icon(
         Icons.next_plan,
       ),
-      onPressed: (() async {
-        print(_selectedContacts);
-
-        await userVC.saveListContact(
-            context, _selectedContacts, timeSMS, timeCall);
-        if (widget.isMenu) {
-        } else {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => const ConfigGeolocator(
-                      isMenu: false,
-                    )),
-          );
-        }
-        // userVC.
-        // checkPermission();
+      onPressed: (() {
+        checkPermission();
+        // Navigator.push(
+        //   context,
+        //   MaterialPageRoute(builder: (context) => PermitionUserPage()),
+        // );
       }),
     );
   }
@@ -585,16 +465,16 @@ class _ContactListState extends State<ContactList> {
     return ElevatedButton.icon(
       style: ButtonStyle(
           backgroundColor:
-              MaterialStateProperty.all<Color>(ColorPalette.principal)),
+          MaterialStateProperty.all<Color>(ColorPalette.principal)),
       label: const Text("Solicitar autorización"),
       icon: const Icon(
         Icons.next_plan,
       ),
       onPressed: (() {
-        // Navigator.push(
-        //   context,
-        //   MaterialPageRoute(builder: (context) => UserInactivityPage()),
-        // );
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => UserInactivityPage()),
+        );
       }),
     );
   }
