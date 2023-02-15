@@ -140,6 +140,14 @@ class PreferenceUser {
   get getDisambleIFFForActivity {
     return _prefs.getInt('DisambleForActivity') ?? 5;
   }
+
+  set setNotificationAudio(String audioPath) {
+    _prefs.setString('NotificationAudio', audioPath);
+  }
+
+  get getNotificationAudio {
+    return _prefs.getString('NotificationAudio') ?? '';
+  }
 }
 
 enum PreferencePermission {
