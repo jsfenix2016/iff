@@ -46,7 +46,7 @@ class Constant {
 
   static const hoursRest = 'A que horas duermes';
   static const hoursSleepAndWakeup = '¿A qué hora te acuestas y te levantas?';
-  static const casefallText = 'En caso de alerta desea compartir su ubicación';
+  static const casefallText = '¿Deseas que, en caso de alerta, enviemos tu ubicación a tus contactos?';
 
   static const permissionApp = 'Permisos que se usan en la app';
 
@@ -88,6 +88,62 @@ class Constant {
     "16": '12 hora',
   };
 
+  static const Map<String, String> timeDicExtended = {
+    "0": '2 min',
+    "1": '5 min',
+    "2": '10 min',
+    "3": '15 min',
+    "4": '20 min',
+    "5": '30 min',
+    "6": '40 min',
+    "7": '50 min',
+    "8": '2 horas',
+    "9": '3 horas',
+    "10": '4 horas',
+    "11": '5 horas',
+    "12": '6 horas',
+    "13": '7 horas',
+    "14": '8 horas',
+    "15": '9 horas',
+    "16": '10 horas',
+    "17": '11 horas',
+    "18": '12 horas',
+  };
+
+  static const Map<String, String> hours = {
+    "0": '00',
+    "1": '01',
+    "2": '02',
+    "3": '03',
+    "4": '04',
+    "5": '05',
+    "6": '06',
+    "7": '07',
+    "8": '08',
+    "9": '09',
+    "10": '10',
+    "11": '11',
+    "12": '12',
+    "13": '13',
+    "14": '14',
+    "15": '15',
+    "16": '16',
+    "17": '17',
+    "18": '18',
+    "19": '19',
+    "20": '20',
+    "21": '21',
+    "22": '22',
+    "23": '23',
+  };
+
+  static const Map<String, String> minutes = {
+    "0": '00',
+    "1": '15',
+    "2": '30',
+    "3": '45'
+  };
+
   static const Map<String, String> weekend = {
     '0': 'Lunes',
     '1': 'Martes',
@@ -127,4 +183,7 @@ class Constant {
     "15": '11 hora',
     "16": '12 hora',
   };
+
+  static const String disablePermission = "Para poder desactivar el permiso, se ha de hacer desde los Ajustes de la app";
+  static const String enablePermission = "Para poder activar el permiso, se ha de hacer desde los Ajustes de la app";
 }

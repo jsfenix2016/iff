@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ifeelefine/Common/utils.dart';
@@ -7,6 +8,11 @@ import 'package:ifeelefine/Page/UserInactivityPage/PageView/configurationUserIna
 import 'package:ifeelefine/Utils/Widgets/elevatedButtonFilling.dart';
 import 'package:flutter/material.dart';
 
+import '../../../Common/colorsPalette.dart';
+import '../../../Provider/prefencesUser.dart';
+
+final _prefs = PreferenceUser();
+
 class DesactivePage extends StatefulWidget {
   const DesactivePage({super.key, required this.isMenu});
   final bool isMenu;
@@ -15,7 +21,7 @@ class DesactivePage extends StatefulWidget {
 }
 
 class _DesactivePageState extends State<DesactivePage> {
-  final DisambleController disambleVC = Get.put(DisambleController());
+  //final DisambleController disambleVC = Get.put(DisambleController());
 
   final List<RestDay> tempDicRest = [];
   final List<String> listDisamble = <String>[
@@ -29,120 +35,206 @@ class _DesactivePageState extends State<DesactivePage> {
     "1 año",
     "Siempre",
   ];
+  List<bool> listDisambleEnabled = <bool>[false, false, false, false, false, false, false, false, false];
+
+  var indexDisamble = -1;
 
   String desactiveIFeelFine = "1 hora";
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getDisamble();
+  }
+
+  void getDisamble() {
+    var count = 0;
+    for (var disamble in listDisamble) {
+      if (disamble == _prefs.getDisambleIFF) {
+        setState(() {
+          listDisambleEnabled[count] = true;
+        });
+        break;
+      }
+      count++;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
 
     return Scaffold(
-      // extendBodyBehindAppBar: true,
+      extendBodyBehindAppBar: false,
       appBar: AppBar(
-        elevation: 0,
-        backgroundColor: Colors.brown,
-        title: const Text('Desactivar IFeelFine'),
+        backgroundColor: ColorPalette.backgroundAppBar,
+        title: const Text("Configuración"),
       ),
-      // floatingActionButton:
       body: Container(
-        decoration: decorationCustom(),
-        width: size.width,
-        height: size.height,
-        child: Container(
-          color: Colors.transparent,
-          child: Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.only(top: 8.0),
+          decoration: decorationCustom(),
+          width: size.width,
+          height: size.height,
+          child: Stack (
+            children: <Widget>[
+              Positioned(
+                top: 32,
+                width: size.width,
+                child: Center(
+                  child: Text('Desactivar IFEELFINE',
+                      textAlign: TextAlign.center,
+                      style: GoogleFonts.barlow(
+                        fontSize: 22.0,
+                        wordSpacing: 1,
+                        letterSpacing: 1.2,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.white,
+                      )),
+                ),
+              ),
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(0, 100, 0, 100),
+                  child: ListView.builder(
+                    itemCount: listDisamble.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      return Row(
+                        children: [
+                          Expanded(
+                              child: Align(
+                                alignment: Alignment.centerRight,
+                                child: TextButton(
+                                    onPressed: () {
+                                      if (indexDisamble == index) {
+                                        indexDisamble = -1;
+                                      } else {
+                                        indexDisamble = index;
+                                      }
+                                    },
+                                    child: Text(
+                                        listDisamble[index],
+                                        style: GoogleFonts.barlow(
+                                          fontSize: 20.0,
+                                          fontWeight: FontWeight.w500,
+                                          color: CupertinoColors.white,
+                                        )
+                                    )
+                                ),
+                              )
+                          ),
+                          Expanded(
+                              child: Align(
+                                alignment: Alignment.centerLeft,
+                                child: Padding(
+                                  padding: EdgeInsets.only(left: 16),
+                                  child: CupertinoSwitch(
+                                    value: listDisambleEnabled[index],
+                                    activeColor: ColorPalette.activeSwitch,
+                                    trackColor: CupertinoColors.inactiveGray,
+                                    onChanged: (bool? value) {
+                                      setState(() {
+                                        var count = 0;
+                                        for (var disambleEnabled in listDisambleEnabled) {
+                                          listDisambleEnabled[count] = false;
+                                          count++;
+                                        }
+                                        listDisambleEnabled[index] = value!;
+                                      });
+                                    },
+                                  ),
+                                )
+                              )
+                          )
+                        ],
+                      );
+                    },
+                  ),
+                ),
+              ),
+              Positioned(
+                bottom: 20,
+                right: 32,
                 child: Container(
-                  color: Colors.transparent,
-                  height: 105,
-                  width: size.width,
+                  decoration: const BoxDecoration(
+                    color: Color.fromRGBO(219, 177, 42, 1),
+                    borderRadius:
+                    BorderRadius.all(Radius.circular(8)),
+                  ),
+                  width: 138,
+                  height: 42,
                   child: Center(
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text(
-                        textAlign: TextAlign.center,
-                        "Permite desactivar la aplicación por un tiempo determinado.",
-                        style: GoogleFonts.barlow(
-                          fontSize: 24.0,
-                          wordSpacing: 1,
-                          letterSpacing: 1.2,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                        ),
-                      ),
+                    child: TextButton(
+                      child: Text('Guardar',
+                          textAlign: TextAlign.center,
+                          style: GoogleFonts.barlow(
+                            fontSize: 16.0,
+                            wordSpacing: 1,
+                            letterSpacing: 1.2,
+                            fontWeight: FontWeight.w700,
+                            color: Colors.black,
+                          )),
+                      onPressed: () async {
+                        saveDisamble();
+                      },
                     ),
                   ),
                 ),
               ),
-              Flexible(
-                child: ListView(
-                  padding: const EdgeInsets.only(top: 0.0, bottom: 20),
-                  children: [
-                    ListView.builder(
-                      padding: const EdgeInsets.only(top: 0.0, bottom: 20),
-                      physics: const NeverScrollableScrollPhysics(),
-                      shrinkWrap: true,
-                      itemCount: listDisamble.length,
-                      itemBuilder: (context, index) {
-                        return RadioListTile(
-                          activeColor: Colors.white,
-                          controlAffinity: ListTileControlAffinity.trailing,
-                          title: Text(
-                            listDisamble[index],
-                            style: GoogleFonts.barlow(
-                              fontSize: 16.0,
-                              wordSpacing: 1,
-                              letterSpacing: 1.2,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
-                            ),
-                          ),
-                          value: listDisamble[index],
-                          groupValue: desactiveIFeelFine,
-                          onChanged: (value) {
-                            setState(
-                              () {
-                                desactiveIFeelFine = value.toString();
-                              },
-                            );
-                          },
-                        );
-                      },
+              Positioned(
+                bottom: 20,
+                left: 32,
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.transparent,
+                    border: Border.all(
+                        color: Color.fromRGBO(219, 177, 42, 1)
                     ),
-                  ],
+                    borderRadius:
+                    BorderRadius.all(Radius.circular(8)),
+                  ),
+                  width: 138,
+                  height: 42,
+                  child: Center(
+                    child: TextButton(
+                      child: Text('Cancelar',
+                          textAlign: TextAlign.center,
+                          style: GoogleFonts.barlow(
+                            fontSize: 16.0,
+                            wordSpacing: 1,
+                            letterSpacing: 1.2,
+                            fontWeight: FontWeight.w700,
+                            color: Colors.white,
+                          )),
+                      onPressed: () => Navigator.of(context).pop(),
+                    ),
+                  ),
                 ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: ElevateButtonFilling(
-                  onChanged: (bool value) {
-                    disambleVC.saveDisamble(context, desactiveIFeelFine);
-                  },
-                  mensaje: "Guardar",
-                ),
-              ),
+              )
             ],
-          ),
-        ),
+          )
       ),
     );
+
   }
 
-  // Widget _createButtonNext() {
-  //   return ElevatedButton.icon(
-  //     style: ButtonStyle(
-  //         backgroundColor: MaterialStateProperty.all<Color>(Colors.blue)),
-  //     label: const Text("Guardar"),
-  //     icon: const Icon(
-  //       Icons.save,
-  //     ),
-  //     onPressed: (() {
-  //       Navigator.push(
-  //         context,
-  //         MaterialPageRoute(builder: (context) => const UserInactivityPage()),
-  //       );
-  //     }),
-  //   );
-  // }
+  void saveDisamble() {
+    for (var i=0;i<listDisamble.length;i++) {
+      if (listDisambleEnabled[i]) {
+        _prefs.setDisambleIFF = listDisamble[i];
+        _prefs.setEnableIFF = false;
+        break;
+      }
+
+      if (i == listDisamble.length - 1) {
+        _prefs.setDisambleIFF = '';
+      }
+    }
+
+    //showAlert();
+    showSaveAlert(
+        context,
+        "Tiempo guardado",
+        "El tiempo en el que queda desactivado la aplicación se ha guardado correctamente."
+    );
+  }
 }

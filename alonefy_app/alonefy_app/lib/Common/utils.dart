@@ -18,8 +18,11 @@ import 'package:ifeelefine/Model/userpositionbd.dart';
 import 'package:ifeelefine/Provider/prefencesUser.dart';
 
 import 'package:image_picker/image_picker.dart';
+import 'package:jiffy/jiffy.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
+
+import 'Constant.dart';
 
 // import 'package:flutter_pay/flutter_pay.dart';
 final _prefs = PreferenceUser();
@@ -296,7 +299,7 @@ Future<bool> cameraPermissions(PreferencePermission acceptedCamera, BuildContext
   PreferencePermission prefsCamera = acceptedCamera;
 
   if (permission == PermissionStatus.denied && prefsCamera == PreferencePermission.deniedForever) {
-    showPermissionDialog(context);
+    showPermissionDialog(context, Constant.enablePermission);
     return false;
   } else if (permission == PermissionStatus.denied) {
     Map<Permission, PermissionStatus> permissionStatus = await [Permission.camera].request();
@@ -304,20 +307,24 @@ Future<bool> cameraPermissions(PreferencePermission acceptedCamera, BuildContext
       _prefs.setAcceptedCamera = PreferencePermission.deniedForever;
     }
 
+    if (permissionStatus[Permission.camera] == PermissionStatus.granted) {
+      _prefs.setAcceptedCamera = PreferencePermission.allow;
+    }
+
     return permissionStatus[Permission.camera] == PermissionStatus.granted;
   } else {
-    return true;
+    return _prefs.getAcceptedCamera == PreferencePermission.allow;
   }
 
 }
 
-void showPermissionDialog(BuildContext context) {
+void showPermissionDialog(BuildContext context, String message) {
   showDialog(
     context: context,
     builder: (context) {
       return AlertDialog(
         title: const Text("Abrir permisos"),
-        content: const Text("Para que se puedan mostrar los contactos, deberás dar permisos desde los ajustes de la aplicación."),
+        content: Text(message),
         actions: <Widget>[
           TextButton(
             child: const Text("Cerrar"),
@@ -331,5 +338,83 @@ void showPermissionDialog(BuildContext context) {
       );
     },
   );
+}
+
+void showSaveAlert(BuildContext context, String title, String message) {
+  showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text(title),
+          content: Text(message),
+          actions: <Widget>[
+            TextButton(
+              child: const Text("Ok"),
+              onPressed: () => Navigator.of(context).pop(),
+            )
+          ],
+        );
+      });
+}
+
+String getDefaultPattern() {
+  return 'EEEE, d MMMM yyyy';
+}
+
+String getShortPattern() {
+  return 'EEEE dd/MM/yyyy';
+}
+
+String rangeTimeToString(String from, String to) {
+  var rangeTime = '$from-$to';
+  rangeTime = rangeTime.replaceAll(' ', '');
+  return rangeTime;
+}
+
+int daysBetween(DateTime from, DateTime to) {
+  from = DateTime(from.year, from.month, from.day);
+  to = DateTime(to.year, to.month, to.day);
+  return (to.difference(from).inHours / 24).round();
+}
+
+Future<String> rangeDateTimeToString(DateTime? from, DateTime? to) async {
+  var rangeDateText = "";
+
+  await Jiffy.locale("es");
+
+  if (from != null && to != null) {
+    if (from.year == to.year) {
+      if (from.month == to.month) {
+        if (from.day == to.day) {
+          rangeDateText = Jiffy(from).format('d [de] MMMM [de] yyyy');
+        } else {
+          var month = Jiffy(from).format('MMMM');
+          var year = Jiffy(from).format('yyyy');
+          rangeDateText = 'Del ${from.day} al ${to.day} de $month de $year';
+        }
+      } else {
+        var monthFrom = Jiffy(from).format('MMMM');
+        var monthTo = Jiffy(to).format('MMMM');
+        var year = Jiffy(from).format('yyyy');
+        rangeDateText = 'Del ${from.day} de $monthFrom al ${to.day} de $monthTo de $year';
+      }
+    } else {
+      var monthFrom = Jiffy(from).format('MMMM');
+      var monthTo = Jiffy(to).format('MMMM');
+      var yearFrom = Jiffy(from).format('yyyy');
+      var yearTo = Jiffy(to).format('yyyy');
+      rangeDateText = 'Del ${from.day} de $monthFrom de $yearFrom al ${to.day} de $monthTo de $yearTo';
+    }
+  } else {
+    rangeDateText = Jiffy().format('d [de] MMMM [de] yyyy');
+  }
+
+  return rangeDateText;
+}
+
+extension StringExtension on String {
+  String capitalize() {
+    return "${this[0].toUpperCase()}${this.substring(1).toLowerCase()}";
+  }
 }
 

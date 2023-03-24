@@ -268,8 +268,12 @@ class _RingTonePageState extends State<RingTonePage> with WidgetsBindingObserver
       }
     }
 
-    showAlert();
-
+    //showAlert();
+    showSaveAlert(
+        context,
+        "Sonido notificación guardada",
+        "El sonido para la notificación se ha guardado correctamente."
+    );
   }
 
   void showAlert() {
@@ -288,95 +292,9 @@ class _RingTonePageState extends State<RingTonePage> with WidgetsBindingObserver
           );
         });
   }
-
-  void _submit() async {
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => const UserRestPage()),
-    );
-  }
 }
 
 
 
 
 
-// Padding(
-                      //   padding: EdgeInsets.all(8),
-                      //   child: ElevatedButton(
-                      //     child: const Text('playAlarm'),
-                      //     onPressed: () {
-                      //       FlutterRingtonePlayer.playAlarm();
-                      //     },
-                      //   ),
-                      // ),
-                      // Padding(
-                      //   padding: EdgeInsets.all(8),
-                      //   child: ElevatedButton(
-                      //     child: const Text('playAlarm asAlarm: false'),
-                      //     onPressed: () {
-                      //       FlutterRingtonePlayer.playAlarm(asAlarm: false);
-                      //     },
-                      //   ),
-                      // ),
-                      // Padding(
-                      //   padding: EdgeInsets.all(8),
-                      //   child: ElevatedButton(
-                      //     child: const Text('playNotification'),
-                      //     onPressed: () {
-                      //       FlutterRingtonePlayer.playNotification();
-                      //     },
-                      //   ),
-                      // ),
-                      // Padding(
-                      //   padding: EdgeInsets.all(8),
-                      //   child: ElevatedButton(
-                      //     child: const Text('playRingtone'),
-                      //     onPressed: () {
-                      //       FlutterRingtonePlayer.playRingtone();
-                      //     },
-                      //   ),
-                      // ),
-                      // Padding(
-                      //   padding: EdgeInsets.all(8),
-                      //   child: ElevatedButton(
-                      //     child: const Text('Play from asset (iphone.mp3)'),
-                      //     onPressed: () {
-                      //       FlutterRingtonePlayer.play(
-                      //           fromAsset: "assets/iphone.mp3");
-                      //     },
-                      //   ),
-                      // ),
-                      // Padding(
-                      //   padding: EdgeInsets.all(8),
-                      //   child: ElevatedButton(
-                      //     child: const Text('Play from asset (android.wav)'),
-                      //     onPressed: () {
-                      //       FlutterRingtonePlayer.play(
-                      //           fromAsset: "assets/android.wav");
-                      //     },
-                      //   ),
-                      // ),
-                      // Padding(
-                      //   padding: EdgeInsets.all(8),
-                      //   child: ElevatedButton(
-                      //     child: const Text('play'),
-                      //     onPressed: () {
-                      //       FlutterRingtonePlayer.play(
-                      //         android: AndroidSounds.notification,
-                      //         ios: IosSounds.glass,
-                      //         looping: true,
-                      //         volume: 1.0,
-                      //       );
-                      //     },
-                      //   ),
-                      // ),
-                      // Padding(
-                      //   padding: EdgeInsets.all(8),
-                      //   child: ElevatedButton(
-                      //     child: const Text('stop'),
-                      //     onPressed: () {
-                      //       FlutterRingtonePlayer.stop();
-                      //     },
-                      //   ),
-                      // ),

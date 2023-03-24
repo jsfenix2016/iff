@@ -53,6 +53,22 @@ class PreferenceUser {
     _prefs.setString('useMobil', value);
   }
 
+  get getSMSTime {
+    return _prefs.getString('SMSTime') ?? "10 min";
+  }
+
+  set setSMSTime(String value) {
+    _prefs.setString('SMSTime', value);
+  }
+
+  get getPhoneTime {
+    return _prefs.getString('PhoneTime') ?? "15 min";
+  }
+
+  set setPhoneTime(String value) {
+    _prefs.setString('PhoneTime', value);
+  }
+
   get getAceptedTerms {
     return _prefs.getBool('aceptedTerms') ?? false;
   }
@@ -93,12 +109,44 @@ class PreferenceUser {
     _prefs.setInt('AcceptedCamera', permission.index);
   }
 
+  get getAcceptedContacts {
+    return PreferencePermission.values[_prefs.getInt('AcceptedContacts') ?? 0];
+  }
+
+  set setAcceptedContacts(PreferencePermission permission) {
+    _prefs.setInt('AcceptedContacts', permission.index);
+  }
+
+  get getAcceptedNotification {
+    return PreferencePermission.values[_prefs.getInt('AcceptedNotification') ?? 0];
+  }
+
+  set setAcceptedNotification(PreferencePermission permission) {
+    _prefs.setInt('AcceptedNotification', permission.index);
+  }
+
+  get getAcceptedScheduleExactAlarm {
+    return PreferencePermission.values[_prefs.getInt('AcceptedScheduleExactAlarm') ?? 0];
+  }
+
+  set setAcceptedScheduleExactAlarm(PreferencePermission permission) {
+    _prefs.setInt('AcceptedScheduleExactAlarm', permission.index);
+  }
+
   get getDetectedFall {
     return _prefs.getBool('DetectedFall') ?? false;
   }
 
   set setDetectedFall(bool value) {
     _prefs.setBool('DetectedFall', value);
+  }
+
+  get getFallTime {
+    return _prefs.getString('FallTime') ?? "10 min";
+  }
+
+  set setFallTime(String value) {
+    _prefs.setString('FallTime', value);
   }
 
   get getUserPremium {

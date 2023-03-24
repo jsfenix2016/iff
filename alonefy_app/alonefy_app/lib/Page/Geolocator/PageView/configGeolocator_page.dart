@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
@@ -9,7 +10,9 @@ import 'package:ifeelefine/Page/Geolocator/Controller/configGeolocatorController
 
 import 'package:ifeelefine/Page/TermsAndConditions/PageView/conditionGeneral_page.dart';
 import 'package:ifeelefine/Utils/Widgets/elevatedButtonFilling.dart';
+import 'package:slidable_button/slidable_button.dart';
 
+import '../../../Common/colorsPalette.dart';
 import '../../../Provider/prefencesUser.dart';
 
 class ConfigGeolocator extends StatefulWidget {
@@ -25,7 +28,7 @@ class ConfigGeolocator extends StatefulWidget {
 
 class _ConfigGeolocatorState extends State<ConfigGeolocator> {
   final ConfigGeolocatorController geoVC =
-      Get.put(ConfigGeolocatorController());
+  Get.put(ConfigGeolocatorController());
 
   late bool isActive = false;
   final _prefs = PreferenceUser();
@@ -34,49 +37,7 @@ class _ConfigGeolocatorState extends State<ConfigGeolocator> {
   ///
   /// When the location services are not enabled or permissions
   /// are denied the `Future` will return an error.
-  Future<Position> _determinePosition() async {
-    bool serviceEnabled;
-    LocationPermission permission;
-    if (isActive) {
-      Geolocator.openAppSettings();
-    }
-    // Test if location services are enabled.
-    serviceEnabled = await Geolocator.isLocationServiceEnabled();
-    if (!serviceEnabled) {
-      // Location services are not enabled don't continue
-      // accessing the position and request users of the
-      // App to enable the location services.
-      isActive = false;
-      return Future.error('Location services are disabled.');
-    }
-
-    permission = await Geolocator.checkPermission();
-    if (permission == LocationPermission.denied) {
-      permission = await Geolocator.requestPermission();
-      if (permission == LocationPermission.denied) {
-        // Permissions are denied, next time you could try
-        // requesting permissions again (this is also where
-        // Android's shouldShowRequestPermissionRationale
-        // returned true. According to Android guidelines
-        // your App should show an explanatory UI now.
-        isActive = false;
-        return Future.error('Location permissions are denied');
-      }
-    }
-
-    if (permission == LocationPermission.deniedForever) {
-      // Permissions are denied forever, handle appropriately.
-      isActive = false;
-      return Future.error(
-          'Location permissions are permanently denied, we cannot request permissions.');
-    }
-
-    // When we reach here, permissions are granted and we can
-    // continue accessing the position of the device.
-
-    return await Geolocator.getCurrentPosition();
-  }
-
+  ///
   Future<Position> getCurrentPosition() async {
     if (_prefs.getAcceptedSendLocation == PreferencePermission.allow) {
       return await Geolocator.getCurrentPosition();
@@ -123,7 +84,7 @@ class _ConfigGeolocatorState extends State<ConfigGeolocator> {
           case PreferencePermission.deniedForever:
             _prefs.setAcceptedSendLocation = PreferencePermission.deniedForever;
             if (permission == LocationPermission.deniedForever) {
-              showPermissionDialog(context);
+              showPermissionDialog(context, Constant.enablePermission);
             }
             break;
           case PreferencePermission.allow:
@@ -134,7 +95,7 @@ class _ConfigGeolocatorState extends State<ConfigGeolocator> {
             break;
         }
       } else {
-        _prefs.setAcceptedSendLocation = PreferencePermission.allow;
+        //_prefs.setAcceptedSendLocation = PreferencePermission.allow;
 
         setState(() {
           isActive = true;
@@ -143,6 +104,22 @@ class _ConfigGeolocatorState extends State<ConfigGeolocator> {
 
       preferencePermission = _prefs.getAcceptedSendLocation;
     }
+  }
+
+  void savePermission() {
+    if (isActive) {
+      _prefs.setAcceptedSendLocation = PreferencePermission.allow;
+    } else {
+      if (_prefs.getAcceptedSendLocation == PreferencePermission.allow) {
+        _prefs.setAcceptedSendLocation = PreferencePermission.noAccepted;
+      }
+    }
+
+    showSaveAlert(
+        context,
+        "Permiso guardado",
+        "El permiso del mapa se ha guardado correctamente."
+    );
   }
 
   Future _isActivePermission() async {
@@ -171,116 +148,167 @@ class _ConfigGeolocatorState extends State<ConfigGeolocator> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: Scaffold(
-        appBar: isMenu
-            ? AppBar(
-                backgroundColor: const Color.fromARGB(255, 76, 52, 22),
-                title: const Text('Geolocator'),
-              )
-            : null,
+      return Scaffold(
+        appBar: AppBar(
+          backgroundColor: ColorPalette.backgroundAppBar,
+          title: const Text("Configuración"),
+        ),
         body: Container(
           decoration: decorationCustom(),
           width: size.width,
           height: size.height,
           child: Stack(
             children: [
-              Center(
-                child: Column(
-                  mainAxisSize: MainAxisSize.max,
-                  children: [
-                    Stack(
+              Positioned(
+                top: 32,
+                width: size.width,
+                child: Center(
+                  child: Text('Enviar mi ubicación',
+                      textAlign: TextAlign.center,
+                      style: GoogleFonts.barlow(
+                        fontSize: 22.0,
+                        wordSpacing: 1,
+                        letterSpacing: 1.2,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.white,
+                      )),
+                ),
+              ),
+              Positioned(
+                top: 126,
+                left: 0,
+                right: 0,
+                child: Center(
+                  child: SizedBox(
+                    child: Image.asset(
+                      fit: BoxFit.fill,
+                      'assets/images/Shape.png',
+                      height: 171.92,
+                      width: 133,
+                    ),
+                  ),
+                ),
+              ),
+              Positioned(
+                top: 360,
+                left: 32,
+                right: 32,
+                //padding: const EdgeInsets.only(left: 20.0, right: 20.0),
+                child: HorizontalSlidableButton(
+                  isRestart: true,
+                  borderRadius: const BorderRadius.all(Radius.circular(2)),
+                  height: 55,
+                  width: 296,
+                  buttonWidth: 60.0,
+                  color: ColorPalette.principal,
+                  buttonColor: const Color.fromRGBO(157, 123, 13, 1),
+                  dismissible: false,
+                  label: Image.asset(
+                    scale: 1,
+                    fit: BoxFit.fill,
+                    'assets/images/Group 969.png',
+                    height: 13,
+                    width: 21,
+                  ),
+                  onChanged: (SlidableButtonPosition value) {
+                    if (value == SlidableButtonPosition.end) {
+                      if (!isActive) _checkPermission();
+                      else {
+                        setState(() {
+                          isActive = false;
+                          //_prefs.setAcceptedSendLocation = PreferencePermission.noAccepted;
+                        });
+                      }
+                    }
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        SizedBox(
-                          child: Image.asset(
-                            fit: BoxFit.fill,
-                            scale: 0.5,
-                            'assets/images/MaskMapa.png',
-                            height: 400,
-                            width: double.infinity,
-                          ),
-                        ),
-                        Center(
-                          heightFactor: 2.2,
-                          child: SizedBox(
-                            child: Image.asset(
-                              fit: BoxFit.fill,
-                              scale: 0.5,
-                              'assets/images/Shape.png',
-                              height: 171.92,
-                              width: 133,
+                        Padding(
+                          padding: const EdgeInsets.only(left: 40.0),
+                          child: Center(
+                            child: Text(
+                              isActive ? 'Desactivar' : "Activar",
+                              textAlign: TextAlign.center,
+                              style: GoogleFonts.barlow(
+                                fontSize: 16.0,
+                                wordSpacing: 1,
+                                letterSpacing: 1,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
                             ),
                           ),
                         ),
                       ],
                     ),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    SizedBox(
-                      child: Column(
-                        children: <Widget>[
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Text(
-                              Constant.casefallText,
-                              textAlign: TextAlign.center,
-                              style: GoogleFonts.barlow(
-                                fontSize: 16.0,
-                                wordSpacing: 1,
-                                letterSpacing: 1.2,
-                                fontWeight: FontWeight.bold,
-                                color: const Color.fromRGBO(219, 177, 42, 1),
-                              ),
-                            ),
-                          ),
-                          // Add the image here
-
-                          Switch(
-                            value: isActive,
-                            onChanged: ((value) async {
-                              setState(() {
-                                isActive = value;
-                              });
-                              if (value) {
-                                await _checkPermission();
-                                getCurrentPosition();
-                              } else {
-                                _prefs.setAcceptedSendLocation = PreferencePermission.noAccepted;
-                              }
-
-                              // geoVC.saveSendLocation(context, value);
-                            }),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
+                  ),
                 ),
               ),
               Positioned(
-                bottom: 40,
-                left: 70,
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: ElevateButtonFilling(
-                    onChanged: (value) {
-                      if (!widget.isMenu)
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => ConditionGeneralPage()),
-                        );
-                    },
-                    mensaje: Constant.nextTxt,
+                bottom: 20,
+                right: 32,
+                child: Container(
+                  decoration: const BoxDecoration(
+                    color: Color.fromRGBO(219, 177, 42, 1),
+                    borderRadius:
+                    BorderRadius.all(Radius.circular(8)),
+                  ),
+                  width: 138,
+                  height: 42,
+                  child: Center(
+                    child: TextButton(
+                      child: Text('Guardar',
+                          textAlign: TextAlign.center,
+                          style: GoogleFonts.barlow(
+                            fontSize: 16.0,
+                            wordSpacing: 1,
+                            letterSpacing: 1.2,
+                            fontWeight: FontWeight.w700,
+                            color: Colors.black,
+                          )),
+                      onPressed: () async {
+                        savePermission();
+                      },
+                    ),
+                  ),
+                ),
+              ),
+              Positioned(
+                bottom: 20,
+                left: 32,
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.transparent,
+                    border: Border.all(
+                        color: Color.fromRGBO(219, 177, 42, 1)
+                    ),
+                    borderRadius:
+                    BorderRadius.all(Radius.circular(8)),
+                  ),
+                  width: 138,
+                  height: 42,
+                  child: Center(
+                    child: TextButton(
+                      child: Text('Cancelar',
+                          textAlign: TextAlign.center,
+                          style: GoogleFonts.barlow(
+                            fontSize: 16.0,
+                            wordSpacing: 1,
+                            letterSpacing: 1.2,
+                            fontWeight: FontWeight.w700,
+                            color: Colors.white,
+                          )),
+                      onPressed: () => Navigator.of(context).pop(),
+                    ),
                   ),
                 ),
               ),
             ],
           ),
         ),
-      ),
-    );
+      );
   }
 }
