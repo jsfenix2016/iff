@@ -16,7 +16,7 @@ class EditZoneController extends GetxController {
 
     if (permission.isPermanentlyDenied) {
       // ignore: use_build_context_synchronously
-      showPermissionDialog(context);
+      showPermissionDialog(context, "Permitir acceder a los contactos");
       return [];
     } else if (permission.isDenied) {
       return [];

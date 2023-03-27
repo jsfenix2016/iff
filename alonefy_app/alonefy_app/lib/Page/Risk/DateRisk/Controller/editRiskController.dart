@@ -14,7 +14,7 @@ class EditRiskController extends GetxController {
     PermissionStatus permission = await Permission.contacts.request();
 
     if (permission.isPermanentlyDenied) {
-      showPermissionDialog(context);
+      showPermissionDialog(context, "Permitir acceder a los contactos");
       return [];
     } else if (permission.isDenied) {
       return [];

@@ -44,19 +44,8 @@ class _UserConfigPageState extends State<UserConfigPage> {
 
   @override
   void initState() {
-    user = User(
-        idUser: 0,
-        name: "",
-        lastname: "",
-        email: "",
-        telephone: "",
-        gender: "",
-        maritalStatus: "",
-        styleLife: "",
-        pathImage: "",
-        age: '',
-        country: '',
-        city: '');
+    user = initUser();
+
     super.initState();
 
     isValidEmail = userVC.validateEmail.isFalse;

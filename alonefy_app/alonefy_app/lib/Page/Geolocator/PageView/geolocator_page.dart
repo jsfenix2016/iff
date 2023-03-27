@@ -16,8 +16,7 @@ import '../../../Provider/prefencesUser.dart';
 
 class InitGeolocator extends StatefulWidget {
   /// Creates a new GeolocatorWidget.
-  const InitGeolocator({Key? key, required this.isMenu}) : super(key: key);
-  final bool isMenu;
+  const InitGeolocator({Key? key}) : super(key: key);
 
   /// Utility method to create a page with the Baseflow templating.
 
@@ -32,6 +31,7 @@ class _InitGeolocatorState extends State<InitGeolocator> {
   late bool isActive = false;
   final _prefs = PreferenceUser();
   PreferencePermission preferencePermission = PreferencePermission.init;
+
   /// Determine the current position of the device.
   ///
   /// When the location services are not enabled or permissions
@@ -105,17 +105,19 @@ class _InitGeolocatorState extends State<InitGeolocator> {
 
     permission = await Geolocator.requestPermission();
 
-    if (permission == LocationPermission.deniedForever && preferencePermission == PreferencePermission.init) {
+    if (permission == LocationPermission.deniedForever &&
+        preferencePermission == PreferencePermission.init) {
       setState(() {
         isActive = false;
       });
     } else {
-      if (permission == LocationPermission.denied || permission == LocationPermission.deniedForever) {
+      if (permission == LocationPermission.denied ||
+          permission == LocationPermission.deniedForever) {
         setState(() {
           isActive = false;
         });
 
-        switch(preferencePermission) {
+        switch (preferencePermission) {
           case PreferencePermission.init:
             _prefs.setAcceptedSendLocation = PreferencePermission.denied;
             break;
@@ -150,8 +152,9 @@ class _InitGeolocatorState extends State<InitGeolocator> {
   Future _isActivePermission() async {
     LocationPermission permission = await Geolocator.checkPermission();
 
-    if (preferencePermission == PreferencePermission.allow
-        && (permission == LocationPermission.whileInUse || permission == LocationPermission.always)) {
+    if (preferencePermission == PreferencePermission.allow &&
+        (permission == LocationPermission.whileInUse ||
+            permission == LocationPermission.always)) {
       setState(() {
         isActive = true;
       });
@@ -169,19 +172,12 @@ class _InitGeolocatorState extends State<InitGeolocator> {
     _isActivePermission();
   }
 
-  bool isMenu = false;
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
-        appBar: isMenu
-            ? AppBar(
-                backgroundColor: const Color.fromARGB(255, 76, 52, 22),
-                title: const Text('Geolocator'),
-              )
-            : null,
         body: Container(
           decoration: decorationCustom(),
           width: size.width,
@@ -221,7 +217,8 @@ class _InitGeolocatorState extends State<InitGeolocator> {
                       child: Column(
                         children: <Widget>[
                           Padding(
-                            padding: const EdgeInsets.only(left: 8.0, right: 8.0, bottom: 8.0),
+                            padding: const EdgeInsets.only(
+                                left: 8.0, right: 8.0, bottom: 8.0),
                             child: Text(
                               Constant.casefallText,
                               textAlign: TextAlign.center,
@@ -248,7 +245,8 @@ class _InitGeolocatorState extends State<InitGeolocator> {
                                 await _checkPermission();
                                 getCurrentPosition();
                               } else {
-                                _prefs.setAcceptedSendLocation = PreferencePermission.noAccepted;
+                                _prefs.setAcceptedSendLocation =
+                                    PreferencePermission.noAccepted;
                               }
 
                               // geoVC.saveSendLocation(context, value);
@@ -267,12 +265,11 @@ class _InitGeolocatorState extends State<InitGeolocator> {
                   padding: const EdgeInsets.all(8.0),
                   child: ElevateButtonFilling(
                     onChanged: (value) {
-                      if (!widget.isMenu)
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => ConditionGeneralPage()),
-                        );
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const ConditionGeneralPage()),
+                      );
                     },
                     mensaje: Constant.continueTxt,
                   ),

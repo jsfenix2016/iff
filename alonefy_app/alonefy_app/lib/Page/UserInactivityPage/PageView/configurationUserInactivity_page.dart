@@ -126,7 +126,7 @@ class _UserInactivityPageState extends State<UserInactivityPage> {
     select.timeFinish = "00:00 AM";
     select.day = daySelect;
     select.id = 0;
-    select.selection = 0;
+
     selecDicActivity.insert(0, select);
 
     if (isVisible) {

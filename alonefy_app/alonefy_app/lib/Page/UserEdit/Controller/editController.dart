@@ -179,7 +179,7 @@ class EditConfigController extends GetxController {
 
   Future<User> getUserDate() async {
     user = User(
-        idUser: -1,
+        idUser: "-1",
         name: '',
         lastname: '',
         email: '',
@@ -195,7 +195,7 @@ class EditConfigController extends GetxController {
     UserBD box = await const HiveData().getuserbd;
     if (box.idUser == "-1") {
       user = User(
-          idUser: int.parse(box.idUser),
+          idUser: (box.idUser),
           name: box.name,
           lastname: box.lastname,
           email: box.email,

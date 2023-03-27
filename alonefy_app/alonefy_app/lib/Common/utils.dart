@@ -319,7 +319,7 @@ Future getResponse() async {
 
 User initUser() {
   return User(
-      idUser: 0,
+      idUser: "0",
       name: "",
       lastname: "",
       email: "",

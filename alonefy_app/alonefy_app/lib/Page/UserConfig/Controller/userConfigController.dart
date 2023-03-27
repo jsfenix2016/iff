@@ -38,7 +38,7 @@ class UserConfigCOntroller extends GetxController {
 
   Future<int> saveUserData(BuildContext context, User user, String uuid) async {
     try {
-      user.idUser = int.parse(uuid);
+      user.idUser = (uuid);
       return const HiveData().saveUser(user);
     } catch (error) {
       return -1;
@@ -74,7 +74,7 @@ class UserConfigCOntroller extends GetxController {
 
   Future<User> getUserDate() async {
     User person = User(
-        idUser: -1,
+        idUser: "-1",
         name: '',
         lastname: '',
         email: '',
@@ -90,7 +90,7 @@ class UserConfigCOntroller extends GetxController {
     UserBD box = await const HiveData().getuserbd;
     if (box.idUser == "-1") {
       User user = User(
-          idUser: int.parse(box.idUser),
+          idUser: (box.idUser),
           name: box.name,
           lastname: box.lastname,
           email: box.email,

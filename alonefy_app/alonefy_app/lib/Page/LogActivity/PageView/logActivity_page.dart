@@ -24,7 +24,6 @@ class LogActivityPage extends StatefulWidget {
 }
 
 class _LogActivityPageState extends State<LogActivityPage> {
-
   final scaffoldKey = GlobalKey<ScaffoldState>();
 
   final LogActivityController controller = Get.put(LogActivityController());
@@ -47,13 +46,13 @@ class _LogActivityPageState extends State<LogActivityPage> {
   Widget build(BuildContext context) {
     final Size size = MediaQuery.of(context).size;
     return Scaffold(
-      extendBodyBehindAppBar: false,
-      key: scaffoldKey,
-      appBar: AppBar(
-        backgroundColor: ColorPalette.backgroundAppBar,
-        title: const Text("Actividad"),
-      ),
-      body: Container(
+        extendBodyBehindAppBar: false,
+        key: scaffoldKey,
+        appBar: AppBar(
+          backgroundColor: ColorPalette.backgroundAppBar,
+          title: const Text("Actividad"),
+        ),
+        body: Container(
           decoration: const BoxDecoration(
             gradient: RadialGradient(
               radius: 2,
@@ -66,18 +65,15 @@ class _LogActivityPageState extends State<LogActivityPage> {
           width: size.width,
           height: size.height,
           child: Padding(
-            padding: const EdgeInsets.fromLTRB(32, 32, 32, 0),
-            child: ListView.builder(
-              shrinkWrap: true,
-              scrollDirection: Axis.vertical,
-              itemCount: _activities.length,
-              itemBuilder: (context, index) {
-
-              }
-            )
-          ),
-      )
-    );
+              padding: const EdgeInsets.fromLTRB(32, 32, 32, 0),
+              child: ListView.builder(
+                  shrinkWrap: true,
+                  scrollDirection: Axis.vertical,
+                  itemCount: _activities.length,
+                  itemBuilder: (context, index) {
+                    return Container();
+                  })),
+        ));
   }
 
   Widget getItem(int index) {
@@ -88,16 +84,9 @@ class _LogActivityPageState extends State<LogActivityPage> {
           Expanded(
             child: Text("movimiento"),
           ),
-          Expanded(
-              child: Text("Fecha")
-          )
+          Expanded(child: Text("Fecha"))
         ],
       ),
     );
   }
 }
-
-
-
-
-

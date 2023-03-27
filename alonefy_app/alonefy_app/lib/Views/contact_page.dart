@@ -9,6 +9,7 @@ import 'package:ifeelefine/Common/colorsPalette.dart';
 import 'package:ifeelefine/Common/utils.dart';
 import 'package:ifeelefine/Controllers/contactUserController.dart';
 import 'package:ifeelefine/Page/Geolocator/PageView/configGeolocator_page.dart';
+import 'package:ifeelefine/Page/Geolocator/PageView/geolocator_page.dart';
 import 'package:ifeelefine/Utils/Widgets/CustomDropdownButtonWidgetContact.dart';
 import 'package:ifeelefine/Utils/Widgets/customDropDown.dart';
 import 'package:ifeelefine/Page/UserInactivityPage/PageView/configurationUserInactivity_page.dart';
@@ -204,10 +205,7 @@ class _ContactListState extends State<ContactList> {
             context, _selectedContacts, timeSMS, timeCall);
         Navigator.push(
           context,
-          MaterialPageRoute(
-              builder: (context) => ConfigGeolocator(
-                    isMenu: false,
-                  )),
+          MaterialPageRoute(builder: (context) => InitGeolocator()),
         );
       }),
     );

@@ -27,8 +27,7 @@ class InactivityViewController extends GetxController {
           activity: element.activity,
           timeStart: element.timeStart,
           timeFinish: element.timeFinish,
-          id: element.id,
-          selection: element.selection);
+          id: element.id);
       listActivitybd.add(temp);
     }
     return listActivitybd;
@@ -49,8 +48,7 @@ class InactivityViewController extends GetxController {
         activity: activity.activity,
         timeStart: activity.timeStart,
         timeFinish: activity.timeFinish,
-        id: activity.id,
-        selection: activity.selection);
+        id: activity.id);
     await const HiveData().deleteActivities(temp);
     return 0;
   }
