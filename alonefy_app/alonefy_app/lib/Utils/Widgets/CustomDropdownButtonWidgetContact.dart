@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+
 import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:google_fonts/google_fonts.dart';
+
+import 'package:ifeelefine/Common/Constant.dart';
+
 import 'package:ifeelefine/Common/utils.dart';
 import 'package:ifeelefine/Provider/prefencesUser.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -29,7 +33,7 @@ class _ContactDropdownButtonState extends State<ContactDropdownButton> {
     PermissionStatus permission = await Permission.contacts.request();
 
     if (permission.isPermanentlyDenied) {
-      showPermissionDialog(context);
+      showPermissionDialog(context, Constant.enablePermission);
     } else if (permission.isDenied) {
     } else {
       // Retrieve the list of contacts from the device

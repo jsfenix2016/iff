@@ -5,5 +5,12 @@ class ActivityDay {
   late String timeStart;
   late String timeFinish;
   late String activity;
-  late int selection;
+
+  late bool allDay;
+  late String dayFinish;
+  String? days;
+  late String repeatType;
+  late bool isDeactivate;
+  String? specificDaysDeactivated;
+  String? specificDaysRemoved;
 }

@@ -1,9 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ifeelefine/Common/colorsPalette.dart';
+import 'package:ifeelefine/Page/AddActivityPage/PageView/addActivity_page.dart';
+import 'package:ifeelefine/Page/ChangeNotificationTime/PageView/changeNotificationTime_page.dart';
 import 'package:ifeelefine/Page/Disamble/Pageview/disambleIfeelfine_page.dart';
+import 'package:ifeelefine/Page/FallDetected/Pageview/fall_activation_config_page.dart';
 import 'package:ifeelefine/Page/FallDetected/Pageview/fall_activation_page.dart';
 import 'package:ifeelefine/Page/Geolocator/PageView/configGeolocator_page.dart';
+import 'package:ifeelefine/Page/Geolocator/PageView/geolocator_page.dart';
+import 'package:ifeelefine/Page/PreviewActivitiesFilteredByDate/PageView/previewActivitiesByDate_page.dart';
+import 'package:ifeelefine/Page/RestoreMyConfiguration/PageView/restoreMyConfig_page.dart';
 import 'package:ifeelefine/Page/UseMobil/PageView/configurationUseMobile_page.dart';
 import 'package:ifeelefine/Page/UserEdit/PageView/editUser_page.dart';
 
@@ -40,6 +46,8 @@ class _MenuConfigurationPageState extends State<MenuConfigurationPage> {
         "Configurar horas de sueño", 'assets/images/EllipseMenu.png', 22, 22),
     menuConfigModel(
         "Configurar tiempo uso", 'assets/images/Group 1084.png', 22, 16.93),
+    menuConfigModel(
+        "Actividades", 'assets/images/Group 1084.png', 22, 16.93),
     menuConfigModel("Seleccionar contacto de aviso",
         'assets/images/Group 1083.png', 22, 25.52),
     menuConfigModel(
@@ -98,7 +106,7 @@ class _MenuConfigurationPageState extends State<MenuConfigurationPage> {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => const ContactList(),
+            builder: (context) => const PreviewActivitiesByDate(),
           ),
         );
         break;
@@ -106,7 +114,7 @@ class _MenuConfigurationPageState extends State<MenuConfigurationPage> {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => const FallActivationPage(),
+            builder: (context) => const ContactList(),
           ),
         );
         break;
@@ -114,11 +122,19 @@ class _MenuConfigurationPageState extends State<MenuConfigurationPage> {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => const GeolocatorWidget(),
+            builder: (context) => const FallActivationConfigPage(),
           ),
         );
         break;
       case 6:
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const GeolocatorWidget(),
+          ),
+        );
+        break;
+      case 7:
         Navigator.push(
           context,
           MaterialPageRoute(
@@ -128,19 +144,11 @@ class _MenuConfigurationPageState extends State<MenuConfigurationPage> {
           ),
         );
         break;
-      case 7:
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => const UserMobilePage(),
-          ),
-        );
-        break;
       case 8:
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => const RingTonePage(),
+            builder: (context) => const ChangeNotificationTimePage(),
           ),
         );
         break;
@@ -148,13 +156,27 @@ class _MenuConfigurationPageState extends State<MenuConfigurationPage> {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => const PermitionUserPage(),
+            builder: (context) => const RingTonePage(),
           ),
         );
         break;
       case 10:
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const PermitionUserPage(),
+          ),
+        );
         break;
       case 11:
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const RestoreMyConfigPage(),
+          ),
+        );
+        break;
+      case 12:
         Navigator.push(
           context,
           MaterialPageRoute(
@@ -164,7 +186,7 @@ class _MenuConfigurationPageState extends State<MenuConfigurationPage> {
           ),
         );
         break;
-      case 12:
+      case 13:
         break;
       default:
     }

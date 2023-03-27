@@ -1,6 +1,7 @@
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:ifeelefine/Model/activitydaybd.dart';
 import 'package:ifeelefine/Model/contact.dart';
+import 'package:ifeelefine/Model/logActivityBd.dart';
 import 'package:ifeelefine/Model/restdaybd.dart';
 import 'package:ifeelefine/Model/user.dart';
 import 'package:ifeelefine/Model/userbd.dart';
@@ -78,6 +79,11 @@ class HiveData {
     return allMovTime;
   }
 
+  Future updateContact(ContactBD contact) async {
+    final Box<ContactBD> box = await Hive.openBox<ContactBD>('contactBD');
+    box.put(contact.id, contact);
+  }
+
   Future<int> saveUserContact(ContactBD user) async {
     final Box<ContactBD> box = await Hive.openBox<ContactBD>('contactBD');
 
@@ -135,6 +141,15 @@ class HiveData {
     return box.values.toList();
   }
 
+  Future<int> saveActivity(ActivityDayBD activity) async {
+    Box<ActivityDayBD> box =
+    await Hive.openBox<ActivityDayBD>('listActivityDayBD');
+
+    box.add(activity);
+
+    return 0;
+  }
+
   Future<int> saveActivities(List<ActivityDayBD> activities) async {
     Box<ActivityDayBD> box =
         await Hive.openBox<ActivityDayBD>('listActivityDayBD');
@@ -146,6 +161,15 @@ class HiveData {
     for (ActivityDayBD element in activities) {
       box.add(element);
     }
+
+    return 0;
+  }
+
+  Future<int> updateActivity(ActivityDayBD activity) async {
+    Box<ActivityDayBD> box =
+    await Hive.openBox<ActivityDayBD>('listActivityDayBD');
+
+    box.put(activity.id, activity);
 
     return 0;
   }
@@ -242,5 +266,16 @@ class HiveData {
         await box.delete(element.key);
       }
     }
+  }
+
+  Future<List<LogActivityBD>> get listLogActivitybd async {
+    final box = await Hive.openBox<LogActivityBD>('LogActivityBD');
+    return box.values.toList();
+  }
+
+  Future<int> saveLogActivity(LogActivityBD logActivityBD) async {
+    final Box<LogActivityBD> box = await Hive.openBox<LogActivityBD>('LogActivityBD');
+
+    return box.add(logActivityBD);
   }
 }
