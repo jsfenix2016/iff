@@ -101,7 +101,8 @@ class _ContainerTextEditTime extends State<ContainerTextEditTime> {
                   padding: const EdgeInsets.all(4.0),
                   child: TextFormField(
                     key: Key(activityTemp),
-                    style: const TextStyle(fontSize: 18, color: Colors.yellow),
+                    style: const TextStyle(
+                        fontSize: 18, color: ColorPalette.principal),
                     autofocus: false,
                     onChanged: (text) {
                       activityAndInactivity.activity = text;
@@ -113,16 +114,17 @@ class _ContainerTextEditTime extends State<ContainerTextEditTime> {
                     controller: _day,
                     decoration: const InputDecoration(
                       focusedBorder: UnderlineInputBorder(
-                        borderSide: BorderSide(color: Colors.yellow),
+                        borderSide: BorderSide(color: ColorPalette.principal),
                         // borderRadius: BorderRadius.circular(100.0),
                       ),
                       enabledBorder: UnderlineInputBorder(
                         borderSide: BorderSide(
-                            width: 1, color: Colors.yellow), //<-- SEE HERE
+                            width: 1,
+                            color: ColorPalette.principal), //<-- SEE HERE
                       ),
-                      hintStyle: TextStyle(color: Colors.yellow),
+                      hintStyle: TextStyle(color: ColorPalette.principal),
                       filled: true,
-                      labelStyle: TextStyle(color: Colors.yellow),
+                      labelStyle: TextStyle(color: ColorPalette.principal),
                     ),
                   ),
                 ),

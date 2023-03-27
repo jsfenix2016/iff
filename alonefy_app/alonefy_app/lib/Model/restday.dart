@@ -3,4 +3,5 @@ class RestDay {
   late String day;
   late String timeWakeup;
   late String timeSleep;
+  late int selection;
 }

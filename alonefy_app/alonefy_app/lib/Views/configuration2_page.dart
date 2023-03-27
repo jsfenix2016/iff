@@ -356,27 +356,13 @@ class _UserConfigPageState2 extends State<UserConfigPage2> {
   }
 
   void _submit() async {
-    UserBD person = UserBD(
-        idUser: '0',
-        name: user!.name,
-        lastname: user!.lastname,
-        email: user!.email,
-        telephone: user!.telephone,
-        gender: user!.gender,
-        maritalStatus: user!.maritalStatus,
-        styleLife: user!.styleLife,
-        pathImage: "",
-        age: user!.age,
-        country: user!.country,
-        city: user!.city);
-
-    bool a = await userVC.updateUserDate(context, person);
+    bool a = await userVC.updateUserDate(context, user!);
 
     //if (!formKey.currentState.validate()) return;
     //formKey.currentState.save();
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => UserMobilePage()),
+      MaterialPageRoute(builder: (context) => const UserMobilePage()),
     );
   }
 }

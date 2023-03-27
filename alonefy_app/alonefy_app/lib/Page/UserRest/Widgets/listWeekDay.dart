@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:ifeelefine/Common/colorsPalette.dart';
 import 'package:ifeelefine/Model/restday.dart';
 import 'package:ifeelefine/Model/restdaybd.dart';
 
@@ -80,6 +81,7 @@ class _ListWeekDayState extends State<ListWeekDay> {
                                   day: _ListDay[i],
                                   timeSleep: timeLblAM,
                                   timeWakeup: timeLblPM,
+                                  selection: i,
                                 );
                                 tempDicRest.add(restDay);
                               }
@@ -100,7 +102,7 @@ class _ListWeekDayState extends State<ListWeekDay> {
                                   letterSpacing: 1,
                                   fontWeight: FontWeight.normal,
                                   color: _selectedDays.contains(_ListDay[i])
-                                      ? Colors.amber
+                                      ? ColorPalette.principal
                                       : Colors.white,
                                 ),
                               ),
@@ -109,7 +111,7 @@ class _ListWeekDayState extends State<ListWeekDay> {
                               ),
                               Container(
                                 color: _selectedDays.contains(_ListDay[i])
-                                    ? Colors.amber
+                                    ? ColorPalette.principal
                                     : Colors.white,
                                 height:
                                     _selectedDays.contains(_ListDay[i]) ? 3 : 1,

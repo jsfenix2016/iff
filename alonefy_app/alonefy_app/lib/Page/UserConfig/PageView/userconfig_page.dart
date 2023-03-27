@@ -228,7 +228,7 @@ class _UserConfigPageState extends State<UserConfigPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             SizedBox(
-              width: 133,
+              width: 120,
               height: 50,
               child: Text(
                 message,
@@ -295,21 +295,7 @@ class _UserConfigPageState extends State<UserConfigPage> {
       return;
     }
 
-    UserBD person = UserBD(
-        idUser: '0',
-        name: user!.name,
-        lastname: user!.lastname,
-        email: user!.email,
-        telephone: user!.telephone,
-        gender: user!.gender,
-        maritalStatus: user!.maritalStatus,
-        styleLife: user!.styleLife,
-        pathImage: "",
-        age: user!.age,
-        country: user!.country,
-        city: user!.city);
-
-    int a = await userVC.saveUserData(context, person, const Uuid().v1());
+    int a = await userVC.saveUserData(context, user!, const Uuid().v1());
 
     if (a != -1) {
       showDialog(

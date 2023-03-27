@@ -9,7 +9,8 @@ class ActivityDayBD extends HiveObject {
       required this.timeStart,
       required this.timeFinish,
       required this.activity,
-      required this.id});
+      required this.id,
+      required this.selection});
 
   @HiveField(0)
   final String day;
@@ -25,4 +26,7 @@ class ActivityDayBD extends HiveObject {
 
   @HiveField(4)
   final int id;
+
+  @HiveField(5)
+  final int selection;
 }

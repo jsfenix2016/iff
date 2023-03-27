@@ -14,6 +14,8 @@ import 'package:ifeelefine/Page/UserInactivityPage/PageView/configurationUserIna
 import 'package:ifeelefine/Page/UserRest/Controller/userRestController.dart';
 import 'package:ifeelefine/Page/UserRest/Widgets/rowSelectTimer.dart';
 import 'package:ifeelefine/Utils/Widgets/elevateButtonCustomBorder.dart';
+import 'package:ifeelefine/Utils/Widgets/listDayweekCustom.dart';
+import 'package:collection/collection.dart';
 
 class PreviewRestTimePage extends StatefulWidget {
   const PreviewRestTimePage({super.key, required this.isMenu});
@@ -28,13 +30,11 @@ class _PreviewRestTimePageState extends State<PreviewRestTimePage> {
 
   late String timeLblAM = "00:00"; //AM
   late String timeLblPM = "00:00"; //PM
-  List<RestDayBD> tempDicRest = [];
+
   List<RestDayBD> selecDicActivity = <RestDayBD>[];
   List<RestDayBD> selecDicActivityTemp = <RestDayBD>[];
   Map<String, List<RestDayBD>> groupedProducts = {};
 
-  final List<int> tempListConfig = <int>[];
-  late RestDay temp;
   final List<String> tempListDay = <String>[];
   List<RestDayBD> lista = [];
 
@@ -46,11 +46,47 @@ class _PreviewRestTimePageState extends State<PreviewRestTimePage> {
   }
 
   Future<void> getInactivity() async {
+    groupedProducts = {};
     selecDicActivity = await restVC.getUserRest();
     List<RestDayBD> sortedWeekdays = sortWeekdays(selecDicActivity);
     selecDicActivity = sortedWeekdays;
+
+    groupedProducts =
+        groupBy(selecDicActivity, (product) => product.selection.toString());
+    groupedProducts.forEach((key, value) {
+      selecDicActivityTemp.add(value.first);
+    });
+
+    groupedProducts.forEach((key, value) {
+      for (int i = 0; i < value.length; i++) {
+        lista.add(value[i]);
+      }
+    });
+
     setState(() {});
   }
+
+// deleteTimeRest
+  // int countInser = 0;
+  // Future processSelectedInfo() async {
+  //   for (var element in selecDicActivity) {
+  //     tempNoSelectListDay.remove(element);
+  //   }
+  //   for (var element in selecDicActivity) {
+  //     restDay = RestDayBD(
+  //       day: diaConvert(element),
+  //       timeSleep: timeLblPM,
+  //       timeWakeup: timeLblAM,
+  //       selection: countInser,
+  //     );
+
+  //     tempDicRest.add(restDay);
+  //   }
+  //   timeLblAM = "00:00";
+  //   timeLblPM = "00:00";
+  //   _selectedDays.clear();
+  //   countInser++;
+  // }
 
   List<RestDayBD> sortWeekdays(List<RestDayBD> weekdays) {
     return weekdays
@@ -74,6 +110,11 @@ class _PreviewRestTimePageState extends State<PreviewRestTimePage> {
           })[b.day]));
   }
 
+  void updateRestDay(RestDayBD restDay) {
+    // ignore: use_build_context_synchronously
+    restVC.updateUserRestTime(context, restDay);
+  }
+
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
@@ -95,69 +136,147 @@ class _PreviewRestTimePageState extends State<PreviewRestTimePage> {
             const SizedBox(
               height: 10,
             ),
-            ListView.builder(
-              shrinkWrap: true,
-              scrollDirection: Axis.vertical,
-              physics: const NeverScrollableScrollPhysics(),
-              padding: const EdgeInsets.all(8),
-              itemCount: selecDicActivity.length,
-              itemBuilder: (BuildContext context, int index) {
-                return Column(
-                  mainAxisSize: MainAxisSize.max,
-                  children: [
-                    Container(
-                      color: Colors.black.withAlpha(100),
-                      width: size.width,
-                      child: Text(
-                        selecDicActivity[index].day,
-                        textAlign: TextAlign.center,
-                        style: GoogleFonts.barlow(
-                          fontSize: 30.0,
-                          wordSpacing: 1,
-                          letterSpacing: 1.2,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
-                    RowSelectTimer(
-                      index: index,
-                      timeLblAM: selecDicActivity[index].timeWakeup, //AM
-                      timeLblPM: selecDicActivity[index].timeSleep, //PM
-                      onChanged: (value) {
-                        RestDayBD restDay = RestDayBD(
-                          day: selecDicActivity[value.id].day,
-                          timeSleep: value.timeSleep,
-                          timeWakeup: value.timeWakeup,
-                        );
-                        // ignore: use_build_context_synchronously
-                        restVC.updateUserRestTime(context, restDay);
-                        getInactivity();
-                      },
-                    ),
-                  ],
-                );
-              },
-            ),
-            Positioned(
-              bottom: 10,
-              child: SizedBox(
-                width: size.width,
-                child: Center(
-                  child: ElevateButtonCustomBorder(
-                    onChanged: (value) {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const UserInactivityPage(),
-                        ),
+            for (var i = 0; i <= groupedProducts.length - 1; i++)
+              Positioned(
+                key: Key(i.toString()),
+                top: (i * 150),
+                child: Container(
+                  key: Key(i.toString()),
+                  color: Colors.transparent,
+                  width: size.width,
+                  height: 210,
+                  child: ListView.builder(
+                    key: Key(i.toString()),
+                    shrinkWrap: true,
+                    scrollDirection: Axis.vertical,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: 1,
+                    itemBuilder: (context, index) {
+                      return Column(
+                        mainAxisSize: MainAxisSize.max,
+                        key: Key(index.toString()),
+                        children: [
+                          ListDayWeek(
+                            selectedDays: tempListDay,
+                            listRest: selecDicActivity,
+                            newIndex: i,
+                            onChanged: (value) async {
+                              print(value);
+                              tempListDay.remove(value);
+
+                              RestDayBD restDay = RestDayBD(
+                                day: selecDicActivityTemp[value.selection].day,
+                                timeSleep: selecDicActivityTemp[value.selection]
+                                    .timeSleep,
+                                timeWakeup:
+                                    selecDicActivityTemp[value.selection]
+                                        .timeWakeup,
+                                selection: index,
+                              );
+                              selecDicActivity.remove(value);
+                              // updateRestDay(restDay);
+
+                              await restVC.deleteUserRestDay(context, restDay);
+                              getInactivity();
+                              setState(() {});
+                            },
+                          ),
+                          RowSelectTimer(
+                            index: index,
+                            timeLblAM: selecDicActivityTemp[i].timeWakeup, //AM
+                            timeLblPM: selecDicActivityTemp[i].timeSleep, //PM
+                            onChanged: (value) {
+                              timeLblAM = value.timeWakeup;
+                              timeLblPM = value.timeSleep;
+
+                              print(timeLblAM);
+                              print(timeLblPM);
+
+                              RestDayBD restDay = RestDayBD(
+                                day: selecDicActivityTemp[value.id].day,
+                                timeSleep: value.timeSleep,
+                                timeWakeup: value.timeWakeup,
+                                selection: index,
+                              );
+                              updateRestDay(restDay);
+                              // ignore: use_build_context_synchronously
+                              // restVC.updateUserRestTime(context, restDay);
+                            },
+                          ),
+                        ],
                       );
                     },
-                    mensaje: Constant.continueTxt,
                   ),
                 ),
               ),
-            ),
+            Row(
+              children: [
+                Container(
+                  color: Colors.red,
+                  height: 50,
+                  width: size.width / 2,
+                  child: Positioned(
+                    bottom: 10,
+                    child: SizedBox(
+                      width: size.width,
+                      child: Center(
+                        child: ElevateButtonCustomBorder(
+                          onChanged: (value) {
+                            print(widget.isMenu);
+
+                            if (lista.length == 7 &&
+                                selecDicActivityTemp.length == 7) {
+                              return;
+                            }
+                            if (widget.isMenu) return;
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    const UserInactivityPage(),
+                              ),
+                            );
+                          },
+                          mensaje: "Cancelar",
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                Container(
+                  color: Colors.green,
+                  height: 50,
+                  width: size.width / 2,
+                  child: Positioned(
+                    bottom: 10,
+                    child: SizedBox(
+                      width: size.width,
+                      child: Center(
+                        child: ElevateButtonCustomBorder(
+                          onChanged: (value) {
+                            print(widget.isMenu);
+
+                            if (lista.length == 7 &&
+                                selecDicActivityTemp.length == 7) {
+                              return;
+                            }
+                            if (widget.isMenu) return;
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    const UserInactivityPage(),
+                              ),
+                            );
+                          },
+                          mensaje: Constant.saveBtn,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            )
           ],
         ),
       ),

@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:ifeelefine/Common/utils.dart';
+
 import 'package:ifeelefine/Data/hive_data.dart';
+import 'package:ifeelefine/Model/user.dart';
 import 'package:ifeelefine/Model/userbd.dart';
 import 'package:ifeelefine/Provider/user_provider.dart';
 
@@ -27,7 +28,7 @@ class UserConfigCOntroller extends GetxController {
   Future<bool> validateSmsUser(
       BuildContext context, int num, String name) async {
     try {
-      var a = await usuarioProvider.verificateSMS(num, name);
+      var res = await usuarioProvider.verificateSMS(num, name);
       validateSms = true.obs;
       return true;
     } catch (error) {
@@ -35,31 +36,45 @@ class UserConfigCOntroller extends GetxController {
     }
   }
 
-  Future<int> saveUserData(
-      BuildContext context, UserBD user, String uuid) async {
+  Future<int> saveUserData(BuildContext context, User user, String uuid) async {
     try {
+      user.idUser = int.parse(uuid);
       return const HiveData().saveUser(user);
     } catch (error) {
       return -1;
     }
   }
 
-  Future<bool> updateUserDate(BuildContext context, UserBD user) async {
+  Future<bool> updateUserDate(BuildContext context, User user) async {
     try {
       // Map info
+      UserBD userbd = UserBD(
+          idUser: user.idUser.toString(),
+          name: user.name,
+          lastname: user.lastname,
+          email: user.email,
+          telephone: user.telephone,
+          gender: user.gender,
+          maritalStatus: user.maritalStatus,
+          styleLife: user.styleLife,
+          pathImage: user.pathImage,
+          age: user.age,
+          country: user.country,
+          city: user.city);
 
+      await const HiveData().updateUser(userbd);
       Box<UserBD> box = await Hive.openBox<UserBD>('userBD');
 
-      await box.putAt(int.parse(user.idUser), user);
+      await box.putAt(int.parse(userbd.idUser), userbd);
       return true;
     } catch (error) {
       return false;
     }
   }
 
-  Future<UserBD> getUserDate() async {
-    UserBD person = UserBD(
-        idUser: '-1',
+  Future<User> getUserDate() async {
+    User person = User(
+        idUser: -1,
         name: '',
         lastname: '',
         email: '',
@@ -72,11 +87,22 @@ class UserConfigCOntroller extends GetxController {
         country: '',
         city: '');
 
-    Box<UserBD> box = await Hive.openBox<UserBD>('userBD');
-    if (box.isEmpty == false) {
-      person = box.getAt(0)!;
-
-      return person;
+    UserBD box = await const HiveData().getuserbd;
+    if (box.idUser == "-1") {
+      User user = User(
+          idUser: int.parse(box.idUser),
+          name: box.name,
+          lastname: box.lastname,
+          email: box.email,
+          telephone: box.telephone,
+          gender: box.gender,
+          maritalStatus: box.maritalStatus,
+          styleLife: box.styleLife,
+          pathImage: box.pathImage,
+          age: box.age,
+          country: box.country,
+          city: box.city);
+      return user;
     } else {
       return person;
     }

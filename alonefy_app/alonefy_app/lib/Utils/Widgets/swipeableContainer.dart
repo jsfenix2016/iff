@@ -9,8 +9,8 @@ import 'package:ifeelefine/Common/colorsPalette.dart';
 import 'package:ifeelefine/Model/userpositionbd.dart';
 
 class SwipeableContainer extends StatefulWidget {
-  const SwipeableContainer({super.key});
-
+  const SwipeableContainer({super.key, required this.temp});
+  final List<UserPositionBD> temp;
   @override
   State<SwipeableContainer> createState() => _SwipeableContainerState();
 }
@@ -18,39 +18,16 @@ class SwipeableContainer extends StatefulWidget {
 class _SwipeableContainerState extends State<SwipeableContainer> {
   late Offset _dragPosition = Offset.zero;
 
-  late final List<UserPositionBD> allMov = [];
-  List<UserPositionBD> temp = [];
-  late final List<UserPositionBD> allMovTime = [];
-
-  Future<void> getAllMov() async {
-    Box<UserPositionBD> box =
-        await Hive.openBox<UserPositionBD>('UserPositionBD');
-
-    for (var element in box.values) {
-      allMovTime.add(element);
-    }
-
-    allMovTime.sort((a, b) {
-      //sorting in descending order
-      return b.movRureUser.compareTo(a.movRureUser);
-    });
-
-    for (var element in allMovTime) {
-      allMov.add(element);
-    }
-
-    temp = removeDuplicates(allMov);
-    setState(() {});
-  }
-
-  List<UserPositionBD> removeDuplicates(List<UserPositionBD> originalList) {
-    return originalList.toSet().toList();
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    // getAllMov();
   }
 
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    var box = getAllMov();
 
     return GestureDetector(
       behavior: HitTestBehavior.translucent,
@@ -80,36 +57,13 @@ class _SwipeableContainerState extends State<SwipeableContainer> {
                 height: 400,
                 child: Stack(
                   children: [
-                    // Container(
-                    //   decoration: const BoxDecoration(
-                    //     color: Colors.transparent,
-                    //     borderRadius: BorderRadius.only(
-                    //         topLeft: Radius.circular(10),
-                    //         topRight: Radius.circular(10)),
-                    //   ),
-                    //   width: size.width,
-                    //   height: 30,
-                    //   child: Center(
-                    //     child: Text(
-                    //       'Movimientos',
-                    //       textAlign: TextAlign.center,
-                    //       style: GoogleFonts.barlow(
-                    //         fontSize: 20.0,
-                    //         wordSpacing: 1,
-                    //         letterSpacing: 1.2,
-                    //         fontWeight: FontWeight.bold,
-                    //         color: Colors.white,
-                    //       ),
-                    //     ),
-                    //   ),
-                    // ),
                     Padding(
                       padding:
                           const EdgeInsets.only(top: 28.0, left: 8, right: 8),
                       child: ListView.builder(
                         shrinkWrap: false,
                         physics: const NeverScrollableScrollPhysics(),
-                        itemCount: temp.length,
+                        itemCount: widget.temp.length,
                         itemBuilder: (context, index) {
                           return Padding(
                             padding: const EdgeInsets.all(8.0),
@@ -140,7 +94,7 @@ class _SwipeableContainerState extends State<SwipeableContainer> {
                                   ),
                                 ),
                                 title: Text(
-                                  temp[index].typeAction.toString(),
+                                  widget.temp[index].typeAction.toString(),
                                   textAlign: TextAlign.left,
                                   style: GoogleFonts.barlow(
                                     fontSize: 16.0,
@@ -151,7 +105,7 @@ class _SwipeableContainerState extends State<SwipeableContainer> {
                                   ),
                                 ),
                                 subtitle: Text(
-                                  temp[index].movRureUser.toString(),
+                                  widget.temp[index].movRureUser.toString(),
                                   textAlign: TextAlign.left,
                                   style: GoogleFonts.barlow(
                                     fontSize: 16.0,

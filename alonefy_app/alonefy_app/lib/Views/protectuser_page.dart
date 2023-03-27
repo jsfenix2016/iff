@@ -511,7 +511,7 @@ class _ProtectUserPageState extends State<ProtectUserPage> {
                                       decoration: BoxDecoration(
                                         color: index == indexSelect
                                             ? Colors.white
-                                            : Colors.yellow,
+                                            : ColorPalette.principal,
                                         borderRadius:
                                             BorderRadius.circular(5.0),
                                         boxShadow: const <BoxShadow>[
@@ -581,7 +581,7 @@ class _ProtectUserPageState extends State<ProtectUserPage> {
                                       decoration: BoxDecoration(
                                         color: index == indexSelect
                                             ? Colors.white
-                                            : Colors.yellow,
+                                            : ColorPalette.principal,
                                         borderRadius:
                                             BorderRadius.circular(5.0),
                                         boxShadow: const <BoxShadow>[
@@ -626,7 +626,7 @@ class _ProtectUserPageState extends State<ProtectUserPage> {
       ];
 
   Color colorSelect(int index) {
-    isSelect == false ? Colors.white : Colors.yellow;
+    isSelect == false ? Colors.white : ColorPalette.principal;
     return Colors.white;
   }
 

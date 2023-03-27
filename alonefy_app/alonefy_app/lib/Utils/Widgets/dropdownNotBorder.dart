@@ -74,8 +74,8 @@ class _DropdownNotBorderState extends State<DropdownNotBorder> {
                       padding: const EdgeInsets.all(8.0),
                       child: Text(
                         e,
-                        style:
-                            const TextStyle(fontSize: 18, color: Colors.yellow),
+                        style: const TextStyle(
+                            fontSize: 18, color: ColorPalette.principal),
                       ),
                     ),
                   ),

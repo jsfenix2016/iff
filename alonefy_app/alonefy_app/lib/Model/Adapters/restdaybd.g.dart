@@ -20,19 +20,22 @@ class RestDayBDAdapter extends TypeAdapter<RestDayBD> {
       day: fields[0] as String,
       timeWakeup: fields[1] as String,
       timeSleep: fields[2] as String,
+      selection: fields[3] as int,
     );
   }
 
   @override
   void write(BinaryWriter writer, RestDayBD obj) {
     writer
-      ..writeByte(3)
+      ..writeByte(4)
       ..writeByte(0)
       ..write(obj.day)
       ..writeByte(1)
       ..write(obj.timeWakeup)
       ..writeByte(2)
-      ..write(obj.timeSleep);
+      ..write(obj.timeSleep)
+      ..writeByte(3)
+      ..write(obj.selection);
   }
 
   @override

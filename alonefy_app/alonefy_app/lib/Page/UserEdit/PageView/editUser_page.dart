@@ -12,6 +12,7 @@ import 'package:ifeelefine/Common/utils.dart';
 import 'package:ifeelefine/Page/UserConfig/Controller/userConfigController.dart';
 import 'package:ifeelefine/Model/user.dart';
 import 'package:ifeelefine/Model/userbd.dart';
+import 'package:ifeelefine/Page/UserEdit/Controller/editController.dart';
 
 import 'package:ifeelefine/Page/UserRest/PageView/configurationUserRest_page.dart';
 import 'package:flutter/material.dart';
@@ -26,13 +27,13 @@ class UserEditPage extends StatefulWidget {
 }
 
 class _UserEditPageState extends State<UserEditPage> {
-  final UserConfigCOntroller userVC = Get.put(UserConfigCOntroller());
+  final EditConfigController editVC = Get.put(EditConfigController());
 
   bool isCheck = false;
   late bool selectImage = false;
   final bool _guardado = false;
   User? user;
-  UserBD? userbd;
+  // UserBD? userbd;
   late bool istrayed;
 
   late bool selectOther = false;
@@ -49,8 +50,8 @@ class _UserEditPageState extends State<UserEditPage> {
   late int indexCountry = 0;
   late String selectState = "";
   late String selectCountry = "";
-  final List<String> _states = ["Seleccionar estado"];
-  final List<String> _country = ["Seleccionar pais"];
+  List<String> _states = ["Seleccionar estado"];
+  List<String> _country = ["Seleccionar pais"];
   final String _selectedCountry = "Choose Country";
   List<dynamic> countryres = [];
   List<dynamic> stateTemp = [];
@@ -58,7 +59,6 @@ class _UserEditPageState extends State<UserEditPage> {
 
   @override
   void initState() {
-    getCounty();
     user = User(
         idUser: 0,
         name: "",
@@ -76,47 +76,16 @@ class _UserEditPageState extends State<UserEditPage> {
     super.initState();
 
     getUserData();
-    _getAge();
   }
 
-  Future<Map<String, String>> _getAge() async {
-    ages = getAge();
-    return ages;
-  }
-
-  Future getResponse() async {
-    var res = await rootBundle.loadString(
-        'packages/country_state_city_picker/lib/assets/country.json');
-
-    return jsonDecode(res);
-  }
-
-  Future refreshContry() async {
-    indexCountry = _country.indexWhere((item) => item == user!.country);
-    print(indexCountry);
-    if (indexCountry < 0) indexCountry = 0;
-    selectCountry = _country[indexCountry];
-    print(selectCountry);
-
-    for (var element in countryres) {
-      var model = StatusModel.StatusModel();
-      model.name = element['name'];
-      model.emoji = element['emoji'];
-      var states = element['state'];
-      if (!mounted) break;
-
-      if (selectCountry.contains(("${model.emoji!}  ${model.name!}"))) {
-        if (stateTemp.isNotEmpty) {
-          stateTemp.clear();
-        }
-        stateTemp.add(states);
-        if (states.length > 1) {
-          filterState();
-        } else {
-          indexState = 0;
-        }
-      }
+  Future getUserData() async {
+    user = await editVC.getUserDate();
+    ages = await editVC.getAgeVC();
+    if (user!.idUser != -1) {
+      selectCountry = user!.country;
+      selectState = user!.city;
     }
+    _country = await editVC.getCounty();
     setState(() {});
   }
 
@@ -125,126 +94,6 @@ class _UserEditPageState extends State<UserEditPage> {
     print(indexState);
     if (indexState < 0) indexState = 0;
     selectState = _states[indexState];
-  }
-
-  Future getCounty() async {
-    countryres = await getResponse() as List;
-    for (var data in countryres) {
-      var model = StatusModel.StatusModel();
-      model.name = data['name'];
-      model.emoji = data['emoji'];
-      if (!mounted) continue;
-      setState(() {
-        _country.add("${model.emoji!}  ${model.name!}");
-      });
-    }
-
-    indexCountry = _country.indexWhere((item) => item == user!.country);
-    print(indexCountry);
-    if (indexCountry < 0) indexCountry = 0;
-    selectCountry = _country[indexCountry];
-    print(selectCountry);
-
-    for (var i in _country) {
-      if (i == user!.country) {
-        for (var element in countryres) {
-          var model = StatusModel.StatusModel();
-          model.name = element['name'];
-          model.emoji = element['emoji'];
-          if (!mounted) break;
-
-          if (i.contains(("${model.emoji!}  ${model.name!}"))) {
-            if (stateTemp.isNotEmpty) {
-              stateTemp.removeLast();
-            }
-            stateTemp.add(element['state']);
-
-            filterState();
-            break;
-          }
-        }
-
-        break;
-      }
-    }
-    indexState = _states.indexWhere((item) => item == user!.city);
-    print(indexState);
-    if (indexState < 0) indexState = 0;
-    selectState = _states[indexState];
-    print(selectCountry);
-
-    return _country;
-  }
-
-  Future filterState() async {
-    if (_states.isNotEmpty) {
-      _states.clear();
-    }
-
-    for (var f in stateTemp) {
-      if (!mounted) continue;
-
-      f.forEach((data) {
-        _states.add("${data['name']}");
-      });
-    }
-
-    setState(() {});
-    return _states;
-  }
-
-  Future getState() async {
-    var response = await getResponse();
-    var takestate = response
-        .map((map) => StatusModel.StatusModel.fromJson(map))
-        .where((item) => item.emoji + "    " + item.name == _selectedCountry)
-        .map((item) => item.state)
-        .toList();
-    var states = takestate as List;
-    for (var f in states) {
-      if (!mounted) continue;
-      setState(
-        () {
-          var name = f.map((item) => item.name).toList();
-          for (var statename in name) {
-            _states.add(statename.toString());
-          }
-        },
-      );
-    }
-
-    return _states;
-  }
-
-  Future getUserData() async {
-    userbd = await userVC.getUserDate();
-    if (userbd != null) {
-      user = User(
-          idUser: int.parse(userbd!.idUser),
-          name: userbd!.name,
-          lastname: userbd!.lastname,
-          email: userbd!.email,
-          telephone: userbd!.telephone,
-          gender: userbd!.gender,
-          maritalStatus: userbd!.maritalStatus,
-          styleLife: userbd!.styleLife,
-          pathImage: userbd!.pathImage,
-          age: userbd!.age.toString(),
-          country: userbd!.country,
-          city: userbd!.city);
-
-      selectCountry = userbd!.country;
-      selectState = userbd!.city;
-    }
-
-    setState(() {});
-  }
-
-  Future<Image> getImage(String urlImage) async {
-    Uint8List bytesImages = const Base64Decoder().convert(urlImage);
-
-    return imgNew = Image.memory(bytesImages,
-        fit: BoxFit.cover, width: double.infinity, height: 250.0);
   }
 
   @override
@@ -268,13 +117,23 @@ class _UserEditPageState extends State<UserEditPage> {
                 Column(
                   children: <Widget>[
                     const SizedBox(height: 10),
-                    _crearNombre(""),
+                    genericTxt((user == null) ? "" : user!.name,
+                        Constant.namePlaceholder, (value) {
+                      user?.name = value;
+                    }),
                     const SizedBox(height: 10),
-                    _lastName(""),
+                    genericTxt((user == null) ? "" : user!.lastname,
+                        Constant.lastnamePlaceholder, (value) {
+                      user?.lastname = value;
+                    }),
                     const SizedBox(height: 10),
                     _telefono(""),
                     const SizedBox(height: 10),
-                    _emailTxt(""),
+                    genericTxt(
+                        (user == null) ? "" : user!.email, Constant.email,
+                        (value) {
+                      user?.email = value;
+                    }),
                     const SizedBox(height: 10),
                     Padding(
                       padding: const EdgeInsets.all(8.0),
@@ -295,8 +154,8 @@ class _UserEditPageState extends State<UserEditPage> {
                             hint: Padding(
                               padding: const EdgeInsets.all(8.0),
                               child: Text(
-                                (userbd != null && userbd!.gender != "")
-                                    ? userbd!.gender
+                                (user != null && user!.gender != "")
+                                    ? user!.gender
                                     : Constant.selectGender,
                                 style: const TextStyle(
                                     fontSize: 18,
@@ -320,7 +179,7 @@ class _UserEditPageState extends State<UserEditPage> {
                                 )
                                 .toList(),
                             onChanged: (v) {
-                              userbd!.gender = v.toString();
+                              user!.gender = v.toString();
                               setState(() {});
                             },
                           ),
@@ -346,8 +205,8 @@ class _UserEditPageState extends State<UserEditPage> {
                             hint: Padding(
                               padding: const EdgeInsets.all(8.0),
                               child: Text(
-                                (userbd != null && userbd!.maritalStatus != "")
-                                    ? userbd!.maritalStatus
+                                (user != null && user!.maritalStatus != "")
+                                    ? user!.maritalStatus
                                     : Constant.maritalStatus,
                                 style: const TextStyle(
                                     fontSize: 18,
@@ -372,7 +231,7 @@ class _UserEditPageState extends State<UserEditPage> {
                                 .toList(),
                             onChanged: (v) {
                               // userbd!.gender = v.toString();
-                              userbd!.maritalStatus = v.toString();
+                              user!.maritalStatus = v.toString();
                               setState(() {});
                             },
                           ),
@@ -512,7 +371,7 @@ class _UserEditPageState extends State<UserEditPage> {
                             hint: Padding(
                               padding: const EdgeInsets.all(8.0),
                               child: Text(
-                                (user != null && user!.country != "")
+                                (user!.idUser != -1 && user!.country != "")
                                     ? user!.country
                                     : selectCountry,
                                 style: const TextStyle(
@@ -540,12 +399,16 @@ class _UserEditPageState extends State<UserEditPage> {
                                   ),
                                 )
                                 .toList(),
-                            onChanged: (v) {
+                            onChanged: (v) async {
                               selectCountry = v!;
-                              user?.country = v;
-                              // user!.city = "";
-                              // indexState = 0;
-                              refreshContry();
+
+                              user!.country = v;
+                              await editVC.refreshContry();
+                              final int index2 = _country.indexWhere(
+                                  (country) => country.contains(v.toString()));
+                              indexCountry = index2;
+                              _states = await editVC.filterState();
+                              setState(() {});
                             },
                           ),
                         ),
@@ -609,10 +472,6 @@ class _UserEditPageState extends State<UserEditPage> {
                             onChanged: (v) {
                               user?.city = v.toString();
                               selectState = v!;
-                              // selectOther = false;
-                              // int index =
-                              //     _states.indexWhere((item) => item == v);
-                              // indexState = index;
                               SelectDropState();
                               setState(() {});
                             },
@@ -668,66 +527,21 @@ class _UserEditPageState extends State<UserEditPage> {
     );
   }
 
-  Widget _crearNombre(String name) {
-    if (userbd != null) {
-      name = userbd!.name;
-    }
-
-    return Padding(
-      padding: const EdgeInsets.only(left: 5.0, right: 5.0),
-      child: Center(
-        child: TextFormField(
-          onChanged: (value) {
-            user?.name = value;
-          },
-          style: const TextStyle(color: ColorPalette.principal),
-          key: Key(name),
-          initialValue: name,
-          textCapitalization: TextCapitalization.sentences,
-          decoration: InputDecoration(
-            suffixIcon: const Icon(Icons.edit, color: ColorPalette.principal),
-            focusedBorder: const UnderlineInputBorder(
-              borderSide: BorderSide(color: ColorPalette.principal),
-              // borderRadius: BorderRadius.circular(100.0),
-            ),
-            enabledBorder: const UnderlineInputBorder(
-              borderSide: BorderSide(
-                  width: 1, color: ColorPalette.principal), //<-- SEE HERE
-            ),
-            hintStyle: const TextStyle(color: ColorPalette.principal),
-            filled: true,
-            hintText: name,
-            labelText: Constant.nameUser,
-            labelStyle: const TextStyle(color: ColorPalette.principal),
-          ),
-          onSaved: (value) => {
-            user?.name = value!,
-          },
-          validator: (value) {
-            return Constant.namePlaceholder;
-          },
-        ),
-      ),
-    );
-  }
-
-  Widget _lastName(String lastName) {
-    if (userbd != null) {
-      lastName = userbd!.lastname;
-    }
+  Widget genericTxt(
+      String text, String labeltext, Function(String value) onChanged) {
     return Padding(
       padding: const EdgeInsets.only(left: 5.0, right: 5.0),
       child: TextFormField(
         onChanged: (valor) {
-          user?.lastname = valor;
+          onChanged(valor);
         },
         autofocus: false,
-        key: Key(lastName),
-        initialValue: userbd == null ? lastName : userbd?.lastname,
+        key: Key(text),
+        initialValue: text,
         textCapitalization: TextCapitalization.sentences,
         decoration: InputDecoration(
-          hintText: userbd == null ? lastName : userbd?.lastname,
-          labelText: Constant.lastName,
+          hintText: text,
+          labelText: labeltext,
           suffixIcon: const Icon(Icons.edit, color: ColorPalette.principal),
           focusedBorder: const UnderlineInputBorder(
             borderSide: BorderSide(color: ColorPalette.principal),
@@ -742,52 +556,15 @@ class _UserEditPageState extends State<UserEditPage> {
         ),
         style: const TextStyle(color: ColorPalette.principal),
         onSaved: (value) => {
-          user?.lastname = value!,
-        },
-      ),
-    );
-  }
-
-  Widget _emailTxt(String email) {
-    if (userbd != null) {
-      email = userbd!.email;
-    }
-    return Padding(
-      padding: const EdgeInsets.only(left: 5.0, right: 5.0),
-      child: TextFormField(
-        onChanged: (valor) {
-          user?.lastname = valor;
-        },
-        autofocus: false,
-        key: Key(email),
-        initialValue: userbd == null ? email : userbd?.email,
-        textCapitalization: TextCapitalization.sentences,
-        decoration: InputDecoration(
-          hintText: userbd == null ? email : userbd?.email,
-          labelText: Constant.email,
-          suffixIcon: const Icon(Icons.edit, color: ColorPalette.principal),
-          focusedBorder: const UnderlineInputBorder(
-            borderSide: BorderSide(color: ColorPalette.principal),
-          ),
-          enabledBorder: const UnderlineInputBorder(
-            borderSide: BorderSide(
-                width: 1, color: ColorPalette.principal), //<-- SEE HERE
-          ),
-          hintStyle: const TextStyle(color: ColorPalette.principal),
-          filled: true,
-          labelStyle: const TextStyle(color: ColorPalette.principal),
-        ),
-        style: const TextStyle(color: ColorPalette.principal),
-        onSaved: (value) => {
-          user?.lastname = value!,
+          onChanged(value!),
         },
       ),
     );
   }
 
   Widget _telefono(String phone) {
-    if (userbd != null) {
-      phone = userbd!.telephone;
+    if (user != null) {
+      phone = user!.telephone;
     }
     return Padding(
       padding: const EdgeInsets.only(left: 3.0, right: 3.0),
@@ -826,42 +603,7 @@ class _UserEditPageState extends State<UserEditPage> {
   }
 
   void _submit() async {
-    // Uint8List? bytes;
-    // String img64 = "";
-    // if (foto?.path != "") {
-    //   bytes = foto?.readAsBytesSync();
-    //   img64 = base64Encode(bytes!);
-    // } else {
-    //   img64 = userbd!.pathImage;
-    // }
-
-    UserBD person = UserBD(
-        idUser: '0',
-        name: user!.name,
-        lastname: user!.lastname,
-        email: user!.email,
-        telephone: user!.telephone,
-        gender: user!.gender,
-        maritalStatus: user!.maritalStatus,
-        styleLife: user!.styleLife,
-        pathImage: userbd!.pathImage,
-        age: user!.age.toString(),
-        country: user!.country,
-        city: user!.city);
-
-    // if (userbd != null) {
-    //   var update = await userVC.updateUserDate(context, person);
-
-    //   if (update) {
-    //     // ignore: use_build_context_synchronously
-    //     Navigator.push(
-    //       context,
-    //       MaterialPageRoute(builder: (context) => const UserRestPage()),
-    //     );
-    //     return;
-    //   }
-    // } else {
-    bool a = await userVC.updateUserDate(context, person);
+    bool a = await editVC.updateUserDate(context, user!);
 
     if (a) {
       showDialog(
@@ -875,11 +617,23 @@ class _UserEditPageState extends State<UserEditPage> {
                   child: const Text("Ok"),
                   onPressed: () {
                     Navigator.of(context).pop();
-                    // Navigator.push(
-                    //   context,
-                    //   MaterialPageRoute(
-                    //       builder: (context) => const UserRestPage()),
-                    // );
+                  },
+                )
+              ],
+            );
+          });
+    } else {
+      showDialog(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              title: const Text("Informacion"),
+              content: Text("Hubo un error".tr),
+              actions: <Widget>[
+                TextButton(
+                  child: const Text("Ok"),
+                  onPressed: () {
+                    Navigator.of(context).pop();
                   },
                 )
               ],

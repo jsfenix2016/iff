@@ -9,10 +9,27 @@ class UserRestController extends GetxController {
   late var validateSms = false.obs;
   Box? box;
 
-  Future<int> saveUserRestTime(
+  Future<int> saveRestTime(BuildContext context, RestDayBD restDay) async {
+    try {
+      return const HiveData().saveTimeRest(restDay);
+    } catch (error) {
+      return -1;
+    }
+  }
+
+  Future<int> saveUserListRestTime(
       BuildContext context, List<RestDayBD> activities) async {
     try {
-      return const HiveData().saveTimeRest(activities);
+      return const HiveData().saveListTimeRest(activities);
+    } catch (error) {
+      return -1;
+    }
+  }
+
+  Future<int> deleteUserRestDay(BuildContext context, RestDayBD restDay) async {
+    try {
+      const HiveData().deleteTimeRest(restDay);
+      return 0;
     } catch (error) {
       return -1;
     }

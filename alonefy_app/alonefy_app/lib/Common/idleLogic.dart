@@ -3,50 +3,30 @@ import 'dart:async';
 import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:ifeelefine/Common/utils.dart';
 import 'package:ifeelefine/Data/hive_data.dart';
+import 'package:ifeelefine/Model/contactRiskBD.dart';
 import 'package:ifeelefine/Provider/user_provider.dart';
 import 'package:intl/intl.dart';
 
 class IdleLogic {
-  Future<Duration> disambleIFF(String time) async {
+  Future<Duration> convertStringToDuration(String time) async {
     var disambleTemp = const Duration();
 
-    switch (time) {
-      case "":
-        disambleTemp = const Duration(seconds: 15);
-        break;
-      case "5 min":
-        disambleTemp = const Duration(minutes: 5);
-        break;
-      case "1 hora":
-        disambleTemp = const Duration(hours: 1);
-        break;
-      case "2 horas":
-        disambleTemp = const Duration(hours: 2);
-        break;
-      case "3 horas":
-        disambleTemp = const Duration(hours: 3);
-        break;
-      case "8 horas":
-        disambleTemp = const Duration(hours: 8);
-        break;
-      case "24 horas":
-        disambleTemp = const Duration(hours: 24);
-        break;
-      case "1 semana":
-        disambleTemp = const Duration(hours: 168);
-        break;
-      case "1 mes":
-        disambleTemp = const Duration(hours: 672);
-        break;
-      case "1 año":
-        disambleTemp = const Duration(hours: 8064);
-        break;
-      case "Siempre":
-        disambleTemp = const Duration(hours: 80640);
-        break;
+    const map = {
+      '': Duration(seconds: 15),
+      '5 min': Duration(minutes: 5),
+      '1 hora': Duration(hours: 1),
+      '2 horas': Duration(hours: 2),
+      '3 horas': Duration(hours: 3),
+      '8 horas': Duration(hours: 8),
+      '24 horas': Duration(hours: 24),
+      '1 semana': Duration(hours: 168),
+      '1 mes': Duration(hours: 672),
+      '1 año': Duration(hours: 8064),
+      'Siempre': Duration(hours: 80640),
+    };
 
-      default:
-    }
+    disambleTemp = map[time] ?? const Duration(hours: 80640);
+
     return disambleTemp;
   }
 
@@ -61,15 +41,41 @@ class IdleLogic {
     for (var element in listContact) {
       numberCOntact = element.phones;
       nameContact = element.displayName;
+
       authData = {
         "recipient": numberCOntact,
         "originator": (nameContact),
         'body':
             "Hola $nameContact, IFeelFine no detecta actividad de ${user.name + user.lastname}, comunicate con el usuario puede estar en riesgo."
       };
+      if (listContact.isNotEmpty) {
+        var useMobil =
+            await IdleLogic().convertStringToDuration(element.timeSendSMS);
+        Timer(useMobil, () {
+          var a = UsuarioProvider().sendSMS(authData);
+        });
+      }
+    }
+  }
+
+  Future notifyContactDate(ContactRiskBD contact) async {
+    await inicializeHiveBD();
+
+    var user = await const HiveData().getuserbd;
+
+    var authData = {};
+    var located = "";
+    if (contact.sendLocation) {
+      located = determinePosition().toString();
     }
 
-    var a = UsuarioProvider().sendSMS(authData);
+    authData = {
+      "recipient": contact.phones,
+      "originator": (contact.name),
+      'body':
+          "Hola ${contact.name}, IFeelFine no detecta actividad de ${user.name + user.lastname}, su cita termino puede estar en riesgo, su ultima ubicación detectada $located."
+    };
+    var req = UsuarioProvider().sendSMS(authData);
   }
 
   Future<Duration> idleLogicDayActivity(

@@ -2,7 +2,10 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:ffi';
 import 'dart:io';
-
+import 'package:ifeelefine/Model/contactRiskBD.dart';
+import 'package:ifeelefine/Model/contactZoneRiskBD.dart';
+import 'package:intl/intl.dart';
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:geolocator/geolocator.dart';
@@ -43,37 +46,48 @@ Map<String, String> getAge() {
   return ages;
 }
 
-String diaConvert(String dia) {
-  var tempDia = '';
-  switch (dia) {
-    case "L":
-      return 'Lunes';
-    case "M":
-      return 'Martes';
-    case "X":
-      return 'Miercoles';
-    case "J":
-      return 'Jueves';
-    case "V":
-      return 'Viernes';
-    case "S":
-      return 'Sabado';
-    case "D":
-      return 'Domingo';
-    default:
+void diveceInfo() async {
+  DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+  if (Platform.isAndroid) {
+    // Android-specific code
+    AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
+    print('Running on ${androidInfo.model}'); // e.g. "Moto G (4)"
+
+  } else if (Platform.isIOS) {
+    // iOS-specific code
+    IosDeviceInfo iosInfo = await deviceInfo.iosInfo;
+    print('Running on ${iosInfo.utsname.machine}'); // e.g. "iPod7,1"
+
   }
-  return tempDia;
 }
 
-// List<UserPosition> tempPosition = <UserPosition>[];
+String diaConvert(String dia) {
+  const map = {
+    "L": 'Lunes',
+    "M": 'Martes',
+    "X": 'Miercoles',
+    "J": 'Jueves',
+    "V": 'Viernes',
+    "S": 'Sabado',
+    "D": 'Domingo',
+  };
 
-// List<UserPosition> get getlistPositionTemp {
-//   return tempPosition;
-// }
+  return map[dia] ?? 'error';
+}
 
-// void slistPositionTemp(List<UserPosition> value) {
-//   tempPosition = value;
-// }
+String initialdayConvertDay(String dia) {
+  const map = {
+    "Lunes": 'L',
+    "Martes": 'M',
+    "Miercoles": 'X',
+    "Jueves": 'J',
+    "Viernes": 'V',
+    "Sabado": 'S',
+    "Domingo": 'D',
+  };
+
+  return map[dia] ?? 'error';
+}
 
 void makePayment() async {
   // FlutterPay flutterPay = FlutterPay();
@@ -124,6 +138,13 @@ String calculateAge(DateTime birthDate) {
   return edad;
 }
 
+Image getImage(String urlImage) {
+  Uint8List bytesImages = const Base64Decoder().convert(urlImage);
+
+  return Image.memory(bytesImages,
+      fit: BoxFit.cover, width: double.infinity, height: 250.0);
+}
+
 Future<File> procesarImagen(ImageSource origen) async {
   final XFile? image = await ImagePicker().pickImage(source: origen);
 
@@ -156,6 +177,12 @@ Future inicializeHiveBD() async {
   if (!Hive.isAdapterRegistered(ContactBDAdapter().typeId)) {
     Hive.registerAdapter(ContactBDAdapter());
   }
+  if (!Hive.isAdapterRegistered(ContactRiskBDAdapter().typeId)) {
+    Hive.registerAdapter(ContactRiskBDAdapter());
+  }
+  if (!Hive.isAdapterRegistered(ContactZoneRiskBDAdapter().typeId)) {
+    Hive.registerAdapter(ContactZoneRiskBDAdapter());
+  }
 }
 
 Future<String> displayTimePicker(BuildContext context, String key) async {
@@ -176,6 +203,91 @@ Future<String> displayTimePicker(BuildContext context, String key) async {
     return time.format(context);
   }
   return "00:00";
+}
+
+Duration getDuration(List<String> parts) {
+  int hours = 0;
+  int minutes = 0;
+  int micros;
+
+  if (parts.length > 2) {
+    hours = int.parse(parts[parts.length - 3]);
+  }
+  if (parts.length > 1) {
+    minutes = int.parse(parts[parts.length - 2]);
+  }
+  micros = (double.parse(parts[parts.length - 1]) * 1000000).round();
+  var temp = Duration(hours: hours, minutes: minutes, microseconds: micros);
+
+  return temp;
+}
+
+DateTime parseDurationRow(String s) {
+  int hours = 0;
+  int minutes = 0;
+  int micros;
+  List<String> parts = [];
+  List<String> parts2 = [];
+  Duration temp = Duration.zero;
+
+  if (s == "00:00") {
+    parts = s.split(':');
+    temp = getDuration(parts);
+  } else {
+    parts = s.split(' ');
+    parts2 = parts[1].split(':');
+    temp = getDuration(parts2);
+  }
+
+  DateTime now = DateTime.now();
+  var format = DateFormat("HH:mm");
+  Duration durationAgo = Duration(days: 5, hours: 2, minutes: 30);
+  String sDuration = "${temp.inHours}:${temp.inMinutes.remainder(60)}";
+  DateTime pastDateTime = format.parse(sDuration);
+  return pastDateTime;
+}
+
+String parseTimeString(String s) {
+  List<String> parts = [];
+  List<String> parts2 = [];
+  Duration temp = Duration.zero;
+
+  if (s == "00:00") {
+    parts = s.split(':');
+    temp = getDuration(parts);
+  } else {
+    parts = s.split(' ');
+    parts2 = parts[1].split(':');
+    temp = getDuration(parts2);
+  }
+
+  String sDuration = "${temp.inHours}:${temp.inMinutes.remainder(60)}";
+
+  return sDuration;
+}
+
+DateTime parseDuration(String s) {
+  int hours = 0;
+  int minutes = 0;
+  int micros;
+  List<String> parts = [];
+  List<String> parts2 = [];
+  Duration temp = Duration.zero;
+
+  if (s == "00:00") {
+    parts = s.split(':');
+    temp = getDuration(parts);
+  } else {
+    parts = s.split(' ');
+    parts2 = parts[1].split(':');
+    temp = getDuration(parts2);
+  }
+
+  var format = DateFormat("HH:mm");
+
+  String sDuration = "${temp.inHours}:${temp.inMinutes.remainder(60)}";
+  DateTime pastDateTime = format.parse(sDuration);
+  return pastDateTime;
 }
 
 void mostrarAlerta(BuildContext context, String mensaje) {
@@ -232,13 +344,28 @@ BoxDecoration decorationCustom() {
   );
 }
 
+BoxDecoration decorationCustom2() {
+  return const BoxDecoration(
+    gradient: LinearGradient(
+      begin: Alignment.centerLeft,
+      end: Alignment(1, 0),
+      colors: <Color>[
+        ColorPalette.principalView,
+        ColorPalette.secondView,
+        ColorPalette.principalView,
+      ],
+      tileMode: TileMode.mirror,
+    ),
+  );
+}
+
 LinearGradient linerGradientButtonFilling() {
   return const LinearGradient(
     begin: Alignment.centerLeft,
     end: Alignment(1, 0),
     colors: <Color>[
-      Color.fromRGBO(202, 157, 11, 1),
-      Color.fromRGBO(219, 177, 42, 1),
+      ColorPalette.linerGradientText,
+      ColorPalette.principal,
     ],
     tileMode: TileMode.mirror,
   );
@@ -264,6 +391,9 @@ Future<Position> determinePosition() async {
     return Future.error('Location services are disabled.');
   }
 
+  if (!_prefs.getAceptedSendLocation && !_prefs.getUserPremium) {
+    return Future.error('');
+  }
   permission = await Geolocator.checkPermission();
   if (permission == LocationPermission.denied) {
     permission = await Geolocator.requestPermission();
@@ -291,16 +421,20 @@ Future<Position> determinePosition() async {
   return await Geolocator.getCurrentPosition();
 }
 
-Future<bool> cameraPermissions(PreferencePermission acceptedCamera, BuildContext context) async {
+Future<bool> cameraPermissions(
+    PreferencePermission acceptedCamera, BuildContext context) async {
   PermissionStatus permission = await Permission.camera.status;
   PreferencePermission prefsCamera = acceptedCamera;
 
-  if (permission == PermissionStatus.denied && prefsCamera == PreferencePermission.deniedForever) {
+  if (permission == PermissionStatus.denied &&
+      prefsCamera == PreferencePermission.deniedForever) {
     showPermissionDialog(context);
     return false;
   } else if (permission == PermissionStatus.denied) {
-    Map<Permission, PermissionStatus> permissionStatus = await [Permission.camera].request();
-    if (permissionStatus[Permission.camera] == PermissionStatus.permanentlyDenied) {
+    Map<Permission, PermissionStatus> permissionStatus =
+        await [Permission.camera].request();
+    if (permissionStatus[Permission.camera] ==
+        PermissionStatus.permanentlyDenied) {
       _prefs.setAcceptedCamera = PreferencePermission.deniedForever;
     }
 
@@ -308,7 +442,6 @@ Future<bool> cameraPermissions(PreferencePermission acceptedCamera, BuildContext
   } else {
     return true;
   }
-
 }
 
 void showPermissionDialog(BuildContext context) {
@@ -317,7 +450,8 @@ void showPermissionDialog(BuildContext context) {
     builder: (context) {
       return AlertDialog(
         title: const Text("Abrir permisos"),
-        content: const Text("Para que se puedan mostrar los contactos, deberás dar permisos desde los ajustes de la aplicación."),
+        content: const Text(
+            "Para que se puedan mostrar los contactos, deberás dar permisos desde los ajustes de la aplicación."),
         actions: <Widget>[
           TextButton(
             child: const Text("Cerrar"),
@@ -332,4 +466,3 @@ void showPermissionDialog(BuildContext context) {
     },
   );
 }
-

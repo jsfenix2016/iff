@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ifeelefine/Common/colorsPalette.dart';
 
 class PanelHomeActivity extends StatefulWidget {
   const PanelHomeActivity({super.key});
@@ -33,7 +34,7 @@ class _PanelHomeActivityState extends State<PanelHomeActivity> {
             child: Expanded(
               child: Container(
                 decoration: const BoxDecoration(
-                  color: Colors.amber,
+                  color: ColorPalette.principal,
                   borderRadius: BorderRadius.only(
                       topLeft: Radius.circular(10),
                       topRight: Radius.circular(10)),
@@ -64,7 +65,7 @@ class _PanelHomeActivityState extends State<PanelHomeActivity> {
                       },
                     ),
                     Container(
-                      color: Colors.amber,
+                      color: ColorPalette.principal,
                     )
                   ],
                 ),

@@ -1,5 +1,6 @@
-import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_contacts/flutter_contacts.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:ifeelefine/Common/utils.dart';
 import 'package:ifeelefine/Provider/prefencesUser.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -9,7 +10,7 @@ class ContactDropdownButton extends StatefulWidget {
   final ValueChanged<Contact> onChanged;
 
   @override
-  _ContactDropdownButtonState createState() => _ContactDropdownButtonState();
+  State<ContactDropdownButton> createState() => _ContactDropdownButtonState();
 }
 
 class _ContactDropdownButtonState extends State<ContactDropdownButton> {
@@ -30,11 +31,12 @@ class _ContactDropdownButtonState extends State<ContactDropdownButton> {
     if (permission.isPermanentlyDenied) {
       showPermissionDialog(context);
     } else if (permission.isDenied) {
-
     } else {
       // Retrieve the list of contacts from the device
       var contacts = await FlutterContacts.getContacts();
       // Set the list of contacts in the state
+      contacts = await FlutterContacts.getContacts(
+          withProperties: true, withPhoto: true);
       setState(() {
         _contacts = contacts;
       });
@@ -54,11 +56,22 @@ class _ContactDropdownButtonState extends State<ContactDropdownButton> {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: DropdownButton<String>(
+        dropdownColor: Colors.brown,
         isExpanded: true,
         items: _contacts.map((contact) {
           return DropdownMenuItem<String>(
             value: contact.displayName,
-            child: Text(contact.displayName),
+            child: Text(
+              contact.displayName,
+              textAlign: TextAlign.center,
+              style: GoogleFonts.barlow(
+                fontSize: 16.0,
+                wordSpacing: 1,
+                letterSpacing: 1,
+                fontWeight: FontWeight.normal,
+                color: Colors.white,
+              ),
+            ),
           );
         }).toList(),
         onChanged: (selectedContact) {
@@ -72,8 +85,28 @@ class _ContactDropdownButtonState extends State<ContactDropdownButton> {
           }
         },
         hint: indexTem == -1
-            ? const Text('Select contact')
-            : Text(_contacts[indexTem].displayName),
+            ? Text(
+                'Selecciona un contacto',
+                textAlign: TextAlign.center,
+                style: GoogleFonts.barlow(
+                  fontSize: 16.0,
+                  wordSpacing: 1,
+                  letterSpacing: 1,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
+              )
+            : Text(
+                _contacts[indexTem].displayName,
+                textAlign: TextAlign.center,
+                style: GoogleFonts.barlow(
+                  fontSize: 16.0,
+                  wordSpacing: 1,
+                  letterSpacing: 1,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
+              ),
       ),
     );
   }

@@ -18,27 +18,30 @@ class ActivityDayBDAdapter extends TypeAdapter<ActivityDayBD> {
     };
     return ActivityDayBD(
       day: fields[0] as String,
-      timeFinish: fields[1] as String,
-      timeStart: fields[2] as String,
+      timeStart: fields[1] as String,
+      timeFinish: fields[2] as String,
       activity: fields[3] as String,
       id: fields[4] as int,
+      selection: fields[5] as int,
     );
   }
 
   @override
   void write(BinaryWriter writer, ActivityDayBD obj) {
     writer
-      ..writeByte(5)
+      ..writeByte(6)
       ..writeByte(0)
       ..write(obj.day)
       ..writeByte(1)
-      ..write(obj.timeFinish)
-      ..writeByte(2)
       ..write(obj.timeStart)
+      ..writeByte(2)
+      ..write(obj.timeFinish)
       ..writeByte(3)
       ..write(obj.activity)
       ..writeByte(4)
-      ..write(obj.id);
+      ..write(obj.id)
+      ..writeByte(5)
+      ..write(obj.selection);
   }
 
   @override

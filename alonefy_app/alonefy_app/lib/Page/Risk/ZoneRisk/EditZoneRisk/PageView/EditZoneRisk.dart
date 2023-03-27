@@ -1,0 +1,485 @@
+import 'dart:ffi';
+
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter_contacts/flutter_contacts.dart';
+import 'package:ifeelefine/Common/Constant.dart';
+import 'package:ifeelefine/Common/colorsPalette.dart';
+import 'package:ifeelefine/Common/utils.dart';
+import 'package:ifeelefine/Model/contactRiskBD.dart';
+import 'package:ifeelefine/Model/contactZoneRiskBD.dart';
+import 'package:ifeelefine/Page/Risk/DateRisk/Controller/editRiskController.dart';
+import 'package:ifeelefine/Page/Risk/DateRisk/Widgets/cardContact.dart';
+import 'package:ifeelefine/Page/Risk/DateRisk/Widgets/contentCode.dart';
+
+import 'package:flutter/material.dart';
+
+import 'package:google_fonts/google_fonts.dart';
+import 'package:ifeelefine/Page/Risk/DateRisk/Widgets/popUpContact.dart';
+import 'package:ifeelefine/Page/Risk/ZoneRisk/EditZoneRisk/Controller/EditZoneController.dart';
+import 'package:ifeelefine/Page/Risk/ZoneRisk/PushAlert/PageView/pushAlert.dart';
+import 'package:ifeelefine/Utils/Widgets/elevateButtonCustomBorder.dart';
+import 'package:ifeelefine/Utils/Widgets/elevatedButtonFilling.dart';
+import 'package:notification_center/notification_center.dart';
+
+class EditZoneRiskPage extends StatefulWidget {
+  const EditZoneRiskPage(
+      {super.key, required this.contactRisk, required this.index});
+
+  final ContactZoneRiskBD contactRisk;
+  final int index;
+  // final String timefinish;
+  @override
+  State<EditZoneRiskPage> createState() => _EditZoneRiskPageState();
+}
+
+class _EditZoneRiskPageState extends State<EditZoneRiskPage> {
+  EditZoneController editZoneVC = EditZoneController();
+
+  var sendWhatsappSMS = false;
+  var sendLocation = false;
+  var saveConfig = true;
+
+  var sendWhatsappContact = false;
+  var callme = false;
+  var save = false;
+
+  String name = 'Selecciona un contacto';
+
+  List<Contact> contactlist = [];
+  late Contact contactSelect;
+  var indexSelect = -1;
+  var code = CodeModel();
+
+  @override
+  void initState() {
+    getContact();
+    List<String> parts = [];
+    if (widget.contactRisk.code != "") {
+      parts = widget.contactRisk.code.split(',');
+
+      code.textCode1 = parts[0];
+      code.textCode2 = parts[1];
+      code.textCode3 = parts[2];
+      code.textCode4 = parts[3];
+    } else {
+      code.textCode1 = '';
+      code.textCode2 = '';
+      code.textCode3 = '';
+      code.textCode4 = '';
+    }
+
+    super.initState();
+  }
+
+  Future getContact() async {
+    contactlist = await editZoneVC.getContacts(context);
+
+    setState(() {});
+  }
+
+  void saveContactZoneRisk(BuildContext context) async {
+    var contactRisk = ContactZoneRiskBD(
+        id: widget.contactRisk.id,
+        photo: contactSelect.photo,
+        name: contactSelect.displayName,
+        phones: contactSelect.phones.first.toString(),
+        sendLocation: sendLocation,
+        sendWhatsapp: sendWhatsappSMS,
+        code: widget.contactRisk.code,
+        isActived: true,
+        sendWhatsappContact: sendWhatsappContact,
+        callme: callme,
+        save: save);
+    if (widget.contactRisk.id == -1) {
+      contactRisk.id = widget.index;
+      // await editVC.saveContactRisk(context, contactRisk);
+    } else {
+      // await editVC.updateContactRisk(context, contactRisk);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.brown,
+        title: const Center(child: Text("Edición de mensaje de zona")),
+      ),
+      body: Container(
+        decoration: decorationCustom(),
+        child: SingleChildScrollView(
+          child: Center(
+            child: Column(
+              children: [
+                SafeArea(
+                  child: Container(
+                    height: 10.0,
+                  ),
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                SizedBox(
+                  child: Column(
+                    children: [
+                      Center(
+                        child: Text(
+                          "En caso de no pulsar botón de alerta",
+                          textAlign: TextAlign.center,
+                          style: GoogleFonts.barlow(
+                            fontSize: 18.0,
+                            wordSpacing: 1,
+                            letterSpacing: 1,
+                            fontWeight: FontWeight.normal,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                      Column(
+                        mainAxisSize: MainAxisSize.max,
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          Container(
+                            height: 60.0,
+                            color: Colors.transparent,
+                            child: Padding(
+                              padding: const EdgeInsets.all(12.0),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.max,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceAround,
+                                children: [
+                                  Container(
+                                    width: 270,
+                                    color: Colors.transparent,
+                                    child: Text(
+                                      "Enviar Whatsapp a",
+                                      textAlign: TextAlign.right,
+                                      style: GoogleFonts.barlow(
+                                        fontSize: 14.0,
+                                        wordSpacing: 1,
+                                        letterSpacing: 1,
+                                        fontWeight: FontWeight.normal,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  ),
+                                  Container(
+                                    width: size.width / 6,
+                                    color: Colors.transparent,
+                                    child: Switch(
+                                      onChanged: (value) {
+                                        sendWhatsappSMS = value;
+                                        widget.contactRisk.sendWhatsapp = value;
+                                        setState(() {});
+                                      },
+                                      value: widget.contactRisk.sendWhatsapp,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                          Padding(
+                            padding:
+                                const EdgeInsets.only(left: 12.0, right: 8),
+                            child: Container(
+                              height: 50.0,
+                              color: Colors.transparent,
+                              child: Row(
+                                mainAxisSize: MainAxisSize.max,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Container(
+                                    width: 270,
+                                    color: Colors.transparent,
+                                    child: Text(
+                                      "Hacer llamada a",
+                                      textAlign: TextAlign.right,
+                                      style: GoogleFonts.barlow(
+                                        fontSize: 14.0,
+                                        wordSpacing: 1,
+                                        letterSpacing: 1,
+                                        fontWeight: FontWeight.normal,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  ),
+                                  Container(
+                                    width: size.width / 6,
+                                    color: Colors.transparent,
+                                    child: Switch(
+                                      onChanged: (value) {
+                                        callme = value;
+                                        widget.contactRisk.callme = value;
+                                        setState(() {});
+                                      },
+                                      value: widget.contactRisk.callme,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(
+                  height: 40,
+                ),
+                SizedBox(
+                  child: Column(
+                    children: [
+                      const SizedBox(
+                        height: 12,
+                      ),
+                      CardContact(
+                        visible: true,
+                        photo: (indexSelect != -1 &&
+                                contactlist.isNotEmpty &&
+                                contactlist[indexSelect].photo != null)
+                            ? contactlist[indexSelect].photo
+                            : widget.contactRisk.photo,
+                        name: (indexSelect != -1 &&
+                                    contactlist.isNotEmpty &&
+                                    contactlist[indexSelect]
+                                        .displayName
+                                        .isNotEmpty ||
+                                widget.contactRisk.name != '')
+                            ? contactlist[indexSelect].displayName
+                            : name,
+                        onChanged: (value) {
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) => Container(
+                              width: size.width,
+                              height: size.height,
+                              color: const Color.fromRGBO(169, 146, 125, 1),
+                              child: Padding(
+                                  padding: const EdgeInsets.only(
+                                      top: 28.0, left: 8, right: 8),
+                                  child: PopUpContact(
+                                    listcontact: contactlist,
+                                    onChanged: (int value) {
+                                      indexSelect = value;
+                                      contactSelect = contactlist[value];
+                                      widget.contactRisk.name =
+                                          contactSelect.displayName;
+                                      setState(() {});
+                                    },
+                                  )),
+                            ),
+                          );
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                Column(
+                  mainAxisSize: MainAxisSize.max,
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    Container(
+                      height: 60.0,
+                      color: Colors.transparent,
+                      child: Padding(
+                        padding: const EdgeInsets.all(12.0),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.max,
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            Container(
+                              width: 270,
+                              color: Colors.transparent,
+                              child: Text(
+                                "Enviar Whatsapp a mi mensaje predefinido:",
+                                textAlign: TextAlign.right,
+                                style: GoogleFonts.barlow(
+                                  fontSize: 14.0,
+                                  wordSpacing: 1,
+                                  letterSpacing: 1,
+                                  fontWeight: FontWeight.normal,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ),
+                            Container(
+                              width: size.width / 6,
+                              color: Colors.transparent,
+                              child: Switch(
+                                onChanged: (value) {
+                                  sendWhatsappContact = value;
+                                  widget.contactRisk.sendWhatsappContact =
+                                      value;
+                                  setState(() {});
+                                },
+                                value: widget.contactRisk.sendWhatsappContact,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 12.0, right: 8),
+                      child: Container(
+                        height: 50.0,
+                        color: Colors.transparent,
+                        child: Row(
+                          mainAxisSize: MainAxisSize.max,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Container(
+                              width: 270,
+                              color: Colors.transparent,
+                              child: Text(
+                                "Enviar mi última ubicación registrada:",
+                                textAlign: TextAlign.right,
+                                style: GoogleFonts.barlow(
+                                  fontSize: 14.0,
+                                  wordSpacing: 1,
+                                  letterSpacing: 1,
+                                  fontWeight: FontWeight.normal,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ),
+                            Container(
+                              width: size.width / 6,
+                              color: Colors.transparent,
+                              child: Switch(
+                                onChanged: (value) {
+                                  sendLocation = value;
+                                  widget.contactRisk.sendLocation = value;
+                                  setState(() {});
+                                },
+                                value: widget.contactRisk.sendLocation,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                Container(
+                  height: 20,
+                  color: Colors.transparent,
+                ),
+                Expanded(
+                  flex: 0,
+                  child: Container(
+                    color: Colors.transparent,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.max,
+                      children: [
+                        SizedBox(
+                          child: Column(
+                            children: [
+                              Center(
+                                child: Text(
+                                  "Establece tu clave de cancelación",
+                                  textAlign: TextAlign.center,
+                                  style: GoogleFonts.barlow(
+                                    fontSize: 18.0,
+                                    wordSpacing: 1,
+                                    letterSpacing: 1,
+                                    fontWeight: FontWeight.normal,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ),
+                              ContentCode(
+                                code: code,
+                                onChanged: (value) {
+                                  code = value;
+                                  widget.contactRisk.code =
+                                      '${value.textCode1},${value.textCode2},${value.textCode3},${value.textCode4}';
+                                },
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.max,
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Container(
+                                width: 280,
+                                color: Colors.transparent,
+                                child: Text(
+                                  "Guardar esta configuración",
+                                  textAlign: TextAlign.right,
+                                  style: GoogleFonts.barlow(
+                                    fontSize: 14.0,
+                                    wordSpacing: 1,
+                                    letterSpacing: 1,
+                                    fontWeight: FontWeight.normal,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ),
+                              Container(
+                                width: size.width / 6,
+                                color: Colors.transparent,
+                                child: Switch(
+                                  onChanged: (value) {
+                                    saveConfig = value;
+                                    widget.contactRisk.save = value;
+                                    setState(() {});
+                                  },
+                                  value: widget.contactRisk.save,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                ElevateButtonCustomBorder(
+                  onChanged: (value) {
+                    if (saveConfig) {
+                      saveContactZoneRisk(context);
+                    }
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => PushAlertPage(
+                          contactZone: widget.contactRisk,
+                        ),
+                      ),
+                    );
+                  },
+                  mensaje: 'Iniciar',
+                ),
+                Container(
+                  height: 20,
+                  color: Colors.transparent,
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
