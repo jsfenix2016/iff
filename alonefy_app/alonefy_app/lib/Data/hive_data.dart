@@ -10,9 +10,9 @@ import 'package:ifeelefine/Model/userpositionbd.dart';
 class HiveData {
   const HiveData();
 
-  Future<int> saveUser(User user) async {
+  Future<UserBD> saveUser(User user) async {
     UserBD person = UserBD(
-        idUser: '0',
+        idUser: user.idUser,
         name: user.name,
         lastname: user.lastname,
         email: user.email,
@@ -25,14 +25,15 @@ class HiveData {
         country: user.country,
         city: user.city);
     final Box<UserBD> box = await Hive.openBox<UserBD>('userBD');
-
-    return box.add(person);
+    await box.add(person);
+    person = box.getAt(0)!;
+    return person;
   }
 
   Future updateUser(UserBD user) async {
     final Box<UserBD> box = await Hive.openBox<UserBD>('userBD');
 
-    box.put(int.parse(user.idUser), user);
+    await box.putAt(0, user);
   }
 
   Future<UserBD> get getuserbd async {
@@ -143,7 +144,7 @@ class HiveData {
 
   Future<int> saveActivity(ActivityDayBD activity) async {
     Box<ActivityDayBD> box =
-    await Hive.openBox<ActivityDayBD>('listActivityDayBD');
+        await Hive.openBox<ActivityDayBD>('listActivityDayBD');
 
     box.add(activity);
 
@@ -167,7 +168,7 @@ class HiveData {
 
   Future<int> updateActivity(ActivityDayBD activity) async {
     Box<ActivityDayBD> box =
-    await Hive.openBox<ActivityDayBD>('listActivityDayBD');
+        await Hive.openBox<ActivityDayBD>('listActivityDayBD');
 
     box.put(activity.id, activity);
 
@@ -274,7 +275,8 @@ class HiveData {
   }
 
   Future<int> saveLogActivity(LogActivityBD logActivityBD) async {
-    final Box<LogActivityBD> box = await Hive.openBox<LogActivityBD>('LogActivityBD');
+    final Box<LogActivityBD> box =
+        await Hive.openBox<LogActivityBD>('LogActivityBD');
 
     return box.add(logActivityBD);
   }

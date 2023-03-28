@@ -134,9 +134,9 @@ class _EditRiskPageState extends State<EditRiskPage> {
     }
 
     if (foto != null) {
-      mostrarAlerta(context, "Se guardo la imagen correctamente".tr);
+      showAlert(context, "Se guardo la imagen correctamente".tr);
     } else {
-      mostrarAlerta(context, "Hubo un error, intente mas tarde".tr);
+      showAlert(context, "Hubo un error, intente mas tarde".tr);
     }
   }
 

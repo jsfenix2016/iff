@@ -52,8 +52,21 @@ class HomeController extends GetxController {
         user.pathImage = img64;
       }
 
-      if (user.idUser != -1) {
-        await userVC.updateUserDate(context, user);
+      if (user.idUser != '-1') {
+        UserBD userbd = UserBD(
+            idUser: user.idUser.toString(),
+            name: user.name,
+            lastname: user.lastname,
+            email: user.email,
+            telephone: user.telephone,
+            gender: user.gender,
+            maritalStatus: user.maritalStatus,
+            styleLife: user.styleLife,
+            pathImage: user.pathImage,
+            age: user.age,
+            country: user.country,
+            city: user.city);
+        await userVC.updateUserDate(context, userbd);
       } else {
         await userVC.saveUserData(context, user, const Uuid().v1());
       }

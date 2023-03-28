@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:ifeelefine/Common/utils.dart';
 
 import 'package:ifeelefine/Data/hive_data.dart';
 import 'package:ifeelefine/Model/user.dart';
@@ -36,36 +37,35 @@ class UserConfigCOntroller extends GetxController {
     }
   }
 
-  Future<int> saveUserData(BuildContext context, User user, String uuid) async {
+  Future<UserBD> saveUserData(
+      BuildContext context, User user, String uuid) async {
     try {
       user.idUser = (uuid);
-      return const HiveData().saveUser(user);
+      return await const HiveData().saveUser(user);
     } catch (error) {
-      return -1;
+      UserBD person = UserBD(
+          idUser: '-1',
+          name: '',
+          lastname: '',
+          email: '',
+          telephone: '',
+          gender: '',
+          maritalStatus: '',
+          styleLife: '',
+          pathImage: '',
+          age: '18',
+          country: '',
+          city: '');
+      return person;
     }
   }
 
-  Future<bool> updateUserDate(BuildContext context, User user) async {
+  Future<bool> updateUserDate(BuildContext context, UserBD user) async {
     try {
       // Map info
-      UserBD userbd = UserBD(
-          idUser: user.idUser.toString(),
-          name: user.name,
-          lastname: user.lastname,
-          email: user.email,
-          telephone: user.telephone,
-          gender: user.gender,
-          maritalStatus: user.maritalStatus,
-          styleLife: user.styleLife,
-          pathImage: user.pathImage,
-          age: user.age,
-          country: user.country,
-          city: user.city);
 
-      await const HiveData().updateUser(userbd);
-      Box<UserBD> box = await Hive.openBox<UserBD>('userBD');
+      await const HiveData().updateUser(user);
 
-      await box.putAt(int.parse(userbd.idUser), userbd);
       return true;
     } catch (error) {
       return false;
@@ -73,22 +73,8 @@ class UserConfigCOntroller extends GetxController {
   }
 
   Future<User> getUserDate() async {
-    User person = User(
-        idUser: "-1",
-        name: '',
-        lastname: '',
-        email: '',
-        telephone: '',
-        gender: '',
-        maritalStatus: '',
-        styleLife: '',
-        pathImage: '',
-        age: '18',
-        country: '',
-        city: '');
-
     UserBD box = await const HiveData().getuserbd;
-    if (box.idUser == "-1") {
+    if (box.idUser != "-1") {
       User user = User(
           idUser: (box.idUser),
           name: box.name,
@@ -104,6 +90,7 @@ class UserConfigCOntroller extends GetxController {
           city: box.city);
       return user;
     } else {
+      User person = initUser();
       return person;
     }
   }

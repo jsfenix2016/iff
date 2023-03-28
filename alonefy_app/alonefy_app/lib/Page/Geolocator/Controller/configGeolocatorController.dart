@@ -10,6 +10,6 @@ class ConfigGeolocatorController extends GetxController {
   Future<void> saveSendLocation(BuildContext context, bool senLocation) async {
     _prefs.setAceptedSendLocation = senLocation;
 
-    mostrarAlerta(context, "Se guardo correctamente");
+    showAlert(context, "Se guardo correctamente");
   }
 }

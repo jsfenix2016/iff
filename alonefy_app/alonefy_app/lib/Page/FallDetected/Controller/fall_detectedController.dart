@@ -11,7 +11,7 @@ class FallDetectedController extends GetxController {
   Future<void> saveDetectedFall(BuildContext context, bool detectedfall) async {
     _prefs.setDetectedFall = detectedfall;
 
-    mostrarAlerta(context, "Se guardo correctamente");
+    showAlert(context, "Se guardo correctamente");
 
     Navigator.push(
       context,

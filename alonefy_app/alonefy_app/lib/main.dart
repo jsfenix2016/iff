@@ -2,24 +2,16 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:ui';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/services.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
-import 'package:ifeelefine/Common/colorsPalette.dart';
 import 'package:ifeelefine/Common/logicDateRisk.dart';
 import 'package:ifeelefine/Common/notificationService.dart';
 import 'package:ifeelefine/Data/hiveRisk_data.dart';
 import 'package:ifeelefine/Model/activitydaybd.dart';
 import 'package:ifeelefine/Model/contactRiskBD.dart';
-import 'package:ifeelefine/Page/HomePage/Pageview/home_page.dart';
-import 'package:ifeelefine/Page/Onboarding/PageView/onboarding_page.dart';
-import 'package:ifeelefine/Page/Risk/DateRisk/Pageview/cancelDatePage.dart';
-import 'package:ifeelefine/Page/Risk/DateRisk/Pageview/editRiskDatePage.dart';
 
 import 'package:ifeelefine/Page/Risk/DateRisk/ListDateRisk/PageView/riskDatePage.dart';
-import 'package:ifeelefine/Page/Risk/ZoneRisk/ListContactZoneRisk/PageView/zoneRisk.dart';
-import 'package:ifeelefine/Page/Risk/ZoneRisk/PushAlert/PageView/pushAlert.dart';
 
 import 'package:intl/intl.dart';
 import 'package:ifeelefine/Common/idleLogic.dart';
@@ -88,11 +80,10 @@ Future<void> main() async {
   if (Platform.isAndroid) {
     var androidInfo = await deviceInfo.androidInfo;
     device = androidInfo.model;
-    var id = androidInfo.id;
   }
   runApp(
     GetMaterialApp(
-      home: OnboardingPage(),
+      home: MyApp(initApp: initApp!),
       debugShowCheckedModeBanner: false,
     ),
   );
@@ -346,7 +337,7 @@ Future accelerometer() async {
   //Initialization Settings for Android
   await _prefs.initPrefs();
 
-  if (_prefs.getDetectedFall == false && _prefs.getUserPremium) return;
+  if (_prefs.getDetectedFall == false && _prefs.getUserPremium == false) return;
 
   _streamSubscriptions.add(
     userAccelerometerEvents!.listen(

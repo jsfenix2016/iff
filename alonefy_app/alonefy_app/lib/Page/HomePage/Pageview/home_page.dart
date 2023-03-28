@@ -137,9 +137,9 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
 
     if (foto != null) {
       await homeVC.changeImage(context, foto, user!);
-      mostrarAlerta(context, "Se guardo la imagen correctamente".tr);
+      showAlert(context, "Se guardo la imagen correctamente".tr);
     } else {
-      mostrarAlerta(context, "Hubo un error, intente mas tarde".tr);
+      showAlert(context, "Hubo un error, intente mas tarde".tr);
     }
   }
 
@@ -166,10 +166,10 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
               ),
           border: Border.all(color: Colors.blueAccent),
           image: DecorationImage(
-            image: (foto != null || userbd != null && userbd!.pathImage != "")
+            image: (foto != null || user != null && user!.pathImage != "")
                 ? (foto != null
                     ? FileImage(foto, scale: 0.5)
-                    : getImage(userbd!.pathImage).image)
+                    : getImage(user!.pathImage).image)
                 : const AssetImage("assets/images/icons8.png"),
             fit: BoxFit.fill,
           ),
@@ -181,8 +181,8 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   @override
   Widget build(BuildContext context) {
     final Size size = MediaQuery.of(context).size;
-    if (userbd != null) {
-      nameComplete = userbd!.name + userbd!.lastname;
+    if (user != null) {
+      nameComplete = user!.name + user!.lastname;
     } else {
       nameComplete = "Usuario";
     }

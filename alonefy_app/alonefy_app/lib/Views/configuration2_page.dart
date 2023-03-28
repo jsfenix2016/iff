@@ -28,6 +28,8 @@ import 'package:uuid/uuid.dart';
 
 // ignore: use_key_in_widget_constructors
 class UserConfigPage2 extends StatefulWidget {
+  const UserConfigPage2({super.key, required this.userbd});
+  final UserBD userbd;
   @override
   State<UserConfigPage2> createState() => _UserConfigPageState2();
 }
@@ -56,6 +58,7 @@ class _UserConfigPageState2 extends State<UserConfigPage2> {
   @override
   void initState() {
     user = initUser();
+    userbd = widget.userbd;
     _timeOfDay = const TimeOfDay(hour: 00, minute: 00);
     super.initState();
 
@@ -356,7 +359,13 @@ class _UserConfigPageState2 extends State<UserConfigPage2> {
   }
 
   void _submit() async {
-    bool a = await userVC.updateUserDate(context, user!);
+    userbd!.age = user!.age;
+    userbd!.city = user!.city;
+    userbd!.styleLife = user!.styleLife;
+    userbd!.maritalStatus = user!.maritalStatus;
+    userbd!.gender = user!.gender;
+    userbd!.country = user!.country;
+    bool a = await userVC.updateUserDate(context, userbd!);
 
     //if (!formKey.currentState.validate()) return;
     //formKey.currentState.save();

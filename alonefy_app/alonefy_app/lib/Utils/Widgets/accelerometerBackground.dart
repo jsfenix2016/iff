@@ -34,7 +34,7 @@ class _AccelerometerBackgroundState extends State<AccelerometerBackground> {
       setState(() {
         _userAccelerometerValues = <double>[event.x, event.y, event.z];
         if (event.x >= 5.5 || event.y >= 5.5 || event.z >= 5.5) {
-          mostrarAlerta(context, "mensaje");
+          showAlert(context, "mensaje");
         }
       });
     }));

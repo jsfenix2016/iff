@@ -37,7 +37,7 @@ class EditZoneController extends GetxController {
       // Map info
       var save = const HiveDataRisk().saveContactZoneRisk(contact);
       NotificationCenter().notify('getContactZoneRisk');
-      mostrarAlerta(context, "Contacto guardado correctamente".tr);
+      showAlert(context, "Contacto guardado correctamente".tr);
       return true;
     } catch (error) {
       print(error);
@@ -51,7 +51,7 @@ class EditZoneController extends GetxController {
       // Map info
       var save = const HiveDataRisk().updateContactZoneRisk(contact);
       NotificationCenter().notify('getContactZoneRisk');
-      mostrarAlerta(context, "Contacto actualizado correctamente".tr);
+      showAlert(context, "Contacto actualizado correctamente".tr);
       return true;
     } catch (error) {
       print(error);

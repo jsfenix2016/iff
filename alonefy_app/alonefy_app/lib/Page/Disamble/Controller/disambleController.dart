@@ -9,6 +9,6 @@ class DisambleController extends GetxController {
   Future<void> saveDisamble(BuildContext context, String dismbletime) async {
     _prefs.setDisambleIFF = dismbletime;
     _prefs.setEnableIFF = false;
-    mostrarAlerta(context, "Se a deshabilitado la protección");
+    showAlert(context, "Se a deshabilitado la protección");
   }
 }

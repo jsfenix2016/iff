@@ -11,7 +11,7 @@ class ContactUserController extends GetxController {
     try {
       // Map info
       await Future.delayed(const Duration(seconds: 5));
-      mostrarAlerta(context, "Ususario o password incorrecto".tr);
+      showAlert(context, "Ususario o password incorrecto".tr);
       return true;
     } catch (error) {
       print(error);
@@ -34,7 +34,7 @@ class ContactUserController extends GetxController {
       }
       // Map info
 
-      mostrarAlerta(context, "Contacto guardado correctamente".tr);
+      showAlert(context, "Contacto guardado correctamente".tr);
       return true;
     } catch (error) {
       print(error);

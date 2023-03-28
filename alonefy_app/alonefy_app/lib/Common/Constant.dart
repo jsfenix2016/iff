@@ -46,7 +46,8 @@ class Constant {
 
   static const hoursRest = 'A que horas duermes';
   static const hoursSleepAndWakeup = '¿A qué hora te acuestas y te levantas?';
-  static const casefallText = '¿Deseas que, en caso de alerta, enviemos tu ubicación a tus contactos?';
+  static const casefallText =
+      '¿Deseas que, en caso de alerta, enviemos tu ubicación a tus contactos?';
 
   static const permissionApp = 'Permisos que se usan en la app';
 
@@ -184,6 +185,12 @@ class Constant {
     "16": '12 hora',
   };
 
-  static const String disablePermission = "Para poder desactivar el permiso, se ha de hacer desde los Ajustes de la app";
-  static const String enablePermission = "Para poder activar el permiso, se ha de hacer desde los Ajustes de la app";
+  static const String disablePermission =
+      "Para poder desactivar el permiso, se ha de hacer desde los Ajustes de la app";
+  static const String enablePermission =
+      "Para poder activar el permiso, se ha de hacer desde los Ajustes de la app";
+  static const String verifyPhoneNumber =
+      'Debe verificar su numero de telefono';
+
+  static const String info = 'Información';
 }

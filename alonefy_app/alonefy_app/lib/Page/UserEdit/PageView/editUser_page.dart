@@ -69,19 +69,25 @@ class _UserEditPageState extends State<UserEditPage> {
   Future getUserData() async {
     user = await editVC.getUserDate();
     ages = await editVC.getAgeVC();
-    if (user!.idUser != -1) {
+    _country = await editVC.getCounty();
+    _states = await editVC.getState();
+    if (user!.idUser != "-1") {
+      indexCountry = _country.indexWhere((item) => item == user!.country);
       selectCountry = user!.country;
       selectState = user!.city;
+      selectDropState();
     }
-    _country = await editVC.getCounty();
-    setState(() {});
   }
 
-  Future SelectDropState() async {
+  Future selectDropState() async {
     indexState = _states.indexWhere((item) => item == user!.city);
-    print(indexState);
-    if (indexState < 0) indexState = 0;
+
+    if (indexState < 0) {
+      indexState = 0;
+    }
     selectState = _states[indexState];
+
+    setState(() {});
   }
 
   @override
@@ -359,9 +365,7 @@ class _UserEditPageState extends State<UserEditPage> {
                             hint: Padding(
                               padding: const EdgeInsets.all(8.0),
                               child: Text(
-                                (user!.idUser != -1 && user!.country != "")
-                                    ? user!.country
-                                    : selectCountry,
+                                selectCountry,
                                 style: const TextStyle(
                                     fontSize: 18,
                                     color: ColorPalette.principal),
@@ -427,9 +431,7 @@ class _UserEditPageState extends State<UserEditPage> {
                                 child: Padding(
                                   padding: const EdgeInsets.all(8.0),
                                   child: Text(
-                                    (user != null && user!.city != "")
-                                        ? user!.city
-                                        : selectState,
+                                    selectState,
                                     style: const TextStyle(
                                         fontSize: 18,
                                         color: ColorPalette.principal),
@@ -460,7 +462,7 @@ class _UserEditPageState extends State<UserEditPage> {
                             onChanged: (v) {
                               user?.city = v.toString();
                               selectState = v!;
-                              SelectDropState();
+                              selectDropState();
                               setState(() {});
                             },
                           ),

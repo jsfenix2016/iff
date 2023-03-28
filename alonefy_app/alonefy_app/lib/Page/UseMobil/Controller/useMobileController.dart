@@ -18,7 +18,7 @@ class UseMobilController extends GetxController {
   Future<void> saveHabitsMobil(BuildContext context, String time) async {
     _prefs.setUseMobil = time;
 
-    mostrarAlerta(context, "Se guardo correctamente");
+    showAlert(context, "Se guardo correctamente");
   }
 
   Future<String> getTimeUseMobil() async {

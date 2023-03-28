@@ -24,7 +24,7 @@ class RiskController extends GetxController {
     try {
       // Map info
       var delete = await const HiveDataRisk().deleteDate(contact);
-      mostrarAlerta(context, "Contacto guardado correctamente".tr);
+      showAlert(context, "Contacto guardado correctamente".tr);
       return true;
     } catch (error) {
       return false;

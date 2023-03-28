@@ -197,7 +197,7 @@ class _ConditionGeneralPageState extends State<ConditionGeneralPage> {
                                                 aceptedConditions,
                                                 aceptedSendMessage);
                                           } else {
-                                            mostrarAlerta(context,
+                                            showAlert(context,
                                                 'Para continuar debe aceptar las condiciones y el permiso de envio de mesnajes y llamadas.');
                                           }
                                         },

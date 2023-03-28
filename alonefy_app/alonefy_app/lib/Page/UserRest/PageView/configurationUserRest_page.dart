@@ -171,7 +171,7 @@ class _UserRestPageState extends State<UserRestPage> {
     if (tempDicRest.isEmpty && _selectedDays.length == 7) {
       await processSelectedInfo();
       // SaveAndContinueScreen();
-      mostrarAlerta(context,
+      showAlert(context,
           "Todos los dias ya fueron asignados puedes continuar con la configuración");
 
       setState(() {});
@@ -180,8 +180,6 @@ class _UserRestPageState extends State<UserRestPage> {
     if (_selectedDays.length < 7 && tempDicRest.length < 7) {
       await processSelectedInfo();
       noSelectDay++;
-
-      // ignore: use_build_context_synchronously
 
       setState(() {});
     }
@@ -194,13 +192,13 @@ class _UserRestPageState extends State<UserRestPage> {
       return;
     }
     if (tempDicRest.length == 7) {
-      SaveAndContinueScreen();
+      saveAndContinueScreen();
       return;
     }
     if (tempDicRest.isEmpty && _selectedDays.length == 7) {
       await processSelectedInfo();
       // SaveAndContinueScreen();
-      mostrarAlerta(context,
+      showAlert(context,
           "Todos los dias ya fueron asignados puedes continuar con la configuración");
 
       setState(() {});
@@ -209,17 +207,17 @@ class _UserRestPageState extends State<UserRestPage> {
     if (_selectedDays.length < 7) {
       await processSelectedInfo();
       if (tempDicRest.length == 7) {
-        SaveAndContinueScreen();
+        saveAndContinueScreen();
         return;
       }
       // ignore: use_build_context_synchronously
-      mostrarAlerta(
+      showAlert(
           context, "debes seleccionar los dias restantes antes de continuar");
       setState(() {});
     }
   }
 
-  void SaveAndContinueScreen() async {
+  void saveAndContinueScreen() async {
     int id = await userRestVC.saveUserListRestTime(context, tempDicRest);
 
     if (id != -1) {
@@ -268,7 +266,7 @@ class _UserRestPageState extends State<UserRestPage> {
     }
 
     if (tempDicRest.length == 7) {
-      mostrarAlerta(context,
+      showAlert(context,
           "Todos los dias ya fueron asignados puedes continuar con la configuración");
       return;
     }

@@ -80,7 +80,7 @@ class _CancelAlertState extends State<CancelAlertPage> {
         ),
       );
     } else {
-      mostrarAlerta(context, 'El codigo no coincide');
+      showAlert(context, 'El codigo no coincide');
     }
   }
 

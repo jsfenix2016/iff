@@ -1,27 +1,18 @@
-import 'dart:convert';
-import 'dart:io';
-
-import 'package:flutter/foundation.dart';
-import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ifeelefine/Common/Constant.dart';
 import 'package:ifeelefine/Common/colorsPalette.dart';
 import 'package:ifeelefine/Common/utils.dart';
-import 'package:ifeelefine/Page/UseMobil/PageView/configurationUseMobile_page.dart';
+
 import 'package:ifeelefine/Page/UserConfig/Controller/userConfigController.dart';
 import 'package:ifeelefine/Model/user.dart';
 import 'package:ifeelefine/Model/userbd.dart';
-import 'package:ifeelefine/Utils/Widgets/CustomDropdownMaritalState.dart';
-import 'package:ifeelefine/Utils/Widgets/CustomDropdownStylelive.dart';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import 'package:ifeelefine/Utils/Widgets/textFieldFormCustomBorder.dart';
 import 'package:ifeelefine/Views/configuration2_page.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:country_state_city_picker/model/select_status_model.dart'
-    as StatusModel;
+
 import 'package:uuid/uuid.dart';
 
 class UserConfigPage extends StatefulWidget {
@@ -280,18 +271,18 @@ class _UserConfigPageState extends State<UserConfigPage> {
 
   void _submit() async {
     if (isValidSms == false) {
-      mostrarAlerta(context, 'Debe verificar su numero de telefono');
+      showAlert(context, Constant.verifyPhoneNumber);
       return;
     }
 
-    int a = await userVC.saveUserData(context, user!, const Uuid().v1());
+    UserBD resp = await userVC.saveUserData(context, user!, const Uuid().v1());
 
-    if (a != -1) {
+    if (resp.idUser != "-1") {
       showDialog(
           context: context,
           builder: (context) {
             return AlertDialog(
-              title: const Text("Informacion"),
+              title: const Text(Constant.info),
               content: Text("Datos guardados".tr),
               actions: <Widget>[
                 TextButton(
@@ -300,7 +291,9 @@ class _UserConfigPageState extends State<UserConfigPage> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => UserConfigPage2()),
+                          builder: (context) => UserConfigPage2(
+                                userbd: resp,
+                              )),
                     );
                   },
                 )

@@ -15,7 +15,7 @@ class TermsAndConditionsController extends GetxController {
     _prefs.setAceptedTerms = terms;
     _prefs.setAceptedSendSMS = sendSms;
 
-    mostrarAlerta(context, "Se guardo correctamente");
+    showAlert(context, "Se guardo correctamente");
 
     Navigator.push(
       context,

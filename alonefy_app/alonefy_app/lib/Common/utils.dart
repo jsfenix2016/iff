@@ -293,7 +293,7 @@ DateTime parseDuration(String s) {
   return pastDateTime;
 }
 
-void mostrarAlerta(BuildContext context, String mensaje) {
+void showAlert(BuildContext context, String mensaje) {
   showDialog(
       context: context,
       builder: (context) {
@@ -319,7 +319,7 @@ Future getResponse() async {
 
 User initUser() {
   return User(
-      idUser: "0",
+      idUser: "-1",
       name: "",
       lastname: "",
       email: "",

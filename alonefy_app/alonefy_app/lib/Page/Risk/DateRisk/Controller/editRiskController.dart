@@ -34,7 +34,7 @@ class EditRiskController extends GetxController {
     try {
       var save = const HiveDataRisk().saveContactRisk(contact);
       NotificationCenter().notify('getContactRisk');
-      mostrarAlerta(context, "Contacto guardado correctamente".tr);
+      showAlert(context, "Contacto guardado correctamente".tr);
       return true;
     } catch (error) {
       return false;
@@ -46,7 +46,7 @@ class EditRiskController extends GetxController {
     try {
       var update = const HiveDataRisk().updateContactRisk(contact);
       NotificationCenter().notify('getContactRisk');
-      mostrarAlerta(context, "Contacto actualizado correctamente".tr);
+      showAlert(context, "Contacto actualizado correctamente".tr);
       return true;
     } catch (error) {
       return false;
