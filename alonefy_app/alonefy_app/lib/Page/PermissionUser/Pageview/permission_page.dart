@@ -48,19 +48,9 @@ class _PermitionUserPageState extends State<PermitionUserPage> {
     false,
     false
   ];
-  //List<String> permissionsPrefs = [
-  //  'Permitir trabajar la App en segundo plano',
-  //  'AcceptedNotification',
-  //  'AcceptedCamera',
-  //  'AcceptedContacts',
-  //  'AcceptedSendLocation',
-  //  'AcceptedScheduleExactAlarm'
-  //];
 
   void requestPermission(int index) async {
     PermissionStatus permission = await permissions[index].request();
-
-    //savePermission(index, false);
 
     if (permission.isPermanentlyDenied) {
       showPermissionDialog(context, Constant.enablePermission);
@@ -69,7 +59,6 @@ class _PermitionUserPageState extends State<PermitionUserPage> {
       setState(() {
         permissionStatus[index] = true;
       });
-      //savePermission(index, true);
     }
 
     if (permissions[index] == Permission.scheduleExactAlarm) {
@@ -77,7 +66,6 @@ class _PermitionUserPageState extends State<PermitionUserPage> {
         setState(() {
           permissionStatus[index] = true;
         });
-        //savePermission(index, true);
       }
     }
   }
@@ -93,33 +81,6 @@ class _PermitionUserPageState extends State<PermitionUserPage> {
 
     return true;
   }
-
-  //void savePermission(int index, bool value) {
-  //  PreferencePermission preferencePermission;
-  //  if (value) preferencePermission = PreferencePermission.allow;
-  //  else preferencePermission = PreferencePermission.noAccepted;
-//
-  //  switch (index) {
-  //    //case 0:
-  //    //  _prefs.setAcceptedNotification = preferencePermission;
-  //    //  break;
-  //    case 0:
-  //      _prefs.setAcceptedNotification = preferencePermission;
-  //      break;
-  //    case 1:
-  //      _prefs.setAcceptedCamera = preferencePermission;
-  //      break;
-  //    case 2:
-  //      _prefs.setAcceptedContacts = preferencePermission;
-  //      break;
-  //    case 3:
-  //      _prefs.setAcceptedSendLocation = preferencePermission;
-  //      break;
-  //    case 4:
-  //      _prefs.setAcceptedScheduleExactAlarm = preferencePermission;
-  //      break;
-  //  }
-  //}
 
   void savePermission() {
     for (var i=0;i<permissionStatus.length;i++) {
@@ -145,9 +106,6 @@ class _PermitionUserPageState extends State<PermitionUserPage> {
             break;
         }
       } else {
-        if (_prefs.getAcceptedSendLocation == PreferencePermission.allow) {
-          _prefs.setAcceptedSendLocation = PreferencePermission.noAccepted;
-        }
         switch (i) {
           case 0:
             if (_prefs.getAcceptedNotification == PreferencePermission.allow) {
@@ -188,29 +146,26 @@ class _PermitionUserPageState extends State<PermitionUserPage> {
   void getPermissions() async {
     for (var i=0;i<permissions.length;i++) {
       PermissionStatus status = await permissions[i].status;
-      setState(() {
-        switch (i) {
-          case 0:
-            permissionStatus[i] = status.isGranted && _prefs.getAcceptedNotification == PreferencePermission.allow;
-            break;
-          //case 1:
-          //  permissionStatus[i] = status.isGranted && _prefs.getAcceptedNotification == PreferencePermission.allow;
-          //  break;
-          case 1:
-            permissionStatus[i] = status.isGranted && _prefs.getAcceptedCamera == PreferencePermission.allow;
-            break;
-          case 2:
-            permissionStatus[i] = status.isGranted && _prefs.getAcceptedContacts == PreferencePermission.allow;
-            break;
-          case 3:
-            permissionStatus[i] = status.isGranted && _prefs.getAcceptedSendLocation == PreferencePermission.allow;
-            break;
-          case 4:
-            permissionStatus[i] = _prefs.getAcceptedScheduleExactAlarm == PreferencePermission.allow;
-            break;
-        }
-      });
+      switch (i) {
+        case 0:
+          permissionStatus[i] = status.isGranted && _prefs.getAcceptedNotification == PreferencePermission.allow;
+          break;
+        case 1:
+          permissionStatus[i] = status.isGranted && _prefs.getAcceptedCamera == PreferencePermission.allow;
+          break;
+        case 2:
+          permissionStatus[i] = status.isGranted && _prefs.getAcceptedContacts == PreferencePermission.allow;
+          break;
+        case 3:
+          permissionStatus[i] = status.isGranted && _prefs.getAcceptedSendLocation == PreferencePermission.allow;
+          break;
+        case 4:
+          permissionStatus[i] = _prefs.getAcceptedScheduleExactAlarm == PreferencePermission.allow;
+          break;
+      }
+
     }
+    setState(() {});
   }
 
   @override

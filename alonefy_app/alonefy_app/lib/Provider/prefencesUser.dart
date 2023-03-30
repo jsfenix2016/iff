@@ -53,6 +53,14 @@ class PreferenceUser {
     _prefs.setString('useMobil', value);
   }
 
+  get getEmailTime {
+    return _prefs.getString('EmailTime') ?? "10 min";
+  }
+
+  set setEmailTime(String value) {
+    _prefs.setString('EmailTime', value);
+  }
+
   get getSMSTime {
     return _prefs.getString('SMSTime') ?? "10 min";
   }
@@ -142,7 +150,7 @@ class PreferenceUser {
   }
 
   get getFallTime {
-    return _prefs.getString('FallTime') ?? "10 min";
+    return _prefs.getString('FallTime') ?? "5 min";
   }
 
   set setFallTime(String value) {

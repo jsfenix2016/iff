@@ -36,7 +36,7 @@ class _ChangeNotificationTimePageState extends State<ChangeNotificationTimePage>
 
     setState(() {
       Constant.timeDicExtended.forEach((key, value) {
-        if (_prefs.getUseMobil == value) {
+        if (_prefs.getEmailTime == value) {
           emailPosition = int.parse(key);
           emailTime = value;
         }
@@ -290,7 +290,7 @@ class _ChangeNotificationTimePageState extends State<ChangeNotificationTimePage>
   }
 
   void saveNotificationTime() {
-    _prefs.setUseMobil = emailTime;
+    _prefs.setEmailTime = emailTime;
     _prefs.setSMSTime = smsTime;
     _prefs.setPhoneTime = phoneTime;
 

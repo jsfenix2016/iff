@@ -12,6 +12,8 @@ import 'package:ifeelefine/Page/FallDetected/Controller/fall_detectedController.
 import 'package:ifeelefine/Page/HomePage/Pageview/home_page.dart';
 import 'package:ifeelefine/Utils/Widgets/elevatedButtonFilling.dart';
 
+import '../../../Views/contact_page.dart';
+
 class FallActivationPage extends StatefulWidget {
   /// Creates a new GeolocatorWidget.
   const FallActivationPage({Key? key}) : super(key: key);
@@ -25,7 +27,7 @@ class FallActivationPage extends StatefulWidget {
 class _FallActivationPageState extends State<FallActivationPage> {
   final FallDetectedController fallVC = Get.put(FallDetectedController());
 
-  late bool isActive = false;
+  bool isActive = false;
 
   /// Determine the current position of the device.
   ///
@@ -79,32 +81,44 @@ class _FallActivationPageState extends State<FallActivationPage> {
                         ),
                       ),
                     ),
-                    Stack(
-                      children: [
-                        SizedBox(
-                          child: Image.asset(
-                            fit: BoxFit.fill,
-                            scale: 0.5,
-                            'assets/images/Group 1006.png',
-                            height: 400,
-                            width: double.infinity,
-                          ),
+                    SizedBox(
+                      height: 360,
+                      child: Image.asset(
+                        fit: BoxFit.contain,
+                        'assets/images/Group 1006.png',
+                      ),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.fromLTRB(0, 16, 0, 0),
+                      child: ElevateButtonFilling(
+                          onChanged: (value) {
+                            isActive = !isActive;
+                            fallVC.setDetectedFall(context, isActive);
+                            setState(() {});
+                          },
+                          mensaje: isActive ? 'Desactivar' : 'Activar',
                         ),
-                      ],
                     ),
                   ],
                 ),
+
               ),
               Positioned(
-                bottom: 40,
-                left: 70,
+                bottom: 24,
+                left: 0,
+                right: 0,
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: ElevateButtonFilling(
                     onChanged: (value) {
-                      fallVC.saveDetectedFall(context, value);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const ContactList(),
+                        ),
+                      );
                     },
-                    mensaje: 'Activar',
+                    mensaje: 'Continuar',
                   ),
                 ),
               ),

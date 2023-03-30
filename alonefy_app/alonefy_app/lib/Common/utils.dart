@@ -4,6 +4,7 @@ import 'dart:ffi';
 import 'dart:io';
 import 'package:ifeelefine/Model/contactRiskBD.dart';
 import 'package:ifeelefine/Model/contactZoneRiskBD.dart';
+import 'package:ifeelefine/Model/logActivityBd.dart';
 import 'package:intl/intl.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
@@ -185,6 +186,9 @@ Future inicializeHiveBD() async {
   }
   if (!Hive.isAdapterRegistered(ContactZoneRiskBDAdapter().typeId)) {
     Hive.registerAdapter(ContactZoneRiskBDAdapter());
+  }
+  if (!Hive.isAdapterRegistered(LogActivityBDAdapter().typeId)) {
+    Hive.registerAdapter(LogActivityBDAdapter());
   }
 }
 
@@ -474,6 +478,34 @@ void showPermissionDialog(BuildContext context, String message) {
   );
 }
 
+void showLocalPermissionDialog(BuildContext context, String message, Function(bool) response) {
+  showDialog(
+    context: context,
+    builder: (context) {
+      return AlertDialog(
+        title: const Text("Permitir permiso"),
+        content: Text(message),
+        actions: <Widget>[
+          TextButton(
+            child: const Text("No"),
+            onPressed: () {
+              response(false);
+              Navigator.of(context).pop();
+            }
+          ),
+          TextButton(
+            child: const Text("Sí"),
+            onPressed: () {
+              response(true);
+              Navigator.of(context).pop();
+            },
+          )
+        ],
+      );
+    },
+  );
+}
+
 void showSaveAlert(BuildContext context, String title, String message) {
   showDialog(
       context: context,
@@ -497,6 +529,22 @@ String getDefaultPattern() {
 
 String getShortPattern() {
   return 'EEEE dd/MM/yyyy';
+}
+
+String getDatePattern() {
+  return 'dd/MM/yyyy';
+}
+
+Future<String> dateTimeToString(DateTime dateTime) async {
+  await Jiffy.locale("es");
+
+  String hour = Jiffy(dateTime).hour < 10 ? '0${Jiffy(dateTime).hour}' : '${Jiffy(dateTime).hour}';
+  String minute = Jiffy(dateTime).minute < 10 ? '0${Jiffy(dateTime).minute}' : '${Jiffy(dateTime).minute}';
+  String second = Jiffy(dateTime).second < 10 ? '0${Jiffy(dateTime).second}' : '${Jiffy(dateTime).second}';
+
+  var date = Jiffy(dateTime).format(getDatePattern());
+
+  return '$date $hour:$minute:$second';
 }
 
 String rangeTimeToString(String from, String to) {

@@ -189,6 +189,8 @@ class Constant {
       "Para poder desactivar el permiso, se ha de hacer desde los Ajustes de la app";
   static const String enablePermission =
       "Para poder activar el permiso, se ha de hacer desde los Ajustes de la app";
+  static const String enableLocalPermission =
+      "¿Aceptas el permiso de";
   static const String verifyPhoneNumber =
       'Debe verificar su numero de telefono';
 

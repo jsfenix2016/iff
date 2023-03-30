@@ -20,4 +20,8 @@ class FallDetectedController extends GetxController {
       ),
     );
   }
+
+  Future<void> setDetectedFall(BuildContext context, bool detectedfall) async {
+    _prefs.setDetectedFall = detectedfall;
+  }
 }

@@ -194,7 +194,7 @@ class _InitGeolocatorState extends State<InitGeolocator> {
                           child: Image.asset(
                             fit: BoxFit.fill,
                             scale: 0.65,
-                            'assets/images/MaskMapa.png',
+                            'assets/images/Map.png',
                             height: 400,
                             width: double.infinity,
                           ),

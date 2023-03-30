@@ -21,30 +21,49 @@ class _ContactDropdownButtonState extends State<ContactDropdownButton> {
   List<Contact> _contacts = [];
   final List<Contact> _selectedContacts = [];
   late int indexTem = -1;
+  final _prefs = PreferenceUser();
 
   @override
   void initState() {
     super.initState();
     // Get the list of contacts from the device
-    _getContacts();
+    _checkPermissionIsEnabled();
   }
 
-  void _getContacts() async {
+  void _checkPermissionIsEnabled() async {
     PermissionStatus permission = await Permission.contacts.request();
 
     if (permission.isPermanentlyDenied) {
       showPermissionDialog(context, Constant.enablePermission);
-    } else if (permission.isDenied) {
-    } else {
-      // Retrieve the list of contacts from the device
-      var contacts = await FlutterContacts.getContacts();
-      // Set the list of contacts in the state
-      contacts = await FlutterContacts.getContacts(
-          withProperties: true, withPhoto: true);
-      setState(() {
-        _contacts = contacts;
+    } else if (permission.isDenied || _prefs.getAcceptedContacts == PreferencePermission.noAccepted) {
+      var permissionName = '${Constant.enableLocalPermission} contacto?';
+      showLocalPermissionDialog(context, permissionName, (bool response) => {
+        alertResponse(response)
       });
+    } else {
+      _getContacts();
     }
+  }
+
+  void alertResponse(bool response) {
+    _prefs.setAcceptedContacts = response
+        ? PreferencePermission.allow
+        : PreferencePermission.noAccepted;
+
+    if (response) {
+      _getContacts();
+    }
+  }
+
+  void _getContacts() async {
+    // Retrieve the list of contacts from the device
+    var contacts = await FlutterContacts.getContacts();
+    // Set the list of contacts in the state
+    contacts = await FlutterContacts.getContacts(
+        withProperties: true, withPhoto: true);
+    setState(() {
+      _contacts = contacts;
+    });
   }
 
   void _selectContact(Contact contact) {
