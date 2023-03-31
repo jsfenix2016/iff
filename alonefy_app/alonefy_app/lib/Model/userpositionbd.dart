@@ -1,8 +1,9 @@
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:ifeelefine/Data/hive_constant_adapterInit.dart';
 
 part 'Adapters/userpositionbd.g.dart';
 
-@HiveType(typeId: 2)
+@HiveType(typeId: HiveConstantAdapterInit.idUserPositionDBAdapter)
 class UserPositionBD extends HiveObject {
   UserPositionBD(
       {required this.typeAction,

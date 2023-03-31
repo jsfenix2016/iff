@@ -185,6 +185,30 @@ class Constant {
     "16": '12 hora',
   };
 
+  static const timeMap = {
+    '': Duration(seconds: 15),
+    '5 min': Duration(minutes: 5),
+    '1 hora': Duration(hours: 1),
+    '2 horas': Duration(hours: 2),
+    '3 horas': Duration(hours: 3),
+    '8 horas': Duration(hours: 8),
+    '24 horas': Duration(hours: 24),
+    '1 semana': Duration(hours: 168),
+    '1 mes': Duration(hours: 672),
+    '1 año': Duration(hours: 8064),
+    'Siempre': Duration(hours: 80640),
+  };
+
+  static const dayMap = {
+    1: "Lunes",
+    2: "Martes",
+    3: "Miércoles",
+    4: "Jueves",
+    5: "Viernes",
+    6: "Sábado",
+    7: "Domingo"
+  };
+
   static const String disablePermission =
       "Para poder desactivar el permiso, se ha de hacer desde los Ajustes de la app";
   static const String enablePermission =

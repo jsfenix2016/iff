@@ -1,5 +1,7 @@
 import 'package:hive_flutter/hive_flutter.dart';
 
+import 'package:ifeelefine/Data/hive_constant_adapterInit.dart';
+
 part 'Adapters/activitydaybd.g.dart';
 
 const String onceTime = "Evento de una sola vez";
@@ -8,7 +10,7 @@ const String weekly = "Semanal";
 const String monthly = "Mensual";
 const String yearly = "Anual";
 
-@HiveType(typeId: 3)
+@HiveType(typeId: HiveConstantAdapterInit.idActivityDayDBAdapter)
 class ActivityDayBD extends HiveObject {
   ActivityDayBD(
       {required this.id,

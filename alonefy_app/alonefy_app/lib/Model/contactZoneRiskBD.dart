@@ -1,9 +1,10 @@
 import 'package:flutter/foundation.dart';
 import 'package:hive/hive.dart';
+import 'package:ifeelefine/Data/hive_constant_adapterInit.dart';
 
-part 'contactZoneRiskBD.g.dart';
+part 'Adapters/contactZoneRiskBD.g.dart';
 
-@HiveType(typeId: 5)
+@HiveType(typeId: HiveConstantAdapterInit.idContactZoneRiskBDAdapter)
 class ContactZoneRiskBD {
   ContactZoneRiskBD(
       {required this.id,

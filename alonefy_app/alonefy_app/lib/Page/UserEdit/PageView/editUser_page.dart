@@ -33,7 +33,10 @@ class _UserEditPageState extends State<UserEditPage> {
   late bool selectImage = false;
   final bool _guardado = false;
   User? user;
-  // UserBD? userbd;
+  List<String> _states = ["Seleccionar estado"];
+  List<String> _country = ["Seleccionar pais"];
+  Map<String, String> ages = {};
+
   late bool istrayed;
 
   late bool selectOther = false;
@@ -50,12 +53,10 @@ class _UserEditPageState extends State<UserEditPage> {
   late int indexCountry = 0;
   late String selectState = "";
   late String selectCountry = "";
-  List<String> _states = ["Seleccionar estado"];
-  List<String> _country = ["Seleccionar pais"];
+
   final String _selectedCountry = "Choose Country";
   List<dynamic> countryres = [];
   List<dynamic> stateTemp = [];
-  Map<String, String> ages = {};
 
   @override
   void initState() {
@@ -67,26 +68,29 @@ class _UserEditPageState extends State<UserEditPage> {
   }
 
   Future getUserData() async {
-    user = await editVC.getUserDate();
-    ages = await editVC.getAgeVC();
-    _country = await editVC.getCounty();
-    _states = await editVC.getState();
-    if (user!.idUser != "-1") {
-      indexCountry = _country.indexWhere((item) => item == user!.country);
-      selectCountry = user!.country;
-      selectState = user!.city;
-      selectDropState();
-    }
+    final futures = [
+      editVC.getUserDate(),
+      editVC.getAgeVC(),
+      editVC.getCounty(),
+      editVC.getState(),
+    ];
+    final results = await Future.wait(futures);
+
+    user = results[0] as User?;
+    ages = results[1] as Map<String, String>;
+    _country = results[2] as List<String>;
+    _states = results[3] as List<String>;
+
+    indexCountry = _country.indexWhere((item) => item == user?.country);
+    selectCountry = user!.country;
+    selectState = user!.city;
+    selectDropState();
   }
 
-  Future selectDropState() async {
-    indexState = _states.indexWhere((item) => item == user!.city);
+  void selectDropState() {
+    indexState = _states.indexWhere((item) => item == user?.city);
 
-    if (indexState < 0) {
-      indexState = 0;
-    }
-    selectState = _states[indexState];
-
+    selectState = (indexState < 0) ? _states[0] : _states[indexState];
     setState(() {});
   }
 
@@ -593,42 +597,12 @@ class _UserEditPageState extends State<UserEditPage> {
   }
 
   void _submit() async {
-    bool a = await editVC.updateUserDate(context, user!);
+    bool resp = await editVC.updateUserDate(context, user!);
 
-    if (a) {
-      showDialog(
-          context: context,
-          builder: (context) {
-            return AlertDialog(
-              title: const Text("Informacion"),
-              content: Text("Datos guardados".tr),
-              actions: <Widget>[
-                TextButton(
-                  child: const Text("Ok"),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                )
-              ],
-            );
-          });
+    if (resp) {
+      showSaveAlert(context, "Informacion", "Datos guardados".tr);
     } else {
-      showDialog(
-          context: context,
-          builder: (context) {
-            return AlertDialog(
-              title: const Text("Informacion"),
-              content: Text("Hubo un error".tr),
-              actions: <Widget>[
-                TextButton(
-                  child: const Text("Ok"),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                )
-              ],
-            );
-          });
+      showSaveAlert(context, "Informacion", "Hubo un error".tr);
     }
   }
 }

@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'contactZoneRiskBD.dart';
+part of '../contactZoneRiskBD.dart';
 
 // **************************************************************************
 // TypeAdapterGenerator
@@ -8,7 +8,7 @@ part of 'contactZoneRiskBD.dart';
 
 class ContactZoneRiskBDAdapter extends TypeAdapter<ContactZoneRiskBD> {
   @override
-  final int typeId = 5;
+  final int typeId = 6;
 
   @override
   ContactZoneRiskBD read(BinaryReader reader) {

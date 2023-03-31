@@ -1,28 +1,19 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:ffi';
 import 'dart:io';
-import 'package:ifeelefine/Model/contactRiskBD.dart';
-import 'package:ifeelefine/Model/contactZoneRiskBD.dart';
 import 'package:intl/intl.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:hive_flutter/hive_flutter.dart';
 import 'package:ifeelefine/Common/colorsPalette.dart';
-import 'package:ifeelefine/Model/activitydaybd.dart';
-import 'package:ifeelefine/Model/contact.dart';
-import 'package:ifeelefine/Model/restdaybd.dart';
 import 'package:ifeelefine/Model/user.dart';
-import 'package:ifeelefine/Model/userPosition.dart';
-import 'package:ifeelefine/Model/userbd.dart';
-import 'package:ifeelefine/Model/userpositionbd.dart';
+
 import 'package:ifeelefine/Provider/prefencesUser.dart';
 
 import 'package:image_picker/image_picker.dart';
 import 'package:jiffy/jiffy.dart';
-import 'package:path_provider/path_provider.dart';
+
 import 'package:permission_handler/permission_handler.dart';
 
 import 'Constant.dart';
@@ -157,35 +148,6 @@ Future<File> procesarImagen(ImageSource origen) async {
   }
   file = File(image.path);
   return file;
-}
-
-Future inicializeHiveBD() async {
-  Directory appDocDirectory = await getApplicationDocumentsDirectory();
-  await Hive.initFlutter(appDocDirectory.path);
-  if (!Hive.isAdapterRegistered(UserPositionBDAdapter().typeId)) {
-    Hive.registerAdapter(UserPositionBDAdapter());
-  }
-
-  if (!Hive.isAdapterRegistered(UserBDAdapter().typeId)) {
-    Hive.registerAdapter(UserBDAdapter());
-  }
-
-  if (!Hive.isAdapterRegistered(ActivityDayBDAdapter().typeId)) {
-    Hive.registerAdapter(ActivityDayBDAdapter());
-  }
-
-  if (!Hive.isAdapterRegistered(RestDayBDAdapter().typeId)) {
-    Hive.registerAdapter(RestDayBDAdapter());
-  }
-  if (!Hive.isAdapterRegistered(ContactBDAdapter().typeId)) {
-    Hive.registerAdapter(ContactBDAdapter());
-  }
-  if (!Hive.isAdapterRegistered(ContactRiskBDAdapter().typeId)) {
-    Hive.registerAdapter(ContactRiskBDAdapter());
-  }
-  if (!Hive.isAdapterRegistered(ContactZoneRiskBDAdapter().typeId)) {
-    Hive.registerAdapter(ContactZoneRiskBDAdapter());
-  }
 }
 
 Future<String> displayTimePicker(BuildContext context, String key) async {

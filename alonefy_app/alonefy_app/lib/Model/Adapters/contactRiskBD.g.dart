@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'contactRiskBD.dart';
+part of '../contactRiskBD.dart';
 
 // **************************************************************************
 // TypeAdapterGenerator
