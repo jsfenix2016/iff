@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ifeelefine/Common/colorsPalette.dart';
+import 'package:ifeelefine/Page/LogActivity/PageView/logActivity_page.dart';
 
 import 'package:ifeelefine/Page/Risk/DateRisk/ListDateRisk/PageView/riskDatePage.dart';
 import 'package:ifeelefine/Page/Risk/ZoneRisk/ListContactZoneRisk/PageView/zoneRisk.dart';
@@ -149,7 +150,7 @@ class _CustomNavbarState extends State<CustomNavbar> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => const AlertsPage()),
+                              builder: (context) => const LogActivityPage()),
                         );
                       },
                       icon: Column(

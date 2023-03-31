@@ -1,20 +1,11 @@
-import 'package:audioplayers/audioplayers.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter_ringtone_player/flutter_ringtone_player.dart';
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:ifeelefine/Common/Constant.dart';
+import 'package:hive/hive.dart';
 import 'package:ifeelefine/Common/colorsPalette.dart';
 import 'package:ifeelefine/Common/utils.dart';
 import 'package:ifeelefine/Model/logActivity.dart';
 import 'package:ifeelefine/Page/LogActivity/Controller/logActivity_controller.dart';
-import 'package:ifeelefine/Page/UserConfig/Controller/userConfigController.dart';
-import 'package:ifeelefine/Model/user.dart';
-import 'package:ifeelefine/Model/userbd.dart';
-
-import 'package:ifeelefine/Page/UserRest/PageView/configurationUserRest_page.dart';
-import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:flutter_system_ringtones/flutter_system_ringtones.dart';
 
 class LogActivityPage extends StatefulWidget {
   const LogActivityPage({super.key});
@@ -28,7 +19,8 @@ class _LogActivityPageState extends State<LogActivityPage> {
 
   final LogActivityController controller = Get.put(LogActivityController());
 
-  late List<LogActivity> _activities;
+  List<LogActivity> _activities = [];
+  List<String> datetimes = [];
 
   @override
   void initState() {
@@ -37,9 +29,19 @@ class _LogActivityPageState extends State<LogActivityPage> {
     getActivities();
   }
 
-  void getActivities() async {
+  Future<void> getActivities() async {
+    await Hive.close();
     _activities = await controller.getActivities();
+
+    for (var activity in _activities) {
+      convertDateTimeToString(activity);
+    }
     setState(() {});
+  }
+
+  Future<void> convertDateTimeToString(LogActivity activity) async {
+    var datetime = await dateTimeToString(activity.dateTime);
+    datetimes.add(datetime);
   }
 
   @override
@@ -65,28 +67,60 @@ class _LogActivityPageState extends State<LogActivityPage> {
           width: size.width,
           height: size.height,
           child: Padding(
-              padding: const EdgeInsets.fromLTRB(32, 32, 32, 0),
+              padding: const EdgeInsets.fromLTRB(32, 32, 32, 32),
               child: ListView.builder(
                   shrinkWrap: true,
                   scrollDirection: Axis.vertical,
                   itemCount: _activities.length,
                   itemBuilder: (context, index) {
-                    return Container();
-                  })),
+                    return getItem(index);
+                  })
+          ),
         ));
   }
 
   Widget getItem(int index) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(0, 8, 0, 0),
-      child: Row(
+      child: Column(
         children: [
-          Expanded(
-            child: Text("movimiento"),
+          Row(
+            children: [
+              Expanded(
+                child: Text(
+                  _activities[index].movementType,
+                  textAlign: TextAlign.left,
+                  style: GoogleFonts.barlow(
+                    fontSize: 20.0,
+                    wordSpacing: 1,
+                    letterSpacing: 1,
+                    fontWeight: FontWeight.normal,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+              Expanded(
+                child: Text(
+                  datetimes[index],
+                  textAlign: TextAlign.right,
+                  style: GoogleFonts.barlow(
+                    fontSize: 16.0,
+                    wordSpacing: 1,
+                    letterSpacing: 1,
+                    fontWeight: FontWeight.normal,
+                    color: Colors.white,
+                  ),
+                ),)
+            ],
           ),
-          Expanded(child: Text("Fecha"))
+          Container(
+            height: 2,
+            decoration: const BoxDecoration(
+              color: ColorPalette.principal
+            ),
+          )
         ],
-      ),
+      )
     );
   }
 }

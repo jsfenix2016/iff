@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 import 'dart:ui';
+import 'package:all_sensors2/all_sensors2.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -31,9 +32,13 @@ import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:flutter_background_service_android/flutter_background_service_android.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
+import 'package:notification_center/notification_center.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:all_sensors/all_sensors.dart';
+
+import 'Model/logActivityBd.dart';
+import 'Page/FallDetected/Pageview/fall_activation_page.dart';
+import 'Page/LogActivity/Controller/logActivity_controller.dart';
 
 DateTime now = DateTime.now();
 late UserPosition userMov;
@@ -57,6 +62,9 @@ Timer _timer = Timer(const Duration(seconds: 20), () {});
 bool isMovRude = false;
 Timer timerSendSMS = Timer(const Duration(seconds: 20), () {});
 
+final LogActivityController logActivityController = Get.put(LogActivityController());
+int _logActivityTimer = 60;
+const int _logActivityTimerRefresh = 60;
 // const String portName = 'notification_send_port';
 // bool _accelAvailable = false;
 // bool _gyroAvailable = false;
@@ -290,6 +298,7 @@ void onStart(ServiceInstance service) async {
       }
     }
     accelerometer();
+    _logActivityTimer += 5;
 
     /// you can see this log in logcat
     print('FLUTTER BACKGROUND SERVICE: ${DateTime.now()}');
@@ -339,27 +348,30 @@ Future accelerometer() async {
   //Initialization Settings for Android
   await _prefs.initPrefs();
 
-  // if (_prefs.getDetectedFall == false && _prefs.getUserPremium == false) return;
+  if (_prefs.getDetectedFall == false && _prefs.getUserPremium == false) return;
 
   _streamSubscriptions.add(
-    userAccelerometerEvents!.listen(
-      (UserAccelerometerEvent event) {
-        userAccelerometerValues = <double>[event.x, event.y, event.z];
-        if (event.x >= 5.5 || event.y >= 5.5 || event.z >= 5.5) {
-          isMovRude = true;
-        } else {
-          isMovRude = false;
-          if (event.x >= 0.02 || event.y >= 0.02 || event.z >= 0.02) {
-            print("me movi");
-            ismove = false;
-            timerActive = true;
-            _timer.cancel();
-          } else {
-            activatedTimerInactivity();
+    accelerometerEvents!.listen((AccelerometerEvent event) {
+      userAccelerometerValues = <double>[event.x, event.y, event.z];
+      if (event.x >= 5.5 || event.y >= 5.5 || event.z >= 5.5) {
+        isMovRude = true;
+      } else {
+        isMovRude = false;
+        if (event.x >= 0.02 || event.y >= 0.02 || event.z >= 0.02) {
+          print("me movi");
+          if (_logActivityTimer >= _logActivityTimerRefresh) {
+            print("Movimiento normal");
+            saveActivityLog(DateTime.now(), "Movimiento normal");
+            _logActivityTimer = 0;
           }
+          ismove = false;
+          timerActive = true;
+          _timer.cancel();
+        } else {
+          activatedTimerInactivity();
         }
-      },
-    ),
+      }
+    }),
   );
 }
 
@@ -463,6 +475,8 @@ Future activatedTimerInactivity() async {
       timerActive = false;
       //TODO:SEND Notification Local
       RedirectViewNotifier.showNotifications();
+      saveUserLog("Alerta de inactividad ", now);
+      saveActivityLog(DateTime.now(), "Inactividad");
     });
   }
 }
@@ -483,6 +497,12 @@ Future<void> saveUserLog(String messaje, DateTime user) async {
   UserPositionBD mov =
       UserPositionBD(typeAction: messaje, time: now, movRureUser: user);
   const HiveData().saveUserPositionBD(mov);
+}
+
+Future<void> saveActivityLog(DateTime dateTime, String movementType) async {
+  await inicializeHiveBD();
+  LogActivityBD activityBD = LogActivityBD(dateTime: dateTime, movementType: movementType);
+  await logActivityController.saveLogActivity(activityBD);
 }
 
 class MyApp extends StatefulWidget {

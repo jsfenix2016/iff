@@ -27,10 +27,14 @@ class LogActivityController extends GetxController {
     LogActivity logActivity = LogActivity();
 
     if (activityBD != null) {
-      logActivity.id = activityBD.id;
       logActivity.dateTime = activityBD.dateTime;
+      logActivity.movementType = activityBD.movementType;
     }
 
     return logActivity;
+  }
+
+  Future<int> saveLogActivity(LogActivityBD activityBD) async {
+    return await const HiveData().saveLogActivity(activityBD);
   }
 }

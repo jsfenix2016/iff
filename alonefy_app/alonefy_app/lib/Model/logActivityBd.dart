@@ -5,15 +5,15 @@ part 'Adapters/logActivityBd.g.dart';
 
 @HiveType(typeId: HiveConstantAdapterInit.idLogActivityBDAdapter)
 class LogActivityBD extends HiveObject {
-  LogActivityBD(
-      {required this.id, required this.dateTime, required this.movementType});
+
+  LogActivityBD({
+    required this.dateTime,
+    required this.movementType
+  });
 
   @HiveField(0)
-  final int id;
-
-  @HiveField(1)
   final DateTime dateTime;
 
-  @HiveField(2)
+  @HiveField(1)
   final String movementType;
 }
