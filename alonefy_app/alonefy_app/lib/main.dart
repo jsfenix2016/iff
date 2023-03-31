@@ -4,10 +4,12 @@ import 'dart:ui';
 import 'package:flutter/cupertino.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:ifeelefine/Common/Constant.dart';
 
 import 'package:ifeelefine/Common/logicDateRisk.dart';
 import 'package:ifeelefine/Common/notificationService.dart';
 import 'package:ifeelefine/Data/hiveRisk_data.dart';
+import 'package:ifeelefine/Data/hive_constant_adapterInit.dart';
 import 'package:ifeelefine/Model/activitydaybd.dart';
 import 'package:ifeelefine/Model/contactRiskBD.dart';
 
@@ -337,7 +339,7 @@ Future accelerometer() async {
   //Initialization Settings for Android
   await _prefs.initPrefs();
 
-  if (_prefs.getDetectedFall == false && _prefs.getUserPremium == false) return;
+  // if (_prefs.getDetectedFall == false && _prefs.getUserPremium == false) return;
 
   _streamSubscriptions.add(
     userAccelerometerEvents!.listen(

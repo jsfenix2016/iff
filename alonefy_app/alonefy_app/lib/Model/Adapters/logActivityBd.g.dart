@@ -2,7 +2,7 @@ part of '../logActivityBd.dart';
 
 class LogActivityBDAdapter extends TypeAdapter<LogActivityBD> {
   @override
-  final int typeId = 5;
+  final int typeId = 7;
 
   @override
   LogActivityBD read(BinaryReader reader) {
@@ -13,8 +13,7 @@ class LogActivityBDAdapter extends TypeAdapter<LogActivityBD> {
     return LogActivityBD(
         id: fields[0] as int,
         dateTime: fields[1] as DateTime,
-        movementType: fields[2] as String
-    );
+        movementType: fields[2] as String);
   }
 
   @override
@@ -35,7 +34,7 @@ class LogActivityBDAdapter extends TypeAdapter<LogActivityBD> {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-          other is LogActivityBDAdapter &&
-              runtimeType == other.runtimeType &&
-              typeId == other.typeId;
+      other is LogActivityBDAdapter &&
+          runtimeType == other.runtimeType &&
+          typeId == other.typeId;
 }

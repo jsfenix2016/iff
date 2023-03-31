@@ -365,13 +365,14 @@ class _UserConfigPageState2 extends State<UserConfigPage2> {
     userbd!.maritalStatus = user!.maritalStatus;
     userbd!.gender = user!.gender;
     userbd!.country = user!.country;
-    bool a = await userVC.updateUserDate(context, userbd!);
-
+    bool isupdate = await userVC.updateUserDate(context, userbd!);
+    if (isupdate) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const UserMobilePage()),
+      );
+    }
     //if (!formKey.currentState.validate()) return;
     //formKey.currentState.save();
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => const UserMobilePage()),
-    );
   }
 }

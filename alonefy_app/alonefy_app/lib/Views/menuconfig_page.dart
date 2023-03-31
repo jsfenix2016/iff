@@ -1,34 +1,34 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ifeelefine/Common/colorsPalette.dart';
-import 'package:ifeelefine/Page/AddActivityPage/PageView/addActivity_page.dart';
+
 import 'package:ifeelefine/Page/ChangeNotificationTime/PageView/changeNotificationTime_page.dart';
 import 'package:ifeelefine/Page/Disamble/Pageview/disambleIfeelfine_page.dart';
 import 'package:ifeelefine/Page/FallDetected/Pageview/fall_activation_config_page.dart';
-import 'package:ifeelefine/Page/FallDetected/Pageview/fall_activation_page.dart';
+
 import 'package:ifeelefine/Page/Geolocator/PageView/configGeolocator_page.dart';
-import 'package:ifeelefine/Page/Geolocator/PageView/geolocator_page.dart';
+
 import 'package:ifeelefine/Page/PreviewActivitiesFilteredByDate/PageView/previewActivitiesByDate_page.dart';
 import 'package:ifeelefine/Page/RestoreMyConfiguration/PageView/restoreMyConfig_page.dart';
-import 'package:ifeelefine/Page/UseMobil/PageView/configurationUseMobile_page.dart';
+
 import 'package:ifeelefine/Page/UserEdit/PageView/editUser_page.dart';
 
 import 'package:ifeelefine/Page/UserInactivityPage/PageView/configurationUserInactivity_page.dart';
-import 'package:ifeelefine/Page/UserRest/PageView/configurationUserRest_page.dart';
+
 import 'package:ifeelefine/Page/UserRest/PageView/previewRestTime.dart';
 import 'package:ifeelefine/Views/contact_page.dart';
 import 'package:ifeelefine/Views/geolocatos_test_page.dart';
-import 'package:ifeelefine/Page/UserConfig/PageView/userconfig_page.dart';
+
 import 'package:ifeelefine/Page/PermissionUser/Pageview/permission_page.dart';
 import 'package:ifeelefine/Views/ringtone_page.dart';
 
-class menuConfigModel {
+class MenuConfigModel {
   late String name;
   late String icon;
   late double heigth;
   late double weigth;
 
-  menuConfigModel(this.name, this.icon, this.heigth, this.weigth);
+  MenuConfigModel(this.name, this.icon, this.heigth, this.weigth);
 }
 
 class MenuConfigurationPage extends StatefulWidget {
@@ -39,40 +39,37 @@ class MenuConfigurationPage extends StatefulWidget {
 }
 
 class _MenuConfigurationPageState extends State<MenuConfigurationPage> {
-  List<menuConfigModel> permissionStatusI = [
-    menuConfigModel(
+  List<MenuConfigModel> permissionStatusI = [
+    MenuConfigModel(
         "Configurar tus datos", 'assets/images/VectorUser.png', 22, 19.25),
-    menuConfigModel(
+    MenuConfigModel(
         "Configurar horas de sueño", 'assets/images/EllipseMenu.png', 22, 22),
-    menuConfigModel(
+    MenuConfigModel(
         "Configurar tiempo uso", 'assets/images/Group 1084.png', 22, 16.93),
-    menuConfigModel(
-        "Actividades", 'assets/images/Group 1084.png', 22, 16.93),
-    menuConfigModel("Seleccionar contacto de aviso",
+    MenuConfigModel("Actividades", 'assets/images/Group 1084.png', 22, 16.93),
+    MenuConfigModel("Seleccionar contacto de aviso",
         'assets/images/Group 1083.png', 22, 25.52),
-    menuConfigModel(
+    MenuConfigModel(
         "Configurar caída", 'assets/images/Group 506.png', 26, 22.76),
-    menuConfigModel(
+    MenuConfigModel(
         "Configurar smartwatch", 'assets/images/Group 1100.png', 22, 15.87),
-    menuConfigModel(
+    MenuConfigModel(
         "Cambiar envío ubicación", 'assets/images/Group 1082.png', 24, 24),
-    menuConfigModel("Cambiar tiempo notificaciónes",
+    MenuConfigModel("Cambiar tiempo notificaciónes",
         'assets/images/Group 1099.png', 22, 17.15),
-    menuConfigModel("Cambiar sonido notificaciones",
+    MenuConfigModel("Cambiar sonido notificaciones",
         'assets/images/Group 1102.png', 22, 22.08),
-    menuConfigModel(
+    MenuConfigModel(
         "Ajustes de mi smartphone", 'assets/images/mobile.png', 22, 19.66),
-    menuConfigModel(
+    MenuConfigModel(
         "Restaurar mi configuración", 'assets/images/Vector-2.png', 22, 22),
-    menuConfigModel(
+    MenuConfigModel(
         "Desactivar mi instalación", 'assets/images/Group 533.png', 21, 17),
   ];
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
-    // _getContacts();
   }
 
   void routeIndexSelect(int index) {

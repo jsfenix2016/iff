@@ -2,9 +2,10 @@ import 'dart:typed_data';
 
 import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:hive/hive.dart';
-part 'contact.g.dart';
+import 'package:ifeelefine/Data/hive_constant_adapterInit.dart';
+part 'Adapters/contact.g.dart';
 
-@HiveType(typeId: 4)
+@HiveType(typeId: HiveConstantAdapterInit.idContactBDAdapter)
 class ContactBD extends HiveObject {
   ContactBD(this.id, this.displayName, this.photo, this.thumbnail, this.name,
       this.timeSendSMS, this.timeCall, this.phones);

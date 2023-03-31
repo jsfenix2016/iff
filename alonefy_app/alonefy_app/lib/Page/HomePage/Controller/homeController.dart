@@ -18,7 +18,6 @@ class HomeController extends GetxController {
   final UserConfigCOntroller userVC = Get.put(UserConfigCOntroller());
 
   Future<List<UserPositionBD>> getAllMov() async {
-    late final List<UserPositionBD> allMovTime = [];
     late final List<UserPositionBD> allMov = [];
     List<UserPositionBD> temp = [];
     List<UserPositionBD> box = await const HiveData().getAlerts();
@@ -53,7 +52,7 @@ class HomeController extends GetxController {
       }
 
       if (user.idUser != '-1') {
-        UserBD userbd = UserBD(
+        final userbd = UserBD(
             idUser: user.idUser.toString(),
             name: user.name,
             lastname: user.lastname,
@@ -73,7 +72,6 @@ class HomeController extends GetxController {
 
       return true;
     } catch (error) {
-      print(error);
       return false;
     }
   }

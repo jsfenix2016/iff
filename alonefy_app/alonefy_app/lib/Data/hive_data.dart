@@ -11,7 +11,7 @@ class HiveData {
   const HiveData();
 
   Future<UserBD> saveUser(User user) async {
-    UserBD person = UserBD(
+    var person = UserBD(
         idUser: user.idUser,
         name: user.name,
         lastname: user.lastname,

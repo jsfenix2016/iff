@@ -42,10 +42,9 @@ class EditConfigController extends GetxController {
 
   Future refreshContry() async {
     indexCountry = _country.indexWhere((item) => item == user!.country);
-    print(indexCountry);
+
     if (indexCountry < 0) indexCountry = 0;
     selectCountry = _country[indexCountry];
-    print(selectCountry);
 
     for (var element in countryres) {
       var model = StatusModel.StatusModel();
@@ -69,6 +68,7 @@ class EditConfigController extends GetxController {
   }
 
   Future<List<String>> getCounty() async {
+    _country.clear();
     countryres = await getResponse() as List;
     for (var data in countryres) {
       var model = StatusModel.StatusModel();
@@ -80,10 +80,9 @@ class EditConfigController extends GetxController {
     }
 
     indexCountry = _country.indexWhere((item) => item == user!.country);
-    print(indexCountry);
+
     if (indexCountry < 0) indexCountry = 0;
     selectCountry = _country[indexCountry];
-    print(selectCountry);
 
     for (var i in _country) {
       if (i == user!.country) {
@@ -131,6 +130,7 @@ class EditConfigController extends GetxController {
   }
 
   Future<List<String>> getState() async {
+    _states.clear();
     var response = await getResponse();
     var takestate = response
         .map((map) => StatusModel.StatusModel.fromJson(map))
@@ -168,9 +168,7 @@ class EditConfigController extends GetxController {
           city: user.city);
 
       await const HiveData().updateUser(userbd);
-      // Box<UserBD> box = await Hive.openBox<UserBD>('userBD');
 
-      // await box.putAt(int.parse(userbd.idUser), userbd);
       return true;
     } catch (error) {
       return false;
@@ -178,7 +176,7 @@ class EditConfigController extends GetxController {
   }
 
   Future<User> getUserDate() async {
-    UserBD box = await const HiveData().getuserbd;
+    final box = await const HiveData().getuserbd;
     if (box.idUser != "-1") {
       user = User(
           idUser: (box.idUser),

@@ -28,7 +28,7 @@ class UserRestController extends GetxController {
 
   Future<int> deleteUserRestDay(BuildContext context, RestDayBD restDay) async {
     try {
-      const HiveData().deleteTimeRest(restDay);
+      await const HiveData().deleteTimeRest(restDay);
       return 0;
     } catch (error) {
       return -1;

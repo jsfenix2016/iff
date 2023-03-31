@@ -1,8 +1,9 @@
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:ifeelefine/Data/hive_constant_adapterInit.dart';
 
 part 'Adapters/restdaybd.g.dart';
 
-@HiveType(typeId: 1)
+@HiveType(typeId: HiveConstantAdapterInit.idRestDayDBAdapter)
 class RestDayBD extends HiveObject {
   RestDayBD(
       {required this.day,
