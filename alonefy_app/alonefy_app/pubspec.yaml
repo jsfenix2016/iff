@@ -50,7 +50,7 @@ dependencies:
   
   flutter_contacts: ^1.1.5+1
   # contacts_service: ^0.6.3
-  all_sensors: ^0.4.2
+  all_sensors2: ^1.0.1
   device_info_plus: ^7.0.1
   geolocator: ^9.0.2
   baseflow_plugin_template: ^2.1.1
@@ -63,7 +63,7 @@ dependencies:
   flutter_ringtone_player: ^3.2.0
   audioplayers: ^3.0.1
 
-  jiffy: ^4.0.0
+  jiffy: ^5.0.0
   
   slidable_button: ^2.0.0+1
   avatar_glow: ^2.0.2 #Animacion tipo radar

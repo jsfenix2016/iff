@@ -333,7 +333,7 @@ class _PreviewActivitiesByDateState extends State<PreviewActivitiesByDate>
 
     for (var index = 0; index < _activitiesByDay.length; index++) {
       for (var activity in _activitiesByDay[index]!) {
-        activitiesName += activity.activity + ";";
+        activitiesName += "${activity.activity};";
       }
     }
 
@@ -398,7 +398,7 @@ class _PreviewActivitiesByDateState extends State<PreviewActivitiesByDate>
                         )),
                   ),
                   Padding(
-                      padding: EdgeInsets.fromLTRB(32, 20, 32, 0),
+                      padding: const EdgeInsets.fromLTRB(32, 20, 32, 0),
                       child: Row(
                         children: [
                           Expanded(
@@ -475,10 +475,10 @@ class _PreviewActivitiesByDateState extends State<PreviewActivitiesByDate>
                         ],
                       )),
                   Padding(
-                    padding: EdgeInsets.fromLTRB(0, 24, 0, 0),
+                    padding: const EdgeInsets.fromLTRB(0, 24, 0, 0),
                     child: Row(
                       children: [
-                        SizedBox(width: 16),
+                        const SizedBox(width: 16),
                         getDayContainer(0, size),
                         getDayContainer(1, size),
                         getDayContainer(2, size),
@@ -486,7 +486,7 @@ class _PreviewActivitiesByDateState extends State<PreviewActivitiesByDate>
                         getDayContainer(4, size),
                         getDayContainer(5, size),
                         getDayContainer(6, size),
-                        SizedBox(width: 16)
+                        const SizedBox(width: 16)
                       ],
                     ),
                   ),
@@ -554,14 +554,8 @@ class _PreviewActivitiesByDateState extends State<PreviewActivitiesByDate>
                                                       left: 16,
                                                       child: Text(
                                                         rangeTimeToString(
-                                                            _activitiesByDay[
-                                                                        index]![
-                                                                    indexActivity]
-                                                                .timeStart,
-                                                            _activitiesByDay[
-                                                                        index]![
-                                                                    indexActivity]
-                                                                .timeFinish),
+                                                            _activitiesByDay[index]![indexActivity].timeStart,
+                                                            _activitiesByDay[index]![indexActivity].timeFinish),
                                                         //_activitiesByDay[index]![indexActivity].activity,
                                                         textAlign:
                                                             TextAlign.left,
@@ -734,7 +728,7 @@ class _PreviewActivitiesByDateState extends State<PreviewActivitiesByDate>
     await Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => AddActivityPage(),
+        builder: (context) => const AddActivityPage(),
       ),
     );
 
@@ -744,7 +738,7 @@ class _PreviewActivitiesByDateState extends State<PreviewActivitiesByDate>
   }
 
   Widget getDayContainer(int index, Size size) {
-    return Container(
+    return SizedBox(
         width: size.width / 7 - 32 / 7, child: Center(child: getDay(index)));
   }
 

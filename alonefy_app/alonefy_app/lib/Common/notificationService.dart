@@ -142,8 +142,6 @@ class RedirectViewNotifier with ChangeNotifier {
       ),
       payload: 'Inactived',
     );
-    DateTime now = DateTime.now();
-    saveUserLog("Alerta de inactividad ", now);
     sendMessageContact();
   }
 
