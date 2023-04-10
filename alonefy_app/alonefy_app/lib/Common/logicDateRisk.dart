@@ -17,7 +17,7 @@ class LogicDateRisk {
     var user = await const HiveData().getuserbd;
 
     final Box<ContactRiskBD> box =
-        await Hive.openBox<ContactRiskBD>('ContactRiskBD');
+        await Hive.openBox<ContactRiskBD>('contactriskbd');
 
     List<ContactRiskBD> dateRisk = box.values.toList();
 

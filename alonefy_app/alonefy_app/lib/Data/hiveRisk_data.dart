@@ -6,75 +6,140 @@ class HiveDataRisk {
   const HiveDataRisk();
 
   Future<int> saveContactRisk(ContactRiskBD contact) async {
-    final Box<ContactRiskBD> box =
-        await Hive.openBox<ContactRiskBD>('ContactRiskBD');
+    try {
+      await Hive.close();
+      final box = await Hive.openBox<ContactRiskBD>('contactriskbd');
 
-    int nextId = 0;
+      var ind = await box.add(contact);
 
-    for (var element in box.keys) {
-      if (element.id == nextId) {
-        nextId++;
-      }
+      return ind;
+    } catch (error) {
+      return -1;
     }
-
-    contact.id = nextId;
-    var ind = box.add(contact);
-    box.compact();
-
-    return ind;
   }
 
   Future updateContactRisk(ContactRiskBD contact) async {
-    var box = await Hive.openBox<ContactRiskBD>('ContactRiskBD');
+    try {
+      await Hive.close();
+      final box = await Hive.openBox<ContactRiskBD>('contactriskbd');
 
-    for (var element in box.keys) {
-      if (element == contact) {
-        box.put((contact.id), contact);
-        box.compact();
-
-        break;
-      }
+      await box.put((contact.id), contact);
+      final listDate = box.values.toList();
+      print(listDate);
+    } catch (error) {
+      print(error);
     }
   }
 
   Future deleteDate(ContactRiskBD contact) async {
-    final Box<ContactRiskBD> box =
-        await Hive.openBox<ContactRiskBD>('ContactRiskBD');
-    box.deleteAt(contact.id);
+    try {
+      final Box<ContactRiskBD> box =
+          await Hive.openBox<ContactRiskBD>('contactriskbd');
+      await box.deleteAt(contact.id);
+    } catch (error) {
+      print(error);
+    }
   }
 
   Future<List<ContactRiskBD>> get getcontactRiskbd async {
-    final Box<ContactRiskBD> box =
-        await Hive.openBox<ContactRiskBD>('ContactRiskBD');
+    try {
+      final box = await Hive.openBox<ContactRiskBD>('contactriskbd');
 
-    return box.values.toList();
+      late List<ContactRiskBD> allDate = [];
+
+      ContactRiskBD contactTemp = ContactRiskBD(
+          id: -1,
+          photo: null,
+          name: '',
+          timeinit: '00:00',
+          timefinish: '00:00',
+          phones: '',
+          titleMessage: '',
+          messages: '',
+          sendLocation: false,
+          sendWhatsapp: false,
+          isInitTime: false,
+          isFinishTime: false,
+          code: '',
+          isActived: false,
+          isprogrammed: false);
+
+      for (var element in box.values.toList()) {
+        contactTemp.id = element.id;
+        contactTemp.photo = element.photo;
+
+        contactTemp.name = element.name;
+        contactTemp.photo = element.photo;
+        contactTemp.timeinit = element.timeinit;
+        contactTemp.timefinish = element.timefinish;
+
+        contactTemp.phones = element.phones;
+        contactTemp.titleMessage = element.titleMessage;
+        contactTemp.messages = element.messages;
+        contactTemp.sendLocation = element.sendLocation;
+
+        contactTemp.sendWhatsapp = element.sendWhatsapp;
+        contactTemp.isInitTime = element.isInitTime;
+        contactTemp.isFinishTime = element.isFinishTime;
+        contactTemp.code = element.code;
+
+        contactTemp.isActived = element.isActived;
+        contactTemp.isprogrammed = element.isprogrammed;
+        allDate.add(contactTemp);
+      }
+
+      return allDate;
+    } catch (error) {
+      print(error);
+      return [];
+    }
   }
 
   ///ZONE RISK
   Future<List<ContactZoneRiskBD>> get getcontactZoneRiskbd async {
-    final Box<ContactZoneRiskBD> box =
-        await Hive.openBox<ContactZoneRiskBD>('ContactZoneRiskBD');
-
-    return box.values.toList();
+    try {
+      final Box<ContactZoneRiskBD> box =
+          await Hive.openBox<ContactZoneRiskBD>('ContactZoneRiskBD');
+      var listZone = box.values.toList();
+      await Hive.close();
+      return listZone;
+    } catch (error) {
+      print(error);
+      return [];
+    }
   }
 
   Future<int> saveContactZoneRisk(ContactZoneRiskBD contact) async {
-    final Box<ContactZoneRiskBD> box =
-        await Hive.openBox<ContactZoneRiskBD>('ContactZoneRiskBD');
+    try {
+      final Box<ContactZoneRiskBD> box =
+          await Hive.openBox<ContactZoneRiskBD>('ContactZoneRiskBD');
 
-    return box.add(contact);
+      await box.add(contact);
+      await Hive.close();
+      return 0;
+    } catch (error) {
+      print(error);
+      return -1;
+    }
   }
 
   Future updateContactZoneRisk(ContactZoneRiskBD contact) async {
-    final Box<ContactZoneRiskBD> box =
-        await Hive.openBox<ContactZoneRiskBD>('ContactZoneRiskBD');
+    try {
+      final Box<ContactZoneRiskBD> box =
+          await Hive.openBox<ContactZoneRiskBD>('ContactZoneRiskBD');
 
-    box.put((contact.id), contact);
+      await box.put((contact.id), contact);
+
+      await Hive.close();
+    } catch (error) {
+      print(error);
+    }
   }
 
   Future deleteContactZone(ContactZoneRiskBD contact) async {
     final Box<ContactZoneRiskBD> box =
         await Hive.openBox<ContactZoneRiskBD>('ContactZoneRiskBD');
-    box.delete(contact);
+    await box.delete(contact);
+    await Hive.close();
   }
 }

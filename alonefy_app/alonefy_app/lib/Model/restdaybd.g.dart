@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of '../restdaybd.dart';
+part of 'restdaybd.dart';
 
 // **************************************************************************
 // TypeAdapterGenerator
@@ -21,13 +21,14 @@ class RestDayBDAdapter extends TypeAdapter<RestDayBD> {
       timeWakeup: fields[1] as String,
       timeSleep: fields[2] as String,
       selection: fields[3] as int,
+      isSelect: fields[4] as bool,
     );
   }
 
   @override
   void write(BinaryWriter writer, RestDayBD obj) {
     writer
-      ..writeByte(4)
+      ..writeByte(5)
       ..writeByte(0)
       ..write(obj.day)
       ..writeByte(1)
@@ -35,7 +36,9 @@ class RestDayBDAdapter extends TypeAdapter<RestDayBD> {
       ..writeByte(2)
       ..write(obj.timeSleep)
       ..writeByte(3)
-      ..write(obj.selection);
+      ..write(obj.selection)
+      ..writeByte(4)
+      ..write(obj.isSelect);
   }
 
   @override

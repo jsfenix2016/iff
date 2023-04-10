@@ -12,8 +12,11 @@ import 'package:ifeelefine/Data/hiveRisk_data.dart';
 import 'package:ifeelefine/Data/hive_constant_adapterInit.dart';
 import 'package:ifeelefine/Model/activitydaybd.dart';
 import 'package:ifeelefine/Model/contactRiskBD.dart';
+import 'package:ifeelefine/Page/HomePage/Pageview/home_page.dart';
 
 import 'package:ifeelefine/Page/Risk/DateRisk/ListDateRisk/PageView/riskDatePage.dart';
+import 'package:ifeelefine/Page/Risk/ZoneRisk/ListContactZoneRisk/PageView/zoneRisk.dart';
+import 'package:ifeelefine/Page/UserRest/PageView/configurationUserRest_page.dart';
 
 import 'package:intl/intl.dart';
 import 'package:ifeelefine/Common/idleLogic.dart';
@@ -364,9 +367,9 @@ Future accelerometer() async {
 }
 
 Future getDateRisk() async {
-  var user = await const HiveData().getuserbd;
+  final user = await const HiveData().getuserbd;
 
-  var box = await Hive.openBox<ContactRiskBD>('ContactRiskBD');
+  final box = await Hive.openBox<ContactRiskBD>('contactriskbd');
 
   List<ContactRiskBD> dateRisk = box.values.toList();
 

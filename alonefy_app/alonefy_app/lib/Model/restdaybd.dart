@@ -1,7 +1,7 @@
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:ifeelefine/Data/hive_constant_adapterInit.dart';
 
-part 'Adapters/restdaybd.g.dart';
+part 'restdaybd.g.dart';
 
 @HiveType(typeId: HiveConstantAdapterInit.idRestDayDBAdapter)
 class RestDayBD extends HiveObject {
@@ -9,17 +9,21 @@ class RestDayBD extends HiveObject {
       {required this.day,
       required this.timeWakeup,
       required this.timeSleep,
-      required this.selection});
+      required this.selection,
+      required this.isSelect});
 
   @HiveField(0)
-  late final String day;
+  late String day;
 
   @HiveField(1)
-  late final String timeWakeup;
+  late String timeWakeup;
 
   @HiveField(2)
-  late final String timeSleep;
+  late String timeSleep;
 
   @HiveField(3)
-  late final int selection;
+  late int selection;
+
+  @HiveField(4)
+  late bool isSelect;
 }

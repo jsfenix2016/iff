@@ -22,6 +22,7 @@ import 'package:ifeelefine/Page/Risk/ZoneRisk/ListContactZoneRisk/PageView/zoneR
 import 'package:ifeelefine/Utils/Widgets/elevateButtonCustomBorder.dart';
 import 'package:ifeelefine/Utils/Widgets/elevatedButtonFilling.dart';
 import 'package:ifeelefine/main.dart';
+import 'package:notification_center/notification_center.dart';
 
 class CancelAlertPage extends StatefulWidget {
   const CancelAlertPage({super.key, required this.contactRisk});
@@ -71,8 +72,10 @@ class _CancelAlertState extends State<CancelAlertPage> {
 
   void saveDate(BuildContext context) async {
     if (widget.contactRisk.code == codeTemp) {
+      NotificationCenter().notify('getContactZoneRisk');
       stopTimer();
       timerSendSMS.cancel();
+
       Navigator.push(
         context,
         MaterialPageRoute(

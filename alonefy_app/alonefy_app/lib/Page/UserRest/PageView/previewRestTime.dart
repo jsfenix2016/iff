@@ -34,10 +34,10 @@ class _PreviewRestTimePageState extends State<PreviewRestTimePage> {
   List<RestDayBD> selecDicActivity = <RestDayBD>[];
   List<RestDayBD> selecDicActivityTemp = <RestDayBD>[];
   Map<String, List<RestDayBD>> groupedProducts = {};
+  List<RestDayBD> tempSave = <RestDayBD>[];
 
-  final List<String> tempListDay = <String>[];
   List<RestDayBD> lista = [];
-
+  int indexFile = 0;
   var indexSelect = -1;
   @override
   void initState() {
@@ -47,72 +47,102 @@ class _PreviewRestTimePageState extends State<PreviewRestTimePage> {
 
   Future<void> getInactivity() async {
     groupedProducts = {};
+    selecDicActivity = [];
+    selecDicActivityTemp = [];
+    lista = [];
     selecDicActivity = await restVC.getUserRest();
+    if (tempSave.isEmpty) {
+      tempSave = selecDicActivity;
+    }
+
     List<RestDayBD> sortedWeekdays = sortWeekdays(selecDicActivity);
     selecDicActivity = sortedWeekdays;
 
     groupedProducts =
         groupBy(selecDicActivity, (product) => product.selection.toString());
-    groupedProducts.forEach((key, value) {
-      selecDicActivityTemp.add(value.first);
-    });
+    for (var element in groupedProducts.values) {
+      selecDicActivityTemp.add(element.first);
+    }
+    selecDicActivityTemp.sort((a, b) => a.selection.compareTo(b.selection));
 
     groupedProducts.forEach((key, value) {
-      for (int i = 0; i < value.length; i++) {
-        lista.add(value[i]);
+      for (var element in value) {
+        lista.add(element);
       }
     });
 
     setState(() {});
   }
 
-// deleteTimeRest
-  // int countInser = 0;
-  // Future processSelectedInfo() async {
-  //   for (var element in selecDicActivity) {
-  //     tempNoSelectListDay.remove(element);
-  //   }
-  //   for (var element in selecDicActivity) {
-  //     restDay = RestDayBD(
-  //       day: diaConvert(element),
-  //       timeSleep: timeLblPM,
-  //       timeWakeup: timeLblAM,
-  //       selection: countInser,
-  //     );
-
-  //     tempDicRest.add(restDay);
-  //   }
-  //   timeLblAM = "00:00";
-  //   timeLblPM = "00:00";
-  //   _selectedDays.clear();
-  //   countInser++;
-  // }
-
   List<RestDayBD> sortWeekdays(List<RestDayBD> weekdays) {
     return weekdays
       ..sort((a, b) => LinkedHashMap.from({
-            'Lunes': 1,
-            'Martes': 2,
-            'Miercoles': 3,
-            'Jueves': 4,
-            'Viernes': 5,
-            'Sabado': 6,
-            'Domingo': 7,
+            'L': 1,
+            'M': 2,
+            'X': 3,
+            'J': 4,
+            'V': 5,
+            'S': 6,
+            'D': 7,
           })[a.day]
               .compareTo(LinkedHashMap.from({
-            'Lunes': 1,
-            'Martes': 2,
-            'Miercoles': 3,
-            'Jueves': 4,
-            'Viernes': 5,
-            'Sabado': 6,
-            'Domingo': 7,
+            'L': 1,
+            'M': 2,
+            'X': 3,
+            'J': 4,
+            'V': 5,
+            'S': 6,
+            'D': 7,
           })[b.day]));
   }
 
-  void updateRestDay(RestDayBD restDay) {
+  Future updateRestDay(BuildContext context) async {
     // ignore: use_build_context_synchronously
-    restVC.updateUserRestTime(context, restDay);
+
+    int id = await restVC.saveUserListRestTime(context, selecDicActivity);
+
+    if (id != -1) {
+      if (widget.isMenu) return;
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const UserInactivityPage(),
+        ),
+      );
+    }
+  }
+
+  Future processSelectedInfo() async {
+    for (int i = 0; i < selecDicActivity.length; i++) {
+      if (selecDicActivity[i].selection == indexFile) {
+        var restDay = selecDicActivity[i];
+        restDay.timeSleep = timeLblPM;
+        restDay.timeWakeup = timeLblAM;
+
+        selecDicActivity.removeAt(i);
+        selecDicActivity.insert(i, restDay);
+      }
+    }
+  }
+
+  Future<bool> validateAllDaySelect() async {
+    bool isNotSelectedAllWeek = false;
+    for (var i = 0; i < selecDicActivity.length; i++) {
+      if (selecDicActivity[i].isSelect == false) {
+        isNotSelectedAllWeek = true;
+        var temp = selecDicActivity[i];
+        temp.isSelect = false;
+        temp.selection = groupedProducts.length;
+
+        selecDicActivity.removeAt(i);
+        selecDicActivity.insert(i, temp);
+        int id = await restVC.saveUserListRestTime(context, selecDicActivity);
+        getInactivity();
+        continue;
+      }
+    }
+
+    return isNotSelectedAllWeek;
   }
 
   @override
@@ -157,50 +187,42 @@ class _PreviewRestTimePageState extends State<PreviewRestTimePage> {
                         key: Key(index.toString()),
                         children: [
                           ListDayWeek(
-                            selectedDays: tempListDay,
                             listRest: selecDicActivity,
                             newIndex: i,
                             onChanged: (value) async {
                               print(value);
-                              tempListDay.remove(value);
 
-                              RestDayBD restDay = RestDayBD(
-                                day: selecDicActivityTemp[value.selection].day,
-                                timeSleep: selecDicActivityTemp[value.selection]
-                                    .timeSleep,
-                                timeWakeup:
-                                    selecDicActivityTemp[value.selection]
-                                        .timeWakeup,
-                                selection: index,
-                              );
-                              selecDicActivity.remove(value);
-                              // updateRestDay(restDay);
+                              indexFile = value;
+                              var temp = selecDicActivity[value];
+                              temp.isSelect =
+                                  (temp.isSelect == false) ? true : false;
+                              temp.selection = i;
+                              print(selecDicActivity[value]);
 
-                              await restVC.deleteUserRestDay(context, restDay);
-                              getInactivity();
+                              selecDicActivity.removeAt(value);
+                              selecDicActivity.insert(value, temp);
+
                               setState(() {});
                             },
                           ),
                           RowSelectTimer(
-                            index: index,
+                            index: i,
                             timeLblAM: selecDicActivityTemp[i].timeWakeup, //AM
                             timeLblPM: selecDicActivityTemp[i].timeSleep, //PM
                             onChanged: (value) {
                               timeLblAM = value.timeWakeup;
                               timeLblPM = value.timeSleep;
-
-                              print(timeLblAM);
-                              print(timeLblPM);
-
-                              RestDayBD restDay = RestDayBD(
-                                day: selecDicActivityTemp[value.id].day,
-                                timeSleep: value.timeSleep,
-                                timeWakeup: value.timeWakeup,
-                                selection: index,
-                              );
-                              updateRestDay(restDay);
-                              // ignore: use_build_context_synchronously
-                              // restVC.updateUserRestTime(context, restDay);
+                              indexFile = i;
+                              var listgroup = groupedProducts[i.toString()];
+                              for (var ic = 0; ic < listgroup!.length; ic++) {
+                                var temp = listgroup[ic];
+                                if (temp.selection == indexFile) {
+                                  selecDicActivity.remove(temp);
+                                  temp.timeSleep = timeLblPM;
+                                  temp.timeWakeup = timeLblAM;
+                                  selecDicActivity.add(temp);
+                                }
+                              }
                             },
                           ),
                         ],
@@ -212,7 +234,7 @@ class _PreviewRestTimePageState extends State<PreviewRestTimePage> {
             Row(
               children: [
                 Container(
-                  color: Colors.red,
+                  color: Colors.transparent,
                   height: 50,
                   width: size.width / 2,
                   child: Positioned(
@@ -221,21 +243,17 @@ class _PreviewRestTimePageState extends State<PreviewRestTimePage> {
                       width: size.width,
                       child: Center(
                         child: ElevateButtonCustomBorder(
-                          onChanged: (value) {
-                            print(widget.isMenu);
+                          onChanged: (value) async {
+                            int id = await restVC.saveUserListRestTime(
+                                context, tempSave);
 
-                            if (lista.length == 7 &&
-                                selecDicActivityTemp.length == 7) {
+                            if (id == -1) {
+                              showAlert(
+                                  context, "Algo salio mal, intente de nuevo");
+
                               return;
                             }
-                            if (widget.isMenu) return;
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) =>
-                                    const UserInactivityPage(),
-                              ),
-                            );
+                            setState(() {});
                           },
                           mensaje: "Cancelar",
                         ),
@@ -244,7 +262,7 @@ class _PreviewRestTimePageState extends State<PreviewRestTimePage> {
                   ),
                 ),
                 Container(
-                  color: Colors.green,
+                  color: Colors.transparent,
                   height: 50,
                   width: size.width / 2,
                   child: Positioned(
@@ -253,21 +271,18 @@ class _PreviewRestTimePageState extends State<PreviewRestTimePage> {
                       width: size.width,
                       child: Center(
                         child: ElevateButtonCustomBorder(
-                          onChanged: (value) {
-                            print(widget.isMenu);
+                          onChanged: (value) async {
+                            if (await validateAllDaySelect()) {
+                              showAlert(context,
+                                  "Debes seleccionar los dias restantes antes de continuar");
 
-                            if (lista.length == 7 &&
-                                selecDicActivityTemp.length == 7) {
                               return;
+                            } else {
+                              await processSelectedInfo();
+                              updateRestDay(context);
                             }
+
                             if (widget.isMenu) return;
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) =>
-                                    const UserInactivityPage(),
-                              ),
-                            );
                           },
                           mensaje: Constant.saveBtn,
                         ),

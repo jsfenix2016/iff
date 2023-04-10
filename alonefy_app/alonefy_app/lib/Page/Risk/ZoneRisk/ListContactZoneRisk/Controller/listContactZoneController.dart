@@ -9,11 +9,11 @@ import 'package:ifeelefine/Model/contactRiskBD.dart';
 import 'package:ifeelefine/Model/contactZoneRiskBD.dart';
 
 class ListContactZoneController extends GetxController {
-  Future<List<ContactZoneRiskBD>> getContactsRisk() async {
+  Future<List<ContactZoneRiskBD>> getContactsZoneRisk() async {
     try {
-      var save = await const HiveDataRisk().getcontactZoneRiskbd;
+      var resp = await const HiveDataRisk().getcontactZoneRiskbd;
 
-      return save;
+      return resp;
     } catch (error) {
       print(error);
       return [];

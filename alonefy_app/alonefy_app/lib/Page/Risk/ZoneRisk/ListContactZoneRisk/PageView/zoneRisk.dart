@@ -27,9 +27,13 @@ class _ZoneRiskPageState extends State<ZoneRiskPage> {
   var indexSelect = -1;
   @override
   void initState() {
-    NotificationCenter().subscribe('getContactZoneRisk', listviewContactRisk);
+    NotificationCenter().subscribe('getContactZoneRisk', getListZoneRisk);
 
     super.initState();
+  }
+
+  Future<List<ContactZoneRiskBD>> getListZoneRisk() async {
+    return riskVC.getContactsZoneRisk();
   }
 
   void initContact() {
@@ -85,7 +89,7 @@ class _ZoneRiskPageState extends State<ZoneRiskPage> {
 
   Widget listviewContactRisk() {
     return FutureBuilder<List<ContactZoneRiskBD>>(
-      future: riskVC.getContactsRisk(),
+      future: getListZoneRisk(),
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           final listContact = snapshot.data!;

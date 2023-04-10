@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -30,24 +32,40 @@ class _UserRestPageState extends State<UserRestPage> {
   late String timeLblAM = "00:00"; //AM
   late String timeLblPM = "00:00"; //PM
 
+  int indexFile = 0;
   int noSelectDay = 1;
   late RestDayBD restDay;
 
-  List<RestDayBD> tempDicRest = [];
-  List<List<RestDayBD>> restDays = [];
-
+  bool isVisibleBtn = false;
   final List<String> _selectedDays = [];
+  final List<String> tempNoSelectListDay = <String>[
+    "L",
+    "M",
+    "X",
+    "J",
+    "V",
+    "S",
+    "D",
+  ];
 
+  List<RestDayBD> tempRestDays = [];
   @override
   void initState() {
-    restDays.add(tempDicRest);
+    // restDays.add(tempDicRest);
 
     super.initState();
-  }
+    if (tempRestDays.isEmpty) {
+      for (var element in tempNoSelectListDay) {
+        restDay = RestDayBD(
+            day: element,
+            timeSleep: timeLblPM,
+            timeWakeup: timeLblAM,
+            selection: 0,
+            isSelect: false);
 
-  Future<void> getUserRestDay() async {
-    tempDicRest = await userRestVC.getUserRest();
-    print(tempDicRest);
+        tempRestDays.add(restDay);
+      }
+    }
   }
 
   @override
@@ -67,68 +85,77 @@ class _UserRestPageState extends State<UserRestPage> {
                 height: size.height - 120,
                 child: ListView(
                   children: [
-                    Positioned(
-                      top: 0,
-                      child: Padding(
-                        padding: const EdgeInsets.only(
-                            top: 128.0, left: 50, right: 50, bottom: 30),
-                        child: Container(
-                          color: Colors.transparent,
-                          width: size.width,
-                          child: Text(
-                            Constant.hoursSleepAndWakeup,
-                            textAlign: TextAlign.center,
-                            style: GoogleFonts.barlow(
-                              fontSize: 24.0,
-                              wordSpacing: 1,
-                              letterSpacing: 1.2,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
-                            ),
+                    Padding(
+                      padding: const EdgeInsets.only(
+                          top: 120.0, left: 50, right: 50, bottom: 30),
+                      child: Container(
+                        color: Colors.transparent,
+                        width: size.width,
+                        child: Text(
+                          Constant.hoursSleepAndWakeup,
+                          textAlign: TextAlign.center,
+                          style: GoogleFonts.barlow(
+                            fontSize: 24.0,
+                            wordSpacing: 1,
+                            letterSpacing: 1.2,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
                           ),
                         ),
                       ),
                     ),
                     const SizedBox(
-                      height: 20,
+                      height: 10,
                     ),
-                    SizedBox(
-                        width: size.width,
-                        height: size.height - 120,
-                        child: ListView.builder(
-                            itemCount: noSelectDay,
-                            itemBuilder: (BuildContext context, int index) {
-                              return Column(
-                                mainAxisSize: MainAxisSize.max,
-                                key: Key(index.toString()),
-                                children: [
-                                  ListDayWeek(
-                                    selectedDays: _selectedDays,
-                                    listRest: restDays.isEmpty
-                                        ? tempDicRest
-                                        : restDays[index],
-                                    newIndex: index,
-                                    onChanged: (value) {
-                                      print(value);
+                    Container(
+                      color: Colors.transparent,
+                      width: size.width,
+                      height: 210 * noSelectDay.toDouble(),
+                      child: ListView.builder(
+                        physics: const NeverScrollableScrollPhysics(),
+                        shrinkWrap: true,
+                        itemCount: noSelectDay,
+                        itemBuilder: (BuildContext context, int index) {
+                          return Column(
+                            mainAxisSize: MainAxisSize.max,
+                            key: Key(index.toString()),
+                            children: [
+                              ListDayWeek(
+                                listRest: tempRestDays,
+                                newIndex: index,
+                                onChanged: (value) {
+                                  var temp = tempRestDays[value];
+                                  temp.selection = index;
 
-                                      tempDicRest.remove(value);
-                                      restDays[index].remove(value);
-                                      _selectedDays.clear();
-                                      // setState(() {});
-                                    },
-                                  ),
-                                  RowSelectTimer(
-                                    index: index,
-                                    timeLblAM: timeLblAM, //AM
-                                    timeLblPM: timeLblPM, //PM
-                                    onChanged: (value) {
-                                      timeLblAM = value.timeWakeup;
-                                      timeLblPM = value.timeSleep;
-                                    },
-                                  ),
-                                ],
-                              );
-                            })),
+                                  temp.isSelect =
+                                      (temp.isSelect == false) ? true : false;
+
+                                  tempRestDays.remove(temp);
+                                  tempRestDays.insert(value, temp);
+
+                                  indexFile = index;
+                                  setState(() {});
+                                },
+                              ),
+                              RowSelectTimer(
+                                index: index,
+                                timeLblAM: timeLblAM, //AM
+                                timeLblPM: timeLblPM, //PM
+                                onChanged: (value) {
+                                  timeLblAM = value.timeWakeup;
+                                  timeLblPM = value.timeSleep;
+                                  indexFile = index;
+                                  setState(() {});
+                                },
+                              ),
+                              const SizedBox(
+                                height: 30,
+                              ),
+                            ],
+                          );
+                        },
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -148,14 +175,17 @@ class _UserRestPageState extends State<UserRestPage> {
               ),
               Positioned(
                 bottom: 10,
-                child: SizedBox(
-                  width: size.width,
-                  child: Center(
-                    child: ElevateButtonFilling(
-                      onChanged: (value) {
-                        btnContinue();
-                      },
-                      mensaje: Constant.continueTxt,
+                child: Visibility(
+                  visible: (isVisibleBtn) ? true : false,
+                  child: SizedBox(
+                    width: size.width,
+                    child: Center(
+                      child: ElevateButtonFilling(
+                        onChanged: (value) {
+                          btnContinue();
+                        },
+                        mensaje: Constant.continueTxt,
+                      ),
                     ),
                   ),
                 ),
@@ -168,36 +198,33 @@ class _UserRestPageState extends State<UserRestPage> {
   }
 
   void btnAdd() async {
-    if (tempDicRest.isEmpty && _selectedDays.length == 7) {
-      await processSelectedInfo();
-      // SaveAndContinueScreen();
-      showAlert(context,
-          "Todos los dias ya fueron asignados puedes continuar con la configuración");
-
-      setState(() {});
-      return;
-    }
-    if (_selectedDays.length < 7 && tempDicRest.length < 7) {
-      await processSelectedInfo();
+    var val = await validateAllDaySelect();
+    if (val == false) {
       noSelectDay++;
+      await processSelectedInfo();
 
-      setState(() {});
+      // SaveAndContinueScreen();
+      showAlert(context, "Faltan dias por seleccionar.");
+    } else {
+      showAlert(context, "Puede continuar.");
+      isVisibleBtn = true;
     }
+    setState(() {});
   }
 
   void btnContinue() async {
-    // noSelectDay++;
-    // tempList.add(noSelectDay);
-    if (!validateDays(tempDicRest)) {
+    if (!validateDays(tempRestDays)) {
       return;
     }
-    if (tempDicRest.length == 7) {
+    if (tempRestDays.length == 7) {
+      await processSelectedInfo();
       saveAndContinueScreen();
       return;
     }
-    if (tempDicRest.isEmpty && _selectedDays.length == 7) {
+    var val = await validateAllDaySelect();
+    if (val == false) {
       await processSelectedInfo();
-      // SaveAndContinueScreen();
+
       showAlert(context,
           "Todos los dias ya fueron asignados puedes continuar con la configuración");
 
@@ -206,7 +233,8 @@ class _UserRestPageState extends State<UserRestPage> {
     }
     if (_selectedDays.length < 7) {
       await processSelectedInfo();
-      if (tempDicRest.length == 7) {
+      if (tempRestDays.length == 7) {
+        await processSelectedInfo();
         saveAndContinueScreen();
         return;
       }
@@ -218,7 +246,7 @@ class _UserRestPageState extends State<UserRestPage> {
   }
 
   void saveAndContinueScreen() async {
-    int id = await userRestVC.saveUserListRestTime(context, tempDicRest);
+    int id = await userRestVC.saveUserListRestTime(context, tempRestDays);
 
     if (id != -1) {
       // ignore: use_build_context_synchronously
@@ -244,32 +272,31 @@ class _UserRestPageState extends State<UserRestPage> {
     return true; // no hay días repetidos en ninguna fila
   }
 
-  int countInser = 0;
-  Future processSelectedInfo() async {
-    if (tempDicRest.length < 7) {
-      for (var element in _selectedDays) {
-        restDay = RestDayBD(
-          day: diaConvert(element),
-          timeSleep: timeLblPM,
-          timeWakeup: timeLblAM,
-          selection: countInser,
-        );
-
-        tempDicRest.add(restDay);
-        // int id = await userRestVC.saveRestTime(context, restDay);
+  Future<bool> validateAllDaySelect() async {
+    bool isSelectedAllWeek = true;
+    isVisibleBtn = true;
+    for (var i = 0; i < tempRestDays.length; i++) {
+      if (tempRestDays[i].isSelect == false) {
+        isSelectedAllWeek = false;
+        isVisibleBtn = false;
       }
-      timeLblAM = "00:00";
-      timeLblPM = "00:00";
-      _selectedDays.clear();
-
-      restDays.insert(countInser, tempDicRest);
     }
 
-    if (tempDicRest.length == 7) {
-      showAlert(context,
-          "Todos los dias ya fueron asignados puedes continuar con la configuración");
-      return;
+    return isSelectedAllWeek;
+  }
+
+  Future processSelectedInfo() async {
+    for (int i = 0; i < tempRestDays.length; i++) {
+      if (tempRestDays[i].selection == indexFile) {
+        restDay = tempRestDays[i];
+        restDay.timeSleep = timeLblPM;
+        restDay.timeWakeup = timeLblAM;
+
+        tempRestDays.removeAt(i);
+        tempRestDays.insert(i, restDay);
+
+        // tempDicRest.add(restDay);
+      }
     }
-    if (tempDicRest.length < 7) countInser++;
   }
 }

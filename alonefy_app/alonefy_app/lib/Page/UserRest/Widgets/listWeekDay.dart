@@ -64,7 +64,7 @@ class _ListWeekDayState extends State<ListWeekDay> {
                     for (var i = 0; i < tempNoSelectListDay.length; i++)
                       GestureDetector(
                         behavior: HitTestBehavior.translucent,
-                        key: Key("${index},${i}"),
+                        key: Key("$index,$i"),
                         onTap: () {
                           indexSelect = i;
                           setState(
@@ -78,11 +78,11 @@ class _ListWeekDayState extends State<ListWeekDay> {
                                 _selectedDays.add(_ListDay[i]);
 
                                 RestDayBD restDay = RestDayBD(
-                                  day: _ListDay[i],
-                                  timeSleep: timeLblAM,
-                                  timeWakeup: timeLblPM,
-                                  selection: i,
-                                );
+                                    day: _ListDay[i],
+                                    timeSleep: timeLblAM,
+                                    timeWakeup: timeLblPM,
+                                    selection: i,
+                                    isSelect: true);
                                 tempDicRest.add(restDay);
                               }
                             },

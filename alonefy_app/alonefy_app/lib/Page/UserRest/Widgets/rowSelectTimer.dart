@@ -29,7 +29,7 @@ class _RowSelectTimerState extends State<RowSelectTimer> {
   @override
   void initState() {
     restDay = RestDay();
-    restDay.id = 0;
+    restDay.id = widget.index;
     restDay.timeSleep = widget.timeLblPM;
     restDay.timeWakeup = widget.timeLblAM;
     super.initState();

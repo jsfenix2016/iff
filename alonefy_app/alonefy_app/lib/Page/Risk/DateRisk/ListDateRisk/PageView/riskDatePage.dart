@@ -36,9 +36,10 @@ class _RiskPageState extends State<RiskPage> {
     super.initState();
   }
 
-  Future<List<ContactRiskBD>> refreshListDateContact() {
-    setState(() {});
-    return riskVC.getContactsRisk();
+  Future<List<ContactRiskBD>> refreshListDateContact() async {
+    final list = await riskVC.getContactsRisk();
+
+    return list;
   }
 
   void initContact() {
