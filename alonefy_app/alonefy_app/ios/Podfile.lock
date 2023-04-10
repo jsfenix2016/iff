@@ -1,5 +1,5 @@
 PODS:
-  - all_sensors (0.0.1):
+  - all_sensors2 (1.0.1):
     - Flutter
   - AppAuth (1.6.0):
     - AppAuth/Core (= 1.6.0)
@@ -55,7 +55,7 @@ PODS:
     - Flutter
 
 DEPENDENCIES:
-  - all_sensors (from `.symlinks/plugins/all_sensors/ios`)
+  - all_sensors2 (from `.symlinks/plugins/all_sensors2/ios`)
   - audioplayers_darwin (from `.symlinks/plugins/audioplayers_darwin/ios`)
   - camera_avfoundation (from `.symlinks/plugins/camera_avfoundation/ios`)
   - device_info_plus (from `.symlinks/plugins/device_info_plus/ios`)
@@ -83,8 +83,8 @@ SPEC REPOS:
     - GTMSessionFetcher
 
 EXTERNAL SOURCES:
-  all_sensors:
-    :path: ".symlinks/plugins/all_sensors/ios"
+  all_sensors2:
+    :path: ".symlinks/plugins/all_sensors2/ios"
   audioplayers_darwin:
     :path: ".symlinks/plugins/audioplayers_darwin/ios"
   camera_avfoundation:
@@ -123,7 +123,7 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/url_launcher_ios/ios"
 
 SPEC CHECKSUMS:
-  all_sensors: 13f46502204bebbd1e06b65ff3d7cdaa03d88b26
+  all_sensors2: 5e204ae87a72b554b2df6c4de741c09031b8e64e
   AppAuth: 8fca6b5563a5baef2c04bee27538025e4ceb2add
   audioplayers_darwin: 877d9a4d06331c5c374595e46e16453ac7eafa40
   camera_avfoundation: 3125e8cd1a4387f6f31c6c63abb8a55892a9eeeb
