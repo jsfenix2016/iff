@@ -18,12 +18,13 @@ import 'package:ifeelefine/Page/Risk/DateRisk/Widgets/contentCode.dart';
 import 'package:flutter/material.dart';
 
 import 'package:google_fonts/google_fonts.dart';
+import 'package:ifeelefine/Page/Risk/DateRisk/Widgets/imagesPreview.dart';
 import 'package:ifeelefine/Page/Risk/DateRisk/Widgets/popUpContact.dart';
 import 'package:ifeelefine/Provider/prefencesUser.dart';
 import 'package:ifeelefine/Utils/Widgets/elevateButtonCustomBorder.dart';
 import 'package:ifeelefine/Utils/Widgets/elevatedButtonFilling.dart';
+import 'package:ifeelefine/Utils/Widgets/imageAccordingWidget.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:notification_center/notification_center.dart';
 
 final _prefs = PreferenceUser();
 
@@ -61,6 +62,10 @@ class _EditRiskPageState extends State<EditRiskPage> {
   late Image imgNew;
   var foto;
   final _picker = ImagePicker();
+  int _currentIndex = 0;
+
+  List<File> imagePaths = [];
+  List<Uint8List> imageData = [];
 
   @override
   void initState() {
@@ -86,6 +91,14 @@ class _EditRiskPageState extends State<EditRiskPage> {
   Future getContact() async {
     contactlist = await editVC.getContacts(context);
 
+    for (var element in contactlist) {
+      if (widget.contactRisk.name == element.displayName) {
+        int index = contactlist.indexOf(element);
+        contactSelect = contactlist[index];
+      }
+    }
+
+    // contactSelect = contactlist.firstWhere(widget.contactRisk.name);
     setState(() {});
   }
 
@@ -99,26 +112,33 @@ class _EditRiskPageState extends State<EditRiskPage> {
         phones: contactSelect.phones.first.toString(),
         titleMessage: titleMessage,
         messages: message,
-        sendLocation: sendLocation,
+        sendLocation: widget.contactRisk.sendLocation,
         sendWhatsapp: sendWhatsappSMS,
         isInitTime: isTimeInit,
         isFinishTime: isTimeFinish,
         code: widget.contactRisk.code,
         isActived: isActived,
-        isprogrammed: isprogrammed);
+        isprogrammed: isprogrammed,
+        photoDate: await convertImageData(),
+        saveContact: widget.contactRisk.saveContact);
+
     if (widget.contactRisk.id == -1) {
       contactRisk.id = widget.index;
       await editVC.saveContactRisk(context, contactRisk);
-
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => const RiskPage(),
-        ),
-      );
+      Navigator.of(context).pop();
     } else {
       await editVC.updateContactRisk(context, contactRisk);
     }
+  }
+
+  Future<List<Uint8List>> convertImageData() async {
+    List<Uint8List> temp = [];
+    for (var i = 0; i < imagePaths.length; i++) {
+      Uint8List bytesImages = const Base64Decoder().convert(imagePaths[i].path);
+      temp.insert(i, bytesImages);
+    }
+
+    return temp;
   }
 
   //capturar imagen de la galeria de fotos
@@ -141,7 +161,7 @@ class _EditRiskPageState extends State<EditRiskPage> {
   }
 
   Widget _mostrarFoto() {
-    Uint8List? bytes;
+    // Uint8List? bytes;
 
     return GestureDetector(
       onTap: (() async {
@@ -175,6 +195,47 @@ class _EditRiskPageState extends State<EditRiskPage> {
         ),
       ),
     );
+  }
+
+  Image getImage(String urlImage) {
+    Uint8List bytesImages = const Base64Decoder().convert(urlImage);
+
+    return Image.memory(bytesImages,
+        fit: BoxFit.fill, width: double.infinity, height: 250.0);
+  }
+
+  Widget getImageFile(File urlImage) {
+    return urlImage.path == ''
+        ? Container(
+            height: double.infinity,
+            width: double.infinity,
+            decoration: BoxDecoration(
+              boxShadow: [
+                BoxShadow(
+                  color:
+                      const Color.fromARGB(255, 153, 169, 255).withOpacity(0.4),
+                  spreadRadius: 1,
+                  blurRadius: 6,
+                  offset: const Offset(0, 3), // changes position of shadow
+                ),
+              ],
+              borderRadius: const BorderRadius.all(Radius.circular(
+                      0.0) //                 <--- border radius here
+                  ),
+              border: Border.all(color: ColorPalette.principal),
+              image: const DecorationImage(
+                image: AssetImage("assets/images/icons8.png"),
+                fit: BoxFit.fill,
+              ),
+            ),
+          )
+        : Image.file(
+            fit: BoxFit.fitHeight,
+            scale: 3,
+            urlImage,
+            height: double.infinity,
+            width: double.infinity,
+          );
   }
 
   @override
@@ -217,17 +278,15 @@ class _EditRiskPageState extends State<EditRiskPage> {
                             mainAxisSize: MainAxisSize.max,
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Container(
+                              SizedBox(
                                 height: 50.0,
-                                color: Colors.transparent,
                                 child: Row(
                                   mainAxisSize: MainAxisSize.max,
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceBetween,
                                   children: [
-                                    Container(
+                                    SizedBox(
                                       width: size.width / 3,
-                                      color: Colors.transparent,
                                       child: Padding(
                                         padding: const EdgeInsets.all(8.0),
                                         child: Text(
@@ -283,17 +342,15 @@ class _EditRiskPageState extends State<EditRiskPage> {
                                 width: size.width,
                                 color: Colors.white,
                               ),
-                              Container(
+                              SizedBox(
                                 height: 50.0,
-                                color: Colors.transparent,
                                 child: Row(
                                   mainAxisSize: MainAxisSize.max,
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceBetween,
                                   children: [
-                                    Container(
+                                    SizedBox(
                                       width: size.width / 3,
-                                      color: Colors.transparent,
                                       child: Padding(
                                         padding: const EdgeInsets.all(8.0),
                                         child: Text(
@@ -471,7 +528,7 @@ class _EditRiskPageState extends State<EditRiskPage> {
                               width: 270,
                               color: Colors.transparent,
                               child: Text(
-                                "Enviar Whatsapp a mi mensaje predefinido:",
+                                "Enviar Whatsapp a mí contacto predefinido:",
                                 textAlign: TextAlign.left,
                                 style: GoogleFonts.barlow(
                                   fontSize: 14.0,
@@ -556,6 +613,7 @@ class _EditRiskPageState extends State<EditRiskPage> {
                           child: TextFormField(
                             onChanged: (valor) {
                               titleMessage = valor;
+                              widget.contactRisk.titleMessage = valor;
                             },
                             autofocus: false,
                             key: const Key("Asunto"),
@@ -593,12 +651,17 @@ class _EditRiskPageState extends State<EditRiskPage> {
                           padding: const EdgeInsets.all(8.0),
                           child: TextField(
                             decoration: InputDecoration(
-                              hintText: "Messaje:",
+                              hintText: "Mensaje:",
                               labelText: widget.contactRisk.messages == ""
-                                  ? 'Message:'
+                                  ? 'Mensaje:'
                                   : widget.contactRisk.messages,
                               focusedBorder: const UnderlineInputBorder(
                                 borderSide: BorderSide(color: Colors.white),
+                              ),
+                              enabledBorder: const UnderlineInputBorder(
+                                borderSide: BorderSide(
+                                    width: 1,
+                                    color: Colors.white), //<-- SEE HERE
                               ),
                               hintStyle: const TextStyle(color: Colors.white),
                               filled: true,
@@ -615,8 +678,12 @@ class _EditRiskPageState extends State<EditRiskPage> {
                             maxLines: null,
                             onChanged: (value) {
                               message = value;
+                              widget.contactRisk.messages = message;
                             },
                           ),
+                        ),
+                        const SizedBox(
+                          height: 20,
                         ),
                         Expanded(
                           flex: 0,
@@ -655,7 +722,7 @@ class _EditRiskPageState extends State<EditRiskPage> {
                                   ),
                                 ),
                                 Container(
-                                  width: 180,
+                                  width: 100,
                                   color: Colors.transparent,
                                   child: Text(
                                     "Añadir imagen",
@@ -663,13 +730,95 @@ class _EditRiskPageState extends State<EditRiskPage> {
                                     style: GoogleFonts.barlow(
                                       fontSize: 14.0,
                                       wordSpacing: 1,
-                                      letterSpacing: 1,
+                                      letterSpacing: 0.01,
                                       fontWeight: FontWeight.normal,
                                       color: Colors.white,
                                     ),
                                   ),
                                 ),
-                                _mostrarFoto(),
+                                ImageFanWidget(
+                                  onChanged: (List<File> value) {
+                                    imagePaths = value;
+                                    setState(() {});
+                                  },
+                                ),
+                                Visibility(
+                                  visible: imagePaths.isEmpty ? false : true,
+                                  child: IconButton(
+                                    onPressed: () {
+                                      //action coe when button is pressed
+                                      showDialog(
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return Dialog(
+                                            child: SizedBox(
+                                              child: Column(
+                                                children: [
+                                                  Expanded(
+                                                    child: getImageFile(
+                                                        imagePaths[
+                                                            _currentIndex]),
+                                                  ),
+                                                  ButtonBar(
+                                                    alignment: MainAxisAlignment
+                                                        .center,
+                                                    children: [
+                                                      IconButton(
+                                                        icon: const Icon(
+                                                            Icons.arrow_back),
+                                                        onPressed: () {
+                                                          _currentIndex =
+                                                              (_currentIndex -
+                                                                      1) %
+                                                                  imagePaths
+                                                                      .length;
+                                                          if (_currentIndex <
+                                                              0) {
+                                                            _currentIndex =
+                                                                imagePaths
+                                                                        .length -
+                                                                    1;
+                                                          }
+                                                          (context as Element)
+                                                              .markNeedsBuild();
+                                                        },
+                                                      ),
+                                                      IconButton(
+                                                        icon: const Icon(Icons
+                                                            .arrow_forward),
+                                                        onPressed: () {
+                                                          _currentIndex =
+                                                              (_currentIndex +
+                                                                      1) %
+                                                                  imagePaths
+                                                                      .length;
+                                                          (context as Element)
+                                                              .markNeedsBuild();
+                                                        },
+                                                      ),
+                                                      IconButton(
+                                                        icon: const Icon(
+                                                            Icons.close),
+                                                        onPressed: () {
+                                                          Navigator.of(context)
+                                                              .pop();
+                                                        },
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          );
+                                        },
+                                      );
+                                    },
+                                    icon: const Icon(
+                                      Icons.preview,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                ),
                               ],
                             ),
                           ),
@@ -680,9 +829,8 @@ class _EditRiskPageState extends State<EditRiskPage> {
                             mainAxisSize: MainAxisSize.max,
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Container(
+                              SizedBox(
                                 width: 280,
-                                color: Colors.transparent,
                                 child: Text(
                                   "Guardar esta configuración",
                                   textAlign: TextAlign.right,
@@ -695,12 +843,12 @@ class _EditRiskPageState extends State<EditRiskPage> {
                                   ),
                                 ),
                               ),
-                              Container(
+                              SizedBox(
                                 width: size.width / 6,
-                                color: Colors.transparent,
                                 child: Switch(
                                   onChanged: (value) {
                                     saveConfig = value;
+                                    widget.contactRisk.saveContact = value;
                                   },
                                   value: saveConfig,
                                 ),
@@ -719,6 +867,8 @@ class _EditRiskPageState extends State<EditRiskPage> {
                   onChanged: (value) {
                     isActived = true;
                     isprogrammed = false;
+                    widget.contactRisk.isActived = true;
+                    widget.contactRisk.isprogrammed = false;
                     saveDate(context);
                   },
                   mensaje: 'Iniciar cita ahora',
@@ -730,9 +880,11 @@ class _EditRiskPageState extends State<EditRiskPage> {
                   onChanged: (value) {
                     isActived = false;
                     isprogrammed = true;
+                    widget.contactRisk.isActived = false;
+                    widget.contactRisk.isprogrammed = true;
                     saveDate(context);
                   },
-                  mensaje: 'Programar Activación',
+                  mensaje: 'Programar activación',
                 ),
               ],
             ),

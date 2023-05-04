@@ -5,7 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ifeelefine/Data/hive_data.dart';
-import 'package:ifeelefine/Model/userpositionbd.dart';
+import 'package:ifeelefine/Model/logAlertsBD.dart';
 
 import 'package:ifeelefine/Page/UserConfig/Controller/userConfigController.dart';
 import 'package:ifeelefine/Model/user.dart';
@@ -17,14 +17,14 @@ import 'package:collection/collection.dart';
 class HomeController extends GetxController {
   final UserConfigCOntroller userVC = Get.put(UserConfigCOntroller());
 
-  Future<List<UserPositionBD>> getAllMov() async {
-    late final List<UserPositionBD> allMov = [];
-    List<UserPositionBD> temp = [];
-    List<UserPositionBD> box = await const HiveData().getAlerts();
+  Future<List<LogAlertsBD>> getAllMov() async {
+    late final List<LogAlertsBD> allMov = [];
+    List<LogAlertsBD> temp = [];
+    List<LogAlertsBD> box = await const HiveData().getAlerts();
 
     box.sort((a, b) {
       //sorting in descending order
-      return b.movRureUser.compareTo(a.movRureUser);
+      return b.time.compareTo(a.time);
     });
 
     for (var element in box) {
@@ -36,7 +36,7 @@ class HomeController extends GetxController {
     return temp;
   }
 
-  List<UserPositionBD> removeDuplicates(List<UserPositionBD> originalList) {
+  List<LogAlertsBD> removeDuplicates(List<LogAlertsBD> originalList) {
     return originalList.toSet().toList();
   }
 

@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of '../contactRiskBD.dart';
+part of 'contactRiskBD.dart';
 
 // **************************************************************************
 // TypeAdapterGenerator
@@ -32,13 +32,15 @@ class ContactRiskBDAdapter extends TypeAdapter<ContactRiskBD> {
       code: fields[12] as String,
       isActived: fields[13] as bool,
       isprogrammed: fields[14] as bool,
-    )..photoDate = fields[15] as Uint8List?;
+      photoDate: (fields[15] as List).cast<Uint8List>(),
+      saveContact: fields[16] as bool,
+    );
   }
 
   @override
   void write(BinaryWriter writer, ContactRiskBD obj) {
     writer
-      ..writeByte(16)
+      ..writeByte(17)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
@@ -70,7 +72,9 @@ class ContactRiskBDAdapter extends TypeAdapter<ContactRiskBD> {
       ..writeByte(14)
       ..write(obj.isprogrammed)
       ..writeByte(15)
-      ..write(obj.photoDate);
+      ..write(obj.photoDate)
+      ..writeByte(16)
+      ..write(obj.saveContact);
   }
 
   @override

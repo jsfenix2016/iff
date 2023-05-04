@@ -6,6 +6,7 @@ import 'package:ifeelefine/Common/utils.dart';
 import 'package:ifeelefine/Data/hive_data.dart';
 import 'package:ifeelefine/Model/user.dart';
 import 'package:ifeelefine/Model/userbd.dart';
+import 'package:ifeelefine/Page/UserConfig/Service/userService.dart';
 import 'package:ifeelefine/Provider/user_provider.dart';
 
 class UserConfigCOntroller extends GetxController {
@@ -13,6 +14,7 @@ class UserConfigCOntroller extends GetxController {
   late var validateSms = false.obs;
   Box? box;
   final usuarioProvider = UsuarioProvider();
+  final UserService userVC = Get.put(UserService());
 
   Future<bool> validateEmailUser(BuildContext context) async {
     try {

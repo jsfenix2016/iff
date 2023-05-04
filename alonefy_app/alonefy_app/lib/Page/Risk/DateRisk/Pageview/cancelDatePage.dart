@@ -41,6 +41,9 @@ class _CancelDatePageState extends State<CancelDatePage> {
   var code = CodeModel();
   late ContactRiskBD contactRiskTemp;
 
+  int _secondsRemaining = 300; //5 minutes = 300 seconds
+  Timer? _timer;
+
   @override
   void dispose() {
     stopTimer();
@@ -73,28 +76,20 @@ class _CancelDatePageState extends State<CancelDatePage> {
       contactRiskTemp.isActived = false;
       contactRiskTemp.isprogrammed = false;
       contactRiskTemp.code = "";
+      // contactRiskTemp.timefinish = '00:00';
+      // contactRiskTemp.timeinit = '00:00';
       var res = await editVC.updateContactRisk(context, contactRiskTemp);
       if (res) {
+        NotificationCenter().notify('getContactRisk');
         print("es igual");
         stopTimer();
         timerSendSMS.cancel();
-        setState(() {
-          NotificationCenter().notify('getContactRisk');
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => const RiskPage(),
-            ),
-          );
-        });
+        Navigator.of(context).pop();
       }
     } else {
       print("no es igual");
     }
   }
-
-  int _secondsRemaining = 300; //5 minutes = 300 seconds
-  Timer? _timer;
 
   void stopTimer() {
     if (_timer != null) {

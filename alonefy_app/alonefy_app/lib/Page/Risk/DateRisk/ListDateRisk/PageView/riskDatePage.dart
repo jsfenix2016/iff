@@ -31,15 +31,19 @@ class _RiskPageState extends State<RiskPage> {
 
   @override
   void initState() {
-    NotificationCenter().subscribe('getContactRisk', refreshListDateContact);
+    NotificationCenter().subscribe('getContactRisk', refreshView);
     initContact();
     super.initState();
   }
 
-  Future<List<ContactRiskBD>> refreshListDateContact() async {
-    final list = await riskVC.getContactsRisk();
+  void refreshView() {
+    setState(() {});
+  }
 
-    return list;
+  Future<List<ContactRiskBD>> refreshListDateContact() async {
+    final tempList = await riskVC.getContactsRisk();
+
+    return tempList;
   }
 
   void initContact() {
@@ -58,7 +62,18 @@ class _RiskPageState extends State<RiskPage> {
         isFinishTime: false,
         code: '',
         isActived: false,
-        isprogrammed: false);
+        isprogrammed: false,
+        photoDate: [],
+        saveContact: false);
+  }
+
+  void deleteContactRisk(BuildContext context, ContactRiskBD contact) async {
+    final index = listContact.indexOf(contact);
+    if (index >= 0 && index < listContact.length) {
+      // Resto del código para eliminar el contacto de la lista
+      await riskVC.deleteContactRisk(context, contact);
+      setState(() {});
+    }
   }
 
   Widget listviewContactRisk() {
@@ -75,63 +90,62 @@ class _RiskPageState extends State<RiskPage> {
               shrinkWrap: true,
               itemCount: listContact.length,
               itemBuilder: (context, index) {
-                return RowContact(
-                  index: index,
-                  onChanged: ((value) {
-                    contactTemp = listContact[index];
-                    if (listContact[index].isActived ||
-                        listContact[index].isprogrammed) {
-                      redirectCancelDate();
-                    } else {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => EditRiskPage(
-                            contactRisk: listContact[index],
-                            index: index,
+                if (index >= 0 && index < listContact.length) {
+                  return RowContact(
+                    contactRisk: listContact[index],
+                    index: index,
+                    onChanged: ((value) {
+                      contactTemp = listContact[index];
+                      if (contactTemp.isActived || contactTemp.isprogrammed) {
+                        redirectCancelDate();
+                      } else {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => EditRiskPage(
+                              contactRisk: contactTemp,
+                              index: index,
+                            ),
                           ),
-                        ),
-                      );
-                    }
-                  }),
-                  contactRisk: listContact[index],
-                  onChangedDelete: (bool value) {
-                    contactTemp = listContact[index];
-                    if (listContact[index].isActived ||
-                        listContact[index].isprogrammed) {
+                        );
+                      }
+                    }),
+                    onChangedDelete: (bool value) {
+                      contactTemp = listContact[index];
+                      if (contactTemp.isActived || contactTemp.isprogrammed) {
+                        redirectCancelDate();
+                      } else {
+                        showDialog(
+                          context: context,
+                          builder: (context) {
+                            return AlertDialog(
+                              title: const Text("Información"),
+                              content: const Text(
+                                  "Si continua eliminara la configuracion de la notificación"),
+                              actions: <Widget>[
+                                TextButton(
+                                  child: const Text("Cerrar"),
+                                  onPressed: () => Navigator.of(context).pop(),
+                                ),
+                                TextButton(
+                                  child: const Text(Constant.continueTxt),
+                                  onPressed: () => {
+                                    deleteContactRisk(context, contactTemp),
+                                  },
+                                )
+                              ],
+                            );
+                          },
+                        );
+                      }
+                    },
+                    onCancel: (bool value) {
+                      contactTemp = listContact[index];
                       redirectCancelDate();
-                    } else {
-                      showDialog(
-                        context: context,
-                        builder: (context) {
-                          return AlertDialog(
-                            title: const Text("Información"),
-                            content: const Text(
-                                "Si continua eliminara la configuracion de la notificación"),
-                            actions: <Widget>[
-                              TextButton(
-                                child: const Text("Cerrar"),
-                                onPressed: () => Navigator.of(context).pop(),
-                              ),
-                              TextButton(
-                                child: const Text(Constant.continueTxt),
-                                onPressed: () => {
-                                  riskVC.deleteContactRisk(
-                                      context, listContact[index]),
-                                  setState(() {})
-                                },
-                              )
-                            ],
-                          );
-                        },
-                      );
-                    }
-                  },
-                  onCancel: (bool value) {
-                    contactTemp = listContact[index];
-                    redirectCancelDate();
-                  },
-                );
+                    },
+                  );
+                }
+                return const CircularProgressIndicator();
               },
             ),
           );
@@ -216,6 +230,14 @@ class _RiskPageState extends State<RiskPage> {
               child: ElevateButtonFilling(
                 onChanged: (value) {
                   initContact();
+                  final _prefs = PreferenceUser();
+                  if (!_prefs.isConfig) {
+                    Route route = MaterialPageRoute(
+                      builder: (context) => const UserConfigPage(),
+                    );
+                    Navigator.pushReplacement(context, route);
+                    return;
+                  }
                   Navigator.push(
                     context,
                     MaterialPageRoute(

@@ -9,6 +9,8 @@ import 'package:ifeelefine/Page/Risk/ZoneRisk/PushAlert/PageView/pushAlert.dart'
 import 'package:flutter/material.dart';
 
 import 'package:google_fonts/google_fonts.dart';
+import 'package:ifeelefine/Page/UserConfig/PageView/userconfig_page.dart';
+import 'package:ifeelefine/Provider/prefencesUser.dart';
 
 import 'package:ifeelefine/Utils/Widgets/elevatedButtonFilling.dart';
 import 'package:notification_center/notification_center.dart';
@@ -21,19 +23,26 @@ class ZoneRiskPage extends StatefulWidget {
 
 class _ZoneRiskPageState extends State<ZoneRiskPage> {
   ListContactZoneController riskVC = ListContactZoneController();
+  static const String routeName = '/listado';
+  final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
   List<ContactZoneRiskBD> listContact = [];
   late ContactZoneRiskBD contactTemp;
   var indexSelect = -1;
   @override
   void initState() {
-    NotificationCenter().subscribe('getContactZoneRisk', getListZoneRisk);
+    NotificationCenter().subscribe('getContactZoneRisk', refreshListZoneRisk);
 
     super.initState();
   }
 
+  Future refreshListZoneRisk() async {
+    setState(() {});
+  }
+
   Future<List<ContactZoneRiskBD>> getListZoneRisk() async {
-    return riskVC.getContactsZoneRisk();
+    var resp = await riskVC.getContactsZoneRisk();
+    return resp;
   }
 
   void initContact() {
@@ -51,12 +60,11 @@ class _ZoneRiskPageState extends State<ZoneRiskPage> {
         save: false);
   }
 
-  Widget _mostrarFoto() {
-    var img = listContact[indexSelect].photo;
+  Widget _mostrarFoto(ContactZoneRiskBD contact) {
+    var img = contact.photo;
     if (indexSelect != -1 &&
         listContact.isNotEmpty &&
         listContact[indexSelect].photo != null) {
-      print("object");
       img = listContact[indexSelect].photo;
     }
 
@@ -96,111 +104,145 @@ class _ZoneRiskPageState extends State<ZoneRiskPage> {
           return Expanded(
             child: ListView.builder(
               scrollDirection: Axis.vertical,
-              itemExtent: 200.0,
+              itemExtent: 79.0,
               padding: const EdgeInsets.only(top: 0.0, bottom: 50),
               shrinkWrap: true,
               itemCount: listContact.length,
               itemBuilder: (context, index) {
-                return Container(
-                  decoration: const BoxDecoration(
-                    color: Color.fromRGBO(169, 146, 125, 0.5),
-                    borderRadius: BorderRadius.all(
-                      Radius.circular(
-                          100.0), //                 <--- border radius here
-                    ),
-                  ),
-                  height: 79,
-                  width: 280,
-                  child: Stack(
-                    children: [
-                      _mostrarFoto(),
-                      Positioned(
-                        right: 0,
-                        child: Center(
-                          child: Container(
-                            decoration: const BoxDecoration(
-                              color: Colors.transparent,
-                              borderRadius: BorderRadius.only(
-                                bottomRight: Radius.circular(100),
-                                topRight: Radius.circular(100),
-                              ),
-                            ),
-                            height: 79,
-                            width: 200,
-                            child: Row(
-                              children: [
-                                Container(
-                                  decoration: const BoxDecoration(
-                                    color: Colors.transparent,
-                                  ),
-                                  height: 79,
-                                  width: 150,
-                                  child: Center(
-                                    child: (indexSelect != -1 &&
-                                            listContact.isNotEmpty &&
-                                            listContact[indexSelect]
-                                                .name
-                                                .isNotEmpty)
-                                        ? Text(
-                                            listContact[indexSelect].name,
-                                            textAlign: TextAlign.center,
-                                            style: GoogleFonts.barlow(
-                                              fontSize: 18.0,
-                                              wordSpacing: 1,
-                                              letterSpacing: 1,
-                                              fontWeight: FontWeight.normal,
-                                              color: Colors.white,
-                                            ),
-                                          )
-                                        : Text(
-                                            "Selecciona un contacto",
-                                            textAlign: TextAlign.center,
-                                            style: GoogleFonts.barlow(
-                                              fontSize: 18.0,
-                                              wordSpacing: 1,
-                                              letterSpacing: 1,
-                                              fontWeight: FontWeight.normal,
-                                              color: Colors.white,
-                                            ),
-                                          ),
-                                  ),
-                                ),
-                                Container(
-                                  decoration: const BoxDecoration(
-                                    color: Colors.transparent,
-                                    borderRadius: BorderRadius.only(
-                                      bottomRight: Radius.circular(100),
-                                      topRight: Radius.circular(100),
-                                    ),
-                                  ),
-                                  height: 79,
-                                  width: 50,
-                                  child: IconButton(
-                                    iconSize: 40,
-                                    color: ColorPalette.principal,
-                                    onPressed: () {},
-                                    icon: Container(
-                                      height: 28,
-                                      width: 28,
-                                      decoration: const BoxDecoration(
-                                        image: DecorationImage(
-                                          image: AssetImage(
-                                              'assets/images/plussWhite.png'),
-                                          fit: BoxFit.fill,
-                                        ),
-                                        color: Colors.transparent,
-                                      ),
-                                    ),
-                                  ),
-                                )
-                              ],
-                            ),
-                          ),
+                if (index >= 0 && index < listContact.length) {
+                  return Padding(
+                    padding: const EdgeInsets.only(left: 28.0, right: 28),
+                    child: Container(
+                      decoration: const BoxDecoration(
+                        color: Color.fromRGBO(169, 146, 125, 0.5),
+                        borderRadius: BorderRadius.all(
+                          Radius.circular(
+                              100.0), //                 <--- border radius here
                         ),
                       ),
-                    ],
-                  ),
-                );
+                      height: 79,
+                      width: 180,
+                      child: Stack(
+                        children: [
+                          _mostrarFoto(listContact[index]),
+                          Positioned(
+                            right: 0,
+                            child: Center(
+                              child: Container(
+                                decoration: const BoxDecoration(
+                                  color: Colors.transparent,
+                                  borderRadius: BorderRadius.only(
+                                    bottomRight: Radius.circular(100),
+                                    topRight: Radius.circular(100),
+                                  ),
+                                ),
+                                height: 79,
+                                width: 200,
+                                child: Row(
+                                  children: [
+                                    Container(
+                                      decoration: const BoxDecoration(
+                                        color: Colors.transparent,
+                                      ),
+                                      height: 79,
+                                      width: 150,
+                                      child: Center(
+                                        child: (listContact.isNotEmpty &&
+                                                listContact[index]
+                                                    .name
+                                                    .isNotEmpty)
+                                            ? Text(
+                                                listContact[index].name,
+                                                textAlign: TextAlign.center,
+                                                style: GoogleFonts.barlow(
+                                                  fontSize: 18.0,
+                                                  wordSpacing: 1,
+                                                  letterSpacing: 1,
+                                                  fontWeight: FontWeight.normal,
+                                                  color: Colors.white,
+                                                ),
+                                              )
+                                            : Text(
+                                                "Selecciona un contacto",
+                                                textAlign: TextAlign.center,
+                                                style: GoogleFonts.barlow(
+                                                  fontSize: 18.0,
+                                                  wordSpacing: 1,
+                                                  letterSpacing: 1,
+                                                  fontWeight: FontWeight.normal,
+                                                  color: Colors.white,
+                                                ),
+                                              ),
+                                      ),
+                                    ),
+                                    Column(
+                                      children: [
+                                        Container(
+                                          decoration: const BoxDecoration(
+                                            color: Colors.transparent,
+                                            borderRadius: BorderRadius.only(
+                                              bottomRight: Radius.circular(100),
+                                              topRight: Radius.circular(100),
+                                            ),
+                                          ),
+                                          height: 30,
+                                          width: 30,
+                                          child: IconButton(
+                                            iconSize: 20,
+                                            onPressed: (() {
+                                              riskVC.deleteContactRisk(
+                                                  context, listContact[index]);
+                                            }),
+                                            icon: const Icon(
+                                              Icons.delete,
+                                              color: ColorPalette.principal,
+                                            ),
+                                          ),
+                                        ),
+                                        Container(
+                                          decoration: const BoxDecoration(
+                                            color: Colors.transparent,
+                                            borderRadius: BorderRadius.only(
+                                              bottomRight: Radius.circular(100),
+                                              topRight: Radius.circular(100),
+                                            ),
+                                          ),
+                                          height: 30,
+                                          width: 30,
+                                          child: IconButton(
+                                            iconSize: 20,
+                                            onPressed: (() {
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      EditZoneRiskPage(
+                                                    contactRisk:
+                                                        listContact[index],
+                                                    index: listContact.length,
+                                                  ),
+                                                ),
+                                              );
+                                            }),
+                                            icon: const Icon(
+                                              Icons.edit,
+                                              color: ColorPalette.principal,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                }
+                return const CircularProgressIndicator();
               },
             ),
           );
@@ -288,6 +330,14 @@ class _ZoneRiskPageState extends State<ZoneRiskPage> {
               child: ElevateButtonFilling(
                 onChanged: (value) {
                   initContact();
+                  final _prefs = PreferenceUser();
+                  if (!_prefs.isConfig) {
+                    Route route = MaterialPageRoute(
+                      builder: (context) => const UserConfigPage(),
+                    );
+                    Navigator.pushReplacement(context, route);
+                    return;
+                  }
                   Navigator.push(
                     context,
                     MaterialPageRoute(

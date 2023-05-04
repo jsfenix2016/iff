@@ -11,7 +11,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import 'package:ifeelefine/Utils/Widgets/textFieldFormCustomBorder.dart';
-import 'package:ifeelefine/Views/configuration2_page.dart';
+import 'package:ifeelefine/Utils/Widgets/widgetLogo.dart';
+import 'package:ifeelefine/Page/UserConfig2/Page/configuration2_page.dart';
 
 import 'package:uuid/uuid.dart';
 
@@ -58,6 +59,7 @@ class _UserConfigPageState extends State<UserConfigPage> {
                   const SizedBox(height: 30),
                   Column(
                     children: <Widget>[
+                      const WidgetLogoApp(),
                       const SizedBox(height: 10),
                       TextFieldFormCustomBorder(
                         labelText: Constant.nameUser,
@@ -94,6 +96,8 @@ class _UserConfigPageState extends State<UserConfigPage> {
                         mesaje: "",
                         onChanged: (String value) {
                           user?.email = value;
+
+                          GetUtils.isEmail(value) ? "" : "";
                         },
                         placeholder: Constant.email,
                         typeInput: TextInputType.emailAddress,
@@ -232,6 +236,10 @@ class _UserConfigPageState extends State<UserConfigPage> {
                 initialValue: code,
                 textCapitalization: TextCapitalization.sentences,
                 decoration: InputDecoration(
+                  suffixIcon: const Text(
+                    '*',
+                    style: TextStyle(color: Colors.red, fontSize: 40),
+                  ),
                   focusedBorder: OutlineInputBorder(
                     borderSide: const BorderSide(color: ColorPalette.principal),
                     borderRadius: BorderRadius.circular(100.0),
@@ -288,7 +296,8 @@ class _UserConfigPageState extends State<UserConfigPage> {
                 TextButton(
                   child: const Text("Ok"),
                   onPressed: () {
-                    Navigator.push(
+                    print(resp);
+                    Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(
                           builder: (context) => UserConfigPage2(

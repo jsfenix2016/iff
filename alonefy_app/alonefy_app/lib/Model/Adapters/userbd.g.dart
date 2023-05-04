@@ -8,7 +8,7 @@ part of '../userbd.dart';
 
 class UserBDAdapter extends TypeAdapter<UserBD> {
   @override
-  final int typeId = 0;
+  final int typeId = HiveConstantAdapterInit.idUserDBAdapter;
 
   @override
   UserBD read(BinaryReader reader) {

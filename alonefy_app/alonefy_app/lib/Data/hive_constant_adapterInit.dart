@@ -7,8 +7,9 @@ import 'package:ifeelefine/Model/contactRiskBD.dart';
 import 'package:ifeelefine/Model/contactZoneRiskBD.dart';
 import 'package:ifeelefine/Model/logActivityBd.dart';
 import 'package:ifeelefine/Model/restdaybd.dart';
+import 'package:ifeelefine/Model/useMobilbd.dart';
 import 'package:ifeelefine/Model/userbd.dart';
-import 'package:ifeelefine/Model/userpositionbd.dart';
+import 'package:ifeelefine/Model/logAlertsBD.dart';
 import 'package:path_provider/path_provider.dart';
 
 class HiveConstantAdapterInit {
@@ -20,13 +21,14 @@ class HiveConstantAdapterInit {
   static const int idContactRiskBDAdapter = 5;
   static const int idContactZoneRiskBDAdapter = 6;
   static const int idLogActivityBDAdapter = 7;
+  static const int idUseMobilBDAdapter = 8;
 }
 
 Future inicializeHiveBD() async {
   Directory appDocDirectory = await getApplicationDocumentsDirectory();
   await Hive.initFlutter(appDocDirectory.path);
-  if (!Hive.isAdapterRegistered(UserPositionBDAdapter().typeId)) {
-    Hive.registerAdapter(UserPositionBDAdapter());
+  if (!Hive.isAdapterRegistered(LogAlertsBDAdapter().typeId)) {
+    Hive.registerAdapter(LogAlertsBDAdapter());
   }
 
   if (!Hive.isAdapterRegistered(UserBDAdapter().typeId)) {
@@ -51,5 +53,8 @@ Future inicializeHiveBD() async {
   }
   if (!Hive.isAdapterRegistered(LogActivityBDAdapter().typeId)) {
     Hive.registerAdapter(LogActivityBDAdapter());
+  }
+  if (!Hive.isAdapterRegistered(UseMobilBDAdapter().typeId)) {
+    Hive.registerAdapter(UseMobilBDAdapter());
   }
 }

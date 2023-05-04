@@ -22,7 +22,8 @@ class FallActivationConfigPage extends StatefulWidget {
   /// Utility method to create a page with the Baseflow templating.
 
   @override
-  State<FallActivationConfigPage> createState() => _FallActivationConfigPageState();
+  State<FallActivationConfigPage> createState() =>
+      _FallActivationConfigPageState();
 }
 
 class _FallActivationConfigPageState extends State<FallActivationConfigPage> {
@@ -99,12 +100,10 @@ class _FallActivationConfigPageState extends State<FallActivationConfigPage> {
                   ),
                   Padding(
                       padding: const EdgeInsets.only(top: 50.0),
-                      child: getPicker(fallPosition)
-                  ),
+                      child: getPicker(fallPosition)),
                   Padding(
                       padding: const EdgeInsets.only(top: 70.0),
-                      child: getSlideableActivate()
-                  ),
+                      child: getSlideableActivate()),
                 ],
               ),
             ),
@@ -114,8 +113,7 @@ class _FallActivationConfigPageState extends State<FallActivationConfigPage> {
               child: Container(
                 decoration: const BoxDecoration(
                   color: Color.fromRGBO(219, 177, 42, 1),
-                  borderRadius:
-                  BorderRadius.all(Radius.circular(8)),
+                  borderRadius: BorderRadius.all(Radius.circular(8)),
                 ),
                 width: 138,
                 height: 42,
@@ -143,11 +141,8 @@ class _FallActivationConfigPageState extends State<FallActivationConfigPage> {
               child: Container(
                 decoration: BoxDecoration(
                   color: Colors.transparent,
-                  border: Border.all(
-                      color: Color.fromRGBO(219, 177, 42, 1)
-                  ),
-                  borderRadius:
-                  BorderRadius.all(Radius.circular(8)),
+                  border: Border.all(color: Color.fromRGBO(219, 177, 42, 1)),
+                  borderRadius: BorderRadius.all(Radius.circular(8)),
                 ),
                 width: 138,
                 height: 42,
@@ -176,48 +171,49 @@ class _FallActivationConfigPageState extends State<FallActivationConfigPage> {
   Widget getPicker(int initialPosition) {
     return Expanded(
         child: SizedBox(
-            height: 120,
-            child: CupertinoPicker(
-                diameterRatio: 1.4,
-                selectionOverlay: const CupertinoPickerDefaultSelectionOverlay(background: Colors.transparent),
-                backgroundColor: Colors.transparent,
-                onSelectedItemChanged: (int value) {
-                  fallTime = Constant.timeDicExtended[value.toString()]!;
-                },
-                scrollController: FixedExtentScrollController(initialItem: initialPosition),
-                itemExtent: 60.0,
+      height: 120,
+      child: CupertinoPicker(
+        diameterRatio: 1.4,
+        selectionOverlay: const CupertinoPickerDefaultSelectionOverlay(
+            background: Colors.transparent),
+        backgroundColor: Colors.transparent,
+        onSelectedItemChanged: (int value) {
+          fallTime = Constant.timeDicExtended[value.toString()]!;
+        },
+        scrollController:
+            FixedExtentScrollController(initialItem: initialPosition),
+        itemExtent: 60.0,
+        children: [
+          for (var i = 0; i < Constant.timeDicExtended.length; i++)
+            Container(
+              height: 24,
+              width: 120,
+              color: Colors.transparent,
+              child: Column(
                 children: [
-                  for (var i = 0; i < Constant.timeDicExtended.length; i++)
-                    Container(
-                      height: 24,
-                      width: 120,
-                      color: Colors.transparent,
-                      child: Column(
-                        children: [
-                          const SizedBox(height: 12),
-                          Text(
-                            Constant.timeDicExtended[i.toString()]!,
-                            textAlign: TextAlign.center,
-                            style: GoogleFonts.barlow(
-                              fontSize: 24.0,
-                              wordSpacing: 1,
-                              letterSpacing: 0.001,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
-                            ),
-                          ),
-                          Container(
-                            height: 2,
-                            width: 120,
-                            color: Colors.white,
-                          ),
-                        ],
-                      ),
+                  const SizedBox(height: 12),
+                  Text(
+                    Constant.timeDicExtended[i.toString()]!,
+                    textAlign: TextAlign.center,
+                    style: GoogleFonts.barlow(
+                      fontSize: 24.0,
+                      wordSpacing: 1,
+                      letterSpacing: 0.001,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
                     ),
+                  ),
+                  Container(
+                    height: 2,
+                    width: 120,
+                    color: Colors.white,
+                  ),
                 ],
               ),
-        )
-    );
+            ),
+        ],
+      ),
+    ));
   }
 
   Widget getSlideableActivate() {
@@ -275,6 +271,7 @@ class _FallActivationConfigPageState extends State<FallActivationConfigPage> {
     _prefs.setDetectedFall = isActive;
     _prefs.setFallTime = fallTime;
 
-    showSaveAlert(context, "Tiempo de caída", "El tiempo de caída se ha guardado correctamente");
+    showSaveAlert(context, "Tiempo de caída",
+        "El tiempo de caída se ha guardado correctamente");
   }
 }

@@ -3,9 +3,10 @@ import 'package:ifeelefine/Model/activitydaybd.dart';
 import 'package:ifeelefine/Model/contact.dart';
 import 'package:ifeelefine/Model/logActivityBd.dart';
 import 'package:ifeelefine/Model/restdaybd.dart';
+import 'package:ifeelefine/Model/useMobilbd.dart';
 import 'package:ifeelefine/Model/user.dart';
 import 'package:ifeelefine/Model/userbd.dart';
-import 'package:ifeelefine/Model/userpositionbd.dart';
+import 'package:ifeelefine/Model/logAlertsBD.dart';
 
 class HiveData {
   const HiveData();
@@ -64,16 +65,15 @@ class HiveData {
     final Box<ContactBD> box = await Hive.openBox<ContactBD>('contactBD');
     late final List<ContactBD> allMovTime = [];
     var listContact = box.values.toList();
-    var contactTemp = ContactBD(0, "", null, null, "", "", "", '');
+    var contactTemp = ContactBD(0, "", null, "", "", "", '', 'Pendiente');
     for (var element in listContact) {
       contactTemp.id = element.id;
       contactTemp.displayName = element.displayName;
-
       contactTemp.phones = element.phones;
-      contactTemp.photo = element.thumbnail;
+      contactTemp.photo = element.photo;
       contactTemp.timeSendSMS = element.timeSendSMS;
       contactTemp.timeCall = element.timeCall;
-
+      contactTemp.requestStatus = element.requestStatus;
       allMovTime.add(contactTemp);
     }
 
@@ -97,10 +97,10 @@ class HiveData {
     return box.delete(user.id);
   }
 
-  Future<int> deleteListAlerts(List<UserPositionBD> listAlerts) async {
+  Future<int> deleteListAlerts(List<LogAlertsBD> listAlerts) async {
     try {
-      final Box<UserPositionBD> box =
-          await Hive.openBox<UserPositionBD>('UserPositionBD');
+      final Box<LogAlertsBD> box =
+          await Hive.openBox<LogAlertsBD>('UserPositionBD');
 
       for (var element in listAlerts) {
         box.delete(element.key);
@@ -112,10 +112,10 @@ class HiveData {
     }
   }
 
-  Future<int> saveUserPositionBD(UserPositionBD user) async {
+  Future<int> saveUserPositionBD(LogAlertsBD user) async {
     try {
-      final Box<UserPositionBD> box =
-          await Hive.openBox<UserPositionBD>('UserPositionBD');
+      final Box<LogAlertsBD> box =
+          await Hive.openBox<LogAlertsBD>('UserPositionBD');
 
       box.add(user);
       return 0;
@@ -124,9 +124,8 @@ class HiveData {
     }
   }
 
-  Future<List<UserPositionBD>> getAlerts() async {
-    Box<UserPositionBD> box =
-        await Hive.openBox<UserPositionBD>('UserPositionBD');
+  Future<List<LogAlertsBD>> getAlerts() async {
+    Box<LogAlertsBD> box = await Hive.openBox<LogAlertsBD>('UserPositionBD');
     return box.values.toList();
   }
 
@@ -280,4 +279,41 @@ class HiveData {
 
     return box.add(logActivityBD);
   }
+
+  Future<int> saveListTimeUseMobil(List<UseMobilBD> useMobilDays) async {
+    try {
+      Box<UseMobilBD> box = await Hive.openBox<UseMobilBD>('TimeUseMobilBD');
+
+      if (box.values.isNotEmpty) {
+        for (var element in box.values) {
+          box.delete(element.key);
+        }
+      }
+
+      for (UseMobilBD element in useMobilDays) {
+        box.put(element.day, element);
+      }
+
+      return 0;
+    } catch (error) {
+      return -1;
+    }
+  }
+
+  Future<List<UseMobilBD>> get listUseMobilBd async {
+    final box = await Hive.openBox<UseMobilBD>('TimeUseMobilBD');
+    return box.values.toList();
+  }
+
+  // Future<bool> updateUserRestTime(RestDayBD user) async {
+  //   try {
+  //     Box<RestDayBD> box = await Hive.openBox<RestDayBD>('RestDayBD');
+
+  //     box.put(user.day, user);
+
+  //     return true;
+  //   } catch (error) {
+  //     return false;
+  //   }
+  // }
 }

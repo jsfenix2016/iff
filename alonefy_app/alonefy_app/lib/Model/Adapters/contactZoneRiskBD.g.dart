@@ -8,7 +8,7 @@ part of '../contactZoneRiskBD.dart';
 
 class ContactZoneRiskBDAdapter extends TypeAdapter<ContactZoneRiskBD> {
   @override
-  final int typeId = 6;
+  final int typeId = HiveConstantAdapterInit.idContactZoneRiskBDAdapter;
 
   @override
   ContactZoneRiskBD read(BinaryReader reader) {

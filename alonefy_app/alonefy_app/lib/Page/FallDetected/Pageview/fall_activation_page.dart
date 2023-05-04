@@ -11,6 +11,7 @@ import 'package:ifeelefine/Page/FallDetected/Controller/fall_detectedController.
 
 import 'package:ifeelefine/Page/HomePage/Pageview/home_page.dart';
 import 'package:ifeelefine/Utils/Widgets/elevatedButtonFilling.dart';
+import 'package:ifeelefine/Utils/Widgets/widgetLogo.dart';
 
 import '../../../Views/contact_page.dart';
 
@@ -61,14 +62,24 @@ class _FallActivationPageState extends State<FallActivationPage> {
           decoration: decorationCustom(),
           width: size.width,
           height: size.height,
-          child: Stack(
+          child: Column(
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Center(
                 child: Column(
                   mainAxisSize: MainAxisSize.max,
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
+                    Column(
+                      mainAxisSize: MainAxisSize.max,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: const [
+                        WidgetLogoApp(),
+                      ],
+                    ),
                     Padding(
-                      padding: const EdgeInsets.only(top: 104.0),
+                      padding: const EdgeInsets.only(top: 30.0),
                       child: Text(
                         'Detectar caidas.',
                         textAlign: TextAlign.center,
@@ -91,17 +102,16 @@ class _FallActivationPageState extends State<FallActivationPage> {
                     Padding(
                       padding: EdgeInsets.fromLTRB(0, 16, 0, 0),
                       child: ElevateButtonFilling(
-                          onChanged: (value) {
-                            isActive = !isActive;
-                            fallVC.setDetectedFall(context, isActive);
-                            setState(() {});
-                          },
-                          mensaje: isActive ? 'Desactivar' : 'Activar',
-                        ),
+                        onChanged: (value) {
+                          isActive = !isActive;
+                          fallVC.setDetectedFall(context, isActive);
+                          setState(() {});
+                        },
+                        mensaje: isActive ? 'Desactivar' : 'Activar',
+                      ),
                     ),
                   ],
                 ),
-
               ),
               Positioned(
                 bottom: 24,
@@ -114,7 +124,9 @@ class _FallActivationPageState extends State<FallActivationPage> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => const ContactList(),
+                          builder: (context) => const ContactList(
+                            isMenu: false,
+                          ),
                         ),
                       );
                     },

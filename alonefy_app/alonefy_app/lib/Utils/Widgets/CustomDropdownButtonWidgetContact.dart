@@ -7,6 +7,7 @@ import 'package:ifeelefine/Common/Constant.dart';
 
 import 'package:ifeelefine/Common/utils.dart';
 import 'package:ifeelefine/Provider/prefencesUser.dart';
+import 'package:ifeelefine/Utils/Widgets/widgedContact.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 class ContactDropdownButton extends StatefulWidget {
@@ -35,20 +36,19 @@ class _ContactDropdownButtonState extends State<ContactDropdownButton> {
 
     if (permission.isPermanentlyDenied) {
       showPermissionDialog(context, Constant.enablePermission);
-    } else if (permission.isDenied || _prefs.getAcceptedContacts == PreferencePermission.noAccepted) {
+    } else if (permission.isDenied ||
+        _prefs.getAcceptedContacts == PreferencePermission.noAccepted) {
       var permissionName = '${Constant.enableLocalPermission} contacto?';
-      showLocalPermissionDialog(context, permissionName, (bool response) => {
-        alertResponse(response)
-      });
+      showLocalPermissionDialog(context, permissionName,
+          (bool response) => {alertResponse(response)});
     } else {
       _getContacts();
     }
   }
 
   void alertResponse(bool response) {
-    _prefs.setAcceptedContacts = response
-        ? PreferencePermission.allow
-        : PreferencePermission.noAccepted;
+    _prefs.setAcceptedContacts =
+        response ? PreferencePermission.allow : PreferencePermission.noAccepted;
 
     if (response) {
       _getContacts();
@@ -76,14 +76,15 @@ class _ContactDropdownButtonState extends State<ContactDropdownButton> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: DropdownButton<String>(
-        dropdownColor: Colors.brown,
-        isExpanded: true,
-        items: _contacts.map((contact) {
-          return DropdownMenuItem<String>(
-            value: contact.displayName,
+    return DropdownButton<String>(
+      dropdownColor: Colors.brown,
+      isExpanded: true,
+      items: _contacts.map((contact) {
+        return DropdownMenuItem<String>(
+          alignment: Alignment.center,
+          value: contact.displayName,
+          child: Padding(
+            padding: const EdgeInsets.all(1.0),
             child: Text(
               contact.displayName,
               textAlign: TextAlign.center,
@@ -91,45 +92,33 @@ class _ContactDropdownButtonState extends State<ContactDropdownButton> {
                 fontSize: 16.0,
                 wordSpacing: 1,
                 letterSpacing: 1,
-                fontWeight: FontWeight.normal,
+                fontWeight: FontWeight.bold,
                 color: Colors.white,
               ),
             ),
-          );
-        }).toList(),
-        onChanged: (selectedContact) {
-          // Find the index of the fist book whose title contains 'Novel'
-          final int index2 = _contacts.indexWhere(
-              (book) => book.displayName.contains(selectedContact.toString()));
-          if (index2 != -1) {
-            indexTem = index2;
+          ),
+        );
+      }).toList(),
+      onChanged: (selectedContact) {
+        // Find the index of the fist book whose title contains 'Novel'
+        final int index2 = _contacts.indexWhere(
+            (book) => book.displayName.contains(selectedContact.toString()));
+        if (index2 != -1) {
+          indexTem = index2;
 
-            _selectContact(_contacts[index2]);
-          }
-        },
-        hint: indexTem == -1
-            ? Text(
-                'Selecciona un contacto',
-                textAlign: TextAlign.center,
-                style: GoogleFonts.barlow(
-                  fontSize: 16.0,
-                  wordSpacing: 1,
-                  letterSpacing: 1,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                ),
-              )
-            : Text(
-                _contacts[indexTem].displayName,
-                textAlign: TextAlign.center,
-                style: GoogleFonts.barlow(
-                  fontSize: 16.0,
-                  wordSpacing: 1,
-                  letterSpacing: 1,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                ),
-              ),
+          _selectContact(_contacts[index2]);
+        }
+      },
+      hint: Text(
+        'Selecciona un contacto',
+        textAlign: TextAlign.center,
+        style: GoogleFonts.barlow(
+          fontSize: 16.0,
+          wordSpacing: 1,
+          letterSpacing: 1,
+          fontWeight: FontWeight.bold,
+          color: Colors.white,
+        ),
       ),
     );
   }

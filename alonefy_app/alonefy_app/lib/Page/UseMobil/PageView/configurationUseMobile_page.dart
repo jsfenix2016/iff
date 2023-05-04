@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:ifeelefine/Common/Constant.dart';
 import 'package:ifeelefine/Common/colorsPalette.dart';
 import 'package:ifeelefine/Common/utils.dart';
+import 'package:ifeelefine/Model/userbd.dart';
 import 'package:ifeelefine/Page/UseMobil/Controller/useMobileController.dart';
 
 import 'package:ifeelefine/Page/UserRest/PageView/configurationUserRest_page.dart';
@@ -15,18 +16,18 @@ import 'package:pay/pay.dart';
 
 // import 'package:flutter_pay/flutter_pay.dart';
 
-class UserMobilePage extends StatefulWidget {
-  const UserMobilePage({super.key});
-
+class UseMobilePage extends StatefulWidget {
+  const UseMobilePage({super.key, required this.userbd});
+  final UserBD userbd;
   @override
-  State<UserMobilePage> createState() => _UserMobilePageState();
+  State<UseMobilePage> createState() => _UseMobilePageState();
 }
 
-class _UserMobilePageState extends State<UserMobilePage> {
+class _UseMobilePageState extends State<UseMobilePage> {
   final UseMobilController useMobilVC = Get.put(UseMobilController());
-  var indexSelect = -1;
+  var indexSelect = 0;
   // FlutterPay flutterPay = FlutterPay();
-
+  UserBD? userbd;
   String result = "Result will be shown here";
   List<PaymentItem> items = [
     const PaymentItem(
@@ -38,6 +39,13 @@ class _UserMobilePageState extends State<UserMobilePage> {
 
   void onGooglePayResult(paymentResult) {
     // Send the resulting Google Pay token to your server / PSP
+  }
+
+  @override
+  void initState() {
+    userbd = widget.userbd;
+
+    super.initState();
   }
 
   @override
@@ -103,8 +111,7 @@ class _UserMobilePageState extends State<UserMobilePage> {
                 child: CupertinoPicker(
                   backgroundColor: Colors.transparent,
                   onSelectedItemChanged: (int value) {
-                    useMobilVC.saveTimeUseMobil(
-                        context, Constant.timeDic[value.toString()].toString());
+                    indexSelect = value;
                   },
                   itemExtent: 60.0,
                   children: [
@@ -212,9 +219,13 @@ class _UserMobilePageState extends State<UserMobilePage> {
                 width: double.infinity,
                 child: Center(
                   child: ElevateButtonFilling(
-                    onChanged: (value) {
+                    onChanged: (value) async {
                       var a = useMobilVC.getTimeUseMobil();
                       print(a);
+                      await useMobilVC.saveTimeUseMobil(
+                          context,
+                          Constant.timeDic[indexSelect.toString()].toString(),
+                          widget.userbd);
                       Navigator.push(
                         context,
                         MaterialPageRoute(

@@ -12,6 +12,7 @@ import 'package:ifeelefine/Common/utils.dart';
 import 'package:ifeelefine/Model/contactRiskBD.dart';
 import 'package:ifeelefine/Model/contactZoneRiskBD.dart';
 import 'package:ifeelefine/Page/Risk/DateRisk/Controller/editRiskController.dart';
+import 'package:ifeelefine/Page/Risk/DateRisk/ListDateRisk/PageView/riskDatePage.dart';
 import 'package:ifeelefine/Page/Risk/DateRisk/Widgets/contentCode.dart';
 
 import 'package:flutter/material.dart';
@@ -75,13 +76,7 @@ class _CancelAlertState extends State<CancelAlertPage> {
       NotificationCenter().notify('getContactZoneRisk');
       stopTimer();
       timerSendSMS.cancel();
-
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => const ZoneRiskPage(),
-        ),
-      );
+      Navigator.of(context).pop();
     } else {
       showAlert(context, 'El codigo no coincide');
     }
@@ -89,7 +84,7 @@ class _CancelAlertState extends State<CancelAlertPage> {
 
   void stopTimer() {
     _timer!.cancel();
-    _timer = null;
+    // _timer = null;
   }
 
   void startTimer() {

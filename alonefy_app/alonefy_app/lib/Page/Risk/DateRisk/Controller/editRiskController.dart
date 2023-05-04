@@ -32,10 +32,14 @@ class EditRiskController extends GetxController {
   Future<bool> saveContactRisk(
       BuildContext context, ContactRiskBD contact) async {
     try {
-      var save = const HiveDataRisk().saveContactRisk(contact);
-      NotificationCenter().notify('getContactRisk');
-      showAlert(context, "Contacto guardado correctamente".tr);
-      return true;
+      final save = await const HiveDataRisk().saveContactRisk(contact);
+      if (save == 0) {
+        NotificationCenter().notify('getContactRisk');
+        showAlert(context, "Contacto guardado correctamente".tr);
+        return true;
+      } else {
+        return false;
+      }
     } catch (error) {
       return false;
     }
@@ -44,10 +48,13 @@ class EditRiskController extends GetxController {
   Future<bool> updateContactRisk(
       BuildContext context, ContactRiskBD contact) async {
     try {
-      var update = const HiveDataRisk().updateContactRisk(contact);
-      NotificationCenter().notify('getContactRisk');
-      showAlert(context, "Contacto actualizado correctamente".tr);
-      return true;
+      var update = await const HiveDataRisk().updateContactRisk(contact);
+      if (update) {
+        NotificationCenter().notify('getContactRisk');
+        showAlert(context, "Contacto actualizado correctamente".tr);
+        return true;
+      }
+      return false;
     } catch (error) {
       return false;
     }

@@ -56,7 +56,7 @@
     <application
         android:label="iFeelFine"
         android:name="${applicationName}"
-        android:icon="@mipmap/ic_launcher">
+        android:icon="@mipmap/logo_alertfriends">
         <activity
             android:name=".MainActivity"
             android:exported="true"

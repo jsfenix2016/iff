@@ -29,19 +29,9 @@ class _PushAlertPageState extends State<PushAlertPage> {
 
   late bool isActive = false;
 
-  /// Determine the current position of the device.
-  ///
-  /// When the location services are not enabled or permissions
-  /// are denied the `Future` will return an error.
-  Future<void> _determinePosition() async {}
-
-  Future _checkPermission() async {}
-
   @override
   void initState() {
     super.initState();
-
-    _checkPermission();
   }
 
   bool isMenu = false;
@@ -61,26 +51,33 @@ class _PushAlertPageState extends State<PushAlertPage> {
           print('El usuario ha tocado la pantalla');
         },
         onTapUp: (details) {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => CancelAlertPage(
-                contactRisk: widget.contactZone,
-              ),
+          // Navigator.push(
+          //   context,
+          //   MaterialPageRoute(
+          //     builder: (context) => CancelAlertPage(
+          //       contactRisk: widget.contactZone,
+          //     ),
+          //   ),
+          // );
+
+          Route route = MaterialPageRoute(
+            builder: (context) => CancelAlertPage(
+              contactRisk: widget.contactZone,
             ),
           );
+          Navigator.pushReplacement(context, route);
+
           // El usuario ha dejado de tocar la pantalla
           print('El usuario ha dejado de tocar la pantalla');
         },
         onPanEnd: (details) {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => CancelAlertPage(
-                contactRisk: widget.contactZone,
-              ),
+          Route route = MaterialPageRoute(
+            builder: (context) => CancelAlertPage(
+              contactRisk: widget.contactZone,
             ),
           );
+          Navigator.pushReplacement(context, route);
+
           // El usuario ha dejado de tocar la pantalla después de haber arrastrado el dedo por la pantalla
           print(
               'El usuario ha dejado de tocar la pantalla después de haber arrastrado el dedo por la pantalla');

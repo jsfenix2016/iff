@@ -38,7 +38,7 @@ class _EditZoneRiskPageState extends State<EditZoneRiskPage> {
 
   var sendWhatsappSMS = false;
   var sendLocation = false;
-  var saveConfig = true;
+  var saveConfig = false;
 
   var sendWhatsappContact = false;
   var callme = false;
@@ -75,28 +75,53 @@ class _EditZoneRiskPageState extends State<EditZoneRiskPage> {
   Future getContact() async {
     contactlist = await editZoneVC.getContacts(context);
 
+    for (var element in contactlist) {
+      if (widget.contactRisk.name == element.displayName) {
+        int index = contactlist.indexOf(element);
+        contactSelect = contactlist[index];
+      }
+    }
     setState(() {});
   }
 
   void saveContactZoneRisk(BuildContext context) async {
+    if (!saveConfig && widget.contactRisk.save == false) {
+      return;
+    }
     var contactRisk = ContactZoneRiskBD(
         id: widget.contactRisk.id,
-        photo: contactSelect.photo,
-        name: contactSelect.displayName,
-        phones: contactSelect.phones.first.toString(),
-        sendLocation: sendLocation,
-        sendWhatsapp: sendWhatsappSMS,
+        photo: widget.contactRisk.photo,
+        name: widget.contactRisk.name,
+        phones: widget.contactRisk.phones.toString(),
+        sendLocation: widget.contactRisk.sendLocation,
+        sendWhatsapp: widget.contactRisk.sendWhatsapp,
         code: widget.contactRisk.code,
         isActived: true,
-        sendWhatsappContact: sendWhatsappContact,
-        callme: callme,
-        save: save);
+        sendWhatsappContact: widget.contactRisk.sendWhatsappContact,
+        callme: widget.contactRisk.callme,
+        save: widget.contactRisk.save);
     if (widget.contactRisk.id == -1) {
       contactRisk.id = widget.index;
-      // await editVC.saveContactRisk(context, contactRisk);
+      await editZoneVC.saveContactZoneRisk(context, contactRisk);
     } else {
-      // await editVC.updateContactRisk(context, contactRisk);
+      await editZoneVC.updateContactZoneRisk(context, contactRisk);
     }
+
+    Route route = MaterialPageRoute(
+      builder: (context) => PushAlertPage(
+        contactZone: widget.contactRisk,
+      ),
+    );
+    Navigator.pushReplacement(context, route);
+
+    // Navigator.push(
+    //   context,
+    //   MaterialPageRoute(
+    //     builder: (context) => PushAlertPage(
+    //       contactZone: widget.contactRisk,
+    //     ),
+    //   ),
+    // );
   }
 
   @override
@@ -114,8 +139,8 @@ class _EditZoneRiskPageState extends State<EditZoneRiskPage> {
           child: Center(
             child: Column(
               children: [
-                SafeArea(
-                  child: Container(
+                const SafeArea(
+                  child: SizedBox(
                     height: 10.0,
                   ),
                 ),
@@ -138,23 +163,21 @@ class _EditZoneRiskPageState extends State<EditZoneRiskPage> {
                           ),
                         ),
                       ),
-                      Column(
-                        mainAxisSize: MainAxisSize.max,
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-                          Container(
-                            height: 60.0,
-                            color: Colors.transparent,
-                            child: Padding(
-                              padding: const EdgeInsets.all(12.0),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 12.0, right: 24),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.max,
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            SizedBox(
+                              height: 60.0,
                               child: Row(
                                 mainAxisSize: MainAxisSize.max,
                                 mainAxisAlignment:
-                                    MainAxisAlignment.spaceAround,
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
-                                  Container(
+                                  SizedBox(
                                     width: 270,
-                                    color: Colors.transparent,
                                     child: Text(
                                       "Enviar Whatsapp a",
                                       textAlign: TextAlign.right,
@@ -167,9 +190,21 @@ class _EditZoneRiskPageState extends State<EditZoneRiskPage> {
                                       ),
                                     ),
                                   ),
-                                  Container(
+                                  // CupertinoSwitch(
+                                  //   value: widget.contactRisk.sendWhatsapp,
+                                  //   onChanged: (value) {
+                                  //     sendWhatsappSMS = value;
+                                  //     widget.contactRisk.sendWhatsapp = value;
+                                  //     setState(() {});
+                                  //   },
+                                  //   trackColor:
+                                  //       Color.fromRGBO(169, 146, 125, 0.5),
+                                  //   thumbColor: CupertinoColors.white,
+                                  //   activeColor:
+                                  //       Color.fromRGBO(169, 146, 125, 0.5),
+                                  // ),
+                                  SizedBox(
                                     width: size.width / 6,
-                                    color: Colors.transparent,
                                     child: Switch(
                                       onChanged: (value) {
                                         sendWhatsappSMS = value;
@@ -182,21 +217,16 @@ class _EditZoneRiskPageState extends State<EditZoneRiskPage> {
                                 ],
                               ),
                             ),
-                          ),
-                          Padding(
-                            padding:
-                                const EdgeInsets.only(left: 12.0, right: 8),
-                            child: Container(
-                              height: 50.0,
+                            Container(
                               color: Colors.transparent,
+                              height: 50.0,
                               child: Row(
                                 mainAxisSize: MainAxisSize.max,
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
                                 children: [
-                                  Container(
+                                  SizedBox(
                                     width: 270,
-                                    color: Colors.transparent,
                                     child: Text(
                                       "Hacer llamada a",
                                       textAlign: TextAlign.right,
@@ -209,9 +239,8 @@ class _EditZoneRiskPageState extends State<EditZoneRiskPage> {
                                       ),
                                     ),
                                   ),
-                                  Container(
+                                  SizedBox(
                                     width: size.width / 6,
-                                    color: Colors.transparent,
                                     child: Switch(
                                       onChanged: (value) {
                                         callme = value;
@@ -224,8 +253,8 @@ class _EditZoneRiskPageState extends State<EditZoneRiskPage> {
                                 ],
                               ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ],
                   ),
@@ -248,11 +277,12 @@ class _EditZoneRiskPageState extends State<EditZoneRiskPage> {
                             : widget.contactRisk.photo,
                         name: (indexSelect != -1 &&
                                     contactlist.isNotEmpty &&
-                                    contactlist[indexSelect]
-                                        .displayName
-                                        .isNotEmpty ||
+                                    contactlist[indexSelect].displayName !=
+                                        '' ||
                                 widget.contactRisk.name != '')
-                            ? contactlist[indexSelect].displayName
+                            ? (indexSelect == -1)
+                                ? widget.contactRisk.name
+                                : contactlist[indexSelect].displayName
                             : name,
                         onChanged: (value) {
                           showDialog(
@@ -284,96 +314,93 @@ class _EditZoneRiskPageState extends State<EditZoneRiskPage> {
                 const SizedBox(
                   height: 20,
                 ),
-                Column(
-                  mainAxisSize: MainAxisSize.max,
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    Container(
-                      height: 60.0,
-                      color: Colors.transparent,
-                      child: Padding(
-                        padding: const EdgeInsets.all(12.0),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.max,
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          children: [
-                            Container(
-                              width: 270,
-                              color: Colors.transparent,
-                              child: Text(
-                                "Enviar Whatsapp a mi mensaje predefinido:",
-                                textAlign: TextAlign.right,
-                                style: GoogleFonts.barlow(
-                                  fontSize: 14.0,
-                                  wordSpacing: 1,
-                                  letterSpacing: 1,
-                                  fontWeight: FontWeight.normal,
-                                  color: Colors.white,
-                                ),
-                              ),
-                            ),
-                            Container(
-                              width: size.width / 6,
-                              color: Colors.transparent,
-                              child: Switch(
-                                onChanged: (value) {
-                                  sendWhatsappContact = value;
-                                  widget.contactRisk.sendWhatsappContact =
-                                      value;
-                                  setState(() {});
-                                },
-                                value: widget.contactRisk.sendWhatsappContact,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 12.0, right: 8),
-                      child: Container(
-                        height: 50.0,
+                Padding(
+                  padding: const EdgeInsets.all(0.0),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.max,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Container(
                         color: Colors.transparent,
-                        child: Row(
-                          mainAxisSize: MainAxisSize.max,
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Container(
-                              width: 270,
-                              color: Colors.transparent,
-                              child: Text(
-                                "Enviar mi última ubicación registrada:",
-                                textAlign: TextAlign.right,
-                                style: GoogleFonts.barlow(
-                                  fontSize: 14.0,
-                                  wordSpacing: 1,
-                                  letterSpacing: 1,
-                                  fontWeight: FontWeight.normal,
-                                  color: Colors.white,
+                        height: 60.0,
+                        child: Padding(
+                          padding: const EdgeInsets.only(left: 12.0, right: 24),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.max,
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            children: [
+                              SizedBox(
+                                width: 270,
+                                child: Text(
+                                  "Enviar Whatsapp a mi mensaje predefinido:",
+                                  textAlign: TextAlign.right,
+                                  style: GoogleFonts.barlow(
+                                    fontSize: 14.0,
+                                    wordSpacing: 1,
+                                    letterSpacing: 1,
+                                    fontWeight: FontWeight.normal,
+                                    color: Colors.white,
+                                  ),
                                 ),
                               ),
-                            ),
-                            Container(
-                              width: size.width / 6,
-                              color: Colors.transparent,
-                              child: Switch(
-                                onChanged: (value) {
-                                  sendLocation = value;
-                                  widget.contactRisk.sendLocation = value;
-                                  setState(() {});
-                                },
-                                value: widget.contactRisk.sendLocation,
+                              SizedBox(
+                                width: size.width / 6,
+                                child: Switch(
+                                  onChanged: (value) {
+                                    sendWhatsappContact = value;
+                                    widget.contactRisk.sendWhatsappContact =
+                                        value;
+                                    setState(() {});
+                                  },
+                                  value: widget.contactRisk.sendWhatsappContact,
+                                ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       ),
-                    ),
-                  ],
+                      Padding(
+                        padding: const EdgeInsets.only(left: 12.0, right: 24),
+                        child: SizedBox(
+                          height: 50.0,
+                          child: Row(
+                            mainAxisSize: MainAxisSize.max,
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              SizedBox(
+                                width: 270,
+                                child: Text(
+                                  "Enviar mi última ubicación registrada:",
+                                  textAlign: TextAlign.right,
+                                  style: GoogleFonts.barlow(
+                                    fontSize: 14.0,
+                                    wordSpacing: 1,
+                                    letterSpacing: 1,
+                                    fontWeight: FontWeight.normal,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ),
+                              SizedBox(
+                                width: size.width / 6,
+                                child: Switch(
+                                  onChanged: (value) {
+                                    sendLocation = value;
+                                    widget.contactRisk.sendLocation = value;
+                                    setState(() {});
+                                  },
+                                  value: widget.contactRisk.sendLocation,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-                Container(
+                const SizedBox(
                   height: 20,
-                  color: Colors.transparent,
                 ),
                 Expanded(
                   flex: 0,
@@ -413,14 +440,13 @@ class _EditZoneRiskPageState extends State<EditZoneRiskPage> {
                           height: 20,
                         ),
                         Padding(
-                          padding: const EdgeInsets.all(8.0),
+                          padding: const EdgeInsets.only(left: 12.0, right: 24),
                           child: Row(
                             mainAxisSize: MainAxisSize.max,
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Container(
-                                width: 280,
-                                color: Colors.transparent,
+                              SizedBox(
+                                width: 270,
                                 child: Text(
                                   "Guardar esta configuración",
                                   textAlign: TextAlign.right,
@@ -433,9 +459,8 @@ class _EditZoneRiskPageState extends State<EditZoneRiskPage> {
                                   ),
                                 ),
                               ),
-                              Container(
+                              SizedBox(
                                 width: size.width / 6,
-                                color: Colors.transparent,
                                 child: Switch(
                                   onChanged: (value) {
                                     saveConfig = value;
@@ -457,17 +482,9 @@ class _EditZoneRiskPageState extends State<EditZoneRiskPage> {
                 ),
                 ElevateButtonCustomBorder(
                   onChanged: (value) {
-                    if (saveConfig) {
-                      saveContactZoneRisk(context);
-                    }
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => PushAlertPage(
-                          contactZone: widget.contactRisk,
-                        ),
-                      ),
-                    );
+                    // if (saveConfig) {
+                    saveContactZoneRisk(context);
+                    // }
                   },
                   mensaje: 'Iniciar',
                 ),

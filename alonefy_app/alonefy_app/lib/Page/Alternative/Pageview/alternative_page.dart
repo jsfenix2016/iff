@@ -69,6 +69,7 @@ class _AlternativePagePageState extends State<AlternativePage> {
                     ),
                     onPressed: () {
                       _prefs.firstConfig = true;
+                      _prefs.config = false;
                       Navigator.push(
                         context,
                         MaterialPageRoute(

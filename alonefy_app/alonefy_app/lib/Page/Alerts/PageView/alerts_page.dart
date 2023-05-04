@@ -2,7 +2,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:ifeelefine/Common/colorsPalette.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:ifeelefine/Model/userpositionbd.dart';
+import 'package:ifeelefine/Model/logAlertsBD.dart';
 import 'package:ifeelefine/Page/Alerts/Controller/alertsController.dart';
 
 import 'package:notification_center/notification_center.dart';
@@ -19,9 +19,9 @@ class _AlertsPageState extends State<AlertsPage> {
 
   final scaffoldKey = GlobalKey<ScaffoldState>();
 
-  Map<String, List<UserPositionBD>> groupedProducts = {};
-  late List<UserPositionBD> listLog;
-  final _group = ValueNotifier<Map<String, List<UserPositionBD>>>({});
+  Map<String, List<LogAlertsBD>> groupedProducts = {};
+  late List<LogAlertsBD> listLog;
+  final _group = ValueNotifier<Map<String, List<LogAlertsBD>>>({});
 
   Future<void> getLog() async {
     groupedProducts = {};
@@ -32,7 +32,7 @@ class _AlertsPageState extends State<AlertsPage> {
   }
 
   Future<void> deleteForDayMov(
-      BuildContext context, List<UserPositionBD> listLog) async {
+      BuildContext context, List<LogAlertsBD> listLog) async {
     groupedProducts = {};
 
     var req = await alertsVC.deleteAlerts(context, listLog);

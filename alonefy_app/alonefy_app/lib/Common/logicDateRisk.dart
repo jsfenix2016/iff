@@ -46,9 +46,9 @@ class LogicDateRisk {
                 now.minute.compareTo(end.minute) >= 0) &&
             element.isActived) {
           if (element.isActived && element.isFinishTime == false) {
-            element.isActived = false;
+            element.isActived = true;
             element.isprogrammed = false;
-
+            element.isFinishTime = true;
             await const HiveDataRisk().updateContactRisk(element);
             sendMessageContactDate(element);
           }

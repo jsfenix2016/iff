@@ -5,7 +5,9 @@ import 'package:ifeelefine/Common/colorsPalette.dart';
 import 'package:ifeelefine/Common/utils.dart';
 import 'package:ifeelefine/Page/HomePage/Pageview/home_page.dart';
 import 'package:flutter/material.dart';
+import 'package:ifeelefine/Provider/prefencesUser.dart';
 import 'package:ifeelefine/Utils/Widgets/elevatedButtonFilling.dart';
+import 'package:ifeelefine/Utils/Widgets/widgetLogo.dart';
 
 class FinishConfigPage extends StatefulWidget {
   const FinishConfigPage({super.key});
@@ -15,6 +17,7 @@ class FinishConfigPage extends StatefulWidget {
 }
 
 class _FinishConfigPageState extends State<FinishConfigPage> {
+  final _prefs = PreferenceUser();
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -36,9 +39,16 @@ class _FinishConfigPageState extends State<FinishConfigPage> {
                 child: Column(
                   children: [
                     SafeArea(
-                      child: Container(
-                        height: 170.0,
+                      child: Column(
+                        mainAxisSize: MainAxisSize.max,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: const [
+                          WidgetLogoApp(),
+                        ],
                       ),
+                    ),
+                    const SizedBox(
+                      height: 80,
                     ),
                     SizedBox(
                       child: Column(
@@ -64,24 +74,30 @@ class _FinishConfigPageState extends State<FinishConfigPage> {
                             width: 300,
                             child: Stack(
                               children: [
-                                Positioned(
-                                  left: 20,
-                                  child: Row(
-                                    children: [
-                                      Text(
-                                        "I'm fine ",
-                                        textAlign: TextAlign.center,
+                                RichText(
+                                  textAlign: TextAlign.center,
+                                  text: TextSpan(
+                                    text: "I'm fine ",
+                                    style: GoogleFonts.barlow(
+                                      fontSize: 22.0,
+                                      wordSpacing: 1,
+                                      letterSpacing: 0.001,
+                                      fontWeight: FontWeight.normal,
+                                      color: Colors.white,
+                                    ),
+                                    children: <TextSpan>[
+                                      TextSpan(
+                                        text: 'se ha configurado ',
                                         style: GoogleFonts.barlow(
                                           fontSize: 22.0,
                                           wordSpacing: 1,
                                           letterSpacing: 0.001,
-                                          fontWeight: FontWeight.normal,
+                                          fontWeight: FontWeight.bold,
                                           color: Colors.white,
                                         ),
                                       ),
-                                      Text(
-                                        "se ha configurado ",
-                                        textAlign: TextAlign.center,
+                                      TextSpan(
+                                        text: 'correctamente',
                                         style: GoogleFonts.barlow(
                                           fontSize: 22.0,
                                           wordSpacing: 1,
@@ -93,27 +109,12 @@ class _FinishConfigPageState extends State<FinishConfigPage> {
                                     ],
                                   ),
                                 ),
-                                Positioned(
-                                  top: 30,
-                                  left: 80,
-                                  child: Text(
-                                    "correctamente",
-                                    textAlign: TextAlign.center,
-                                    style: GoogleFonts.barlow(
-                                      fontSize: 22.0,
-                                      wordSpacing: 1,
-                                      letterSpacing: 0.001,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.white,
-                                    ),
-                                  ),
-                                ),
                               ],
                             ),
                           ),
 
                           const SizedBox(
-                            height: 58,
+                            height: 10,
                           ),
 
                           Center(
@@ -126,6 +127,7 @@ class _FinishConfigPageState extends State<FinishConfigPage> {
                                   } else {
                                     service.startService();
                                   }
+                                  _prefs.config = true;
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(

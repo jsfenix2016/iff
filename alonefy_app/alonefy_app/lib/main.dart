@@ -4,28 +4,22 @@ import 'dart:ui';
 import 'package:all_sensors2/all_sensors2.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:hive_flutter/hive_flutter.dart';
-import 'package:ifeelefine/Common/Constant.dart';
-
-import 'package:ifeelefine/Common/logicDateRisk.dart';
 import 'package:ifeelefine/Common/notificationService.dart';
 import 'package:ifeelefine/Data/hiveRisk_data.dart';
 import 'package:ifeelefine/Data/hive_constant_adapterInit.dart';
 import 'package:ifeelefine/Model/activitydaybd.dart';
 import 'package:ifeelefine/Model/contactRiskBD.dart';
-import 'package:ifeelefine/Page/HomePage/Pageview/home_page.dart';
-
+import 'package:ifeelefine/Model/userbd.dart';
 import 'package:ifeelefine/Page/Risk/DateRisk/ListDateRisk/PageView/riskDatePage.dart';
-import 'package:ifeelefine/Page/Risk/ZoneRisk/ListContactZoneRisk/PageView/zoneRisk.dart';
-import 'package:ifeelefine/Page/UserRest/PageView/configurationUserRest_page.dart';
+import 'package:ifeelefine/Services/mainService.dart';
 
 import 'package:intl/intl.dart';
 import 'package:ifeelefine/Common/idleLogic.dart';
 import 'package:ifeelefine/Common/utils.dart';
 import 'package:ifeelefine/Data/hive_data.dart';
 import 'package:ifeelefine/Model/restdaybd.dart';
-import 'package:ifeelefine/Model/userPosition.dart';
-import 'package:ifeelefine/Model/userpositionbd.dart';
+import 'package:ifeelefine/Model/logAlerts.dart';
+import 'package:ifeelefine/Model/logAlertsBD.dart';
 
 import 'package:ifeelefine/Provider/prefencesUser.dart';
 import 'package:ifeelefine/Routes/routes.dart';
@@ -40,11 +34,11 @@ import 'package:notification_center/notification_center.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'Model/logActivityBd.dart';
-import 'Page/FallDetected/Pageview/fall_activation_page.dart';
+
 import 'Page/LogActivity/Controller/logActivity_controller.dart';
 
 DateTime now = DateTime.now();
-late UserPosition userMov;
+late LogAlerts userMov;
 var accelerometerValues = <double>[];
 List<double> userAccelerometerValues = <double>[];
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
@@ -65,28 +59,23 @@ Timer _timer = Timer(const Duration(seconds: 20), () {});
 bool isMovRude = false;
 Timer timerSendSMS = Timer(const Duration(seconds: 20), () {});
 
-final LogActivityController logActivityController = Get.put(LogActivityController());
+final LogActivityController logActivityController =
+    Get.put(LogActivityController());
 int _logActivityTimer = 60;
 const int _logActivityTimerRefresh = 60;
-// const String portName = 'notification_send_port';
-// bool _accelAvailable = false;
-// bool _gyroAvailable = false;
-// List<double> _accelData = List.filled(3, 0.0);
-// List<double> _gyroData = List.filled(3, 0.0);
-// StreamSubscription? _accelSubscription;
-// StreamSubscription? _gyroSubscription;
 
 String? device;
 String? initApp;
+UserBD? user;
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  userMov = UserPosition(mov: [], time: now);
+  userMov = LogAlerts(mov: [], time: now);
   await _prefs.initPrefs();
   await inicializeHiveBD();
 
   await initializeService();
-
+  user = await const HiveData().getuserbd;
   initApp = _prefs.isFirstConfig == false ? 'onboarding' : 'home';
   final deviceInfo = DeviceInfoPlugin();
 
@@ -96,7 +85,9 @@ Future<void> main() async {
   }
   runApp(
     GetMaterialApp(
-      home: MyApp(initApp: initApp!),
+      home: MyApp(
+        initApp: initApp!,
+      ),
       debugShowCheckedModeBanner: false,
     ),
   );
@@ -219,6 +210,7 @@ Future activateService() async {
           if (notificationResponse.actionId == "imgoodId") {
             ismove = false;
             timerActive = true;
+            MainService().cancelNotifications();
             _timer.cancel();
           }
           if (notificationResponse.actionId == "date") {
@@ -285,7 +277,7 @@ void onStart(ServiceInstance service) async {
   service.on('stopService').listen((event) {
     service.stopSelf();
   });
-
+  accelerometer();
   // bring to foreground
   Timer.periodic(const Duration(seconds: 5), (timer) async {
     if (Platform.isAndroid) {
@@ -293,20 +285,13 @@ void onStart(ServiceInstance service) async {
         if (await service.isForegroundService()) {
           if (isMovRude) {
             isMovRude = false;
-
-            RedirectViewNotifier.showNotifications();
-            saveUserLog("Movimiento brusco a ", now);
           }
         }
       }
     }
-    accelerometer();
+
     _logActivityTimer += 5;
-
-    /// you can see this log in logcat
-    print('FLUTTER BACKGROUND SERVICE: ${DateTime.now()}');
-
-    // test using external plugin
+    getDateRisk();
 
     service.invoke(
       'update',
@@ -356,11 +341,18 @@ Future accelerometer() async {
   _streamSubscriptions.add(
     accelerometerEvents!.listen((AccelerometerEvent event) {
       userAccelerometerValues = <double>[event.x, event.y, event.z];
-      if (event.x >= 5.5 || event.y >= 5.5 || event.z >= 5.5) {
+      if (event.x >= 11.0 || event.y >= 11.0 || event.z >= 11.0) {
         isMovRude = true;
+        print("movimiento rudo");
+        if (user != null) {
+          MainService().saveDrop(user!);
+        }
+
+        RedirectViewNotifier.showNotifications();
+        saveUserLog("Movimiento brusco a ", now);
       } else {
         isMovRude = false;
-        if (event.x >= 0.02 || event.y >= 0.02 || event.z >= 0.02) {
+        if (event.x >= 0.07 || event.y >= 0.02 || event.z >= 9.9) {
           print("me movi");
           if (_logActivityTimer >= _logActivityTimerRefresh) {
             print("Movimiento normal");
@@ -379,44 +371,47 @@ Future accelerometer() async {
 }
 
 Future getDateRisk() async {
+  await inicializeHiveBD();
   final user = await const HiveData().getuserbd;
 
-  final box = await Hive.openBox<ContactRiskBD>('contactriskbd');
+  final box = await const HiveDataRisk().getcontactRiskbd;
 
-  List<ContactRiskBD> dateRisk = box.values.toList();
+  List<ContactRiskBD> dateRisk = box.toList();
 
   if (dateRisk.isEmpty) {
     return;
   }
+
   for (var element in dateRisk) {
     DateTime start = parseDurationRow(element.timeinit);
     DateTime end = parseDurationRow(element.timefinish);
 
     RedirectViewNotifier.contactRisk = element;
+
     if (now.hour.compareTo(start.hour) == 0 &&
-        now.minute.compareTo(start.minute) >= 0) {
+        now.minute.compareTo(start.minute) > 0) {
       if (element.isActived == false && element.isFinishTime == false) {
         element.isActived = true;
         element.isprogrammed = false;
         await const HiveDataRisk().updateContactRisk(element);
         RedirectViewNotifier.showDateNotifications();
-      }
-
-      return;
-    } else {
-      print(
-          "ahora: ${now.hour}:${now.minute}, hora fin: ${end.hour}:${end.minute},isActived: ${element.isActived}");
-      if ((now.hour.compareTo(end.hour) == 0 &&
-              now.minute.compareTo(end.minute) >= 0) &&
-          element.isActived) {
-        if (element.isActived && element.isFinishTime == false) {
-          element.isActived = false;
-          element.isprogrammed = false;
-
-          await const HiveDataRisk().updateContactRisk(element);
-          RedirectViewNotifier.sendMessageContactDate(element);
+      } else {
+        print(
+            "ahora: ${now.hour}:${now.minute}, hora fin: ${end.hour}:${end.minute},isActived: ${element.isActived}");
+        if ((now.hour.compareTo(end.hour) == 0 &&
+                now.minute.compareTo(end.minute) >= 0) &&
+            element.isActived) {
+          if (element.isActived && element.isFinishTime == false) {
+            element.isActived = true;
+            element.isprogrammed = false;
+            element.isFinishTime = true;
+            await const HiveDataRisk().updateContactRisk(element);
+            RedirectViewNotifier.sendMessageContactDate(element);
+            RedirectViewNotifier.showDateFinishNotifications();
+          }
         }
       }
+      NotificationCenter().notify('getContactRisk');
     }
   }
 }
@@ -432,7 +427,6 @@ Future activatedTimerInactivity() async {
   var format = DateFormat("HH:mm");
 
   //Revisamos si tenemos alguna cita y procesamos la información para notificar a los contactos
-  getDateRisk();
 
   ///Consultamos en la base de datos las actividades o inactividad del usuario
   List<ActivityDayBD> listActividad =
@@ -466,9 +460,7 @@ Future activatedTimerInactivity() async {
     } else if (day == element.day &&
         now.hour.compareTo(start.hour) == 0 &&
         now.hour.compareTo(end.hour) == 1 &&
-        now.hour.compareTo(end.minute) <= 1) {
-      print("object");
-    }
+        now.hour.compareTo(end.minute) <= 1) {}
   }
 
   if (timerActive) {
@@ -476,7 +468,7 @@ Future activatedTimerInactivity() async {
     Duration useMobil = await IdleLogic().convertStringToDuration("5 min");
     _timer = Timer(useMobil, () {
       timerActive = false;
-      //TODO:SEND Notification Local
+
       RedirectViewNotifier.showNotifications();
       saveUserLog("Alerta de inactividad ", now);
       saveActivityLog(DateTime.now(), "Inactividad");
@@ -489,22 +481,22 @@ void sendMessageContact() async {
       await IdleLogic().convertStringToDuration(_prefs.getUseMobil);
   timerSendSMS = Timer(useMobil, () {
     timerActive = false;
-    //TODO:SEND Notification Local
+
     IdleLogic().notifyContact();
     saveUserLog("Envio de SMS a contacto ", now);
   });
 }
 
-Future<void> saveUserLog(String messaje, DateTime user) async {
+Future<void> saveUserLog(String messaje, DateTime time) async {
   await inicializeHiveBD();
-  UserPositionBD mov =
-      UserPositionBD(typeAction: messaje, time: now, movRureUser: user);
+  LogAlertsBD mov = LogAlertsBD(typeAction: messaje, time: time);
   const HiveData().saveUserPositionBD(mov);
 }
 
 Future<void> saveActivityLog(DateTime dateTime, String movementType) async {
   await inicializeHiveBD();
-  LogActivityBD activityBD = LogActivityBD(dateTime: dateTime, movementType: movementType);
+  LogActivityBD activityBD =
+      LogActivityBD(dateTime: dateTime, movementType: movementType);
   await logActivityController.saveLogActivity(activityBD);
 }
 
@@ -527,74 +519,6 @@ class _MyAppState extends State<MyApp> {
     );
   }
 }
-
-// void _checkAccelerometerStatus() async {
-//   await SensorManager().isSensorAvailable(Sensors.ACCELEROMETER).then((result) {
-//     _accelAvailable = result;
-//   });
-// }
-
-// Future<void> _startAccelerometer() async {
-//   if (_accelSubscription != null) return;
-//   if (_accelAvailable) {
-//     final stream = await SensorManager().sensorUpdates(
-//       sensorId: Sensors.ACCELEROMETER,
-//       interval: Sensors.SENSOR_DELAY_FASTEST,
-//     );
-//     _accelSubscription = stream.listen((sensorEvent) {
-//       _accelData = sensorEvent.data;
-//     });
-//   }
-// }
-
-// // Register a sensor listener
-// void startSensorListen() async {
-//   await FlutterSensors.startSensor(Sensor.TYPE_ACCELEROMETER);
-//   FlutterSensors.sensorsEvents.listen((event) {
-//     int currentTime = DateTime.now().millisecondsSinceEpoch;
-//     int lastMovement = await getLastMovement();
-//     int timeSinceLastMovement = currentTime - lastMovement;
-//     setLastMovement(currentTime);
-//     // Log the time since last movement and update the data for the day
-//   });
-// }
-
-// void backgroundFetchCallback() async {
-//   DateTime now = DateTime.now();
-//   int dayOfWeek = now.weekday;
-//   int lastMovement = await getLastMovement();
-
-//   if(lastMovement == null){
-//     // first movement of the day
-//     setFirstMovementToday(DateTime.now().millisecondsSinceEpoch);
-//   }
-
-//   // check if it is the last movement of the day
-//   int currentTime = DateTime.now().millisecondsSinceEpoch;
-//   int lastUse = await getLastUse();
-//   int timeSinceLastUse = currentTime - lastUse;
-//   if (timeSinceLastUse > threshold) {
-//     setLastMovementToday(DateTime.now().millisecondsSinceEpoch);
-//     // update the data for the day
-//     updateDataForTheDay(dayOfWeek);
-//   }
-//   setLastUse(currentTime);
-
-//   BackgroundFetch.finish();
-// }
-
-// Function to update data for the day
-// void updateDataForTheDay(int dayOfWeek) {
-//     var firstMovementToday = await getFirstMovementToday();
-//     var lastMovementToday = await getLastMovementToday();
-//     var data = await getData();
-//     data[dayOfWeek] = {
-//     "firstMovement": firstMovementToday,
-//     "lastMovement": lastMovementToday,
-//     "cadence": cadence
-//   };
-//   await setData(data);
-// }
 
 Future<Position> determinePosition() async {
   bool serviceEnabled;

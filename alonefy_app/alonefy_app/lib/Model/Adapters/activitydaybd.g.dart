@@ -8,7 +8,7 @@ part of '../activitydaybd.dart';
 
 class ActivityDayBDAdapter extends TypeAdapter<ActivityDayBD> {
   @override
-  final int typeId = 3;
+  final int typeId = HiveConstantAdapterInit.idActivityDayDBAdapter;
 
   @override
   ActivityDayBD read(BinaryReader reader) {

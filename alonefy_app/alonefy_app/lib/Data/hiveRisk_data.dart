@@ -7,27 +7,29 @@ class HiveDataRisk {
 
   Future<int> saveContactRisk(ContactRiskBD contact) async {
     try {
-      await Hive.close();
-      final box = await Hive.openBox<ContactRiskBD>('contactriskbd');
+      final Box<ContactRiskBD> box =
+          await Hive.openBox<ContactRiskBD>('contactriskbd');
 
-      var ind = await box.add(contact);
-
-      return ind;
+      var ind = box.values.length;
+      contact.id = ind;
+      final person = await box.add(contact);
+      return person;
     } catch (error) {
       return -1;
     }
   }
 
-  Future updateContactRisk(ContactRiskBD contact) async {
+  Future<bool> updateContactRisk(ContactRiskBD contact) async {
     try {
-      await Hive.close();
       final box = await Hive.openBox<ContactRiskBD>('contactriskbd');
 
       await box.put((contact.id), contact);
       final listDate = box.values.toList();
       print(listDate);
+      return true;
     } catch (error) {
       print(error);
+      return false;
     }
   }
 
@@ -47,48 +49,48 @@ class HiveDataRisk {
 
       late List<ContactRiskBD> allDate = [];
 
-      ContactRiskBD contactTemp = ContactRiskBD(
-          id: -1,
-          photo: null,
-          name: '',
-          timeinit: '00:00',
-          timefinish: '00:00',
-          phones: '',
-          titleMessage: '',
-          messages: '',
-          sendLocation: false,
-          sendWhatsapp: false,
-          isInitTime: false,
-          isFinishTime: false,
-          code: '',
-          isActived: false,
-          isprogrammed: false);
+      // ContactRiskBD contactTemp = ContactRiskBD(
+      //     id: -1,
+      //     photo: null,
+      //     name: '',
+      //     timeinit: '00:00',
+      //     timefinish: '00:00',
+      //     phones: '',
+      //     titleMessage: '',
+      //     messages: '',
+      //     sendLocation: false,
+      //     sendWhatsapp: false,
+      //     isInitTime: false,
+      //     isFinishTime: false,
+      //     code: '',
+      //     isActived: false,
+      //     isprogrammed: false);
 
-      for (var element in box.values.toList()) {
-        contactTemp.id = element.id;
-        contactTemp.photo = element.photo;
+      // for (var element in box.values.toList()) {
+      //   contactTemp.id = element.id;
+      //   contactTemp.photo = element.photo;
 
-        contactTemp.name = element.name;
-        contactTemp.photo = element.photo;
-        contactTemp.timeinit = element.timeinit;
-        contactTemp.timefinish = element.timefinish;
+      //   contactTemp.name = element.name;
+      //   contactTemp.photo = element.photo;
+      //   contactTemp.timeinit = element.timeinit;
+      //   contactTemp.timefinish = element.timefinish;
 
-        contactTemp.phones = element.phones;
-        contactTemp.titleMessage = element.titleMessage;
-        contactTemp.messages = element.messages;
-        contactTemp.sendLocation = element.sendLocation;
+      //   contactTemp.phones = element.phones;
+      //   contactTemp.titleMessage = element.titleMessage;
+      //   contactTemp.messages = element.messages;
+      //   contactTemp.sendLocation = element.sendLocation;
 
-        contactTemp.sendWhatsapp = element.sendWhatsapp;
-        contactTemp.isInitTime = element.isInitTime;
-        contactTemp.isFinishTime = element.isFinishTime;
-        contactTemp.code = element.code;
+      //   contactTemp.sendWhatsapp = element.sendWhatsapp;
+      //   contactTemp.isInitTime = element.isInitTime;
+      //   contactTemp.isFinishTime = element.isFinishTime;
+      //   contactTemp.code = element.code;
 
-        contactTemp.isActived = element.isActived;
-        contactTemp.isprogrammed = element.isprogrammed;
-        allDate.add(contactTemp);
-      }
+      //   contactTemp.isActived = element.isActived;
+      //   contactTemp.isprogrammed = element.isprogrammed;
+      //   allDate.add(contactTemp);
+      // }
 
-      return allDate;
+      return box.values.toList();
     } catch (error) {
       print(error);
       return [];
@@ -136,10 +138,16 @@ class HiveDataRisk {
     }
   }
 
-  Future deleteContactZone(ContactZoneRiskBD contact) async {
-    final Box<ContactZoneRiskBD> box =
-        await Hive.openBox<ContactZoneRiskBD>('ContactZoneRiskBD');
-    await box.delete(contact);
-    await Hive.close();
+  Future<bool> deleteContactZone(ContactZoneRiskBD contact) async {
+    try {
+      final Box<ContactZoneRiskBD> box =
+          await Hive.openBox<ContactZoneRiskBD>('ContactZoneRiskBD');
+      await box.deleteAt(contact.id);
+
+      return true;
+    } catch (error) {
+      print(error);
+      return false;
+    }
   }
 }

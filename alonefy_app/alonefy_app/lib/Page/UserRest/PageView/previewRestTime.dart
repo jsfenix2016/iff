@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:collection';
 
 import 'package:flutter/material.dart';
@@ -16,6 +18,7 @@ import 'package:ifeelefine/Page/UserRest/Widgets/rowSelectTimer.dart';
 import 'package:ifeelefine/Utils/Widgets/elevateButtonCustomBorder.dart';
 import 'package:ifeelefine/Utils/Widgets/listDayweekCustom.dart';
 import 'package:collection/collection.dart';
+import 'package:ifeelefine/Utils/Widgets/widgetLogo.dart';
 
 class PreviewRestTimePage extends StatefulWidget {
   const PreviewRestTimePage({super.key, required this.isMenu});
@@ -97,13 +100,15 @@ class _PreviewRestTimePageState extends State<PreviewRestTimePage> {
   }
 
   Future updateRestDay(BuildContext context) async {
-    // ignore: use_build_context_synchronously
-
     int id = await restVC.saveUserListRestTime(context, selecDicActivity);
 
     if (id != -1) {
-      if (widget.isMenu) return;
-      Navigator.push(
+      if (widget.isMenu) {
+        showAlert(context, "Se a guardado correctamente");
+
+        return;
+      }
+      Navigator.pushReplacement(
         context,
         MaterialPageRoute(
           builder: (context) => const UserInactivityPage(),
@@ -136,7 +141,7 @@ class _PreviewRestTimePageState extends State<PreviewRestTimePage> {
 
         selecDicActivity.removeAt(i);
         selecDicActivity.insert(i, temp);
-        int id = await restVC.saveUserListRestTime(context, selecDicActivity);
+        await restVC.saveUserListRestTime(context, selecDicActivity);
         getInactivity();
         continue;
       }
@@ -163,6 +168,11 @@ class _PreviewRestTimePageState extends State<PreviewRestTimePage> {
         height: size.height,
         child: ListView(
           children: [
+            Column(
+              children: const [
+                WidgetLogoApp(),
+              ],
+            ),
             const SizedBox(
               height: 10,
             ),
@@ -190,14 +200,11 @@ class _PreviewRestTimePageState extends State<PreviewRestTimePage> {
                             listRest: selecDicActivity,
                             newIndex: i,
                             onChanged: (value) async {
-                              print(value);
-
                               indexFile = value;
                               var temp = selecDicActivity[value];
                               temp.isSelect =
                                   (temp.isSelect == false) ? true : false;
                               temp.selection = i;
-                              print(selecDicActivity[value]);
 
                               selecDicActivity.removeAt(value);
                               selecDicActivity.insert(value, temp);

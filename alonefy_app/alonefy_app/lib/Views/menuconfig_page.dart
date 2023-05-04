@@ -4,18 +4,21 @@ import 'package:ifeelefine/Common/colorsPalette.dart';
 
 import 'package:ifeelefine/Page/ChangeNotificationTime/PageView/changeNotificationTime_page.dart';
 import 'package:ifeelefine/Page/Disamble/Pageview/disambleIfeelfine_page.dart';
+import 'package:ifeelefine/Page/EditUseMobil/Page/editUseMobil.dart';
 import 'package:ifeelefine/Page/FallDetected/Pageview/fall_activation_config_page.dart';
 
 import 'package:ifeelefine/Page/Geolocator/PageView/configGeolocator_page.dart';
 
 import 'package:ifeelefine/Page/PreviewActivitiesFilteredByDate/PageView/previewActivitiesByDate_page.dart';
 import 'package:ifeelefine/Page/RestoreMyConfiguration/PageView/restoreMyConfig_page.dart';
+import 'package:ifeelefine/Page/UserConfig/PageView/userconfig_page.dart';
 
 import 'package:ifeelefine/Page/UserEdit/PageView/editUser_page.dart';
 
 import 'package:ifeelefine/Page/UserInactivityPage/PageView/configurationUserInactivity_page.dart';
 
 import 'package:ifeelefine/Page/UserRest/PageView/previewRestTime.dart';
+import 'package:ifeelefine/Provider/prefencesUser.dart';
 import 'package:ifeelefine/Views/contact_page.dart';
 import 'package:ifeelefine/Views/geolocatos_test_page.dart';
 
@@ -52,8 +55,6 @@ class _MenuConfigurationPageState extends State<MenuConfigurationPage> {
     MenuConfigModel(
         "Configurar caída", 'assets/images/Group 506.png', 26, 22.76),
     MenuConfigModel(
-        "Configurar smartwatch", 'assets/images/Group 1100.png', 22, 15.87),
-    MenuConfigModel(
         "Cambiar envío ubicación", 'assets/images/Group 1082.png', 24, 24),
     MenuConfigModel("Cambiar tiempo notificaciónes",
         'assets/images/Group 1099.png', 22, 17.15),
@@ -72,15 +73,32 @@ class _MenuConfigurationPageState extends State<MenuConfigurationPage> {
     super.initState();
   }
 
+  void redirectToConfigUser() {
+    Route route = MaterialPageRoute(
+      builder: (context) => const UserConfigPage(),
+    );
+    Navigator.pushReplacement(context, route);
+  }
+
   void routeIndexSelect(int index) {
+    final prefs = PreferenceUser();
+
     switch (index) {
       case 0:
+        if (!prefs.isConfig) {
+          redirectToConfigUser();
+          return;
+        }
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => const UserEditPage()),
         );
         break;
       case 1:
+        if (!prefs.isConfig) {
+          redirectToConfigUser();
+          return;
+        }
         Navigator.push(
           context,
           MaterialPageRoute(
@@ -92,14 +110,22 @@ class _MenuConfigurationPageState extends State<MenuConfigurationPage> {
         break;
 
       case 2:
+        // if (!prefs.isConfig) {
+        //   redirectToConfigUser();
+        //   return;
+        // }
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => const UserInactivityPage(),
+            builder: (context) => const EditUseMobilPage(),
           ),
         );
         break;
       case 3:
+        if (!prefs.isConfig) {
+          redirectToConfigUser();
+          return;
+        }
         Navigator.push(
           context,
           MaterialPageRoute(
@@ -108,14 +134,24 @@ class _MenuConfigurationPageState extends State<MenuConfigurationPage> {
         );
         break;
       case 4:
+        if (!prefs.isConfig) {
+          redirectToConfigUser();
+          return;
+        }
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => const ContactList(),
+            builder: (context) => const ContactList(
+              isMenu: true,
+            ),
           ),
         );
         break;
       case 5:
+        if (!prefs.isConfig) {
+          redirectToConfigUser();
+          return;
+        }
         Navigator.push(
           context,
           MaterialPageRoute(
@@ -124,6 +160,10 @@ class _MenuConfigurationPageState extends State<MenuConfigurationPage> {
         );
         break;
       case 6:
+        if (!prefs.isConfig) {
+          redirectToConfigUser();
+          return;
+        }
         Navigator.push(
           context,
           MaterialPageRoute(
@@ -132,6 +172,10 @@ class _MenuConfigurationPageState extends State<MenuConfigurationPage> {
         );
         break;
       case 7:
+        if (!prefs.isConfig) {
+          redirectToConfigUser();
+          return;
+        }
         Navigator.push(
           context,
           MaterialPageRoute(
@@ -142,6 +186,10 @@ class _MenuConfigurationPageState extends State<MenuConfigurationPage> {
         );
         break;
       case 8:
+        if (!prefs.isConfig) {
+          redirectToConfigUser();
+          return;
+        }
         Navigator.push(
           context,
           MaterialPageRoute(
@@ -150,6 +198,10 @@ class _MenuConfigurationPageState extends State<MenuConfigurationPage> {
         );
         break;
       case 9:
+        if (!prefs.isConfig) {
+          redirectToConfigUser();
+          return;
+        }
         Navigator.push(
           context,
           MaterialPageRoute(
@@ -158,6 +210,10 @@ class _MenuConfigurationPageState extends State<MenuConfigurationPage> {
         );
         break;
       case 10:
+        if (!prefs.isConfig) {
+          redirectToConfigUser();
+          return;
+        }
         Navigator.push(
           context,
           MaterialPageRoute(
@@ -184,6 +240,7 @@ class _MenuConfigurationPageState extends State<MenuConfigurationPage> {
         );
         break;
       case 13:
+        redirectToConfigUser();
         break;
       default:
     }

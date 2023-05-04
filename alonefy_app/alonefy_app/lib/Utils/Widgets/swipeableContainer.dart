@@ -6,11 +6,11 @@ import 'package:flutter/widgets.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:ifeelefine/Common/colorsPalette.dart';
-import 'package:ifeelefine/Model/userpositionbd.dart';
+import 'package:ifeelefine/Model/logAlertsBD.dart';
 
 class SwipeableContainer extends StatefulWidget {
   const SwipeableContainer({super.key, required this.temp});
-  final List<UserPositionBD> temp;
+  final List<LogAlertsBD> temp;
   @override
   State<SwipeableContainer> createState() => _SwipeableContainerState();
 }
@@ -20,9 +20,7 @@ class _SwipeableContainerState extends State<SwipeableContainer> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
-    // getAllMov();
   }
 
   @override
@@ -105,7 +103,7 @@ class _SwipeableContainerState extends State<SwipeableContainer> {
                                   ),
                                 ),
                                 subtitle: Text(
-                                  widget.temp[index].movRureUser.toString(),
+                                  widget.temp[index].time.toString(),
                                   textAlign: TextAlign.left,
                                   style: GoogleFonts.barlow(
                                     fontSize: 16.0,

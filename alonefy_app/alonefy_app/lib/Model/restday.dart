@@ -4,4 +4,5 @@ class RestDay {
   late String timeWakeup;
   late String timeSleep;
   late int selection;
+  late bool isSelect;
 }

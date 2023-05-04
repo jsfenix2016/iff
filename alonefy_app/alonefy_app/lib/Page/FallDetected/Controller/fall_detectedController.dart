@@ -16,7 +16,9 @@ class FallDetectedController extends GetxController {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => const ContactList(),
+        builder: (context) => const ContactList(
+          isMenu: false,
+        ),
       ),
     );
   }

@@ -3,12 +3,12 @@ import 'dart:typed_data';
 import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:hive/hive.dart';
 import 'package:ifeelefine/Data/hive_constant_adapterInit.dart';
-part 'Adapters/contact.g.dart';
+part 'contact.g.dart';
 
 @HiveType(typeId: HiveConstantAdapterInit.idContactBDAdapter)
 class ContactBD extends HiveObject {
-  ContactBD(this.id, this.displayName, this.photo, this.thumbnail, this.name,
-      this.timeSendSMS, this.timeCall, this.phones);
+  ContactBD(this.id, this.displayName, this.photo, this.name, this.timeSendSMS,
+      this.timeCall, this.phones, this.requestStatus);
 
   @HiveField(0)
   int id;
@@ -20,18 +20,18 @@ class ContactBD extends HiveObject {
   Uint8List? photo;
 
   @HiveField(3)
-  Uint8List? thumbnail;
-
-  @HiveField(4)
   String name;
 
-  @HiveField(5)
+  @HiveField(4)
   String timeSendSMS;
 
-  @HiveField(6)
+  @HiveField(5)
   String timeCall;
-  @HiveField(7)
+  @HiveField(6)
   String phones;
+
+  @HiveField(7)
+  String requestStatus;
 }
 
 // class Contact {

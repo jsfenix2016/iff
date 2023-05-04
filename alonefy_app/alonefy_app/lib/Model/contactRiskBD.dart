@@ -2,7 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:hive/hive.dart';
 import 'package:ifeelefine/Data/hive_constant_adapterInit.dart';
 
-part 'Adapters/contactRiskBD.g.dart';
+part 'contactRiskBD.g.dart';
 
 @HiveType(typeId: HiveConstantAdapterInit.idContactRiskBDAdapter)
 class ContactRiskBD {
@@ -21,7 +21,9 @@ class ContactRiskBD {
       required this.isFinishTime,
       required this.code,
       required this.isActived,
-      required this.isprogrammed});
+      required this.isprogrammed,
+      required this.photoDate,
+      required this.saveContact});
 
   @HiveField(0)
   int id;
@@ -68,5 +70,8 @@ class ContactRiskBD {
   bool isprogrammed;
 
   @HiveField(15)
-  Uint8List? photoDate;
+  List<Uint8List> photoDate;
+
+  @HiveField(16)
+  bool saveContact;
 }

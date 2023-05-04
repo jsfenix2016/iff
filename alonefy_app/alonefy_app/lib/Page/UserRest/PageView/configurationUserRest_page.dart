@@ -18,6 +18,7 @@ import 'package:ifeelefine/Page/UserRest/PageView/previewRestTime.dart';
 import 'package:ifeelefine/Page/UserRest/Widgets/rowSelectTimer.dart';
 import 'package:ifeelefine/Utils/Widgets/elevatedButtonFilling.dart';
 import 'package:ifeelefine/Utils/Widgets/listDayweekCustom.dart';
+import 'package:ifeelefine/Utils/Widgets/widgetLogo.dart';
 
 class UserRestPage extends StatefulWidget {
   const UserRestPage({super.key});
@@ -85,9 +86,14 @@ class _UserRestPageState extends State<UserRestPage> {
                 height: size.height - 120,
                 child: ListView(
                   children: [
+                    Column(
+                      children: const [
+                        WidgetLogoApp(),
+                      ],
+                    ),
                     Padding(
                       padding: const EdgeInsets.only(
-                          top: 120.0, left: 50, right: 50, bottom: 30),
+                          top: 100.0, left: 30, right: 30, bottom: 30),
                       child: Container(
                         color: Colors.transparent,
                         width: size.width,
@@ -99,7 +105,7 @@ class _UserRestPageState extends State<UserRestPage> {
                             wordSpacing: 1,
                             letterSpacing: 1.2,
                             fontWeight: FontWeight.bold,
-                            color: Colors.white,
+                            color: ColorPalette.principal,
                           ),
                         ),
                       ),

@@ -24,6 +24,7 @@ class OnboardingPage extends StatelessWidget {
     const MyPage2Widget(),
     const MyPage3Widget(),
     const MyPage4Widget(),
+    const MyPage5Widget(),
   ];
   @override
   Widget build(BuildContext context) {
@@ -49,14 +50,14 @@ class OnboardingPage extends StatelessWidget {
               bottom: 80,
               left: 0,
               right: 0,
-              height: 20,
+              height: 8,
               child: SizedBox(
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: List<Widget>.generate(
                       _pages.length,
                       (index) => Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 10),
+                            padding: const EdgeInsets.symmetric(horizontal: 3),
                             child: InkWell(
                               onTap: () {
                                 _controller.animateToPage(index,
@@ -111,7 +112,7 @@ class MyPage1Widget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const WidgetColumnOnboarding(
-      img: 'assets/images/Mask group-2.png',
+      img: 'assets/images/pantalla1.jpg',
       title: Constant.onBoardingWelcome,
       subtitle: Constant.onBoardingWelcomeMessage,
     );
@@ -124,7 +125,7 @@ class MyPage2Widget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const WidgetColumnOnboarding(
-      img: 'assets/images/Mask group.png',
+      img: 'assets/images/pantalla2.png',
       title: Constant.onBoardingPageTwoTitle,
       subtitle: Constant.onBoardingPageTwoSubtitle,
     );
@@ -137,7 +138,7 @@ class MyPage3Widget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const WidgetColumnOnboarding(
-      img: 'assets/images/Mask group-3.png',
+      img: 'assets/images/pantalla3.png',
       title: Constant.onBoardingPageTreeTitle,
       subtitle: Constant.onBoardingPageTreeSubtitle,
     );
@@ -150,9 +151,22 @@ class MyPage4Widget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const WidgetColumnOnboarding(
-      img: 'assets/images/Mask group-4.png',
+      img: 'assets/images/Pantalla4.jpg',
       title: Constant.onBoardingPageFourTitle,
       subtitle: Constant.onBoardingPageFourSubtitle,
+    );
+  }
+}
+
+class MyPage5Widget extends StatelessWidget {
+  const MyPage5Widget({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const WidgetColumnOnboarding(
+      img: 'assets/images/Pantalla5.jpg',
+      title: Constant.onBoardingPageFiveTitle,
+      subtitle: Constant.onBoardingPageFiveSubtitle,
     );
   }
 }

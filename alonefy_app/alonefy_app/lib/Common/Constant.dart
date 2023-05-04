@@ -21,21 +21,28 @@ class Constant {
   static const saveBtn = 'Guardar';
   static const nextTxt = 'Siguiente';
   static const age = 'Edad';
-  static const onBoardingWelcome = 'Bienvenida/o a I’m fine';
+  static const onBoardingWelcome = 'Te damos la Bienvenida/o a I’m fine';
   static const onBoardingWelcomeMessage =
       'Si vives feliz solo o sola además, quieres sentirte protegido/a';
 
-  static const onBoardingPageTwoTitle = 'Ante una situación de riesgo';
+  static const onBoardingPageTwoTitle =
+      'Ante una situación de riesgo cuando estas sol@';
   static const onBoardingPageTwoSubtitle =
-      'Si IFeelFine no detecta actividad o movimiento en tu smartphone';
+      'Si I’m fine no detecta actividad o movimiento en tu smartphone, avisa al amigo o familiar que desees';
 
-  static const onBoardingPageTreeTitle = 'Avisa a las personas que elijas';
+  static const onBoardingPageTreeTitle = 'Cuando una cita privada no vaya bien';
   static const onBoardingPageTreeSubtitle =
-      'Con IFeelFine, aunque vivas solo o sola, te sentiras protegido/a';
+      'I’m fine avisa a tus amig@s de confianza y envía tu ubicación';
 
-  static const onBoardingPageFourTitle = 'Ahora ya puedes descansar';
+  static const onBoardingPageFourTitle =
+      'Si tienes que atravesar sol@ una zona peligrosa';
   static const onBoardingPageFourSubtitle =
-      'Si vives feliz solo o sola pero ademas quieres sentirte protegido/a mientras estas en casa o de viaje';
+      'I’m fine activará una alerta inmediata si te ocurre algo';
+
+  static const onBoardingPageFiveTitle =
+      'Sientete ahora más segur@ viviendo sol@';
+  static const onBoardingPageFiveSubtitle =
+      'Con I’m fine tu  smartphone será tu mejor protección personal';
 
   static const alternativePageButtonPersonalizar = 'Personalizar ajustes';
   static const alternativePageButtonInit = 'Comenzar a usar';
@@ -50,6 +57,12 @@ class Constant {
       '¿Deseas que, en caso de alerta, enviemos tu ubicación a tus contactos?';
 
   static const permissionApp = 'Permisos que se usan en la app';
+
+  static const String onceTime = "Evento de una sola vez";
+  static const String diary = "Diario";
+  static const String weekly = "Semanal";
+  static const String monthly = "Mensual";
+  static const String yearly = "Anual";
 
   static const Map<String, String> gender = {
     '0': 'Hombre',
@@ -213,8 +226,7 @@ class Constant {
       "Para poder desactivar el permiso, se ha de hacer desde los Ajustes de la app";
   static const String enablePermission =
       "Para poder activar el permiso, se ha de hacer desde los Ajustes de la app";
-  static const String enableLocalPermission =
-      "¿Aceptas el permiso de";
+  static const String enableLocalPermission = "¿Aceptas el permiso de";
   static const String verifyPhoneNumber =
       'Debe verificar su numero de telefono';
 

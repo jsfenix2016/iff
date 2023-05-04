@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of '../contact.dart';
+part of 'contact.dart';
 
 // **************************************************************************
 // TypeAdapterGenerator
@@ -20,7 +20,7 @@ class ContactBDAdapter extends TypeAdapter<ContactBD> {
       fields[0] as int,
       fields[1] as String,
       fields[2] as Uint8List?,
-      fields[3] as Uint8List?,
+      fields[3] as String,
       fields[4] as String,
       fields[5] as String,
       fields[6] as String,
@@ -39,15 +39,15 @@ class ContactBDAdapter extends TypeAdapter<ContactBD> {
       ..writeByte(2)
       ..write(obj.photo)
       ..writeByte(3)
-      ..write(obj.thumbnail)
-      ..writeByte(4)
       ..write(obj.name)
-      ..writeByte(5)
+      ..writeByte(4)
       ..write(obj.timeSendSMS)
-      ..writeByte(6)
+      ..writeByte(5)
       ..write(obj.timeCall)
+      ..writeByte(6)
+      ..write(obj.phones)
       ..writeByte(7)
-      ..write(obj.phones);
+      ..write(obj.requestStatus);
   }
 
   @override

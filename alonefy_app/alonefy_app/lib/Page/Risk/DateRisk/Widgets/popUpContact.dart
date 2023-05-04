@@ -36,83 +36,80 @@ class _PopUpContactState extends State<PopUpContact> {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(top: 28.0, left: 8, right: 8),
-      child: Expanded(
-        child: ListView.separated(
-          shrinkWrap: false,
-          itemCount: widget.listcontact.length,
-          separatorBuilder: (context, index) {
-            return const SizedBox(
-              height: 10,
-            );
-          },
-          itemBuilder: (BuildContext context, int index) {
-            return GestureDetector(
-              onTap: () {
-                contactSelect = widget.listcontact[index];
-                indexSelect = index;
-                widget.onChanged(indexSelect);
-                Navigator.pop(context);
-                setState(() {});
-              },
-              child: Container(
-                decoration: BoxDecoration(
-                  color: Colors.black.withAlpha(60),
-                  borderRadius: const BorderRadius.all(Radius.circular(
-                          79.0) //                 <--- border radius here
-                      ),
-                ),
-                width: 300,
-                height: 80,
-                child: Stack(
-                  children: [
-                    Container(
-                      width: 79,
-                      height: 79,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: const BorderRadius.all(Radius.circular(
-                                79.0) //                 <--- border radius here
-                            ),
-                        border: Border.all(color: Colors.blueAccent),
-                        image: DecorationImage(
-                          image: (widget.listcontact[index].photo == null)
-                              ? const AssetImage("assets/images/icons8.png")
-                              : Image.memory(widget.listcontact[index].photo!,
-                                      fit: BoxFit.cover,
-                                      width: 100,
-                                      height: 100.0)
-                                  .image,
-                          fit: BoxFit.fill,
-                        ),
+      child: ListView.separated(
+        shrinkWrap: false,
+        itemCount: widget.listcontact.length,
+        separatorBuilder: (context, index) {
+          return const SizedBox(
+            height: 10,
+          );
+        },
+        itemBuilder: (BuildContext context, int index) {
+          return GestureDetector(
+            onTap: () {
+              contactSelect = widget.listcontact[index];
+              indexSelect = index;
+              widget.onChanged(indexSelect);
+              Navigator.pop(context);
+              setState(() {});
+            },
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.black.withAlpha(60),
+                borderRadius: const BorderRadius.all(Radius.circular(79.0)),
+              ),
+              width: 300,
+              height: 80,
+              child: Stack(
+                children: [
+                  Container(
+                    width: 79,
+                    height: 79,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius:
+                          const BorderRadius.all(Radius.circular(79.0)),
+                      border: Border.all(color: Colors.blueAccent),
+                      image: DecorationImage(
+                        image: (widget.listcontact[index].photo == null)
+                            ? const AssetImage("assets/images/icons8.png")
+                            : Image.memory(
+                                widget.listcontact[index].photo!,
+                                fit: BoxFit.cover,
+                                width: 100,
+                                height: 100.0,
+                              ).image,
+                        fit: BoxFit.fill,
                       ),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 90.0),
-                      child: Container(
-                        color: Colors.transparent,
-                        height: 79,
-                        width: 220,
-                        child: Center(
-                          child: Text(
-                            widget.listcontact[index].displayName.toString(),
-                            textAlign: TextAlign.left,
-                            style: GoogleFonts.barlow(
-                              fontSize: 18.0,
-                              wordSpacing: 1,
-                              letterSpacing: 1,
-                              fontWeight: FontWeight.normal,
-                              color: Colors.white,
-                            ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 90.0),
+                    child: Container(
+                      color: Colors.transparent,
+                      height: 79,
+                      width: 220,
+                      child: Center(
+                        child: Text(
+                          widget.listcontact[index].displayName.toString(),
+                          textAlign: TextAlign.left,
+                          style: GoogleFonts.barlow(
+                            fontSize: 18.0,
+                            wordSpacing: 1,
+                            letterSpacing: 1,
+                            fontWeight: FontWeight.normal,
+                            color: Colors.white,
+                            decoration: TextDecoration.none,
                           ),
                         ),
                       ),
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
-            );
-          },
-        ),
+            ),
+          );
+        },
       ),
     );
   }

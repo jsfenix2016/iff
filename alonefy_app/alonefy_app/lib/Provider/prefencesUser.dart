@@ -14,7 +14,7 @@ class PreferenceUser {
   }
 
   get onBoarding {
-    return _prefs.getBool('onboar') ?? false;
+    return _prefs.getBool('onboard') ?? false;
   }
 
   set onboarding(bool value) {
@@ -27,6 +27,14 @@ class PreferenceUser {
 
   set firstConfig(bool value) {
     _prefs.setBool('firstConfig', value);
+  }
+
+  get isConfig {
+    return _prefs.getBool('isConfig') ?? false;
+  }
+
+  set config(bool value) {
+    _prefs.setBool('isConfig', value);
   }
 
   get getTimeUse {
@@ -102,7 +110,8 @@ class PreferenceUser {
   }
 
   get getAcceptedSendLocation {
-    return PreferencePermission.values[_prefs.getInt('AcceptedSendLocation') ?? 0];
+    return PreferencePermission
+        .values[_prefs.getInt('AcceptedSendLocation') ?? 0];
   }
 
   set setAcceptedSendLocation(PreferencePermission permission) {
@@ -126,7 +135,8 @@ class PreferenceUser {
   }
 
   get getAcceptedNotification {
-    return PreferencePermission.values[_prefs.getInt('AcceptedNotification') ?? 0];
+    return PreferencePermission
+        .values[_prefs.getInt('AcceptedNotification') ?? 0];
   }
 
   set setAcceptedNotification(PreferencePermission permission) {
@@ -134,7 +144,8 @@ class PreferenceUser {
   }
 
   get getAcceptedScheduleExactAlarm {
-    return PreferencePermission.values[_prefs.getInt('AcceptedScheduleExactAlarm') ?? 0];
+    return PreferencePermission
+        .values[_prefs.getInt('AcceptedScheduleExactAlarm') ?? 0];
   }
 
   set setAcceptedScheduleExactAlarm(PreferencePermission permission) {
@@ -206,10 +217,4 @@ class PreferenceUser {
   }
 }
 
-enum PreferencePermission {
-  init,
-  denied,
-  deniedForever,
-  allow,
-  noAccepted
-}
+enum PreferencePermission { init, denied, deniedForever, allow, noAccepted }

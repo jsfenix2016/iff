@@ -77,23 +77,6 @@ class _CustomNavbarState extends State<CustomNavbar> {
                     color: Colors.transparent,
                     child: Stack(
                       children: [
-                        Positioned(
-                          right: 7,
-                          top: 5,
-                          child: Visibility(
-                            visible: true,
-                            child: Container(
-                              decoration: const BoxDecoration(
-                                  borderRadius: BorderRadius.all(
-                                      Radius.circular(
-                                          20.0) //                 <--- border radius here
-                                      ),
-                                  color: Colors.red),
-                              height: 8,
-                              width: 8,
-                            ),
-                          ),
-                        ),
                         IconButton(
                           iconSize: 61,
                           icon: Column(

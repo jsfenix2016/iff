@@ -2,10 +2,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:ifeelefine/Common/Constant.dart';
 import 'package:ifeelefine/Common/colorsPalette.dart';
 import 'package:ifeelefine/Common/utils.dart';
 import 'package:ifeelefine/Model/activitydaybd.dart';
 import 'package:ifeelefine/Page/Calendar/calendarPopup.dart';
+import 'package:ifeelefine/Utils/Widgets/widgetLogo.dart';
 import 'package:jiffy/jiffy.dart';
 
 import '../../../Model/activityDay.dart';
@@ -126,7 +128,7 @@ class _PreviewActivitiesByDateState extends State<PreviewActivitiesByDate>
           if (!isDayRemoved) {
             // Hacer validaciones según el tipo de periodicidad de la tempActivity
             switch (activity.repeatType) {
-              case onceTime:
+              case Constant.onceTime:
                 var onceDate =
                     Jiffy(activity.day.toLowerCase(), getDefaultPattern())
                         .dateTime;
@@ -137,7 +139,7 @@ class _PreviewActivitiesByDateState extends State<PreviewActivitiesByDate>
                   activitiesByDay.add(activity);
                 }
                 break;
-              case diary:
+              case Constant.diary:
                 var diaryStartDate =
                     Jiffy(activity.day.toLowerCase(), getDefaultPattern())
                         .dateTime;
@@ -151,7 +153,7 @@ class _PreviewActivitiesByDateState extends State<PreviewActivitiesByDate>
                   activitiesByDay.add(activity);
                 }
                 break;
-              case weekly:
+              case Constant.weekly:
                 if (activity.days != null && activity.days!.isNotEmpty) {
                   var daysRepeated = activity.days!.split(';');
                   for (var day in daysRepeated) {
@@ -178,7 +180,7 @@ class _PreviewActivitiesByDateState extends State<PreviewActivitiesByDate>
                   }
                 }
                 break;
-              case monthly:
+              case Constant.monthly:
                 var monthlyStartDate =
                     Jiffy(activity.day.toLowerCase(), getDefaultPattern())
                         .dateTime;
@@ -194,7 +196,7 @@ class _PreviewActivitiesByDateState extends State<PreviewActivitiesByDate>
                   }
                 }
                 break;
-              case yearly:
+              case Constant.yearly:
                 var yearlyStartDate =
                     Jiffy(activity.day.toLowerCase(), getDefaultPattern())
                         .dateTime;
@@ -372,6 +374,7 @@ class _PreviewActivitiesByDateState extends State<PreviewActivitiesByDate>
             children: [
               Column(
                 children: [
+                  const WidgetLogoApp(),
                   Padding(
                     padding: const EdgeInsets.fromLTRB(32, 32, 32, 0),
                     child:
@@ -554,8 +557,14 @@ class _PreviewActivitiesByDateState extends State<PreviewActivitiesByDate>
                                                       left: 16,
                                                       child: Text(
                                                         rangeTimeToString(
-                                                            _activitiesByDay[index]![indexActivity].timeStart,
-                                                            _activitiesByDay[index]![indexActivity].timeFinish),
+                                                            _activitiesByDay[
+                                                                        index]![
+                                                                    indexActivity]
+                                                                .timeStart,
+                                                            _activitiesByDay[
+                                                                        index]![
+                                                                    indexActivity]
+                                                                .timeFinish),
                                                         //_activitiesByDay[index]![indexActivity].activity,
                                                         textAlign:
                                                             TextAlign.left,

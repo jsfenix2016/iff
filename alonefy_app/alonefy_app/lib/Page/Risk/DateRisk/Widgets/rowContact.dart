@@ -1,7 +1,6 @@
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ifeelefine/Common/colorsPalette.dart';
 import 'package:ifeelefine/Common/utils.dart';
-import 'package:ifeelefine/Model/activityDay.dart';
 
 import 'package:flutter/material.dart';
 import 'package:ifeelefine/Model/contactRiskBD.dart';
@@ -33,9 +32,6 @@ class _RowContactState extends State<RowContact> {
   late String timeLblAM = "00:00 AM";
   DateTime now = DateTime.now();
   DateFormat format = DateFormat();
-  void _sendRestDay(ActivityDay rest) {
-    setState(() {});
-  }
 
   @override
   void initState() {
@@ -58,13 +54,13 @@ class _RowContactState extends State<RowContact> {
     bool isBefore = now.hour < endTime.hour ||
         (now.hour == endTime.hour && now.minute < endTime.minute);
 
-    if (isActive && !isProgrammed) {
+    if (isActive && !isProgrammed && !isAfter) {
       // La cita está activa y no está programada, se muestra en amarillo
       return ColorPalette.principal.withAlpha(900);
     } else if (!isActive && isProgrammed && isBefore) {
       // La cita está programada y aún no ha comenzado, se muestra en azul
       return Colors.blueAccent.withAlpha(900);
-    } else if (!isActive && isAfter) {
+    } else if (isAfter && isActive) {
       // La cita ha finalizado, se muestra en rojo
       return Colors.red.withAlpha(900);
     } else {
@@ -77,28 +73,6 @@ class _RowContactState extends State<RowContact> {
     DateTime endTime = parseDurationRow(contactRisk.timefinish);
     return _getColor(endTime, contactRisk.isActived, contactRisk.isprogrammed);
   }
-
-  // Color getStateDateColor(ContactRiskBD contactRisk) {
-  //   DateTime end = parseDurationRow(contactRisk.timefinish);
-
-  //   Color colortemp = const Color.fromRGBO(11, 11, 10, 0.6);
-
-  //   if (contactRisk.isActived && contactRisk.isprogrammed == false) {
-  //     return ColorPalette.principal.withAlpha(900);
-  //   } else if (contactRisk.isActived == false &&
-  //       contactRisk.isprogrammed &&
-  //       (now.hour.compareTo(end.hour) == 0 &&
-  //           now.minute.compareTo(end.minute) >= 0)) {
-  //     return Colors.blueAccent.withAlpha(900);
-  //   } else if (contactRisk.isActived == false &&
-  //       contactRisk.isprogrammed == false &&
-  //       (now.hour.compareTo(end.hour) == 0 &&
-  //           now.minute.compareTo(end.minute) >= 0)) {
-  //     return Colors.red.withAlpha(900);
-  //   }
-
-  //   return colortemp;
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -122,15 +96,19 @@ class _RowContactState extends State<RowContact> {
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     mainAxisSize: MainAxisSize.max,
                     children: [
-                      Text(
-                        "Hora de inicio:",
-                        textAlign: TextAlign.left,
-                        style: GoogleFonts.barlow(
-                          fontSize: 16.0,
-                          wordSpacing: 1,
-                          letterSpacing: 0.001,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
+                      Container(
+                        width: 105,
+                        color: Colors.transparent,
+                        child: Text(
+                          "Hora de inicio:",
+                          textAlign: TextAlign.left,
+                          style: GoogleFonts.barlow(
+                            fontSize: 16.0,
+                            wordSpacing: 1,
+                            letterSpacing: 0.001,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
                         ),
                       ),
                       Text(
@@ -186,15 +164,19 @@ class _RowContactState extends State<RowContact> {
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   mainAxisSize: MainAxisSize.max,
                   children: [
-                    Text(
-                      "Hora de fin:    ",
-                      textAlign: TextAlign.left,
-                      style: GoogleFonts.barlow(
-                        fontSize: 16.0,
-                        wordSpacing: 1,
-                        letterSpacing: 0.001,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
+                    Container(
+                      width: 110,
+                      color: Colors.transparent,
+                      child: Text(
+                        "Hora de fin:",
+                        textAlign: TextAlign.left,
+                        style: GoogleFonts.barlow(
+                          fontSize: 16.0,
+                          wordSpacing: 1,
+                          letterSpacing: 0.001,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
                       ),
                     ),
                     Container(

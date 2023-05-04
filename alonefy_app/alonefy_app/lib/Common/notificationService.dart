@@ -1,66 +1,3 @@
-// import 'dart:async';
-// import 'dart:io';
-// import 'dart:ui';
-
-// import 'package:device_info_plus/device_info_plus.dart';
-// import 'package:flutter/material.dart';
-
-// import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-
-// import 'package:flutter_background_service/flutter_background_service.dart';
-
-// import 'package:flutter_background_service_android/flutter_background_service_android.dart';
-
-// class NotificationService {
-//   FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-//       FlutterLocalNotificationsPlugin();
-
-//   Future onStart(ServiceInstance service) async {
-//     if (service is AndroidServiceInstance) {
-//       service.on('setAsForeground').listen((event) {
-//         service.setAsForegroundService();
-//       });
-
-//       service.on('setAsBackground').listen((event) {
-//         service.setAsBackgroundService();
-//       });
-//     }
-
-//     service.on('stopService').listen((event) {
-//       service.stopSelf();
-//     });
-
-//     // bring to foreground
-//     Timer.periodic(const Duration(seconds: 1), (timer) async {
-//       if (Platform.isAndroid) {
-//         if (service is AndroidServiceInstance) {
-//           if (await service.isForegroundService()) {}
-//         }
-//       }
-
-//       /// you can see this log in logcat
-//       print('FLUTTER BACKGROUND SERVICE: ${DateTime.now()}');
-
-//       // test using external plugin
-//       final deviceInfo = DeviceInfoPlugin();
-//       String? device;
-//       if (Platform.isAndroid) {
-//         final androidInfo = await deviceInfo.androidInfo;
-//         device = androidInfo.model;
-//         var id = androidInfo.id;
-//       }
-
-//       service.invoke(
-//         'update',
-//         {
-//           "current_date": DateTime.now().toIso8601String(),
-//           "device": device,
-//         },
-//       );
-//     });
-//   }
-// }
-
 import 'dart:async';
 
 import 'package:flutter/material.dart';
@@ -160,9 +97,47 @@ class RedirectViewNotifier with ChangeNotifier {
 
   static Future<void> showDateNotifications() async {
     await flutterLocalNotificationsPlugin.show(
-      0,
+      1,
       'Alerta',
       'Se a iniciado el horario de cita',
+      const NotificationDetails(
+        android: AndroidNotificationDetails(
+          'my_foreground',
+          'MY FOREGROUND SERVICE',
+          icon: 'ic_bg_service_small',
+          color: ColorPalette.principal,
+          importance: Importance.max,
+          ongoing: true,
+          enableLights: true,
+          playSound: true,
+          enableVibration: true,
+          channelShowBadge: false,
+          groupAlertBehavior: GroupAlertBehavior.children,
+          priority: Priority.high,
+
+          largeIcon: DrawableResourceAndroidBitmap('ic_bg_service_small'),
+          // sound: RawResourceAndroidNotificationSound(
+          //     "content://media/internal/audio/media/26.wav"),
+          actions: <AndroidNotificationAction>[
+            AndroidNotificationAction(
+              "date",
+              "Cancelar cita",
+              icon: DrawableResourceAndroidBitmap('ic_bg_service_small'),
+              showsUserInterface: true,
+              cancelNotification: true,
+            ),
+          ],
+        ),
+      ),
+      payload: 'DateRisk',
+    );
+  }
+
+  static Future<void> showDateFinishNotifications() async {
+    await flutterLocalNotificationsPlugin.show(
+      2,
+      'Alerta',
+      'Se a finalizado el horario de cita',
       const NotificationDetails(
         android: AndroidNotificationDetails(
           'my_foreground',

@@ -15,7 +15,7 @@ import 'package:ifeelefine/Page/Risk/DateRisk/ListDateRisk/PageView/riskDatePage
 import 'package:ifeelefine/Page/UserConfig/Controller/userConfigController.dart';
 import 'package:ifeelefine/Model/user.dart';
 import 'package:ifeelefine/Model/userbd.dart';
-import 'package:ifeelefine/Model/userpositionbd.dart';
+import 'package:ifeelefine/Model/logAlertsBD.dart';
 import 'package:ifeelefine/Provider/prefencesUser.dart';
 import 'package:ifeelefine/Utils/Widgets/swipeableContainer.dart';
 import 'package:ifeelefine/Page/Alerts/PageView/alerts_page.dart';
@@ -58,7 +58,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   late Image imgNew;
   var foto;
   final _picker = ImagePicker();
-  List<UserPositionBD> temp = [];
+  List<LogAlertsBD> temp = [];
   late AppLifecycleState _appLifecycleState;
 
   setBottomBarIndex(index) {
@@ -223,6 +223,22 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
               ),
             ),
             Positioned(
+              left: 57,
+              top: 55,
+              child: Visibility(
+                visible: !_prefs.isConfig,
+                child: Container(
+                  decoration: const BoxDecoration(
+                      borderRadius: BorderRadius.all(Radius.circular(
+                              20.0) //                 <--- border radius here
+                          ),
+                      color: Colors.red),
+                  height: 8,
+                  width: 8,
+                ),
+              ),
+            ),
+            Positioned(
               top: 44,
               right: 16,
               child: IconButton(
@@ -248,7 +264,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
               ),
             ),
             Positioned(
-              top: 75,
+              top: 90,
               child: Container(
                 width: size.width,
                 color: Colors.transparent,
@@ -263,7 +279,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
               ),
             ),
             Positioned(
-              top: 100,
+              top: 120,
               left: (size.width / 3) - 30,
               child: AvatarGlow(
                 glowColor: Colors.white,

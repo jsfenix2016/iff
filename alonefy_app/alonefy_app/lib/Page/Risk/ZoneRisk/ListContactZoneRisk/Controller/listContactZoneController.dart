@@ -7,6 +7,7 @@ import 'package:ifeelefine/Data/hive_data.dart';
 import 'package:ifeelefine/Model/contact.dart';
 import 'package:ifeelefine/Model/contactRiskBD.dart';
 import 'package:ifeelefine/Model/contactZoneRiskBD.dart';
+import 'package:notification_center/notification_center.dart';
 
 class ListContactZoneController extends GetxController {
   Future<List<ContactZoneRiskBD>> getContactsZoneRisk() async {
@@ -25,7 +26,8 @@ class ListContactZoneController extends GetxController {
     try {
       // Map info
       var delete = await const HiveDataRisk().deleteContactZone(contact);
-      showAlert(context, "Contacto guardado correctamente".tr);
+      showAlert(context, "Contacto eliminado correctamente".tr);
+      NotificationCenter().notify('getContactZoneRisk');
       return true;
     } catch (error) {
       return false;

@@ -1,7 +1,6 @@
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ifeelefine/Common/colorsPalette.dart';
-import 'package:ifeelefine/Model/activityDay.dart';
 
 import 'package:flutter/material.dart';
 
@@ -27,20 +26,26 @@ class ContentCode extends StatefulWidget {
 
 class _ContentCodeState extends State<ContentCode> {
   var code = CodeModel();
+
+  late List<FocusNode> _focusNodes;
+  @override
   @override
   void initState() {
     super.initState();
+    _focusNodes = List.generate(4, (index) => FocusNode());
   }
 
   @override
   void dispose() {
-    // Clean up the focus node when the Form is disposed.
-
+    // Asegúrate de liberar los recursos de los FocusNodes al finalizar
+    for (var focusNode in _focusNodes) {
+      focusNode.dispose();
+    }
     super.dispose();
   }
 
-  Widget textFildContainer(
-      String key, String code, ValueChanged<String> onChanged) {
+  Widget textFildContainer(String key, String code,
+      ValueChanged<String> onChanged, FocusNode focusNode) {
     return Container(
       height: 50,
       width: 50,
@@ -55,8 +60,13 @@ class _ContentCodeState extends State<ContentCode> {
         // maxLength: 1,
         onChanged: (valor) {
           onChanged((valor));
+          if (valor.length == 1 && focusNode != _focusNodes.last) {
+            // Solicita el siguiente enfoque solo si la longitud del valor es 1
+            // y el cuadro de texto actual no es el último en la lista
+            focusNode.nextFocus();
+          }
         },
-        autofocus: false,
+        focusNode: focusNode,
         key: Key(key),
         textCapitalization: TextCapitalization.sentences,
         decoration: const InputDecoration(
@@ -71,7 +81,13 @@ class _ContentCodeState extends State<ContentCode> {
           filled: true,
           labelStyle: TextStyle(color: ColorPalette.principal),
         ),
-        style: const TextStyle(fontSize: 18, color: ColorPalette.principal),
+        style: GoogleFonts.barlow(
+          fontSize: 24.0,
+          wordSpacing: 1,
+          letterSpacing: 1,
+          fontWeight: FontWeight.normal,
+          color: ColorPalette.principal,
+        ),
         onSaved: (value) => {},
       ),
     );
@@ -79,6 +95,9 @@ class _ContentCodeState extends State<ContentCode> {
 
   @override
   Widget build(BuildContext context) {
+    if (_focusNodes.isEmpty) {
+      _focusNodes = List.generate(4, (index) => FocusNode());
+    }
     return Container(
       color: Colors.transparent,
       height: 50,
@@ -87,12 +106,15 @@ class _ContentCodeState extends State<ContentCode> {
           mainAxisSize: MainAxisSize.max,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            textFildContainer("1",
-                widget.code.textCode1 == null ? "" : widget.code.textCode1!,
-                ((value) {
-              code.textCode1 = value.toString();
-              widget.onChanged(code);
-            })),
+            textFildContainer(
+              "1",
+              widget.code.textCode1 == null ? "" : widget.code.textCode1!,
+              ((value) {
+                code.textCode1 = value.toString();
+                widget.onChanged(code);
+              }),
+              _focusNodes[0],
+            ),
             const SizedBox(
               width: 10,
             ),
@@ -101,7 +123,7 @@ class _ContentCodeState extends State<ContentCode> {
                 ((value) {
               code.textCode2 = value.toString();
               widget.onChanged(code);
-            })),
+            }), _focusNodes[1]),
             const SizedBox(
               width: 10,
             ),
@@ -110,7 +132,7 @@ class _ContentCodeState extends State<ContentCode> {
                 ((value) {
               code.textCode3 = value.toString();
               widget.onChanged(code);
-            })),
+            }), _focusNodes[2]),
             const SizedBox(
               width: 10,
             ),
@@ -119,7 +141,7 @@ class _ContentCodeState extends State<ContentCode> {
                 ((value) {
               code.textCode4 = value.toString();
               widget.onChanged(code);
-            })),
+            }), _focusNodes[3]),
           ],
         ),
       ),

@@ -24,53 +24,105 @@ class _WidgetColumnOnboardingState extends State<WidgetColumnOnboarding> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisSize: MainAxisSize.max,
+    return Stack(
       children: [
-        SafeArea(child: Container()),
-        Center(
-          child: SizedBox(
-            width: 350,
-            child: Text(
-              widget.title,
-              textAlign: TextAlign.center,
-              style: GoogleFonts.barlow(
-                fontSize: 22.0,
-                wordSpacing: 1,
-                letterSpacing: 1.2,
-                fontWeight: FontWeight.bold,
-                color: ColorPalette.principal,
-              ),
-            ),
-          ),
-        ),
         SizedBox(
           child: Image.asset(
-            fit: BoxFit.fill,
-            scale: 0.5,
+            fit: BoxFit.fitHeight,
+            scale: 3,
             widget.img,
-            height: 430,
+            height: double.infinity,
             width: double.infinity,
           ),
         ),
-        const SizedBox(
-          height: 10,
+        LayoutBuilder(
+          builder: (BuildContext context, BoxConstraints constraints) {
+            // Utiliza constraints para obtener el tamaño disponible
+            // y configura adecuadamente tu widget
+            return Container(
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment(0, 1),
+                  colors: <Color>[
+                    Colors.black,
+                    Colors.transparent,
+                  ],
+                  tileMode: TileMode.mirror,
+                ),
+              ),
+              height: 250,
+              width: constraints.maxWidth,
+              child: Padding(
+                padding: const EdgeInsets.only(top: 38.0, left: 32, right: 32),
+                child: Text(
+                  widget.title,
+                  textAlign: TextAlign.center,
+                  style: GoogleFonts.barlow(
+                    fontSize: 22.0,
+                    wordSpacing: 1,
+                    letterSpacing: 1.2,
+                    fontWeight: FontWeight.bold,
+                    color: ColorPalette.principal,
+                  ),
+                ),
+              ),
+            );
+          },
         ),
-        const SizedBox(
-          height: 10,
+        Positioned(
+          left: 0.0,
+          right: 0,
+          bottom: 0,
+          child: Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: const Alignment(0, 1),
+                colors: <Color>[
+                  ColorPalette.secondView.withAlpha(600),
+                  ColorPalette.secondView,
+                  Colors.black,
+                ],
+                tileMode: TileMode.mirror,
+              ),
+            ),
+            height: 275,
+            width: double.infinity,
+          ),
         ),
-        Center(
-          child: SizedBox(
-            width: 350,
-            child: Text(
-              widget.subtitle,
-              textAlign: TextAlign.center,
-              style: GoogleFonts.barlow(
-                fontSize: 22.0,
-                wordSpacing: 1,
-                letterSpacing: 1,
-                fontWeight: FontWeight.normal,
-                color: Colors.white,
+        Positioned(
+          left: 0.0,
+          right: 0,
+          bottom: 00,
+          child: Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: const Alignment(0, 1),
+                colors: <Color>[
+                  Colors.transparent,
+                  Colors.black.withAlpha(700),
+                ],
+                tileMode: TileMode.mirror,
+              ),
+            ),
+            height: 400,
+            width: double.infinity,
+            child: Center(
+              child: Padding(
+                padding: const EdgeInsets.all(38.0),
+                child: Text(
+                  widget.subtitle,
+                  textAlign: TextAlign.center,
+                  style: GoogleFonts.barlow(
+                    fontSize: 26.0,
+                    wordSpacing: 1,
+                    letterSpacing: 1,
+                    fontWeight: FontWeight.normal,
+                    color: Colors.white,
+                  ),
+                ),
               ),
             ),
           ),

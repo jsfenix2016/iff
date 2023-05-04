@@ -20,8 +20,8 @@ class AddActivityPage extends StatefulWidget {
   State<AddActivityPage> createState() => _AddActivityPageState();
 }
 
-class _AddActivityPageState extends State<AddActivityPage>  with TickerProviderStateMixin {
-
+class _AddActivityPageState extends State<AddActivityPage>
+    with TickerProviderStateMixin {
   final AddActivityController controller = Get.put(AddActivityController());
 
   int hoursPositionPicker1 = 0;
@@ -41,11 +41,11 @@ class _AddActivityPageState extends State<AddActivityPage>  with TickerProviderS
 
   List<bool> itemsDropDown = [false, false, false, false, false];
   List<String> itemsDropDownText = [
-    onceTime,
-    diary,
-    weekly,
-    monthly,
-    yearly
+    Constant.onceTime,
+    Constant.diary,
+    Constant.weekly,
+    Constant.monthly,
+    Constant.yearly
   ];
 
   final List<String> tempNoSelectListDay = <String>[
@@ -58,7 +58,15 @@ class _AddActivityPageState extends State<AddActivityPage>  with TickerProviderS
     "D",
   ];
 
-  final List<bool> _selectedDays = [false, false, false, false, false, false, false];
+  final List<bool> _selectedDays = [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+  ];
 
   final TextEditingController textController = TextEditingController();
 
@@ -66,9 +74,7 @@ class _AddActivityPageState extends State<AddActivityPage>  with TickerProviderS
 
   Future<Widget> calculate(BuildContext context, Size size) {
     return Future<Widget>.delayed(
-      const Duration(milliseconds: 100),
-        () => getStack(context, size)
-    );
+        const Duration(milliseconds: 100), () => getStack(context, size));
   }
 
   @override
@@ -82,7 +88,6 @@ class _AddActivityPageState extends State<AddActivityPage>  with TickerProviderS
     hoursPicker2 = Constant.hours[hoursPositionPicker2.toString()]!;
     minutesPicker2 = Constant.minutes[minutesPositionPicker2.toString()]!;
     setState(() {});
-
   }
 
   void initDates() async {
@@ -108,7 +113,7 @@ class _AddActivityPageState extends State<AddActivityPage>  with TickerProviderS
         width: size.width,
         height: size.height,
         child: FutureBuilder<Widget>(
-          future: calculate(context, size) ,
+          future: calculate(context, size),
           builder: (BuildContext context, AsyncSnapshot<Widget> snapshot) {
             if (snapshot.hasData) {
               return snapshot.data!;
@@ -144,156 +149,145 @@ class _AddActivityPageState extends State<AddActivityPage>  with TickerProviderS
           padding: const EdgeInsets.fromLTRB(0, 70, 0, 100),
           child: Expanded(
             child: SingleChildScrollView(
-              child: Column(
+              child: Column(children: [
+                Padding(
+                    padding: const EdgeInsets.fromLTRB(32.0, 0.0, 32.0, 0.0),
+                    child: getTextField()),
+                const SizedBox(height: 40),
+                Row(
                   children: [
-                    Padding(
-                        padding: const EdgeInsets.fromLTRB(32.0, 0.0, 32.0, 0.0),
-                        child: getTextField()
+                    Expanded(
+                      child: Text(
+                        "Todo el día",
+                        textAlign: TextAlign.right,
+                        style: GoogleFonts.barlow(
+                            fontSize: 20.0,
+                            wordSpacing: 1,
+                            letterSpacing: 0.001,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.white),
+                      ),
                     ),
-                    const SizedBox(height: 40),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: Text(
-                            "Todo el día",
-                            textAlign: TextAlign.right,
-                            style: GoogleFonts.barlow(
-                                fontSize: 20.0,
-                                wordSpacing: 1,
-                                letterSpacing: 0.001,
-                                fontWeight: FontWeight.w500,
-                                color: Colors.white
-                            ),
-                          ),
-                        ),
-                        Positioned(
-                            right: 32,
-                            child: SizedBox(
-                                width: 120,
-                                child: StatefulBuilder(
-                                  builder: (BuildContext context, StateSetter setState) {
-                                    return CupertinoSwitch(
-                                      value: allDay,
-                                      activeColor: ColorPalette.activeSwitch,
-                                      trackColor: CupertinoColors.inactiveGray,
-                                      onChanged: (bool? value) {
-                                        allDay = value!;
-                                        setState(() {});
-                                      },
-                                    );
-                                  },
-                                )
-                            )
-                        )
-                      ],
-                    ),
-                    const SizedBox(height: 40),
-                    getDateSelected("De"),
-                    const SizedBox(height: 8),
-                    getDateSelected("A"),
-                    const SizedBox(height: 24),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: Padding(
-                            padding: const EdgeInsets.fromLTRB(12, 0, 0, 0),
-                            child: getHourTitle("Hora Inicio"),
-                          ),
-                        ),
-                        Expanded(
-                          child: Padding(
-                            padding: const EdgeInsets.fromLTRB(0, 0, 56, 0),
-                            child: getHourTitle("Hora Fin"),
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 16),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: Padding(
-                            padding: const EdgeInsets.fromLTRB(32, 0, 0, 0),
-                            child: getFutureColumnPicker(hoursPositionPicker1, minutesPositionPicker1, 0),
-                          ),
-                        ),
-                        Expanded(
-                          child: Padding(
-                            padding: const EdgeInsets.fromLTRB(0, 0, 32, 0),
-                            child: getFutureColumnPicker(hoursPositionPicker2, minutesPositionPicker2, 1),
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 50),
-                    Row(
-                      children: [
-                        SizedBox(
+                    Positioned(
+                        right: 32,
+                        child: SizedBox(
                             width: 120,
-                            child: Padding(
-                                padding: const EdgeInsets.fromLTRB(32, 0, 0, 0),
+                            child: StatefulBuilder(
+                              builder:
+                                  (BuildContext context, StateSetter setState) {
+                                return CupertinoSwitch(
+                                  value: allDay,
+                                  activeColor: ColorPalette.activeSwitch,
+                                  trackColor: CupertinoColors.inactiveGray,
+                                  onChanged: (bool? value) {
+                                    allDay = value!;
+                                    setState(() {});
+                                  },
+                                );
+                              },
+                            )))
+                  ],
+                ),
+                const SizedBox(height: 40),
+                getDateSelected("De"),
+                const SizedBox(height: 8),
+                getDateSelected("A"),
+                const SizedBox(height: 24),
+                Row(
+                  children: [
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.fromLTRB(12, 0, 0, 0),
+                        child: getHourTitle("Hora Inicio"),
+                      ),
+                    ),
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.fromLTRB(0, 0, 56, 0),
+                        child: getHourTitle("Hora Fin"),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                Row(
+                  children: [
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.fromLTRB(32, 0, 0, 0),
+                        child: getFutureColumnPicker(
+                            hoursPositionPicker1, minutesPositionPicker1, 0),
+                      ),
+                    ),
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.fromLTRB(0, 0, 32, 0),
+                        child: getFutureColumnPicker(
+                            hoursPositionPicker2, minutesPositionPicker2, 1),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 50),
+                Row(
+                  children: [
+                    SizedBox(
+                        width: 120,
+                        child: Padding(
+                            padding: const EdgeInsets.fromLTRB(32, 0, 0, 0),
+                            child: Text(
+                              "Repetir",
+                              style: GoogleFonts.barlow(
+                                  fontSize: 20.0,
+                                  wordSpacing: 1,
+                                  letterSpacing: 0.001,
+                                  fontWeight: FontWeight.w500,
+                                  color:
+                                      const Color.fromARGB(255, 222, 222, 222)),
+                            ))),
+                    if (isDropDownVisible) ...[
+                      Expanded(
+                          child: Padding(
+                              padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
+                              child: TextButton(
+                                onPressed: () {
+                                  setState(() {
+                                    isDropDownVisible = false;
+                                  });
+                                },
                                 child: Text(
-                                  "Repetir",
+                                  getItemSelected(),
                                   style: GoogleFonts.barlow(
-                                      fontSize: 20.0,
+                                      fontSize: 14.0,
                                       wordSpacing: 1,
                                       letterSpacing: 0.001,
                                       fontWeight: FontWeight.w500,
-                                      color: const Color.fromARGB(255, 222, 222, 222)
-                                  ),
-                                )
-                            )
-
-                        ),
-                        if (isDropDownVisible) ...[
-                          Expanded(
-                              child: Padding(
-                                  padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
-                                  child: TextButton(
-                                    onPressed: () {
-                                      setState(() {
-                                        isDropDownVisible = false;
-                                      });
-                                    },
-                                    child: Text(
-                                      getItemSelected(),
-                                      style: GoogleFonts.barlow(
-                                          fontSize: 14.0,
-                                          wordSpacing: 1,
-                                          letterSpacing: 0.001,
-                                          fontWeight: FontWeight.w500,
-                                          color: Colors.white
-                                      ),
-                                    ),
-                                  )
-                              )
-                          ),
-                          SizedBox(
-                              width: 60,
-                              child: Padding(
-                                padding: const EdgeInsets.only(right: 26),
-                                child: IconButton(
-                                  icon: const ImageIcon(
-                                    AssetImage('assets/images/drop_down.png'),
-                                    color: Colors.white,
-                                  ),
-                                  onPressed: () {
-                                    setState(() {
-                                      isDropDownVisible = false;
-                                    });
-                                  },
+                                      color: Colors.white),
                                 ),
-                              )
-                          )
-                        ]
-                      ],
-                    ),
-                    const SizedBox(height: 12),
-                    getSwitches(size),
-                    const SizedBox(height: 32)
-                  ]
-              ),
-
+                              ))),
+                      SizedBox(
+                          width: 60,
+                          child: Padding(
+                            padding: const EdgeInsets.only(right: 26),
+                            child: IconButton(
+                              icon: const ImageIcon(
+                                AssetImage('assets/images/drop_down.png'),
+                                color: Colors.white,
+                              ),
+                              onPressed: () {
+                                setState(() {
+                                  isDropDownVisible = false;
+                                });
+                              },
+                            ),
+                          ))
+                    ]
+                  ],
+                ),
+                const SizedBox(height: 12),
+                getSwitches(size),
+                const SizedBox(height: 32)
+              ]),
             ),
           ),
         ),
@@ -303,16 +297,14 @@ class _AddActivityPageState extends State<AddActivityPage>  with TickerProviderS
           child: Container(
             decoration: const BoxDecoration(
               color: Color.fromRGBO(219, 177, 42, 1),
-              borderRadius:
-              BorderRadius.all(Radius.circular(8)),
+              borderRadius: BorderRadius.all(Radius.circular(8)),
             ),
             width: 138,
             height: 42,
             child: Center(
               child: TextButton(
                 style: TextButton.styleFrom(
-                    minimumSize: const Size.fromWidth(138)
-                ),
+                    minimumSize: const Size.fromWidth(138)),
                 child: Text('Guardar',
                     textAlign: TextAlign.center,
                     style: GoogleFonts.barlow(
@@ -326,8 +318,7 @@ class _AddActivityPageState extends State<AddActivityPage>  with TickerProviderS
                   if (isRepeatTypeSelected()) {
                     await saveActivity();
                     Navigator.of(context).pop();
-                  }
-                  else {
+                  } else {
                     showRepeatTypeError();
                   }
                 },
@@ -341,19 +332,15 @@ class _AddActivityPageState extends State<AddActivityPage>  with TickerProviderS
           child: Container(
             decoration: BoxDecoration(
               color: Colors.transparent,
-              border: Border.all(
-                  color: const Color.fromRGBO(219, 177, 42, 1)
-              ),
-              borderRadius:
-              const BorderRadius.all(Radius.circular(8)),
+              border: Border.all(color: const Color.fromRGBO(219, 177, 42, 1)),
+              borderRadius: const BorderRadius.all(Radius.circular(8)),
             ),
             width: 138,
             height: 42,
             child: Center(
               child: TextButton(
                 style: TextButton.styleFrom(
-                    minimumSize: const Size.fromWidth(138)
-                ),
+                    minimumSize: const Size.fromWidth(138)),
                 child: Text('Cancelar',
                     textAlign: TextAlign.center,
                     style: GoogleFonts.barlow(
@@ -384,8 +371,7 @@ class _AddActivityPageState extends State<AddActivityPage>  with TickerProviderS
             wordSpacing: 1,
             letterSpacing: 0.001,
             fontWeight: FontWeight.normal,
-            color: Colors.white
-        ),
+            color: Colors.white),
         fillColor: const Color.fromRGBO(169, 146, 125, 50),
         filled: true,
         contentPadding: const EdgeInsets.fromLTRB(20.0, 0.0, 20.0, 0.0),
@@ -401,8 +387,7 @@ class _AddActivityPageState extends State<AddActivityPage>  with TickerProviderS
           wordSpacing: 1,
           letterSpacing: 0.001,
           fontWeight: FontWeight.normal,
-          color: Colors.white
-      ),
+          color: Colors.white),
     );
   }
 
@@ -420,23 +405,19 @@ class _AddActivityPageState extends State<AddActivityPage>  with TickerProviderS
                       wordSpacing: 1,
                       letterSpacing: 0.001,
                       fontWeight: FontWeight.w500,
-                      color: Colors.white
-                  ),
-                )
-            )
-        ),
+                      color: Colors.white),
+                ))),
         Expanded(
             child: Padding(
                 padding: const EdgeInsets.fromLTRB(0, 0, 16, 0),
                 child: TextButton(
-                    style: const ButtonStyle(
-                        alignment: Alignment.centerRight
-                    ),
+                    style: const ButtonStyle(alignment: Alignment.centerRight),
                     onPressed: () async {
                       var rangeDateTime = await showCalendar(context);
 
                       if (rangeDateTime != null) {
-                        if (rangeDateTime.from != null && rangeDateTime.to != null) {
+                        if (rangeDateTime.from != null &&
+                            rangeDateTime.to != null) {
                           updateDate('De', rangeDateTime.from!);
                           updateDate('A', rangeDateTime.to!);
                         } else if (rangeDateTime.from != null) {
@@ -452,18 +433,14 @@ class _AddActivityPageState extends State<AddActivityPage>  with TickerProviderS
                           wordSpacing: 1,
                           letterSpacing: 0.001,
                           fontWeight: FontWeight.w500,
-                          color: Colors.white
-                      ),
-                    )
-                )
-            )
-        )
+                          color: Colors.white),
+                    ))))
       ],
     );
   }
 
   String getStringFromDate(String date) {
-    return date.substring(0, date.length-5);
+    return date.substring(0, date.length - 5);
   }
 
   void updateDate(String dateType, DateTime date) async {
@@ -484,7 +461,7 @@ class _AddActivityPageState extends State<AddActivityPage>  with TickerProviderS
         to = strDate.capitalizeFirst!;
       }
     } else {
-      if (fromDate.isSameOrBefore(date) ) {
+      if (fromDate.isSameOrBefore(date)) {
         to = strDate.capitalizeFirst!;
       } else {
         to = strDate.capitalizeFirst!;
@@ -504,32 +481,32 @@ class _AddActivityPageState extends State<AddActivityPage>  with TickerProviderS
           wordSpacing: 1,
           letterSpacing: 0.001,
           fontWeight: FontWeight.w500,
-          color: Colors.white
-      ),
+          color: Colors.white),
     );
   }
 
-  Widget getFutureColumnPicker(int initialPosition1, int initialPosition2, int pickerId) {
+  Widget getFutureColumnPicker(
+      int initialPosition1, int initialPosition2, int pickerId) {
     return FutureBuilder<Widget>(
-        future: calculateColumnPicker(initialPosition1, initialPosition2, pickerId),
+        future:
+            calculateColumnPicker(initialPosition1, initialPosition2, pickerId),
         builder: (BuildContext context, AsyncSnapshot<Widget> snapshot) {
           if (snapshot.hasData) {
             return snapshot.data!;
           } else {
             return Container();
           }
-        }
-    );
+        });
   }
 
-  Future<Widget> calculateColumnPicker(int initialPosition1, int initialPosition2, int pickerId) {
-    return Future<Widget>.delayed(
-        const Duration(milliseconds: 50),
-            () => getColumnPicker(initialPosition1, initialPosition2, pickerId)
-    );
+  Future<Widget> calculateColumnPicker(
+      int initialPosition1, int initialPosition2, int pickerId) {
+    return Future<Widget>.delayed(const Duration(milliseconds: 50),
+        () => getColumnPicker(initialPosition1, initialPosition2, pickerId));
   }
 
-  Widget getColumnPicker(int initialPosition1, int initialPosition2, int pickerId) {
+  Widget getColumnPicker(
+      int initialPosition1, int initialPosition2, int pickerId) {
     return Column(
       children: [
         Row(
@@ -555,13 +532,15 @@ class _AddActivityPageState extends State<AddActivityPage>  with TickerProviderS
     );
   }
 
-  Widget getPicker(int initialPosition, Map<String, String> time, int pickerId) {
+  Widget getPicker(
+      int initialPosition, Map<String, String> time, int pickerId) {
     return SizedBox(
       width: 60,
       height: 120,
       child: CupertinoPicker(
         diameterRatio: 2,
-        selectionOverlay: const CupertinoPickerDefaultSelectionOverlay(background: Colors.transparent),
+        selectionOverlay: const CupertinoPickerDefaultSelectionOverlay(
+            background: Colors.transparent),
         backgroundColor: Colors.transparent,
         onSelectedItemChanged: (int value) {
           if (value != null) {
@@ -576,7 +555,8 @@ class _AddActivityPageState extends State<AddActivityPage>  with TickerProviderS
             }
           }
         },
-        scrollController: FixedExtentScrollController(initialItem: initialPosition),
+        scrollController:
+            FixedExtentScrollController(initialItem: initialPosition),
         itemExtent: 60.0,
         children: [
           for (var i = 0; i < time.length; i++)
@@ -615,24 +595,17 @@ class _AddActivityPageState extends State<AddActivityPage>  with TickerProviderS
           } else {
             return Container();
           }
-        }
-    );
+        });
   }
 
   Future<Widget> calculateDayContainer(int index, Size size) {
     return Future<Widget>.delayed(
-        const Duration(milliseconds: 50),
-            () => getDayContainer(index, size)
-    );
+        const Duration(milliseconds: 50), () => getDayContainer(index, size));
   }
 
   Widget getDayContainer(int index, Size size) {
     return Container(
-        width: size.width / 7 - 32 / 7,
-        child: Center (
-            child: getDay(index)
-        )
-    );
+        width: size.width / 7 - 32 / 7, child: Center(child: getDay(index)));
   }
 
   Widget getDay(int index) {
@@ -641,45 +614,39 @@ class _AddActivityPageState extends State<AddActivityPage>  with TickerProviderS
         border: _selectedDays[index]
             ? null
             : Border.all(
-          color: _selectedDays[index]
-              ? ColorPalette.principal
-              : Colors.white,
-          width: 1,
-        ),
-        color: _selectedDays[index]
-            ? ColorPalette.principal
-            : null,
+                color: _selectedDays[index]
+                    ? ColorPalette.principal
+                    : Colors.white,
+                width: 1,
+              ),
+        color: _selectedDays[index] ? ColorPalette.principal : null,
         borderRadius: BorderRadius.circular(100),
       ),
       height: 38,
       width: 38,
       child: Center(
           child: TextButton(
-            style: TextButton.styleFrom(
-                padding: EdgeInsets.zero,
-                tapTargetSize: MaterialTapTargetSize.shrinkWrap),
-            onPressed: () {
-              setState(() {
-                _selectedDays[index] = !_selectedDays[index];
-              });
-            },
-            child: Text(
-              tempNoSelectListDay[index],
-              textAlign: TextAlign.center,
-              style: GoogleFonts.barlow(
-                fontSize: 20.0,
-                wordSpacing: 1,
-                letterSpacing: 1,
-                fontWeight: _selectedDays[index]
-                    ? FontWeight.bold
-                    : FontWeight.normal,
-                color: _selectedDays[index]
-                    ? Colors.black
-                    : Colors.white,
-              ),
-            ),
-          )
-      ),
+        style: TextButton.styleFrom(
+            padding: EdgeInsets.zero,
+            tapTargetSize: MaterialTapTargetSize.shrinkWrap),
+        onPressed: () {
+          setState(() {
+            _selectedDays[index] = !_selectedDays[index];
+          });
+        },
+        child: Text(
+          tempNoSelectListDay[index],
+          textAlign: TextAlign.center,
+          style: GoogleFonts.barlow(
+            fontSize: 20.0,
+            wordSpacing: 1,
+            letterSpacing: 1,
+            fontWeight:
+                _selectedDays[index] ? FontWeight.bold : FontWeight.normal,
+            color: _selectedDays[index] ? Colors.black : Colors.white,
+          ),
+        ),
+      )),
     );
   }
 
@@ -688,9 +655,9 @@ class _AddActivityPageState extends State<AddActivityPage>  with TickerProviderS
       builder: (BuildContext context, StateSetter setState) {
         return Column(
           children: [
-            for ( var text in itemsDropDownText ) getFutureSwitch(text, setState),
+            for (var text in itemsDropDownText) getFutureSwitch(text, setState),
             const SizedBox(height: 12),
-            if (itemsDropDown[2]) ... [
+            if (itemsDropDown[2]) ...[
               Row(
                 children: [
                   const SizedBox(width: 16),
@@ -713,66 +680,61 @@ class _AddActivityPageState extends State<AddActivityPage>  with TickerProviderS
 
   Widget getFutureSwitch(String text, StateSetter setState) {
     return FutureBuilder<Widget>(
-      future: calculateSwitch(text, setState),
-      builder: (BuildContext context, AsyncSnapshot<Widget> snapshot) {
-        if (snapshot.hasData) {
-          return snapshot.data!;
-        } else {
-          return Container();
-        }
-      }
-    );
+        future: calculateSwitch(text, setState),
+        builder: (BuildContext context, AsyncSnapshot<Widget> snapshot) {
+          if (snapshot.hasData) {
+            return snapshot.data!;
+          } else {
+            return Container();
+          }
+        });
   }
 
   Future<Widget> calculateSwitch(String text, StateSetter setState) {
     return Future<Widget>.delayed(
-        const Duration(milliseconds: 50),
-            () => getSwitch(text, setState)
-    );
+        const Duration(milliseconds: 50), () => getSwitch(text, setState));
   }
 
   Future<Widget> getSwitch(String text, StateSetter setState) async {
     return Row(
-          children: [
-            if (!isDropDownVisible) ...[
-              Expanded(
-                child: Text(
-                  text,
-                  textAlign: TextAlign.right,
-                  style: GoogleFonts.barlow(
-                      fontSize: 18.0,
-                      wordSpacing: 1,
-                      letterSpacing: 0.001,
-                      fontWeight: FontWeight.w500,
-                      color: const Color.fromARGB(255, 222, 222, 222)
-                  ),
+      children: [
+        if (!isDropDownVisible) ...[
+          Expanded(
+            child: Text(
+              text,
+              textAlign: TextAlign.right,
+              style: GoogleFonts.barlow(
+                  fontSize: 18.0,
+                  wordSpacing: 1,
+                  letterSpacing: 0.001,
+                  fontWeight: FontWeight.w500,
+                  color: const Color.fromARGB(255, 222, 222, 222)),
+            ),
+          ),
+          Positioned(
+              right: 24,
+              child: SizedBox(
+                width: 120,
+                child: CupertinoSwitch(
+                  value: itemsDropDown[getIndexOfItemsDropDown(text)],
+                  activeColor: ColorPalette.activeSwitch,
+                  trackColor: CupertinoColors.inactiveGray,
+                  onChanged: (bool? value) {
+                    var count = 0;
+                    for (var itemText in itemsDropDownText) {
+                      itemsDropDown[count] = false;
+                      if (itemText == text) {
+                        itemsDropDown[count] = value!;
+                      }
+                      count++;
+                    }
+                    setState(() {});
+                  },
                 ),
-              ),
-              Positioned(
-                  right: 24,
-                  child: SizedBox(
-                    width: 120,
-                    child: CupertinoSwitch(
-                      value: itemsDropDown[getIndexOfItemsDropDown(text)],
-                      activeColor: ColorPalette.activeSwitch,
-                      trackColor: CupertinoColors.inactiveGray,
-                      onChanged: (bool? value) {
-                        var count = 0;
-                        for (var itemText in itemsDropDownText) {
-                          itemsDropDown[count] = false;
-                          if (itemText == text) {
-                            itemsDropDown[count] = value!;
-                          }
-                          count++;
-                        }
-                        setState(() {});
-                      },
-                    ),
-                  )
-              )
-            ]
-          ],
-        );
+              ))
+        ]
+      ],
+    );
   }
 
   int getIndexOfItemsDropDown(String text) {
@@ -810,7 +772,8 @@ class _AddActivityPageState extends State<AddActivityPage>  with TickerProviderS
   }
 
   void showRepeatTypeError() {
-    showSaveAlert(context, "Faltan datos", "Se ha de seleccionar que tipo de repetición quieres para esta actividad");
+    showSaveAlert(context, "Faltan datos",
+        "Se ha de seleccionar que tipo de repetición quieres para esta actividad");
   }
 
   Future<int> saveActivity() async {
@@ -841,12 +804,11 @@ class _AddActivityPageState extends State<AddActivityPage>  with TickerProviderS
   String convertDayListToDaysString() {
     String strDays = "";
 
-    for (var index=0;index<_selectedDays.length;index++) {
-      if (_selectedDays[index])
-        strDays += "${tempNoSelectListDay[index]};";
+    for (var index = 0; index < _selectedDays.length; index++) {
+      if (_selectedDays[index]) strDays += "${tempNoSelectListDay[index]};";
     }
 
-    if (strDays.isNotEmpty) strDays = strDays.substring(0, strDays.length -1);
+    if (strDays.isNotEmpty) strDays = strDays.substring(0, strDays.length - 1);
 
     return strDays;
   }

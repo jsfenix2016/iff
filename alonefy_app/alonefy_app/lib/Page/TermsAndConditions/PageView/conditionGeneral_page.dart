@@ -5,6 +5,7 @@ import 'package:ifeelefine/Common/Constant.dart';
 import 'package:ifeelefine/Common/utils.dart';
 import 'package:ifeelefine/Page/TermsAndConditions/Controller/terms_conditionController.dart';
 import 'package:flutter/material.dart';
+import 'package:ifeelefine/Utils/Widgets/widgetLogo.dart';
 
 import '../../../Common/colorsPalette.dart';
 
@@ -35,15 +36,19 @@ class _ConditionGeneralPageState extends State<ConditionGeneralPage> {
               child: Column(
                 children: [
                   SafeArea(
-                    child: Container(
-                      height: 50.0,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.max,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: const [
+                        WidgetLogoApp(),
+                      ],
                     ),
                   ),
                   SizedBox(
                     child: Column(
                       children: <Widget>[
                         Padding(
-                            padding: const EdgeInsets.only(top: 60),
+                            padding: const EdgeInsets.only(top: 40),
                             child: Row(
                               children: [
                                 Expanded(

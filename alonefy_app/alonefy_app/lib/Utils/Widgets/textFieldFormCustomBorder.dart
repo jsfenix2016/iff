@@ -47,6 +47,13 @@ class TextFieldFormCustomBorderState extends State<TextFieldFormCustomBorder> {
         initialValue: widget.mesaje,
         textCapitalization: TextCapitalization.sentences,
         decoration: InputDecoration(
+          suffixIcon: (widget.labelText == 'Correo electronico' ||
+                  widget.labelText == 'Telefono')
+              ? const Text(
+                  '*',
+                  style: TextStyle(color: Colors.red, fontSize: 40),
+                )
+              : null,
           hintText: widget.mesaje,
           labelText: widget.labelText,
           focusedBorder: OutlineInputBorder(
