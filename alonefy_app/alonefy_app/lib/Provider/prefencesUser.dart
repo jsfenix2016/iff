@@ -176,6 +176,14 @@ class PreferenceUser {
     _prefs.setBool('userPremium', value);
   }
 
+  get getPremiumPrice {
+    return _prefs.getString('premiumPrice') ?? "4.99€/mes";
+  }
+
+  set setPremiumPrice(String price) {
+    _prefs.setString('premiumPrice', price);
+  }
+
   get getUserNotification {
     return _prefs.getBool('UserNotification') ?? false;
   }

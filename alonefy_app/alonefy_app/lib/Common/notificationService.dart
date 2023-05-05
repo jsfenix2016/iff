@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:ifeelefine/Common/colorsPalette.dart';
@@ -53,7 +54,6 @@ class RedirectViewNotifier with ChangeNotifier {
           playSound: true,
           enableVibration: true,
           channelShowBadge: false,
-          groupAlertBehavior: GroupAlertBehavior.children,
           priority: Priority.high,
 
           largeIcon: DrawableResourceAndroidBitmap('ic_bg_service_small'),
@@ -79,6 +79,20 @@ class RedirectViewNotifier with ChangeNotifier {
       ),
       payload: 'Inactived',
     );
+
+    //await AwesomeNotifications().createNotification(
+    //  content: NotificationContent(
+    //      id: 10,
+    //      channelKey: 'alerts',
+    //      title: 'Simple Notification',
+    //      body: 'Simple body',
+    //    color: ColorPalette.principal,
+    //  ),
+    //  actionButtons: <NotificationActionButton>[
+    //    NotificationActionButton(key: 'yes', label: 'Ayuda'),
+    //    NotificationActionButton(key: 'no', label: 'Estoy bien'),
+    //  ],
+    //);
     sendMessageContact();
   }
 
@@ -112,7 +126,7 @@ class RedirectViewNotifier with ChangeNotifier {
           playSound: true,
           enableVibration: true,
           channelShowBadge: false,
-          groupAlertBehavior: GroupAlertBehavior.children,
+          //groupAlertBehavior: GroupAlertBehavior.children,
           priority: Priority.high,
 
           largeIcon: DrawableResourceAndroidBitmap('ic_bg_service_small'),
@@ -150,7 +164,7 @@ class RedirectViewNotifier with ChangeNotifier {
           playSound: true,
           enableVibration: true,
           channelShowBadge: false,
-          groupAlertBehavior: GroupAlertBehavior.children,
+          // groupAlertBehavior: GroupAlertBehavior.children,
           priority: Priority.high,
 
           largeIcon: DrawableResourceAndroidBitmap('ic_bg_service_small'),

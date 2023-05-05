@@ -15,6 +15,8 @@ import 'package:ifeelefine/Provider/prefencesUser.dart';
 import 'package:ifeelefine/Utils/Widgets/elevatedButtonFilling.dart';
 import 'package:slidable_button/slidable_button.dart';
 
+import '../../Premium/PageView/premium_page.dart';
+
 class FallActivationConfigPage extends StatefulWidget {
   /// Creates a new GeolocatorWidget.
   const FallActivationConfigPage({Key? key}) : super(key: key);
@@ -234,10 +236,19 @@ class _FallActivationConfigPageState extends State<FallActivationConfigPage> {
         width: 21,
       ),
       onChanged: (SlidableButtonPosition value) {
-        if (value == SlidableButtonPosition.end) {
+        if (value == SlidableButtonPosition.end && _prefs.getUserPremium) {
           setState(() {
             isActive = !isActive;
           });
+        } else if (value == SlidableButtonPosition.end) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const PremiumPage(
+                img: 'Mask group-4',
+                title: Constant.premiumFallTitle,
+                subtitle: '')
+            ),
+          );
         }
       },
       child: Padding(

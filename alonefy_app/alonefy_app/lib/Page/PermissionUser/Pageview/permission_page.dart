@@ -29,7 +29,8 @@ class _PermitionUserPageState extends State<PermitionUserPage> {
     'Permitir el uso de la cámara',
     'Permitir acceso a contactos',
     'Permitir compartir ubicación del smartphone',
-    'Permitir emitir sonido de alerta en el estado silencio'
+    'Permitir emitir sonido de alerta en el estado silencio',
+    'Permitir envío de SMS y llamadas'
   ];
   List<Permission> permissions = [
     //Permission.accessMediaLocation,
@@ -37,11 +38,13 @@ class _PermitionUserPageState extends State<PermitionUserPage> {
     Permission.camera,
     Permission.contacts,
     Permission.location,
-    Permission.scheduleExactAlarm
+    Permission.scheduleExactAlarm,
+    Permission.sms
   ];
   late bool accessContact = false;
   List<bool> permissionStatus = [
     //false,
+    false,
     false,
     false,
     false,
@@ -104,6 +107,9 @@ class _PermitionUserPageState extends State<PermitionUserPage> {
           case 4:
             _prefs.setAcceptedScheduleExactAlarm = preferencePermission;
             break;
+          case 5:
+            _prefs.setAceptedSendSMS = true;
+            break;
         }
       } else {
         switch (i) {
@@ -131,6 +137,9 @@ class _PermitionUserPageState extends State<PermitionUserPage> {
             if (_prefs.getAcceptedScheduleExactAlarm == PreferencePermission.allow) {
               _prefs.setAcceptedScheduleExactAlarm = PreferencePermission.noAccepted;
             }
+            break;
+          case 5:
+            _prefs.setAceptedSendSMS = false;
             break;
         }
       }
@@ -161,6 +170,9 @@ class _PermitionUserPageState extends State<PermitionUserPage> {
           break;
         case 4:
           permissionStatus[i] = _prefs.getAcceptedScheduleExactAlarm == PreferencePermission.allow;
+          break;
+        case 5:
+          permissionStatus[i] = _prefs.getAceptedSendSMS;
           break;
       }
 

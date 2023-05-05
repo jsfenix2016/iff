@@ -1,6 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:get/get_state_manager/src/simple/get_controllers.dart';
+import 'package:ifeelefine/Model/ApiRest/activityDayApi.dart';
+import 'package:ifeelefine/Page/AddActivityPage/Service/activityService.dart';
+import 'package:jiffy/jiffy.dart';
+import '../../../Common/utils.dart';
 import '../../../Data/hive_data.dart';
+import '../../../Model/ApiRest/activityDayApiResponse.dart';
 import '../../../Model/activityDay.dart';
 import '../../../Model/activitydaybd.dart';
 
@@ -11,7 +16,7 @@ class AddActivityController extends GetxController {
 
       List<ActivityDay> activities = [];
       for (var activityBD in activitiesBD) {
-        var activity = await convertActivityDayBDToActivityDat(activityBD);
+        var activity = await convertActivityDayBDToActivityDay(activityBD);
         activities.add(activity);
       }
 
@@ -47,7 +52,7 @@ class AddActivityController extends GetxController {
     return activitybd;
   }
 
-  Future<ActivityDay> convertActivityDayBDToActivityDat(
+  Future<ActivityDay> convertActivityDayBDToActivityDay(
       ActivityDayBD activityBD) async {
     ActivityDay activity = ActivityDay();
 
@@ -71,6 +76,166 @@ class AddActivityController extends GetxController {
     var activitybd = await convertActivityDayToBD(activityDay);
 
     await const HiveData().updateActivity(activitybd);
+  }
+
+  Future<void> saveActivityApi(ActivityDay activity) async {
+    var activityApi = await convertToApi(activity);
+    ActivityService().saveData(activityApi);
+  }
+
+  Future<ActivityDayApi> convertToApi(ActivityDay activity) async {
+    ActivityDayApi activityDayApi = ActivityDayApi();
+
+    activityDayApi.startDate = await _convertDayToApi(activity.day);
+    activityDayApi.startTime = await _convertTimeToApi(activity.timeStart);
+    activityDayApi.endTime = await _convertTimeToApi(activity.timeFinish);
+    activityDayApi.name = activity.activity;
+    activityDayApi.allDay = activity.allDay;
+    activityDayApi.endDate = await _convertDayToApi(activity.dayFinish);
+    activityDayApi.days = _convertDaysToList(activity.days!);
+    activityDayApi.repeatType = activity.repeatType;
+    activityDayApi.enabled = activity.isDeactivate;
+    activityDayApi.disabledDates =
+        await _convertSpecificDaysToList(activity.specificDaysDeactivated);
+    activityDayApi.removedDates =
+        await _convertSpecificDaysToList(activity.specificDaysRemoved);
+
+    return activityDayApi;
+  }
+
+  Future<DateTime> _convertDayToApi(String day) async {
+    await Jiffy.locale('es');
+
+    var dateTime = Jiffy(day.toLowerCase(), getDefaultPattern()).dateTime;
+    return dateTime;
+  }
+
+  Future<DateTime> _convertTimeToApi(String time) async {
+    await Jiffy.locale('es');
+
+    var dateTime = Jiffy(time.toLowerCase(), getTimePattern()).dateTime;
+    return dateTime;
+  }
+
+  List<String> _convertDaysToList(String? days) {
+    if (days != null && days.isNotEmpty) {
+      var daysArray = days.split(';');
+      return daysArray;
+    } else {
+      return [];
+    }
+  }
+
+  Future<List<DateTime>> _convertSpecificDaysToList(
+      String? specificDays) async {
+    await Jiffy.locale('es');
+
+    if (specificDays != null && specificDays.isNotEmpty) {
+      List<DateTime> specificDaysDateTime = [];
+      var specifyDays = specificDays.split(';');
+
+      for (var specificDay in specifyDays) {
+        var specificDateTime =
+            Jiffy(specificDay.toLowerCase(), getDefaultPattern()).dateTime;
+
+        specificDaysDateTime.add(specificDateTime);
+      }
+
+      return specificDaysDateTime;
+    } else {
+      return [];
+    }
+  }
+
+  Future<List<ActivityDay>> convertToApk(
+      List<ActivityDayApiResponse> activitiesApi) async {
+    await Jiffy.locale("es");
+    List<ActivityDay> activities = [];
+
+    for (var activityApi in activitiesApi) {
+      ActivityDay activityDay = ActivityDay();
+
+      activityDay.id = activityApi.id;
+      activityDay.day = await _convertDayToApk(activityApi.startDate);
+      activityDay.timeStart = await _convertTimeToApk(activityApi.startTime);
+      activityDay.timeFinish = await _convertTimeToApk(activityApi.endTime);
+      activityDay.activity = activityApi.name;
+      activityDay.allDay = activityApi.allDay;
+      activityDay.dayFinish = await _convertDayToApk(activityApi.endDate);
+      activityDay.days = _convertListToDays(activityApi.days);
+      activityDay.repeatType = activityApi.repeatType;
+      activityDay.isDeactivate = activityApi.enabled;
+      activityDay.specificDaysDeactivated =
+          await _convertListToSpecificDays(activityApi.disabledDates);
+      activityDay.specificDaysRemoved =
+          await _convertListToSpecificDays(activityApi.removedDates);
+
+      activities.add(activityDay);
+    }
+
+    return activities;
+  }
+
+  Future<String> _convertDayToApk(DateTime day) async {
+    await Jiffy.locale('es');
+
+    var dateTime = Jiffy(day).format(getDefaultPattern());
+    return dateTime;
+  }
+
+  Future<String> _convertTimeToApk(DateTime time) async {
+    await Jiffy.locale('es');
+
+    var hour = time.hour;
+    var minutes = time.minute;
+
+    var strHour = '$hour';
+    var strMinutes = '$minutes';
+
+    if (hour < 10) strHour = '0$hour';
+    if (minutes < 10) strMinutes = '0$minutes';
+
+    //var dateTime = Jiffy(time).format(getTimePattern());
+    return '$strHour:$strMinutes';
+  }
+
+  String? _convertListToDays(List<String>? days) {
+    if (days != null && days.isNotEmpty) {
+      String strDays = "";
+      for (var day in days) {
+        strDays += '${day};';
+      }
+
+      if (strDays.isNotEmpty)
+        strDays = strDays.substring(0, strDays.length - 1);
+
+      return strDays;
+    } else {
+      return null;
+    }
+  }
+
+  Future<String?> _convertListToSpecificDays(
+      List<DateTime>? specificDays) async {
+    await Jiffy.locale('es');
+
+    if (specificDays != null && specificDays.isNotEmpty) {
+      String strSpecificDays = "";
+
+      for (var specificDay in specificDays) {
+        var day = Jiffy(specificDay).format(getDefaultPattern());
+
+        strSpecificDays = '$day;';
+      }
+
+      if (strSpecificDays.isNotEmpty)
+        strSpecificDays =
+            strSpecificDays.substring(0, strSpecificDays.length - 1);
+
+      return strSpecificDays;
+    } else {
+      return null;
+    }
   }
 
   ActivityDay clone(ActivityDay activityDay) {

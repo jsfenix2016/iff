@@ -45,6 +45,13 @@ dependencies:
   rxdart: ^0.27.2
   provider: ^6.0.3
   flutter_local_notifications: ^13.0.0
+  awesome_notifications: ^0.7.0-beta.7+5
+
+  firebase_core: ^2.10.0
+  firebase_messaging: ^14.4.1
+
+  #in_app_purchase: ^3.1.5
+  flutter_inapp_purchase: ^5.0.0
   
   uuid: ^3.0.5
   
@@ -69,11 +76,6 @@ dependencies:
   avatar_glow: ^2.0.2 #Animacion tipo radar
   grouped_list: ^5.1.2
   google_sign_in: ^5.2.1
-  # flutter_pay: ^1.0.2
-  pay: ^1.0.11
- 
-  
-  
  
   url_launcher: ^6.1.7
   whatsapp_unilink: ^2.1.0

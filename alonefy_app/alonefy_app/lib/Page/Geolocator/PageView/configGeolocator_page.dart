@@ -14,6 +14,7 @@ import 'package:slidable_button/slidable_button.dart';
 
 import '../../../Common/colorsPalette.dart';
 import '../../../Provider/prefencesUser.dart';
+import '../../Premium/PageView/premium_page.dart';
 
 class ConfigGeolocator extends StatefulWidget {
   /// Creates a new GeolocatorWidget.
@@ -212,12 +213,23 @@ class _ConfigGeolocatorState extends State<ConfigGeolocator> {
                   ),
                   onChanged: (SlidableButtonPosition value) {
                     if (value == SlidableButtonPosition.end) {
-                      if (!isActive) _checkPermission();
-                      else {
-                        setState(() {
-                          isActive = false;
-                          //_prefs.setAcceptedSendLocation = PreferencePermission.noAccepted;
-                        });
+                      if (_prefs.getUserPremium) {
+                        if (!isActive) _checkPermission();
+                        else {
+                          setState(() {
+                            isActive = false;
+                            //_prefs.setAcceptedSendLocation = PreferencePermission.noAccepted;
+                          });
+                        }
+                      } else {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => const PremiumPage(
+                              img: 'Mask group-4',
+                              title: Constant.premiumMapTitle,
+                              subtitle: '')
+                          ),
+                        );
                       }
                     }
                   },
