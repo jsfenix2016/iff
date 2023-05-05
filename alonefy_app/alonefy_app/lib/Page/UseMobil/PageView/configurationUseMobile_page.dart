@@ -11,7 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:ifeelefine/Utils/Widgets/elevateButtonCustomBorder.dart';
 import 'package:ifeelefine/Utils/Widgets/elevatedButtonFilling.dart';
 import 'package:slidable_button/slidable_button.dart';
-import 'package:pay/pay.dart';
+//import 'package:pay/pay.dart';
 
 // import 'package:flutter_pay/flutter_pay.dart';
 
@@ -27,14 +27,14 @@ class _UserMobilePageState extends State<UserMobilePage> {
   var indexSelect = -1;
   // FlutterPay flutterPay = FlutterPay();
 
-  String result = "Result will be shown here";
-  List<PaymentItem> items = [
-    const PaymentItem(
-      label: 'Total',
-      amount: '1.99',
-      status: PaymentItemStatus.final_price,
-    )
-  ];
+  //String result = "Result will be shown here";
+  //List<PaymentItem> items = [
+  //  const PaymentItem(
+  //    label: 'Total',
+  //    amount: '1.99',
+  //    status: PaymentItemStatus.final_price,
+  //  )
+  //];
 
   void onGooglePayResult(paymentResult) {
     // Send the resulting Google Pay token to your server / PSP
@@ -187,17 +187,17 @@ class _UserMobilePageState extends State<UserMobilePage> {
                       if (position == SlidableButtonPosition.end) {
                         // result = 'Button is on the right';
                         // makePayment();
-                        GooglePayButton(
-                          paymentConfigurationAsset:
-                              'json/default_payment_profile_google_pay.json',
-                          paymentItems: items,
-                          type: GooglePayButtonType.pay,
-                          margin: const EdgeInsets.only(top: 15.0),
-                          onPaymentResult: onGooglePayResult,
-                          loadingIndicator: const Center(
-                            child: CircularProgressIndicator(),
-                          ),
-                        );
+                        //GooglePayButton(
+                        //  paymentConfigurationAsset:
+                        //      'json/default_payment_profile_google_pay.json',
+                        //  paymentItems: items,
+                        //  type: GooglePayButtonType.pay,
+                        //  margin: const EdgeInsets.only(top: 15.0),
+                        //  onPaymentResult: onGooglePayResult,
+                        //  loadingIndicator: const Center(
+                        //    child: CircularProgressIndicator(),
+                        //  ),
+                        //);
                       } else {
                         // result = 'Button is on the left';
                       }

@@ -10,6 +10,7 @@ import 'package:ifeelefine/Common/colorsPalette.dart';
 import 'package:ifeelefine/Common/utils.dart';
 import 'package:ifeelefine/Model/user.dart';
 import 'package:ifeelefine/Model/userbd.dart';
+import 'package:ifeelefine/Page/Premium/Controller/premium_controller.dart';
 import 'package:ifeelefine/Page/UseMobil/PageView/configurationUseMobile_page.dart';
 import 'package:ifeelefine/Page/UserConfig/Controller/userConfigController.dart';
 import 'package:ifeelefine/Utils/Widgets/CustomDropdownMaritalState.dart';
@@ -54,6 +55,8 @@ class _UserConfigPageState2 extends State<UserConfigPage2> {
   late String _title;
   late TimeOfDay _timeOfDay;
   // late Function _updateTimeFunction;
+
+  var premiumController = Get.put(PremiumController());
 
   @override
   void initState() {
@@ -279,7 +282,7 @@ class _UserConfigPageState2 extends State<UserConfigPage2> {
             const SizedBox(height: 20),
             ElevateButtonCustomBorder(
                 onChanged: ((value) {
-                  _submit;
+                  requestSubscription();
                 }),
                 mensaje: "Gratuito 30 dias"),
             const SizedBox(height: 20),
@@ -334,7 +337,7 @@ class _UserConfigPageState2 extends State<UserConfigPage2> {
           Colors.transparent,
         ),
       ),
-      onPressed: _submit,
+      onPressed: requestSubscription,
       child: Container(
         decoration: BoxDecoration(
           gradient: linerGradientButtonFilling(),
@@ -356,6 +359,16 @@ class _UserConfigPageState2 extends State<UserConfigPage2> {
         ),
       ),
     );
+  }
+
+  void requestSubscription() {
+    premiumController.requestPurchaseByProductId(PremiumController.subscriptionId, responseSubscription());
+  }
+
+  Function responseSubscription() {
+    return (bool response) => {
+      if (response) _submit()
+    };
   }
 
   void _submit() async {

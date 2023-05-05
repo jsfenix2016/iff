@@ -8,6 +8,7 @@ import 'package:ifeelefine/Model/activityDay.dart';
 import 'package:ifeelefine/Model/activitydaybd.dart';
 import 'package:ifeelefine/Page/AddActivityPage/Controller/addActivityController.dart';
 import 'package:ifeelefine/Page/Calendar/calendarPopup.dart';
+import 'package:ifeelefine/Provider/prefencesUser.dart';
 import 'package:jiffy/jiffy.dart';
 
 import '../../../Common/colorsPalette.dart';
@@ -22,6 +23,7 @@ class AddActivityPage extends StatefulWidget {
 
 class _AddActivityPageState extends State<AddActivityPage>  with TickerProviderStateMixin {
 
+  final _prefs = PreferenceUser();
   final AddActivityController controller = Get.put(AddActivityController());
 
   int hoursPositionPicker1 = 0;
@@ -324,8 +326,15 @@ class _AddActivityPageState extends State<AddActivityPage>  with TickerProviderS
                     )),
                 onPressed: () async {
                   if (isRepeatTypeSelected()) {
-                    await saveActivity();
-                    Navigator.of(context).pop();
+                    var activities = await controller.getActivities();
+                    if (activities.length >= 3 && !_prefs.getUserPremium) {
+                      showSaveAlert(context, "", "Se ha alcanzado el máximo de tiempos de inactividad. Para poder programar más, hazte Premium.");
+                    } else {
+                      var activity = createActivity();
+                      await controller.saveActivityApi(activity);
+                      await controller.saveActivity(context, activity);
+                      Navigator.of(context).pop();
+                    }
                   }
                   else {
                     showRepeatTypeError();
@@ -813,7 +822,7 @@ class _AddActivityPageState extends State<AddActivityPage>  with TickerProviderS
     showSaveAlert(context, "Faltan datos", "Se ha de seleccionar que tipo de repetición quieres para esta actividad");
   }
 
-  Future<int> saveActivity() async {
+  ActivityDay createActivity() {
     var activity = ActivityDay();
     activity.id = 0;
     activity.activity = textController.text;
@@ -826,9 +835,7 @@ class _AddActivityPageState extends State<AddActivityPage>  with TickerProviderS
     activity.repeatType = getItemSelected();
     activity.isDeactivate = false;
 
-    await controller.saveActivity(context, activity);
-
-    return 0;
+    return activity;
   }
 
   String parseDateTime(String dateTime) {

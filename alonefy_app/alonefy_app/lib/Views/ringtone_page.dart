@@ -62,16 +62,21 @@ class _RingTonePageState extends State<RingTonePage>
     // We also handle the message potentially returning null.
     try {
       final temp = await FlutterSystemRingtones.getRingtoneSounds();
-      setState(() {
-        ringtones = temp;
-        for (var element in ringtones) {
-          if (_prefs.getNotificationAudio == element.uri) {
-            ringtonesEnabled.add(true);
-          } else {
-            ringtonesEnabled.add(false);
-          }
+      ringtones = temp;
+
+      var count = 0;
+      for (var element in ringtones) {
+        if (_prefs.getNotificationAudio == element.uri) {
+          ringtonesEnabled.add(true);
+        } else {
+          ringtonesEnabled.add(false);
         }
-      });
+        count++;
+
+        if (count == 10 && !_prefs.getUserPremium) break;
+      }
+
+      setState(() {});
     } catch (e) {
       debugPrint('Failed to get platform version.');
     }

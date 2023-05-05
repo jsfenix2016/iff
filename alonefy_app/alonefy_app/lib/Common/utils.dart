@@ -84,6 +84,20 @@ String initialdayConvertDay(String dia) {
   return map[dia] ?? 'error';
 }
 
+String weekDayToString(int weekDay) {
+  const map = {
+    1: 'Lunes',
+    2: 'Martes',
+    3: 'Miercoles',
+    4: 'Jueves',
+    5: 'Viernes',
+    6: 'Sabado',
+    7: 'Domingo',
+  };
+
+  return map[weekDay] ?? 'error';
+}
+
 void makePayment() async {
   // FlutterPay flutterPay = FlutterPay();
 
@@ -254,6 +268,14 @@ DateTime parseDuration(String s) {
   String sDuration = "${temp.inHours}:${temp.inMinutes.remainder(60)}";
   DateTime pastDateTime = format.parse(sDuration);
   return pastDateTime;
+}
+
+DateTime parseTime(String str, DateTime dateTime) {
+  var hour = int.parse(str.substring(0, 2));
+  var minute = int.parse(str.substring(3, 5));
+
+  var time = DateTime(dateTime.year, dateTime.month, dateTime.day, hour, minute);
+  return time;
 }
 
 void showAlert(BuildContext context, String mensaje) {
@@ -492,6 +514,10 @@ String getShortPattern() {
 
 String getDatePattern() {
   return 'dd/MM/yyyy';
+}
+
+String getTimePattern() {
+  return 'hh:mm';
 }
 
 Future<String> dateTimeToString(DateTime dateTime) async {

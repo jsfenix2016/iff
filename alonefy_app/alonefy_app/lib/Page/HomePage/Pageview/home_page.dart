@@ -146,8 +146,8 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   Widget _mostrarFoto() {
     return GestureDetector(
       onTap: (() async {
-        var result = await cameraPermissions(_prefs.getAcceptedCamera, context);
-        if (result) getImageGallery(ImageSource.gallery);
+        //RedirectViewNotifier.showNotifications();
+
       }),
       child: Container(
         width: 100,

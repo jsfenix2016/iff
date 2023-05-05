@@ -13,6 +13,7 @@ import 'package:ifeelefine/Utils/Widgets/elevatedButtonFilling.dart';
 
 import '../../../Common/colorsPalette.dart';
 import '../../../Provider/prefencesUser.dart';
+import '../../Premium/PageView/premium_page.dart';
 
 class InitGeolocator extends StatefulWidget {
   /// Creates a new GeolocatorWidget.
@@ -238,17 +239,31 @@ class _InitGeolocatorState extends State<InitGeolocator> {
                             activeColor: ColorPalette.activeSwitch,
                             trackColor: CupertinoColors.inactiveGray,
                             onChanged: ((value) async {
-                              setState(() {
-                                isActive = value;
-                              });
-                              if (value) {
-                                await _checkPermission();
-                                getCurrentPosition();
+                              if (_prefs.getUserPremium) {
+                                setState(() {
+                                  isActive = value;
+                                });
+                                if (value) {
+                                  await _checkPermission();
+                                  getCurrentPosition();
+                                } else {
+                                  _prefs.setAcceptedSendLocation =
+                                      PreferencePermission.noAccepted;
+                                }
                               } else {
-                                _prefs.setAcceptedSendLocation =
-                                    PreferencePermission.noAccepted;
-                              }
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(builder: (context) => const PremiumPage(
+                                      img: 'Mask group-4',
+                                      title: Constant.premiumMapTitle,
+                                      subtitle: '')
+                                  ),
+                                );
 
+                                setState(() {
+                                  isActive = false;
+                                });
+                              }
                               // geoVC.saveSendLocation(context, value);
                             }),
                           ),

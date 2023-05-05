@@ -2,6 +2,8 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:ui';
 import 'package:all_sensors2/all_sensors2.dart';
+import 'package:awesome_notifications/awesome_notifications.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -13,6 +15,7 @@ import 'package:ifeelefine/Data/hiveRisk_data.dart';
 import 'package:ifeelefine/Data/hive_constant_adapterInit.dart';
 import 'package:ifeelefine/Model/activitydaybd.dart';
 import 'package:ifeelefine/Model/contactRiskBD.dart';
+import 'package:ifeelefine/Page/Premium/Controller/premium_controller.dart';
 import 'package:ifeelefine/Page/HomePage/Pageview/home_page.dart';
 
 import 'package:ifeelefine/Page/Risk/DateRisk/ListDateRisk/PageView/riskDatePage.dart';
@@ -39,6 +42,8 @@ import 'package:notification_center/notification_center.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'Common/Firebase/firebaseManager.dart';
+import 'Common/notificationController.dart';
 import 'Model/logActivityBd.dart';
 import 'Page/FallDetected/Pageview/fall_activation_page.dart';
 import 'Page/LogActivity/Controller/logActivity_controller.dart';
@@ -81,11 +86,17 @@ String? initApp;
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
+  await initializeFirebase();
+
   userMov = UserPosition(mov: [], time: now);
   await _prefs.initPrefs();
   await inicializeHiveBD();
 
   await initializeService();
+
+  var premiumController = Get.put(PremiumController());
+
+  premiumController.initPlatformState();
 
   initApp = _prefs.isFirstConfig == false ? 'onboarding' : 'home';
   final deviceInfo = DeviceInfoPlugin();
@@ -518,6 +529,12 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
+  @override
+  void initState() {
+    super.initState();
+
+    FirebaseMessaging.onMessage.listen(showFlutterNotification);
+  }
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
