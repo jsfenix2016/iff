@@ -5,6 +5,7 @@ import 'package:all_sensors2/all_sensors2.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:ifeelefine/Common/notificationService.dart';
+import 'package:ifeelefine/Controllers/mainController.dart';
 import 'package:ifeelefine/Data/hiveRisk_data.dart';
 import 'package:ifeelefine/Data/hive_constant_adapterInit.dart';
 import 'package:ifeelefine/Model/activitydaybd.dart';
@@ -61,6 +62,8 @@ Timer timerSendSMS = Timer(const Duration(seconds: 20), () {});
 
 final LogActivityController logActivityController =
     Get.put(LogActivityController());
+
+final MainController mainController = Get.put(MainController());
 int _logActivityTimer = 60;
 const int _logActivityTimerRefresh = 60;
 
@@ -75,7 +78,7 @@ Future<void> main() async {
   await inicializeHiveBD();
 
   await initializeService();
-  user = await const HiveData().getuserbd;
+  user = await mainController.getUserData();
   initApp = _prefs.isFirstConfig == false ? 'onboarding' : 'home';
   final deviceInfo = DeviceInfoPlugin();
 
@@ -205,7 +208,7 @@ Future activateService() async {
         case NotificationResponseType.selectedNotificationAction:
           if (notificationResponse.actionId == "helpID") {
             IdleLogic().notifyContact();
-            saveUserLog("Envio de SMS", now);
+            mainController.saveUserLog("Envio de SMS", now);
           }
           if (notificationResponse.actionId == "imgoodId") {
             ismove = false;
@@ -349,14 +352,14 @@ Future accelerometer() async {
         }
 
         RedirectViewNotifier.showNotifications();
-        saveUserLog("Movimiento brusco a ", now);
+        mainController.saveUserLog("Movimiento brusco a ", now);
       } else {
         isMovRude = false;
         if (event.x >= 0.07 || event.y >= 0.02 || event.z >= 9.9) {
           print("me movi");
           if (_logActivityTimer >= _logActivityTimerRefresh) {
             print("Movimiento normal");
-            saveActivityLog(DateTime.now(), "Movimiento normal");
+            mainController.saveActivityLog(DateTime.now(), "Movimiento normal");
             _logActivityTimer = 0;
           }
           ismove = false;
@@ -470,8 +473,8 @@ Future activatedTimerInactivity() async {
       timerActive = false;
 
       RedirectViewNotifier.showNotifications();
-      saveUserLog("Alerta de inactividad ", now);
-      saveActivityLog(DateTime.now(), "Inactividad");
+      mainController.saveUserLog("Alerta de inactividad ", now);
+      mainController.saveActivityLog(DateTime.now(), "Inactividad");
     });
   }
 }
@@ -483,21 +486,8 @@ void sendMessageContact() async {
     timerActive = false;
 
     IdleLogic().notifyContact();
-    saveUserLog("Envio de SMS a contacto ", now);
+    mainController.saveUserLog("Envio de SMS a contacto ", now);
   });
-}
-
-Future<void> saveUserLog(String messaje, DateTime time) async {
-  await inicializeHiveBD();
-  LogAlertsBD mov = LogAlertsBD(typeAction: messaje, time: time);
-  const HiveData().saveUserPositionBD(mov);
-}
-
-Future<void> saveActivityLog(DateTime dateTime, String movementType) async {
-  await inicializeHiveBD();
-  LogActivityBD activityBD =
-      LogActivityBD(dateTime: dateTime, movementType: movementType);
-  await logActivityController.saveLogActivity(activityBD);
 }
 
 class MyApp extends StatefulWidget {

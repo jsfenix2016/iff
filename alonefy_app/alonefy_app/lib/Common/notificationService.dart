@@ -91,7 +91,7 @@ class RedirectViewNotifier with ChangeNotifier {
       if (contact.sendWhatsapp) {
         IdleLogic().notifyContact();
       }
-      saveUserLog("Envio de SMS a contacto cita", now);
+      mainController.saveUserLog("Envio de SMS a contacto cita", now);
     });
   }
 

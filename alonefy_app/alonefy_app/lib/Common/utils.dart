@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:ifeelefine/Model/userbd.dart';
 import 'package:intl/intl.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
@@ -280,6 +281,22 @@ Future getResponse() async {
 
 User initUser() {
   return User(
+      idUser: "-1",
+      name: "",
+      lastname: "",
+      email: "",
+      telephone: "",
+      gender: "",
+      maritalStatus: "",
+      styleLife: "",
+      pathImage: "",
+      age: '',
+      country: '',
+      city: '');
+}
+
+UserBD initUserBD() {
+  return UserBD(
       idUser: "-1",
       name: "",
       lastname: "",
