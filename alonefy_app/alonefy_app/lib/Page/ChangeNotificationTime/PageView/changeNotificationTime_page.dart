@@ -7,6 +7,7 @@ import '../../../Common/Constant.dart';
 import '../../../Common/colorsPalette.dart';
 import '../../../Data/hive_data.dart';
 import '../../../Provider/prefencesUser.dart';
+import '../../Premium/PageView/premium_page.dart';
 
 class ChangeNotificationTimePage extends StatefulWidget {
   /// Creates a new GeolocatorWidget.
@@ -232,13 +233,27 @@ class _ChangeNotificationTimePageState extends State<ChangeNotificationTimePage>
           home: CupertinoPicker(
             backgroundColor: Colors.transparent,
             onSelectedItemChanged: (int value) {
-              switch (pickerId) {
-                case 0: emailTime = Constant.timeDicExtended[value.toString()]!;
-                break;
-                case 1: smsTime = Constant.timeDicExtended[value.toString()]!;
-                break;
-                case 2: phoneTime = Constant.timeDicExtended[value.toString()]!;
-                break;
+              if (_prefs.getUserPremium) {
+                switch (pickerId) {
+                  case 0:
+                    emailTime = Constant.timeDicExtended[value.toString()]!;
+                    break;
+                  case 1:
+                    smsTime = Constant.timeDicExtended[value.toString()]!;
+                    break;
+                  case 2:
+                    phoneTime = Constant.timeDicExtended[value.toString()]!;
+                    break;
+                }
+              } else {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const PremiumPage(
+                      img: 'Mask group-4',
+                      title: Constant.premiumChangeTimeTitle,
+                      subtitle: '')
+                  ),
+                );
               }
               //useMobilVC.saveTimeUseMobil(
               //    context, Constant.timeDicExtended[value.toString()].toString());

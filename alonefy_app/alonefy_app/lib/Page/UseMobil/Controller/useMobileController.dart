@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import 'package:ifeelefine/Common/utils.dart';
 import 'package:ifeelefine/Provider/prefencesUser.dart';
 import 'package:ifeelefine/Provider/user_provider.dart';
-import 'package:pay/pay.dart';
+//import 'package:pay/pay.dart';
 
 final _prefs = PreferenceUser();
 

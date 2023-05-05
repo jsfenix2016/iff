@@ -165,6 +165,16 @@ class Constant {
     "Domingo",
   ];
 
+  static const List<String> tempListShortDay = <String>[
+    "L",
+    "M",
+    "X",
+    "J",
+    "V",
+    "S",
+    "D",
+  ];
+
   static const Map<String, String> timeDicAge = {
     "0": '18',
     "1": '19',
@@ -219,4 +229,11 @@ class Constant {
       'Debe verificar su numero de telefono';
 
   static const String info = 'Información';
+
+  static const String premiumHabitsTitle = 'Aprende de tus hábitos';
+  static const String premiumChangeTimeTitle = 'Modifica los tiempos para enviar sms, whatsapp y llamadas';
+  static const String premiumMapTitle = 'Envía tu ubicación cuando envíes una alerta';
+  static const String premiumRestoreTitle = 'Restaura tú cuenta';
+  static const String premiumContactsTitle = 'Asegurarte que responden a tu emergencia, añade más contactos';
+  static const String premiumFallTitle = 'Cuando tu smartphone detecte una caída avisará al amigo o familiar que desees';
 }

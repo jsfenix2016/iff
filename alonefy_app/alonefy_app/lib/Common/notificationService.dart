@@ -63,6 +63,7 @@
 
 import 'dart:async';
 
+import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:ifeelefine/Common/colorsPalette.dart';
@@ -100,48 +101,64 @@ class RedirectViewNotifier with ChangeNotifier {
   ///una ves se notifica al usuario se activa otra funcion -> sendMessageContact que se activa un timer a la espera de que el usuario indique
   ///si esta bien o se procede a notificar al contacto antes seleccionado.
   static Future<void> showNotifications() async {
-    await flutterLocalNotificationsPlugin.show(
-      0,
-      'Alerta',
-      '¿Te encuentras bien?',
-      const NotificationDetails(
-        android: AndroidNotificationDetails(
-          'my_foreground',
-          'MY FOREGROUND SERVICE',
-          icon: 'ic_bg_service_small',
-          color: ColorPalette.principal,
-          importance: Importance.max,
-          ongoing: true,
-          enableLights: true,
-          playSound: true,
-          enableVibration: true,
-          channelShowBadge: false,
-          groupAlertBehavior: GroupAlertBehavior.children,
-          priority: Priority.high,
+await flutterLocalNotificationsPlugin.show(
+  0,
+  'Alerta',
+  '¿Te encuentras bien?',
+  const NotificationDetails(
+    android: AndroidNotificationDetails(
+      'my_foreground',
+      'MY FOREGROUND SERVICE',
+      icon: 'ic_bg_service_small',
+      color: ColorPalette.principal,
+      importance: Importance.max,
+      ongoing: true,
+      enableLights: true,
+      playSound: true,
+      enableVibration: true,
+      channelShowBadge: false,
+      priority: Priority.high,
 
-          largeIcon: DrawableResourceAndroidBitmap('ic_bg_service_small'),
-          // sound: RawResourceAndroidNotificationSound(
-          //     "content://media/internal/audio/media/26.wav"),
-          actions: <AndroidNotificationAction>[
-            AndroidNotificationAction(
-              "helpID",
-              "ayuda",
-              icon: DrawableResourceAndroidBitmap('ic_bg_service_small'),
-              showsUserInterface: true,
-              cancelNotification: true,
-            ),
-            AndroidNotificationAction(
-              "imgoodId",
-              "Estoy bien",
-              icon: DrawableResourceAndroidBitmap('ic_bg_service_small'),
-              showsUserInterface: true,
-              cancelNotification: true,
-            ),
-          ],
+      largeIcon: DrawableResourceAndroidBitmap('ic_bg_service_small'),
+      // sound: RawResourceAndroidNotificationSound(
+      //     "content://media/internal/audio/media/26.wav"),
+      actions: <AndroidNotificationAction>[
+        AndroidNotificationAction(
+          "helpID",
+          "ayuda",
+          icon: DrawableResourceAndroidBitmap('ic_bg_service_small'),
+          showsUserInterface: true,
+          cancelNotification: true,
         ),
-      ),
-      payload: 'Inactived',
-    );
+        AndroidNotificationAction(
+          "imgoodId",
+          "Estoy bien",
+          icon: DrawableResourceAndroidBitmap('ic_bg_service_small'),
+          showsUserInterface: true,
+          cancelNotification: true,
+        ),
+      ],
+    ),
+  ),
+  payload: 'Inactived',
+);
+
+
+
+
+    //await AwesomeNotifications().createNotification(
+    //  content: NotificationContent(
+    //      id: 10,
+    //      channelKey: 'alerts',
+    //      title: 'Simple Notification',
+    //      body: 'Simple body',
+    //    color: ColorPalette.principal,
+    //  ),
+    //  actionButtons: <NotificationActionButton>[
+    //    NotificationActionButton(key: 'yes', label: 'Ayuda'),
+    //    NotificationActionButton(key: 'no', label: 'Estoy bien'),
+    //  ],
+    //);
     sendMessageContact();
   }
 
@@ -175,7 +192,7 @@ class RedirectViewNotifier with ChangeNotifier {
           playSound: true,
           enableVibration: true,
           channelShowBadge: false,
-          groupAlertBehavior: GroupAlertBehavior.children,
+          //groupAlertBehavior: GroupAlertBehavior.children,
           priority: Priority.high,
 
           largeIcon: DrawableResourceAndroidBitmap('ic_bg_service_small'),

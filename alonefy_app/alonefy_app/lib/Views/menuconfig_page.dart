@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ifeelefine/Common/colorsPalette.dart';
+import 'package:ifeelefine/Common/habits.dart';
 
 import 'package:ifeelefine/Page/ChangeNotificationTime/PageView/changeNotificationTime_page.dart';
+import 'package:ifeelefine/Page/Contact/PageView/addContact_page.dart';
 import 'package:ifeelefine/Page/Disamble/Pageview/disambleIfeelfine_page.dart';
 import 'package:ifeelefine/Page/FallDetected/Pageview/fall_activation_config_page.dart';
 
@@ -16,11 +18,16 @@ import 'package:ifeelefine/Page/UserEdit/PageView/editUser_page.dart';
 import 'package:ifeelefine/Page/UserInactivityPage/PageView/configurationUserInactivity_page.dart';
 
 import 'package:ifeelefine/Page/UserRest/PageView/previewRestTime.dart';
+import 'package:ifeelefine/Provider/prefencesUser.dart';
 import 'package:ifeelefine/Views/contact_page.dart';
 import 'package:ifeelefine/Views/geolocatos_test_page.dart';
 
 import 'package:ifeelefine/Page/PermissionUser/Pageview/permission_page.dart';
 import 'package:ifeelefine/Views/ringtone_page.dart';
+import 'package:slidable_button/slidable_button.dart';
+
+import '../Common/Constant.dart';
+import '../Page/Premium/PageView/premium_page.dart';
 
 class MenuConfigModel {
   late String name;
@@ -66,6 +73,8 @@ class _MenuConfigurationPageState extends State<MenuConfigurationPage> {
     MenuConfigModel(
         "Desactivar mi instalación", 'assets/images/Group 533.png', 21, 17),
   ];
+  
+  final _prefs = PreferenceUser();
 
   @override
   void initState() {
@@ -153,7 +162,7 @@ class _MenuConfigurationPageState extends State<MenuConfigurationPage> {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => const RingTonePage(),
+            builder: (context) => const AddContactPage(),
           ),
         );
         break;
@@ -166,12 +175,23 @@ class _MenuConfigurationPageState extends State<MenuConfigurationPage> {
         );
         break;
       case 11:
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => const RestoreMyConfigPage(),
-          ),
-        );
+        if (_prefs.getUserPremium) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const RestoreMyConfigPage(),
+            ),
+          );
+        } else {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const PremiumPage(
+                img: 'Mask group-4',
+                title: Constant.premiumRestoreTitle,
+                subtitle: '')
+            ),
+          );
+        }
         break;
       case 12:
         Navigator.push(
@@ -213,75 +233,151 @@ class _MenuConfigurationPageState extends State<MenuConfigurationPage> {
         height: size.height,
         child: Stack(
           children: [
-            ListView.builder(
-              itemCount: permissionStatusI.length,
-              itemBuilder: (context, index) {
-                return GestureDetector(
-                  onTap: () {
-                    routeIndexSelect(index);
-                  },
-                  child: Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: SizedBox(
-                      child: Stack(
-                        children: [
-                          Center(
-                            child: Container(
-                              decoration: const BoxDecoration(
-                                color: Colors.transparent,
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(8)),
-                              ),
-                              height: 38,
-                              width: 312,
-                              child: Row(
-                                children: [
-                                  Padding(
-                                    padding: const EdgeInsets.only(left: 8.0),
-                                    child: Container(
-                                      height: permissionStatusI[index].heigth,
-                                      width: permissionStatusI[index].weigth,
-                                      decoration: BoxDecoration(
-                                        image: DecorationImage(
-                                          image: AssetImage(
-                                              permissionStatusI[index].icon),
-                                          fit: BoxFit.fill,
+            Padding(
+              padding: EdgeInsets.fromLTRB(0, 0, 0, 100),
+              child: ListView.builder(
+                itemCount: permissionStatusI.length,
+                itemBuilder: (context, index) {
+                  return GestureDetector(
+                    onTap: () {
+                      routeIndexSelect(index);
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: SizedBox(
+                        child: Stack(
+                          children: [
+                            Center(
+                              child: Container(
+                                decoration: const BoxDecoration(
+                                  color: Colors.transparent,
+                                  borderRadius:
+                                  BorderRadius.all(Radius.circular(8)),
+                                ),
+                                height: 38,
+                                width: 312,
+                                child: Row(
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.only(left: 8.0),
+                                      child: Container(
+                                        height: permissionStatusI[index].heigth,
+                                        width: permissionStatusI[index].weigth,
+                                        decoration: BoxDecoration(
+                                          image: DecorationImage(
+                                            image: AssetImage(
+                                                permissionStatusI[index].icon),
+                                            fit: BoxFit.fill,
+                                          ),
+                                          color: Colors.transparent,
                                         ),
-                                        color: Colors.transparent,
                                       ),
                                     ),
-                                  ),
-                                  const SizedBox(
-                                    width: 12,
-                                  ),
-                                  Expanded(
-                                    child: Text(
-                                      permissionStatusI[index].name,
-                                      maxLines: 2,
-                                      textAlign: TextAlign.left,
-                                      style: GoogleFonts.barlow(
-                                        fontSize: 16.0,
-                                        wordSpacing: 1,
-                                        letterSpacing: 1,
-                                        fontWeight: FontWeight.normal,
-                                        color: Colors.white,
+                                    const SizedBox(
+                                      width: 12,
+                                    ),
+                                    Expanded(
+                                      child: Text(
+                                        permissionStatusI[index].name,
+                                        maxLines: 2,
+                                        textAlign: TextAlign.left,
+                                        style: GoogleFonts.barlow(
+                                          fontSize: 16.0,
+                                          wordSpacing: 1,
+                                          letterSpacing: 1,
+                                          fontWeight: FontWeight.normal,
+                                          color: Colors.white,
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                ],
+                                  ],
+                                ),
                               ),
-                            ),
-                          )
-                        ],
+                            )
+                          ],
+                        ),
                       ),
                     ),
+                  );
+                },
+              ),
+            ),
+            Positioned(
+              bottom: 32,
+              left: 32,
+              right: 32,
+              child: getHorizontalSlide()
+            )
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget getHorizontalSlide() {
+    return HorizontalSlidableButton(
+      isRestart: true,
+      borderRadius: const BorderRadius.all(Radius.circular(2)),
+      height: 55,
+      width: 296,
+      buttonWidth: 60.0,
+      color: ColorPalette.principal,
+      buttonColor: const Color.fromRGBO(157, 123, 13, 1),
+      dismissible: false,
+      label: Image.asset(
+        scale: 1,
+        fit: BoxFit.fill,
+        'assets/images/Group 969.png',
+        height: 13,
+        width: 21,
+      ),
+      onChanged: (SlidableButtonPosition value) async {
+        if (value == SlidableButtonPosition.end && _prefs.getUserPremium) {
+          updateHabits();
+        } else if (value == SlidableButtonPosition.end) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const PremiumPage(
+                img: 'Mask group-4',
+                title: Constant.premiumHabitsTitle,
+                subtitle: '')
+            ),
+          );
+        }
+      },
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(left: 48.0),
+              child: Center(
+                child: Text(
+                  "Aprender de mis hábitos",
+                  textAlign: TextAlign.center,
+                  style: GoogleFonts.barlow(
+                    fontSize: 16.0,
+                    wordSpacing: 1,
+                    letterSpacing: 1,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
                   ),
-                );
-              },
+                ),
+              ),
             ),
           ],
         ),
       ),
     );
+  }
+  
+  void updateHabits() async {
+    var habits = Habits();
+    await habits.fillHabits();
+    await habits.fillRestDays();
+    await habits.fillActivityDays();
+    await habits.average();
+    habits.updateUseTime();
   }
 }
