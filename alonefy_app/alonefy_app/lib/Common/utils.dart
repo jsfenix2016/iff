@@ -602,6 +602,23 @@ Future<String> rangeDateTimeToString(DateTime? from, DateTime? to) async {
   return rangeDateText;
 }
 
+int minToInt(String time) {
+  var min = int.parse(time.replaceAll(" min", ""));
+  return min;
+}
+
+int hourToInt(String time) {
+  var hour = int.parse(time.replaceAll(" hora", ""));
+  return hour;
+}
+
+String convertMinutesToHourAndMinutes(int minutes) {
+  var hours = minutes / 60;
+  var min = minutes % 60;
+
+  return '${hours.toInt()} hora y $min min';
+}
+
 extension StringExtension on String {
   String capitalize() {
     return "${this[0].toUpperCase()}${this.substring(1).toLowerCase()}";

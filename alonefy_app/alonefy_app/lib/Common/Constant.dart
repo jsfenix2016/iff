@@ -244,6 +244,7 @@ class Constant {
 
   static const String premiumHabitsTitle = 'Aprende de tus hábitos';
   static const String premiumChangeTimeTitle = 'Modifica los tiempos para enviar sms, whatsapp y llamadas';
+  static const String premiumUseTimeTitle = 'Modifica el tiempo de cada cuanto usas el móvil';
   static const String premiumMapTitle = 'Envía tu ubicación cuando envíes una alerta';
   static const String premiumRestoreTitle = 'Restaura tú cuenta';
   static const String premiumContactsTitle = 'Asegurarte que responden a tu emergencia, añade más contactos';

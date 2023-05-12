@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:ifeelefine/Common/utils.dart';
@@ -14,6 +15,7 @@ import 'package:jiffy/jiffy.dart';
 import '../Model/activitydaybd.dart';
 import '../Model/logActivity.dart';
 import '../Page/AddActivityPage/Controller/addActivityController.dart';
+import '../Page/EditUseMobil/Controller/editUseController.dart';
 import 'Constant.dart';
 
 class Habits {
@@ -39,6 +41,16 @@ class Habits {
 
   int result = 0;
   int movements = -1;
+
+  Future<bool> canUpdateHabits() async {
+    Jiffy.locale('es');
+    var refreshTime = _prefs.getHabitsRefresh;
+    var date = Jiffy(refreshTime, getDefaultPattern());
+
+    var offset = DateTime(date.year, date.month, date.day + 1);
+
+    return DateTime.now().isAfter(offset);
+  }
 
   Future<void> fillHabits() async {
     // test
@@ -110,12 +122,20 @@ class Habits {
     print('Result average: ' + (result / movements).toString());
   }
 
-  void updateUseTime() {
+  void updateUseTime(BuildContext context) {
     var useMobile = result / movements;
     print('Use time average: ' + (result / movements).toString());
-    _prefs.setUseMobil = '$useMobile min';
+    _prefs.setHabitsTime = '$useMobile min';
 
-    print("Use time: " + _prefs.getUseMobil);
+    updateUseTimeBD(context, '$useMobile min');
+
+    print("Use time: " + _prefs.getHabitsTime);
+  }
+
+  void updateUseTimeBD(BuildContext context, String time) {
+    final EditUseMobilController editUseMobilVC = Get.put(EditUseMobilController());
+
+    editUseMobilVC.saveTimeUseMobileFromHabits(context, time);
   }
 
   bool isValidDate(LogActivity logActivity) {

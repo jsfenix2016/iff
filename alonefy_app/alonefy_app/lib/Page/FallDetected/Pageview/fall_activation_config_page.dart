@@ -244,7 +244,8 @@ class _FallActivationConfigPageState extends State<FallActivationConfigPage> {
           Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => const PremiumPage(
-                img: 'Mask group-4',
+                isFreeTrial: false,
+                img: 'pantalla2.png',
                 title: Constant.premiumFallTitle,
                 subtitle: '')
             ),

@@ -7,6 +7,7 @@ import 'package:ifeelefine/Common/colorsPalette.dart';
 import 'package:ifeelefine/Common/utils.dart';
 import 'package:ifeelefine/Model/activitydaybd.dart';
 import 'package:ifeelefine/Page/Calendar/calendarPopup.dart';
+import 'package:ifeelefine/Page/FallDetected/Pageview/fall_activation_page.dart';
 import 'package:ifeelefine/Utils/Widgets/widgetLogo.dart';
 import 'package:jiffy/jiffy.dart';
 
@@ -16,7 +17,9 @@ import '../../AddActivityPage/PageView/addActivity_page.dart';
 
 class PreviewActivitiesByDate extends StatefulWidget {
   /// Creates a new GeolocatorWidget.
-  const PreviewActivitiesByDate({Key? key}) : super(key: key);
+  const PreviewActivitiesByDate({Key? key, required this.isMenu}) : super(key: key);
+
+  final bool isMenu;
 
   @override
   State<PreviewActivitiesByDate> createState() =>
@@ -362,10 +365,12 @@ class _PreviewActivitiesByDateState extends State<PreviewActivitiesByDate>
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: ColorPalette.backgroundAppBar,
-        title: const Text("Configuración"),
-      ),
+      appBar: widget.isMenu
+          ? AppBar(
+            backgroundColor: ColorPalette.backgroundAppBar,
+            title: Text("Configuración"),
+      )
+          : null,
       body: Container(
           decoration: decorationCustom(),
           width: size.width,
@@ -495,7 +500,7 @@ class _PreviewActivitiesByDateState extends State<PreviewActivitiesByDate>
                   ),
                   Expanded(
                     child: Padding(
-                        padding: const EdgeInsets.fromLTRB(16, 24, 16, 100),
+                        padding: EdgeInsets.fromLTRB(16, 24, 16, widget.isMenu ? 100 : 150),
                         child: ListView.builder(
                             shrinkWrap: true,
                             itemCount: _days.length,
@@ -623,10 +628,8 @@ class _PreviewActivitiesByDateState extends State<PreviewActivitiesByDate>
                                                                     index]![
                                                                 indexActivity],
                                                             _days[index]);
-                                                        controller.updateActivity(
-                                                            _activitiesByDay[
-                                                                    index]![
-                                                                indexActivity]);
+                                                        controller.updateActivity(_activitiesByDay[index]![indexActivity]);
+                                                        controller.updateActivityApi(_activitiesByDay[index]![indexActivity]);
                                                         _activitiesByDay[index]!
                                                             .removeAt(
                                                                 indexActivity);
@@ -683,6 +686,7 @@ class _PreviewActivitiesByDateState extends State<PreviewActivitiesByDate>
                                                                     controller.updateActivity(
                                                                         _activitiesByDay[index]![
                                                                             indexActivity]);
+                                                                    controller.updateActivityApi(_activitiesByDay[index]![indexActivity]);
                                                                     setState(
                                                                         () {});
                                                                   },
@@ -699,7 +703,7 @@ class _PreviewActivitiesByDateState extends State<PreviewActivitiesByDate>
                 ],
               ),
               Positioned(
-                bottom: 20,
+                bottom: widget.isMenu ? 20 : 70,
                 right: 32,
                 left: 32,
                 child: Container(
@@ -728,6 +732,43 @@ class _PreviewActivitiesByDateState extends State<PreviewActivitiesByDate>
                   ),
                 ),
               ),
+              if (!widget.isMenu) ...[
+                Positioned(
+                  bottom: 20,
+                  right: 32,
+                  left: 32,
+                  child: Container(
+                    decoration: const BoxDecoration(
+                      color: Color.fromRGBO(219, 177, 42, 1),
+                      borderRadius: BorderRadius.all(Radius.circular(8)),
+                    ),
+                    height: 42,
+                    child: Center(
+                      child: TextButton(
+                        style: TextButton.styleFrom(
+                            minimumSize: const Size.fromWidth(300)),
+                        child: Text('Continuar',
+                            textAlign: TextAlign.center,
+                            style: GoogleFonts.barlow(
+                              fontSize: 16.0,
+                              wordSpacing: 1,
+                              letterSpacing: 1.2,
+                              fontWeight: FontWeight.w700,
+                              color: Colors.black,
+                            )),
+                        onPressed: () async {
+                          await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => FallActivationPage(),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                  ),
+                )
+              ],
             ],
           )),
     );
@@ -737,7 +778,7 @@ class _PreviewActivitiesByDateState extends State<PreviewActivitiesByDate>
     await Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => const AddActivityPage(),
+        builder: (context) => AddActivityPage(isMenu: widget.isMenu),
       ),
     );
 

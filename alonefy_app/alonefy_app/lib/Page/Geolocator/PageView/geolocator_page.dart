@@ -9,6 +9,7 @@ import 'package:ifeelefine/Common/utils.dart';
 import 'package:ifeelefine/Page/Geolocator/Controller/configGeolocatorController.dart';
 
 import 'package:ifeelefine/Page/TermsAndConditions/PageView/conditionGeneral_page.dart';
+import 'package:ifeelefine/Utils/Widgets/ImageGradient.dart';
 import 'package:ifeelefine/Utils/Widgets/elevatedButtonFilling.dart';
 
 import '../../../Common/colorsPalette.dart';
@@ -191,15 +192,17 @@ class _InitGeolocatorState extends State<InitGeolocator> {
                   children: [
                     Stack(
                       children: [
-                        SizedBox(
-                          child: Image.asset(
-                            fit: BoxFit.fill,
-                            scale: 0.65,
-                            'assets/images/Map.png',
-                            height: 400,
-                            width: double.infinity,
-                          ),
-                        ),
+                        //SizedBox(
+                        //  child: Image.asset(
+                        //    fit: BoxFit.fill,
+                        //    scale: 0.65,
+                        //    'assets/images/Map.png',
+                        //    height: 400,
+                        //    width: double.infinity,
+                        //  ),
+                        //),
+                        //getPremiumImageGradient('assets/images/Map.png'),
+                        getMapImageGradient(),
                         Center(
                           heightFactor: 2.2,
                           child: SizedBox(
@@ -239,30 +242,15 @@ class _InitGeolocatorState extends State<InitGeolocator> {
                             activeColor: ColorPalette.activeSwitch,
                             trackColor: CupertinoColors.inactiveGray,
                             onChanged: ((value) async {
-                              if (_prefs.getUserPremium) {
-                                setState(() {
-                                  isActive = value;
-                                });
-                                if (value) {
-                                  await _checkPermission();
-                                  getCurrentPosition();
-                                } else {
-                                  _prefs.setAcceptedSendLocation =
-                                      PreferencePermission.noAccepted;
-                                }
+                              setState(() {
+                                isActive = value;
+                              });
+                              if (value) {
+                                await _checkPermission();
+                                getCurrentPosition();
                               } else {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(builder: (context) => const PremiumPage(
-                                      img: 'Mask group-4',
-                                      title: Constant.premiumMapTitle,
-                                      subtitle: '')
-                                  ),
-                                );
-
-                                setState(() {
-                                  isActive = false;
-                                });
+                                _prefs.setAcceptedSendLocation =
+                                    PreferencePermission.noAccepted;
                               }
                               // geoVC.saveSendLocation(context, value);
                             }),

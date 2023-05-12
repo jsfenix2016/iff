@@ -3,7 +3,7 @@ import 'package:ifeelefine/Data/hive_constant_adapterInit.dart';
 
 part 'useMobilbd.g.dart';
 
-@HiveType(typeId: HiveConstantAdapterInit.idRestDayDBAdapter)
+@HiveType(typeId: HiveConstantAdapterInit.idUseMobilBDAdapter)
 class UseMobilBD extends HiveObject {
   UseMobilBD(
       {required this.day,

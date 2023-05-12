@@ -6,6 +6,9 @@ import 'package:ifeelefine/Model/userbd.dart';
 import 'package:ifeelefine/Page/UseMobil/Service/useMobilService.dart';
 import 'package:ifeelefine/Provider/prefencesUser.dart';
 import 'package:ifeelefine/Provider/user_provider.dart';
+
+import '../../../Data/hive_data.dart';
+import '../../../Model/ApiRest/UseMobilApi.dart';
 //import 'package:pay/pay.dart';
 
 final _prefs = PreferenceUser();
@@ -13,9 +16,9 @@ final _prefs = PreferenceUser();
 class UseMobilController extends GetxController {
   final UseMobilService useMobilServ = Get.put(UseMobilService());
 
-  Future<bool> saveTimeUseMobil(
+  Future<void> saveTimeUseMobil(
       BuildContext context, String time, UserBD userbd) async {
-    _prefs.setUseMobil = time;
+    //_prefs.setHabitsTime = time;
     final List<String> tempNoSelectListDay = <String>[
       "L",
       "M",
@@ -32,24 +35,52 @@ class UseMobilController extends GetxController {
 
       selectedDays.add(useDay);
     }
-    Map<String, dynamic> resp =
-        await useMobilServ.saveUseMobil(selectedDays, userbd);
-    if (resp["id"] != null) {
-      return true;
-    } else {
-      return false;
+    await const HiveData().saveListTimeUseMobil(selectedDays);
+
+    var listMobilApi = _convertToApi(selectedDays, userbd);
+
+    var resp = await useMobilServ.saveUseMobil(listMobilApi);
+  }
+
+  List<UseMobilApi> _convertToApi(List<UseMobilBD> listMobilBD, UserBD userBD) {
+    List<UseMobilApi> listMobilApi = [];
+
+    for (var useMobil in listMobilBD) {
+      var useMobilApi = UseMobilApi();
+
+      useMobilApi.phoneNumber = userBD.telephone;
+      useMobilApi.dayOfWeek = useMobil.day;
+      useMobilApi.time = _convertTimeToInt(useMobil.time);
+      useMobilApi.index = useMobil.selection;
+
+      listMobilApi.add(useMobilApi);
     }
+
+    return listMobilApi;
   }
 
-  Future<void> saveHabitsMobil(BuildContext context, String time) async {
-    _prefs.setUseMobil = time;
+  int _convertTimeToInt(String strTime) {
+    var strTimeTemp = strTime;
+    strTimeTemp = strTimeTemp.replaceAll(" min", "");
+    strTimeTemp = strTimeTemp.replaceAll(" hora", "");
 
-    showAlert(context, "Se guardo correctamente");
+    int minutes = 0;
+    if (strTime.contains("hora")) {
+      minutes = hourToInt(strTimeTemp) * 60;
+    }
+
+    return minutes;
   }
 
-  Future<String> getTimeUseMobil() async {
-    return _prefs.getUseMobil;
-  }
+  //Future<void> saveHabitsMobil(BuildContext context, String time) async {
+  //  _prefs.setHabitsTime = time;
+//
+  //  showAlert(context, "Se guardo correctamente");
+  //}
+
+  //Future<String> getTimeUseMobil() async {
+  //  return _prefs.getUseMobil;
+  //}
 
   Future payAlgo() async {
     // List<PaymentItem> items = [];

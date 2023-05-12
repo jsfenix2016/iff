@@ -10,6 +10,7 @@ import 'package:ifeelefine/Common/colorsPalette.dart';
 import 'package:ifeelefine/Common/utils.dart';
 import 'package:ifeelefine/Model/user.dart';
 import 'package:ifeelefine/Model/userbd.dart';
+import 'package:ifeelefine/Page/Premium/PageView/premium_page.dart';
 import 'package:ifeelefine/Page/UseMobil/PageView/configurationUseMobile_page.dart';
 import 'package:ifeelefine/Page/UserConfig/Controller/userConfigController.dart';
 import 'package:ifeelefine/Page/UserConfig2/Controller/userConfig2Controller.dart';
@@ -282,7 +283,7 @@ class _UserConfigPageState2 extends State<UserConfigPage2> {
                 const SizedBox(height: 20),
                 ElevateButtonCustomBorder(
                     onChanged: ((value) {
-                      _submit;
+                      _submit(true);
                     }),
                     mensaje: "Gratuito 30 dias"),
                 const SizedBox(height: 20),
@@ -306,7 +307,9 @@ class _UserConfigPageState2 extends State<UserConfigPage2> {
           Colors.transparent,
         ),
       ),
-      onPressed: _submit,
+      onPressed: () {
+        _submit(false);
+      },
       child: Container(
         decoration: BoxDecoration(
           gradient: linerGradientButtonFilling(),
@@ -330,7 +333,7 @@ class _UserConfigPageState2 extends State<UserConfigPage2> {
     );
   }
 
-  void _submit() async {
+  void _submit(bool isFreeTrial) async {
     userbd!.age = user!.age;
     userbd!.city = user!.city;
     userbd!.styleLife = user!.styleLife;
@@ -339,10 +342,22 @@ class _UserConfigPageState2 extends State<UserConfigPage2> {
     userbd!.country = user!.country;
     bool isupdate = await userConfigVC.updateUserDate(context, userbd!);
     if (isupdate) {
-      Navigator.push(
+      await Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => UseMobilePage(userbd: userbd!)),
-      );
+        MaterialPageRoute(builder: (context) => PremiumPage(
+            isFreeTrial: isFreeTrial,
+            img: 'pantalla3.png',
+            title: Constant.premiumFallTitle,
+            subtitle: '')
+        ),
+      ).then((value) {
+        if (value != null && value) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => UseMobilePage(userbd: userbd!)),
+          );
+        }
+      });
     }
     //if (!formKey.currentState.validate()) return;
     //formKey.currentState.save();

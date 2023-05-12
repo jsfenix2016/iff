@@ -9,8 +9,10 @@ import 'package:ifeelefine/Page/UseMobil/Controller/useMobileController.dart';
 
 import 'package:ifeelefine/Page/UserRest/PageView/configurationUserRest_page.dart';
 import 'package:flutter/material.dart';
+import 'package:ifeelefine/Provider/prefencesUser.dart';
 import 'package:ifeelefine/Utils/Widgets/elevateButtonCustomBorder.dart';
 import 'package:ifeelefine/Utils/Widgets/elevatedButtonFilling.dart';
+import 'package:jiffy/jiffy.dart';
 import 'package:slidable_button/slidable_button.dart';
 //import 'package:pay/pay.dart';
 
@@ -28,6 +30,8 @@ class _UseMobilePageState extends State<UseMobilePage> {
   var indexSelect = 0;
   UserBD? userbd;
   // FlutterPay flutterPay = FlutterPay();
+
+  final _prefs = PreferenceUser();
 
   void onGooglePayResult(paymentResult) {
     // Send the resulting Google Pay token to your server / PSP
@@ -181,9 +185,15 @@ class _UseMobilePageState extends State<UseMobilePage> {
                       ],
                     ),
                   ),
-                  onChanged: (position) {
+                  onChanged: (position) async {
+                    await Jiffy.locale('es');
+                    var datetime = DateTime.now();
+                    var strDatetime = Jiffy(datetime).format(getDefaultPattern());
+
                     setState(() {
                       if (position == SlidableButtonPosition.end) {
+                        _prefs.setHabitsEnable = true;
+                        _prefs.setHabitsRefresh = strDatetime;
                         // result = 'Button is on the right';
                         // makePayment();
                         //GooglePayButton(
@@ -212,8 +222,6 @@ class _UseMobilePageState extends State<UseMobilePage> {
                 child: Center(
                   child: ElevateButtonFilling(
                     onChanged: (value) async {
-                      var a = useMobilVC.getTimeUseMobil();
-                      print(a);
                       await useMobilVC.saveTimeUseMobil(
                           context,
                           Constant.timeDic[indexSelect.toString()].toString(),

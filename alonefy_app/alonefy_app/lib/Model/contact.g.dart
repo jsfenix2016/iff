@@ -25,13 +25,14 @@ class ContactBDAdapter extends TypeAdapter<ContactBD> {
       fields[5] as String,
       fields[6] as String,
       fields[7] as String,
+      fields[8] as String,
     );
   }
 
   @override
   void write(BinaryWriter writer, ContactBD obj) {
     writer
-      ..writeByte(8)
+      ..writeByte(9)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
@@ -45,8 +46,10 @@ class ContactBDAdapter extends TypeAdapter<ContactBD> {
       ..writeByte(5)
       ..write(obj.timeCall)
       ..writeByte(6)
-      ..write(obj.phones)
+      ..write(obj.timeWhatsapp)
       ..writeByte(7)
+      ..write(obj.phones)
+      ..writeByte(8)
       ..write(obj.requestStatus);
   }
 

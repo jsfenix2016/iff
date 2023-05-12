@@ -62,15 +62,16 @@ class _RingTonePageState extends State<RingTonePage>
     // We also handle the message potentially returning null.
     try {
       final temp = await FlutterSystemRingtones.getRingtoneSounds();
-      ringtones = temp;
+      //ringtones = temp;
 
       var count = 0;
-      for (var element in ringtones) {
+      for (var element in temp) {
         if (_prefs.getNotificationAudio == element.uri) {
           ringtonesEnabled.add(true);
         } else {
           ringtonesEnabled.add(false);
         }
+        ringtones.add(element);
         count++;
 
         if (count == 10 && !_prefs.getUserPremium) break;
