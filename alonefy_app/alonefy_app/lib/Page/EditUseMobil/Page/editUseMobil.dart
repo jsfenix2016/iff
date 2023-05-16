@@ -7,6 +7,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:ifeelefine/Common/Constant.dart';
 import 'package:ifeelefine/Common/colorsPalette.dart';
 import 'package:ifeelefine/Common/utils.dart';
+import 'package:ifeelefine/Data/hive_data.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
 import 'package:ifeelefine/Model/useMobilbd.dart';
 import 'package:ifeelefine/Page/EditUseMobil/Controller/editUseController.dart';
@@ -15,6 +17,9 @@ import 'package:ifeelefine/Page/EditUseMobil/Page/Widget/listWeekDayCustom.dart'
 import 'package:ifeelefine/Utils/Widgets/elevateButtonCustomBorder.dart';
 
 import 'package:collection/collection.dart';
+
+import '../../../Provider/prefencesUser.dart';
+import '../../Premium/PageView/premium_page.dart';
 
 class EditUseMobilPage extends StatefulWidget {
   const EditUseMobilPage({super.key});
@@ -49,8 +54,20 @@ class _EditUseMobilPageState extends State<EditUseMobilPage> {
     "D",
   ];
 
+  Map<String, String> timeDic = <String, String>{};
+
+  final _prefs = PreferenceUser();
+
   @override
   void initState() {
+    _init();
+    super.initState();
+  }
+
+  Future<void> _init() async {
+    await Hive.close();
+    var habits = _prefs.getHabitsTime;
+    timeDic = editUseMobilVC.getMapWithHabitsTime(habits);
     getListUseMobilForDay();
     scrollController = FixedExtentScrollController(initialItem: 0);
     if (tempUseMobilBDDays.isEmpty) {
@@ -61,7 +78,6 @@ class _EditUseMobilPageState extends State<EditUseMobilPage> {
         tempUseMobilBDDays.add(useMobilBD);
       }
     }
-    super.initState();
   }
 
   Future<void> getListUseMobilForDay() async {
@@ -213,7 +229,7 @@ class _EditUseMobilPageState extends State<EditUseMobilPage> {
                     itemCount: 1,
                     itemBuilder: (context, indexList) {
                       final scrollController = FixedExtentScrollController(
-                        initialItem: Constant.timeDic.values.toList().indexOf(
+                        initialItem: timeDic.values.toList().indexOf(
                               groupedProducts.entries
                                   .toList()[indexGroup]
                                   .value
@@ -250,50 +266,31 @@ class _EditUseMobilPageState extends State<EditUseMobilPage> {
                             child: SizedBox(
                               width: 200,
                               height: 90,
-                              child: CupertinoPicker(
-                                key: Key(indexList.toString()),
-                                scrollController: scrollController,
-                                backgroundColor: Colors.transparent,
-                                onSelectedItemChanged: (int value) {
-                                  indexSelect = indexGroup;
-                                  timeLblPM = Constant.timeDic[value.toString()]
-                                      .toString();
-                                  processSelectedInfo();
-                                },
-                                itemExtent: 56.0,
-                                children: List.generate(Constant.timeDic.length,
-                                    (index) {
-                                  return Container(
-                                    key: Key(indexList.toString()),
-                                    height: 64,
-                                    width: 125,
-                                    color: Colors.transparent,
-                                    child: Column(
-                                      key: Key(indexList.toString()),
-                                      children: [
-                                        Text(
-                                          key: Key(indexList.toString()),
-                                          Constant.timeDic.values
-                                              .toList()[index],
-                                          textAlign: TextAlign.center,
-                                          style: GoogleFonts.barlow(
-                                            fontSize: 36.0,
-                                            wordSpacing: 1,
-                                            letterSpacing: 0.001,
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.white,
+                              child: Stack (
+                                children: [
+                                  if (!_prefs.getUserPremium) ... [
+                                    _getCupertinoPicker(indexList, indexGroup, scrollController),
+                                  ] else ...[
+                                    GestureDetector(
+                                      child: AbsorbPointer(
+                                        absorbing: !_prefs.getUserPremium,
+                                        child: _getCupertinoPicker(indexList, indexGroup, scrollController)
+                                      ),
+                                      onVerticalDragEnd: (drag) {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(builder: (context) => const PremiumPage(
+                                              isFreeTrial: false,
+                                              img: 'pantalla3.png',
+                                              title: Constant.premiumUseTimeTitle,
+                                              subtitle: '')
                                           ),
-                                        ),
-                                        Container(
-                                          height: 2,
-                                          width: 100,
-                                          color: Colors.white,
-                                        ),
-                                      ],
-                                    ),
-                                  );
-                                }),
-                              ),
+                                        );
+                                      },
+                                    )
+                                  ]
+                                ],
+                              )
                             ),
                           ),
                         ],
@@ -315,7 +312,7 @@ class _EditUseMobilPageState extends State<EditUseMobilPage> {
                       child: Center(
                         child: ElevateButtonCustomBorder(
                           onChanged: (value) async {
-                            btnCancel();
+                            //btnCancel();
                           },
                           mensaje: "Cancelar",
                         ),
@@ -347,6 +344,53 @@ class _EditUseMobilPageState extends State<EditUseMobilPage> {
           ],
         ),
       ),
+    );
+  }
+
+  Widget _getCupertinoPicker(int indexList, int indexGroup, FixedExtentScrollController scrollController) {
+    return CupertinoPicker(
+      key: Key(indexList.toString()),
+      scrollController: scrollController,
+      backgroundColor: Colors.transparent,
+      onSelectedItemChanged: (int value) {
+        indexSelect = indexGroup;
+        timeLblPM = timeDic[value.toString()]
+            .toString();
+        processSelectedInfo();
+      },
+      itemExtent: 56.0,
+      children: List.generate(timeDic.length,
+              (index) {
+            return Container(
+              key: Key(indexList.toString()),
+              height: 64,
+              width: 125,
+              color: Colors.transparent,
+              child: Column(
+                key: Key(indexList.toString()),
+                children: [
+                  Text(
+                    key: Key(indexList.toString()),
+                    timeDic.values
+                        .toList()[index],
+                    textAlign: TextAlign.center,
+                    style: GoogleFonts.barlow(
+                      fontSize: 36.0,
+                      wordSpacing: 1,
+                      letterSpacing: 0.001,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                  Container(
+                    height: 2,
+                    width: 100,
+                    color: Colors.white,
+                  ),
+                ],
+              ),
+            );
+          }),
     );
   }
 }

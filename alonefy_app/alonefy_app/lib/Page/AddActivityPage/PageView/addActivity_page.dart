@@ -15,7 +15,9 @@ import '../../../Common/colorsPalette.dart';
 
 class AddActivityPage extends StatefulWidget {
   /// Creates a new GeolocatorWidget.
-  const AddActivityPage({Key? key}) : super(key: key);
+  const AddActivityPage({Key? key, required this.isMenu}) : super(key: key);
+
+  final bool isMenu;
 
   @override
   State<AddActivityPage> createState() => _AddActivityPageState();
@@ -107,10 +109,12 @@ class _AddActivityPageState extends State<AddActivityPage>
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: ColorPalette.backgroundAppBar,
-        title: const Text("Configuración"),
-      ),
+      appBar: widget.isMenu
+          ? AppBar(
+            backgroundColor: ColorPalette.backgroundAppBar,
+            title: Text("Configuración"),
+      )
+      : null,
       body: Container(
         decoration: decorationCustom(),
         width: size.width,
@@ -325,8 +329,12 @@ class _AddActivityPageState extends State<AddActivityPage>
                           "Se ha alcanzado el máximo de tiempos de inactividad. Para poder programar más, hazte Premium.");
                     } else {
                       var activity = createActivity();
-                      await controller.saveActivityApi(activity);
-                      await controller.saveActivity(context, activity);
+                      var activityApiResponse = await controller.saveActivityApi(activity);
+                      if (activityApiResponse != null) {
+                        activity.id = activityApiResponse.id;
+                        await controller.saveActivity(context, activity);
+                      }
+
                       Navigator.of(context).pop();
                     }
                   } else {

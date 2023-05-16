@@ -1,9 +1,12 @@
 import 'package:flutter/cupertino.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_state_manager/src/simple/get_controllers.dart';
 import 'package:ifeelefine/Model/ApiRest/activityDayApi.dart';
 import 'package:ifeelefine/Page/AddActivityPage/Service/activityService.dart';
 import 'package:jiffy/jiffy.dart';
 import '../../../Common/utils.dart';
+import '../../../Controllers/mainController.dart';
 import '../../../Data/hive_data.dart';
 import '../../../Model/ApiRest/activityDayApiResponse.dart';
 import '../../../Model/activityDay.dart';
@@ -78,9 +81,18 @@ class AddActivityController extends GetxController {
     await const HiveData().updateActivity(activitybd);
   }
 
-  Future<void> saveActivityApi(ActivityDay activity) async {
+  Future<ActivityDayApiResponse?> saveActivityApi(ActivityDay activity) async {
     var activityApi = await convertToApi(activity);
-    ActivityService().saveData(activityApi);
+    final MainController mainController = Get.put(MainController());
+    var user = await mainController.getUserData();
+    return ActivityService().saveData(activityApi, user.telephone);
+  }
+
+  Future<void> updateActivityApi(ActivityDay activity) async {
+    var activityApi = await convertToApi(activity);
+    final MainController mainController = Get.put(MainController());
+    var user = await mainController.getUserData();
+    ActivityService().updateData(activityApi, user.telephone);
   }
 
   Future<ActivityDayApi> convertToApi(ActivityDay activity) async {

@@ -26,9 +26,11 @@ import 'package:ifeelefine/Views/geolocatos_test_page.dart';
 
 import 'package:ifeelefine/Page/PermissionUser/Pageview/permission_page.dart';
 import 'package:ifeelefine/Views/ringtone_page.dart';
+import 'package:jiffy/jiffy.dart';
 import 'package:slidable_button/slidable_button.dart';
 
 import '../Common/Constant.dart';
+import '../Common/utils.dart';
 import '../Page/Premium/PageView/premium_page.dart';
 
 class MenuConfigModel {
@@ -137,7 +139,7 @@ class _MenuConfigurationPageState extends State<MenuConfigurationPage> {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => const PreviewActivitiesByDate(),
+            builder: (context) => const PreviewActivitiesByDate(isMenu: true),
           ),
         );
         break;
@@ -175,7 +177,7 @@ class _MenuConfigurationPageState extends State<MenuConfigurationPage> {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => const GeolocatorWidget(),
+            builder: (context) => const ConfigGeolocator(isMenu: true),
           ),
         );
         break;
@@ -187,9 +189,7 @@ class _MenuConfigurationPageState extends State<MenuConfigurationPage> {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => const ConfigGeolocator(
-              isMenu: true,
-            ),
+            builder: (context) => const ChangeNotificationTimePage(),
           ),
         );
         break;
@@ -201,7 +201,7 @@ class _MenuConfigurationPageState extends State<MenuConfigurationPage> {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => const ChangeNotificationTimePage(),
+            builder: (context) => const RingTonePage(),
           ),
         );
         break;
@@ -213,7 +213,7 @@ class _MenuConfigurationPageState extends State<MenuConfigurationPage> {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => const AddContactPage(),
+            builder: (context) => const PermitionUserPage(),
           ),
         );
         break;
@@ -225,7 +225,7 @@ class _MenuConfigurationPageState extends State<MenuConfigurationPage> {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => const PermitionUserPage(),
+            builder: (context) => const RestoreMyConfigPage(),
           ),
         );
         break;
@@ -241,7 +241,8 @@ class _MenuConfigurationPageState extends State<MenuConfigurationPage> {
           Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => const PremiumPage(
-                img: 'Mask group-4',
+                isFreeTrial: false,
+                img: 'Pantalla5.jpg',
                 title: Constant.premiumRestoreTitle,
                 subtitle: '')
             ),
@@ -389,12 +390,13 @@ class _MenuConfigurationPageState extends State<MenuConfigurationPage> {
       ),
       onChanged: (SlidableButtonPosition value) async {
         if (value == SlidableButtonPosition.end && _prefs.getUserPremium) {
-          updateHabits();
+          updateHabits(context);
         } else if (value == SlidableButtonPosition.end) {
           Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => const PremiumPage(
-                img: 'Mask group-4',
+                isFreeTrial: false,
+                img: 'pantalla2.png',
                 title: Constant.premiumHabitsTitle,
                 subtitle: '')
             ),
@@ -428,12 +430,25 @@ class _MenuConfigurationPageState extends State<MenuConfigurationPage> {
     );
   }
   
-  void updateHabits() async {
-    var habits = Habits();
-    await habits.fillHabits();
-    await habits.fillRestDays();
-    await habits.fillActivityDays();
-    await habits.average();
-    habits.updateUseTime();
+  void updateHabits(BuildContext context) async {
+    if (!_prefs.getHabitsEnable) {
+      await Jiffy.locale('es');
+      var datetime = DateTime.now();
+      var strDatetime = Jiffy(datetime).format(getDefaultPattern());
+
+      _prefs.setHabitsEnable = true;
+      _prefs.setHabitsRefresh = strDatetime;
+    }
+
+    //var habits = Habits();
+    //
+    //if (await habits.canUpdateHabits()) {
+    //  await habits.fillHabits();
+    //  await habits.fillRestDays();
+    //  await habits.fillActivityDays();
+    //  await habits.average();
+    //  habits.updateUseTime(context);
+    //}
+
   }
 }

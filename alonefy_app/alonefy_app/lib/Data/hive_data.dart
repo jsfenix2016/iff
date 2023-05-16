@@ -65,7 +65,7 @@ class HiveData {
     final Box<ContactBD> box = await Hive.openBox<ContactBD>('contactBD');
     late final List<ContactBD> allMovTime = [];
     var listContact = box.values.toList();
-    var contactTemp = ContactBD(0, "", null, "", "", "", '', 'Pendiente');
+    var contactTemp = ContactBD(0, "", null, "", "", "", "", '', 'Pendiente');
     for (var element in listContact) {
       contactTemp.id = element.id;
       contactTemp.displayName = element.displayName;
@@ -73,6 +73,7 @@ class HiveData {
       contactTemp.photo = element.photo;
       contactTemp.timeSendSMS = element.timeSendSMS;
       contactTemp.timeCall = element.timeCall;
+      contactTemp.timeWhatsapp = element.timeWhatsapp;
       contactTemp.requestStatus = element.requestStatus;
       allMovTime.add(contactTemp);
     }

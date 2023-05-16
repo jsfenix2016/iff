@@ -53,12 +53,28 @@ class PreferenceUser {
     _prefs.setBool('notConfig', value);
   }
 
-  get getUseMobil {
-    return _prefs.getString('useMobil') ?? "5 min";
+  get getHabitsTime {
+    return _prefs.getString('habitsTime') ?? "";
   }
 
-  set setUseMobil(String value) {
-    _prefs.setString('useMobil', value);
+  set setHabitsTime(String value) {
+    _prefs.setString('habitsTime', value);
+  }
+
+  get getHabitsEnable {
+    return _prefs.getBool('habitsEnable') ?? false;
+  }
+
+  set setHabitsEnable(bool enable) {
+    _prefs.setBool('habitsEnable', enable);
+  }
+
+  get getHabitsRefresh {
+    return _prefs.getString('habitsRefresh') ?? "";
+  }
+
+  set setHabitsRefresh(String datetime) {
+    _prefs.setString('habitsRefresh', datetime);
   }
 
   get getEmailTime {

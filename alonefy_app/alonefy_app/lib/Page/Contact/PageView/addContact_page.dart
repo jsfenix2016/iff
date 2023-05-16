@@ -104,7 +104,8 @@ class _AddContactPageState extends State<AddContactPage> {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(builder: (context) => const PremiumPage(
-                                      img: 'Mask group-4',
+                                      isFreeTrial: false,
+                                      img: 'Pantalla5.jpg',
                                       title: Constant.premiumContactsTitle,
                                       subtitle: '')
                                   ),

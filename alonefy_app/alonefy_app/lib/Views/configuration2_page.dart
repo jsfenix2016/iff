@@ -362,8 +362,8 @@ class _UserConfigPageState2 extends State<UserConfigPage2> {
   }
 
   void requestSubscription() {
-    premiumController.requestPurchaseByProductId(
-        PremiumController.subscriptionId, responseSubscription());
+    //premiumController.requestPurchaseByProductId(
+    //    PremiumController.subscriptionId, responseSubscription());
   }
 
   Function responseSubscription() {
