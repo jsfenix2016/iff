@@ -37,21 +37,21 @@ class UseMobilController extends GetxController {
     }
     await const HiveData().saveListTimeUseMobil(selectedDays);
 
-    var listMobilApi = _convertToApi(selectedDays, userbd);
+    List<UseMobilApi> listMobilApi = _convertToApi(selectedDays, userbd);
 
-    var resp = await useMobilServ.saveUseMobil(listMobilApi);
+    useMobilServ.saveUseMobil(listMobilApi);
   }
 
   List<UseMobilApi> _convertToApi(List<UseMobilBD> listMobilBD, UserBD userBD) {
     List<UseMobilApi> listMobilApi = [];
 
     for (var useMobil in listMobilBD) {
-      var useMobilApi = UseMobilApi();
-
-      useMobilApi.phoneNumber = userBD.telephone;
-      useMobilApi.dayOfWeek = useMobil.day;
-      useMobilApi.time = _convertTimeToInt(useMobil.time);
-      useMobilApi.index = useMobil.selection;
+      var useMobilApi = UseMobilApi(
+          userBD.telephone,
+          useMobil.day,
+          _convertTimeToInt(useMobil.time),
+          useMobil.selection
+      );
 
       listMobilApi.add(useMobilApi);
     }
@@ -64,7 +64,7 @@ class UseMobilController extends GetxController {
     strTimeTemp = strTimeTemp.replaceAll(" min", "");
     strTimeTemp = strTimeTemp.replaceAll(" hora", "");
 
-    int minutes = 0;
+    int minutes = int.parse(strTimeTemp);
     if (strTime.contains("hora")) {
       minutes = hourToInt(strTimeTemp) * 60;
     }

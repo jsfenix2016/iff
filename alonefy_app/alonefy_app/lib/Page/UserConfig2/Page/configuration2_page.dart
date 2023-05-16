@@ -342,22 +342,26 @@ class _UserConfigPageState2 extends State<UserConfigPage2> {
     userbd!.country = user!.country;
     bool isupdate = await userConfigVC.updateUserDate(context, userbd!);
     if (isupdate) {
-      await Navigator.push(
+      //await Navigator.push(
+      //  context,
+      //  MaterialPageRoute(builder: (context) => PremiumPage(
+      //      isFreeTrial: isFreeTrial,
+      //      img: 'pantalla3.png',
+      //      title: Constant.premiumFallTitle,
+      //      subtitle: '')
+      //  ),
+      //).then((value) {
+      //  if (value != null && value) {
+      //    Navigator.push(
+      //      context,
+      //      MaterialPageRoute(builder: (context) => UseMobilePage(userbd: userbd!)),
+      //    );
+      //  }
+      //});
+      Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => PremiumPage(
-            isFreeTrial: isFreeTrial,
-            img: 'pantalla3.png',
-            title: Constant.premiumFallTitle,
-            subtitle: '')
-        ),
-      ).then((value) {
-        if (value != null && value) {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => UseMobilePage(userbd: userbd!)),
-          );
-        }
-      });
+        MaterialPageRoute(builder: (context) => UseMobilePage(userbd: userbd!)),
+      );
     }
     //if (!formKey.currentState.validate()) return;
     //formKey.currentState.save();
