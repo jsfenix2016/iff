@@ -17,39 +17,36 @@ class ContactBDAdapter extends TypeAdapter<ContactBD> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return ContactBD(
-      fields[0] as int,
-      fields[1] as String,
-      fields[2] as Uint8List?,
+      fields[0] as String,
+      fields[1] as Uint8List?,
+      fields[2] as String,
       fields[3] as String,
       fields[4] as String,
       fields[5] as String,
       fields[6] as String,
       fields[7] as String,
-      fields[8] as String,
     );
   }
 
   @override
   void write(BinaryWriter writer, ContactBD obj) {
     writer
-      ..writeByte(9)
-      ..writeByte(0)
-      ..write(obj.id)
-      ..writeByte(1)
-      ..write(obj.displayName)
-      ..writeByte(2)
-      ..write(obj.photo)
-      ..writeByte(3)
-      ..write(obj.name)
-      ..writeByte(4)
-      ..write(obj.timeSendSMS)
-      ..writeByte(5)
-      ..write(obj.timeCall)
-      ..writeByte(6)
-      ..write(obj.timeWhatsapp)
-      ..writeByte(7)
-      ..write(obj.phones)
       ..writeByte(8)
+      ..writeByte(0)
+      ..write(obj.displayName)
+      ..writeByte(1)
+      ..write(obj.photo)
+      ..writeByte(2)
+      ..write(obj.name)
+      ..writeByte(3)
+      ..write(obj.timeSendSMS)
+      ..writeByte(4)
+      ..write(obj.timeCall)
+      ..writeByte(5)
+      ..write(obj.timeWhatsapp)
+      ..writeByte(6)
+      ..write(obj.phones)
+      ..writeByte(7)
       ..write(obj.requestStatus);
   }
 

@@ -7,32 +7,29 @@ part 'contact.g.dart';
 
 @HiveType(typeId: HiveConstantAdapterInit.idContactBDAdapter)
 class ContactBD extends HiveObject {
-  ContactBD(this.id, this.displayName, this.photo, this.name, this.timeSendSMS,
+  ContactBD(this.displayName, this.photo, this.name, this.timeSendSMS,
       this.timeCall, this.timeWhatsapp, this.phones, this.requestStatus);
 
   @HiveField(0)
-  int id;
-
-  @HiveField(1)
   String displayName;
 
-  @HiveField(2)
+  @HiveField(1)
   Uint8List? photo;
 
-  @HiveField(3)
+  @HiveField(2)
   String name;
 
-  @HiveField(4)
+  @HiveField(3)
   String timeSendSMS;
 
-  @HiveField(5)
+  @HiveField(4)
   String timeCall;
-  @HiveField(6)
+  @HiveField(5)
   String timeWhatsapp;
-  @HiveField(7)
+  @HiveField(6)
   String phones;
 
-  @HiveField(8)
+  @HiveField(7)
   String requestStatus;
 }
 

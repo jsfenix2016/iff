@@ -32,10 +32,12 @@ class EditUseMobilService {
 
   Future<void> saveUseMobil(List<UseMobilApi> listuse) async {
 
+    var json = jsonEncode(listuse);
+
     final resp = await http.put(
         Uri.parse("${Constant.baseApi}/v1/inactivityTime"),
-        body: listuse);
+        body: json);
 
-    Map<String, dynamic> decodeResp = json.decode(resp.body);
+    //Map<String, dynamic> decodeResp = json.decode(resp.body);
   }
 }

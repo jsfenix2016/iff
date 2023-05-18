@@ -612,6 +612,40 @@ int hourToInt(String time) {
   return hour;
 }
 
+int stringTimeToInt(String strTime) {
+  strTime = strTime.replaceAll(" min", "");
+  strTime = strTime.replaceAll(" hora", "");
+  return int.parse(strTime);
+}
+
+String minutesToString(int minutes) {
+  var hours = minutes / 60;
+  var min = minutes % 60;
+
+  if (hours > 0 && minutes > 0) {
+    return '$minutes min';
+  } else if (hours > 0) {
+    return '$hours hora';
+  } else {
+    return '$minutes min';
+  }
+}
+
+String uint8ListToString(String str) {
+  List<int> list = str.codeUnits;
+  Uint8List bytes = Uint8List.fromList(list);
+  String string = String.fromCharCodes(bytes);
+
+  return string;
+}
+
+Uint8List stringToUint8List(String str) {
+  List<int> list = str.codeUnits;
+  Uint8List bytes = Uint8List.fromList(list);
+
+  return bytes;
+}
+
 String convertMinutesToHourAndMinutes(int minutes) {
   var hours = minutes / 60;
   var min = minutes % 60;
