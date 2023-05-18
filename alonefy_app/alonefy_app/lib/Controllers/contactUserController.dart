@@ -28,7 +28,7 @@ class ContactUserController extends GetxController {
   Future<bool> saveListContact(BuildContext context, List<Contact> listContact,
       String timeSendSMS, String timeCall, String timeWhatsapp) async {
     try {
-      var contactBD = ContactBD(0, "", null, "", "", "", "", '', "pendiente");
+      var contactBD = ContactBD("", null, "", "", "", "", '', "pendiente");
       for (var element in listContact) {
         contactBD.displayName = element.displayName;
         contactBD.phones = element.phones.first.number;
@@ -53,17 +53,87 @@ class ContactUserController extends GetxController {
     }
   }
 
+  Future<void> updateContacts(List<ContactBD> contacts, emailTime, phoneTime, smsTime) async {
+    for (var contact in contacts) {
+      contact.timeSendSMS = emailTime;
+      contact.timeCall = phoneTime;
+      contact.timeWhatsapp = smsTime;
+
+      const HiveData().updateContact(contact);
+
+      final MainController mainController = Get.put(MainController());
+      var user = await mainController.getUserData();
+      ContactApi contactApi = convertToApi(contact, user.telephone);
+
+      contactServ.updateContact(contactApi);
+    }
+  }
+
   ContactApi convertToApi(ContactBD contactBD, String phoneNumber) {
-    var contactAPI = ContactApi();
+    //var contactAPI = ContactApi(
+    //    userPhoneNumber: phoneNumber,
+    //    phoneNumber: contactBD.phones,
+    //    name: contactBD.name,
+    //    displayName: contactBD.displayName,
+    //    timeSendSms: stringTimeToInt(contactBD.timeSendSMS),
+    //    timeCall: stringTimeToInt(contactBD.timeCall),
+    //    timeWhatsapp: stringTimeToInt(contactBD.timeWhatsapp)
+    //);
 
-    contactAPI.userPhoneNumber = phoneNumber;
-    contactAPI.phoneNumber = contactBD.phones;
-    contactAPI.name = contactBD.name;
-    contactAPI.displayName = contactBD.displayName;
-    contactAPI.timeSendSms = contactBD.timeSendSMS;
-    contactAPI.timeCall = contactBD.timeCall;
-    contactAPI.timeWhatsapp = contactBD.timeWhatsapp;
+    var contactApi = ContactApi.fromContact(contactBD, phoneNumber);
 
-    return contactAPI;
+    return contactApi;
+  }
+
+  Future<bool> deleteContact(ContactBD contact) async {
+    final MainController mainController = Get.put(MainController());
+    var user = await mainController.getUserData();
+
+    var response = await contactServ.deleteContact(user.telephone, contact.phones);
+
+    return response;
+  }
+
+  Future<bool> updateContactStatus(ContactBD contact) async {
+    final MainController mainController = Get.put(MainController());
+    var user = await mainController.getUserData();
+
+    var response = await contactServ.updateContactStatus(user.telephone, contact.phones);
+
+    return response;
+  }
+
+  Future<List<ContactBD>> getContacts() async {
+    final MainController mainController = Get.put(MainController());
+    var user = await mainController.getUserData();
+    
+    var contactApiList = await contactServ.getContact(user.telephone);
+    
+    if (contactApiList != null) {
+      return _convertToContactBD(contactApiList);
+    }
+
+    return [];
+  }
+  
+  List<ContactBD> _convertToContactBD(List<ContactApi> contactApiList) {
+    List<ContactBD> contacts = [];
+    
+    for (var contactApi in contactApiList) {
+      var contact = ContactBD(
+          contactApi.displayName,
+          stringToUint8List(contactApi.photo),
+          contactApi.name,
+          minutesToString(contactApi.timeSendSms),
+          minutesToString(contactApi.timeCall),
+          minutesToString(contactApi.timeWhatsapp),
+          contactApi.phoneNumber,
+          contactApi.status
+      );
+
+      contacts.add(contact);
+    }
+
+    return contacts;
   }
 }

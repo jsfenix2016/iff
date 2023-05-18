@@ -65,9 +65,8 @@ class HiveData {
     final Box<ContactBD> box = await Hive.openBox<ContactBD>('contactBD');
     late final List<ContactBD> allMovTime = [];
     var listContact = box.values.toList();
-    var contactTemp = ContactBD(0, "", null, "", "", "", "", '', 'Pendiente');
+    var contactTemp = ContactBD("", null, "", "", "", "", '', 'Pendiente');
     for (var element in listContact) {
-      contactTemp.id = element.id;
       contactTemp.displayName = element.displayName;
       contactTemp.phones = element.phones;
       contactTemp.photo = element.photo;
@@ -83,7 +82,7 @@ class HiveData {
 
   Future updateContact(ContactBD contact) async {
     final Box<ContactBD> box = await Hive.openBox<ContactBD>('contactBD');
-    box.put(contact.id, contact);
+    box.put(contact.phones, contact);
   }
 
   Future<int> saveUserContact(ContactBD user) async {
@@ -95,7 +94,7 @@ class HiveData {
   Future<void> deleteUserContact(ContactBD user) async {
     final Box<ContactBD> box = await Hive.openBox<ContactBD>('contactBD');
 
-    return box.delete(user.id);
+    return box.delete(user);
   }
 
   Future<int> deleteListAlerts(List<LogAlertsBD> listAlerts) async {

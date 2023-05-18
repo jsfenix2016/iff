@@ -82,35 +82,42 @@ class AddActivityController extends GetxController {
   }
 
   Future<ActivityDayApiResponse?> saveActivityApi(ActivityDay activity) async {
-    var activityApi = await convertToApi(activity);
     final MainController mainController = Get.put(MainController());
     var user = await mainController.getUserData();
-    return ActivityService().saveData(activityApi, user.telephone);
+    var activityApi = await _convertToApi(activity, user.telephone);
+    return ActivityService().saveData(activityApi);
   }
 
   Future<void> updateActivityApi(ActivityDay activity) async {
-    var activityApi = await convertToApi(activity);
     final MainController mainController = Get.put(MainController());
     var user = await mainController.getUserData();
-    ActivityService().updateData(activityApi, user.telephone);
+    var activityApi = await _convertToApi(activity, user.telephone);
+    ActivityService().updateData(activityApi);
   }
 
-  Future<ActivityDayApi> convertToApi(ActivityDay activity) async {
-    ActivityDayApi activityDayApi = ActivityDayApi();
+  Future<ActivityDayApi> _convertToApi(ActivityDay activity, String phoneNumber) async {
 
-    activityDayApi.startDate = await _convertDayToApi(activity.day);
-    activityDayApi.startTime = await _convertTimeToApi(activity.timeStart);
-    activityDayApi.endTime = await _convertTimeToApi(activity.timeFinish);
-    activityDayApi.name = activity.activity;
-    activityDayApi.allDay = activity.allDay;
-    activityDayApi.endDate = await _convertDayToApi(activity.dayFinish);
-    activityDayApi.days = _convertDaysToList(activity.days!);
-    activityDayApi.repeatType = activity.repeatType;
-    activityDayApi.enabled = activity.isDeactivate;
-    activityDayApi.disabledDates =
-        await _convertSpecificDaysToList(activity.specificDaysDeactivated);
-    activityDayApi.removedDates =
-        await _convertSpecificDaysToList(activity.specificDaysRemoved);
+    var startDate = await _convertDayToApi(activity.day);
+    var startTime = await _convertTimeToApi(activity.timeStart);
+    var endTime = await _convertTimeToApi(activity.timeFinish);
+    var endDate = await _convertDayToApi(activity.dayFinish);
+    var disabledDates = await _convertSpecificDaysToList(activity.specificDaysDeactivated);
+    var removedDates = await _convertSpecificDaysToList(activity.specificDaysRemoved);
+
+    ActivityDayApi activityDayApi = ActivityDayApi(
+      phoneNumber,
+      startDate,
+      endDate,
+      startTime,
+      activity.activity,
+      activity.allDay,
+      endTime,
+      _convertDaysToList(activity.days!),
+      activity.repeatType,
+      activity.isDeactivate,
+      disabledDates,
+      removedDates
+    );
 
     return activityDayApi;
   }
