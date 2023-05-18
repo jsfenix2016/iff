@@ -72,6 +72,8 @@ dependencies:
   audioplayers: ^3.0.1
 
   jiffy: ^5.0.0
+
+  flutter_rating_bar: ^4.0.1
   
   slidable_button: ^2.0.0+1
   avatar_glow: ^2.0.2 #Animacion tipo radar
@@ -79,7 +81,7 @@ dependencies:
   google_sign_in: ^5.2.1
   
   country_state_city_picker: ^1.2.8
-  google_fonts: ^3.0.1
+  google_fonts: ^4.0.4
   notification_center: ^0.0.2
   camera: ^0.10.3+2
   camerax: ^0.1.1

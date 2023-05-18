@@ -8,7 +8,7 @@ part 'contact.g.dart';
 @HiveType(typeId: HiveConstantAdapterInit.idContactBDAdapter)
 class ContactBD extends HiveObject {
   ContactBD(this.displayName, this.photo, this.name, this.timeSendSMS,
-      this.timeCall, this.phones, this.requestStatus);
+      this.timeCall, this.timeWhatsapp, this.phones, this.requestStatus);
 
   @HiveField(0)
   String displayName;
@@ -25,9 +25,11 @@ class ContactBD extends HiveObject {
   @HiveField(4)
   String timeCall;
   @HiveField(5)
+  String timeWhatsapp;
+  @HiveField(6)
   String phones;
 
-  @HiveField(6)
+  @HiveField(7)
   String requestStatus;
 }
 

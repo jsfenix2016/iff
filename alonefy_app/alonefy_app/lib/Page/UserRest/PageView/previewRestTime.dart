@@ -11,6 +11,7 @@ import 'package:ifeelefine/Common/utils.dart';
 
 import 'package:ifeelefine/Model/restday.dart';
 import 'package:ifeelefine/Model/restdaybd.dart';
+import 'package:ifeelefine/Page/PreviewActivitiesFilteredByDate/PageView/previewActivitiesByDate_page.dart';
 
 import 'package:ifeelefine/Page/UserInactivityPage/PageView/configurationUserInactivity_page.dart';
 import 'package:ifeelefine/Page/UserRest/Controller/userRestController.dart';
@@ -114,7 +115,7 @@ class _PreviewRestTimePageState extends State<PreviewRestTimePage> {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-          builder: (context) => const UserInactivityPage(),
+          builder: (context) => const PreviewActivitiesByDate(isMenu: false),
         ),
       );
     }

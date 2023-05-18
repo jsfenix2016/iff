@@ -229,7 +229,8 @@ class _ConfigGeolocatorState extends State<ConfigGeolocator> {
                         context,
                         MaterialPageRoute(
                             builder: (context) => const PremiumPage(
-                                img: 'Mask group-4',
+                                isFreeTrial: false,
+                                img: 'pantalla3.png',
                                 title: Constant.premiumMapTitle,
                                 subtitle: '')),
                       );

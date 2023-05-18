@@ -1,7 +1,9 @@
 import 'package:get/get.dart';
 import 'package:ifeelefine/Model/logActivity.dart';
 import 'package:ifeelefine/Model/logActivityBd.dart';
+import 'package:ifeelefine/Page/LogActivity/Service/logActivityService.dart';
 
+import '../../../Controllers/mainController.dart';
 import '../../../Data/hive_data.dart';
 
 class LogActivityController extends GetxController {
@@ -36,5 +38,11 @@ class LogActivityController extends GetxController {
 
   Future<int> saveLogActivity(LogActivityBD activityBD) async {
     return await const HiveData().saveLogActivity(activityBD);
+  }
+
+  Future<void> saveLastMovement() async {
+    final MainController mainController = Get.put(MainController());
+    var user = await mainController.getUserData();
+    LogActivityService().saveData(user.telephone);
   }
 }

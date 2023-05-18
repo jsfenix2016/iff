@@ -71,7 +71,8 @@ class HiveData {
 
   Future updateContact(ContactBD contact) async {
     final Box<ContactBD> box = await Hive.openBox<ContactBD>('contactBD');
-    box.put(contact.key, contact);
+
+    box.put(contact.phones, contact);
   }
 
   Future<int> saveUserContact(ContactBD user) async {
@@ -82,7 +83,8 @@ class HiveData {
 
   Future<void> deleteUserContact(ContactBD user) async {
     final Box<ContactBD> box = await Hive.openBox<ContactBD>('contactBD');
-    await box.delete(user.key);
+
+    return box.delete(user);
   }
 
   Future<int> deleteListAlerts(List<LogAlertsBD> listAlerts) async {

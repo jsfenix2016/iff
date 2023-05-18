@@ -5,6 +5,8 @@ import 'dart:convert';
 
 import 'package:ifeelefine/Model/userbd.dart';
 
+import '../../../Model/ApiRest/UseMobilApi.dart';
+
 class EditUseMobilService {
   Future<Map<String, List<UseMobilBD>>> getUseMobil(UserBD user) async {
     return {};
@@ -28,29 +30,14 @@ class EditUseMobilService {
     // }
   }
 
-  Future<Map<String, dynamic>> saveUseMobil(
-      List<UseMobilBD> listuse, UserBD user) async {
-    final authData = {"listday": (listuse)};
+  Future<void> saveUseMobil(List<UseMobilApi> listuse) async {
 
-    try {
-      final resp = await http.post(
-          Uri.parse(
-              "${Constant.baseApi}/v1/user/${user.telephone}/personalData"),
-          body: authData);
+    var json = jsonEncode(listuse);
 
-      Map<String, dynamic> decodeResp = json.decode(resp.body);
+    final resp = await http.put(
+        Uri.parse("${Constant.baseApi}/v1/inactivityTime"),
+        body: json);
 
-      if (decodeResp['errors'] == null) {
-        return {"ok": false, "mesaje": decodeResp['description']};
-      }
-
-      if (decodeResp['id'] != null) {
-        return {"ok": true, "token": decodeResp['id']};
-      } else {
-        return {"ok": false, "mesaje": decodeResp['id']};
-      }
-    } catch (error) {
-      return {"ko": false, "mesaje": error.toString()};
-    }
+    //Map<String, dynamic> decodeResp = json.decode(resp.body);
   }
 }

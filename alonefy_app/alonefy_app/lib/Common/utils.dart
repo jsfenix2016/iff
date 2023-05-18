@@ -603,6 +603,57 @@ Future<String> rangeDateTimeToString(DateTime? from, DateTime? to) async {
   return rangeDateText;
 }
 
+int minToInt(String time) {
+  var min = int.parse(time.replaceAll(" min", ""));
+  return min;
+}
+
+int hourToInt(String time) {
+  var hour = int.parse(time.replaceAll(" hora", ""));
+  return hour;
+}
+
+int stringTimeToInt(String strTime) {
+  strTime = strTime.replaceAll(" min", "");
+  strTime = strTime.replaceAll(" hora", "");
+  return int.parse(strTime);
+}
+
+String minutesToString(int minutes) {
+  var hours = minutes / 60;
+  var min = minutes % 60;
+
+  if (hours > 0 && minutes > 0) {
+    return '$minutes min';
+  } else if (hours > 0) {
+    return '$hours hora';
+  } else {
+    return '$minutes min';
+  }
+}
+
+String uint8ListToString(String str) {
+  List<int> list = str.codeUnits;
+  Uint8List bytes = Uint8List.fromList(list);
+  String string = String.fromCharCodes(bytes);
+
+  return string;
+}
+
+Uint8List stringToUint8List(String str) {
+  List<int> list = str.codeUnits;
+  Uint8List bytes = Uint8List.fromList(list);
+
+  return bytes;
+}
+
+String convertMinutesToHourAndMinutes(int minutes) {
+  var hours = minutes / 60;
+  var min = minutes % 60;
+
+  return '${hours.toInt()} hora y $min min';
+}
+
 extension StringExtension on String {
   String capitalize() {
     return "${this[0].toUpperCase()}${this.substring(1).toLowerCase()}";

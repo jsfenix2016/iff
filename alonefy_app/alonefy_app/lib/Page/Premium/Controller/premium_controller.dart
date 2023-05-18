@@ -5,7 +5,11 @@ import 'package:get/get.dart';
 //import for GooglePlayProductDetails
 //import for SkuDetailsWrapper
 import 'package:flutter_inapp_purchase/flutter_inapp_purchase.dart';
+import 'package:ifeelefine/Model/ApiRest/PremiumApi.dart';
+import 'package:ifeelefine/Page/Premium/Service/premiumService.dart';
 import 'package:ifeelefine/Provider/prefencesUser.dart';
+
+import '../../../Controllers/mainController.dart';
 
 class PremiumController extends GetxController {
 
@@ -14,12 +18,13 @@ class PremiumController extends GetxController {
   StreamSubscription? _conectionSubscription;
 
   static const String subscriptionId = 'subscription_test';
+  static const String subscriptionFreeTrialId = 'subscription_test_free_trial';
 
   final _prefs = PreferenceUser();
 
   Function? _response = null;
 
-  List<String> _productLists = [subscriptionId];
+  List<String> _productLists = [subscriptionId, subscriptionFreeTrialId];
   List<IAPItem> _items = [];
   List<PurchasedItem> _purchases = [];
 
@@ -64,14 +69,20 @@ class PremiumController extends GetxController {
             _prefs.setUserPremium = false;
           }
 
+          _updatePremiumAPI();
+
           _getProducts();
           print('connected: $connected');
         });
 
     _purchaseUpdatedSubscription =
         FlutterInappPurchase.purchaseUpdated.listen((productItem) {
-          if (_response != null) _response!(true);
-          print('purchase-updated: $productItem');
+          if (_response != null) {
+            _response!(true);
+            _prefs.setUserPremium = true;
+            _updatePremiumAPI();
+            print('purchase-updated: $productItem');
+          }
         });
 
     _purchaseErrorSubscription =
@@ -96,7 +107,7 @@ class PremiumController extends GetxController {
       print('${item.toString()}');
       this._items.add(item);
 
-      if (item.productId == subscriptionId) {
+      if (item.productId == subscriptionId || item.productId == subscriptionFreeTrialId) {
         _prefs.setPremiumPrice = '${item.localizedPrice!}/mes';
       }
     }
@@ -107,7 +118,7 @@ class PremiumController extends GetxController {
 
     if (purchases != null && _purchases.isNotEmpty) {
       for (var item in purchases) {
-        if (item.productId == subscriptionId) {
+        if (item.productId == subscriptionId || item.productId == subscriptionFreeTrialId) {
           return true;
         }
       }
@@ -130,6 +141,15 @@ class PremiumController extends GetxController {
       _conectionSubscription!.cancel();
       _conectionSubscription = null;
     }
+  }
+
+  void _updatePremiumAPI() async {
+    final MainController mainController = Get.put(MainController());
+    var user = await mainController.getUserData();
+    PremiumApi premiumApi = PremiumApi();
+    premiumApi.phoneNumber = user.telephone;
+    premiumApi.premium = _prefs.getUserPremium;
+    PremiumService().saveData(premiumApi);
   }
 
 }

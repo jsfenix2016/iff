@@ -8,7 +8,7 @@ part of 'useMobilbd.dart';
 
 class UseMobilBDAdapter extends TypeAdapter<UseMobilBD> {
   @override
-  final int typeId = 1;
+  final int typeId = HiveConstantAdapterInit.idUseMobilBDAdapter;
 
   @override
   UseMobilBD read(BinaryReader reader) {

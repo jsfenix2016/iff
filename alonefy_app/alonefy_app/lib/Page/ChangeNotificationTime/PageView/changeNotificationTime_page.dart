@@ -1,10 +1,16 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ifeelefine/Common/utils.dart';
+import 'package:ifeelefine/Controllers/contactUserController.dart';
+import 'package:ifeelefine/Model/ApiRest/ContactApi.dart';
+import 'package:ifeelefine/Page/Contact/Service/contactService.dart';
 
 import '../../../Common/Constant.dart';
 import '../../../Common/colorsPalette.dart';
+import '../../../Controllers/mainController.dart';
 import '../../../Data/hive_data.dart';
 import '../../../Provider/prefencesUser.dart';
 import '../../Premium/PageView/premium_page.dart';
@@ -251,13 +257,14 @@ class _ChangeNotificationTimePageState
                       context,
                       MaterialPageRoute(
                           builder: (context) => const PremiumPage(
-                              img: 'Mask group-4',
+                              isFreeTrial: false,
+                              img: 'Pantalla5.jpg',
                               title: Constant.premiumChangeTimeTitle,
                               subtitle: '')),
                     );
                   }
-                  //useMobilVC.saveTimeUseMobil(
-                  //    context, Constant.timeDicExtended[value.toString()].toString());
+//useMobilVC.saveTimeUseMobil(
+// context, Constant.timeDicExtended[value.toString()].toString());
                 },
                 scrollController:
                     FixedExtentScrollController(initialItem: initialPosition),
@@ -316,10 +323,20 @@ class _ChangeNotificationTimePageState
     var listContact = await const HiveData().listUserContactbd;
 
     for (var contact in listContact) {
-      contact.timeSendSMS = smsTime;
+      contact.timeSendSMS = emailTime;
       contact.timeCall = phoneTime;
+      contact.timeWhatsapp = smsTime;
 
       const HiveData().updateContact(contact);
+
+      final MainController mainController = Get.put(MainController());
+      var user = await mainController.getUserData();
+      final ContactUserController contactUserController =
+          Get.put(ContactUserController());
+      ContactApi contactApi =
+          contactUserController.convertToApi(contact, user.telephone);
+
+      //ContactService().saveContact(contactcamApi);
     }
   }
 }

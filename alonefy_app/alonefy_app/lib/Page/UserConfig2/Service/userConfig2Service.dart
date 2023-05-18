@@ -21,7 +21,7 @@ class UserConfig2Service {
     };
 
     try {
-      final resp = await http.post(
+      final resp = await http.put(
           Uri.parse(
               "${Constant.baseApi}/v1/user/${user.telephone}/personalData"),
           body: authData);

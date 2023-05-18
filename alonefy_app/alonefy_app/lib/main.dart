@@ -497,7 +497,7 @@ Future activatedTimerInactivity() async {
 
 void sendMessageContact() async {
   Duration useMobil =
-      await IdleLogic().convertStringToDuration(_prefs.getUseMobil);
+      await IdleLogic().convertStringToDuration(_prefs.getHabitsTime);
   timerSendSMS = Timer(useMobil, () {
     timerActive = false;
 
