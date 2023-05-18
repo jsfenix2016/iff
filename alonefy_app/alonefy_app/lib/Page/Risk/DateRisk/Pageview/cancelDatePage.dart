@@ -128,7 +128,7 @@ class _CancelDatePageState extends State<CancelDatePage> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.brown,
-        title: const Center(child: Text("Finalizar cita")),
+        title: const Text("Finalizar cita"),
       ),
       body: Container(
         height: size.height,

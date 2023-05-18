@@ -12,6 +12,7 @@ import 'package:ifeelefine/Model/activitydaybd.dart';
 import 'package:ifeelefine/Page/FallDetected/Pageview/fall_activation_page.dart';
 import 'package:ifeelefine/Page/UserInactivityPage/Controller/inactivityViewController.dart';
 import 'package:ifeelefine/Page/UserInactivityPage/PageView/previewInactivityPage.dart';
+import 'package:ifeelefine/Provider/prefencesUser.dart';
 import 'package:ifeelefine/Utils/Widgets/containerTextEditAndTime.dart';
 import 'package:ifeelefine/Utils/Widgets/customDropDown.dart';
 import 'package:flutter/material.dart';
@@ -42,9 +43,10 @@ class _UserInactivityPageState extends State<UserInactivityPage> {
   final List<int> tempListConfig = <int>[];
   late ActivityDay temp;
   final List<String> tempListDay = <String>[];
-
+  PreferenceUser prefs = PreferenceUser();
   @override
   void initState() {
+    prefs.saveLastScreenRoute("inactivityDay");
     temp = ActivityDay();
     temp.day = "";
     temp.activity = "";

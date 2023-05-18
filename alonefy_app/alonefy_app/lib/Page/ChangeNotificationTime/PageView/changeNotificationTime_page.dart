@@ -16,11 +16,12 @@ class ChangeNotificationTimePage extends StatefulWidget {
   /// Utility method to create a page with the Baseflow templating.
 
   @override
-  State<ChangeNotificationTimePage> createState() => _ChangeNotificationTimePageState();
+  State<ChangeNotificationTimePage> createState() =>
+      _ChangeNotificationTimePageState();
 }
 
-class _ChangeNotificationTimePageState extends State<ChangeNotificationTimePage> {
-
+class _ChangeNotificationTimePageState
+    extends State<ChangeNotificationTimePage> {
   final _prefs = PreferenceUser();
 
   int emailPosition = 0;
@@ -88,21 +89,25 @@ class _ChangeNotificationTimePageState extends State<ChangeNotificationTimePage>
               padding: const EdgeInsets.fromLTRB(0, 68, 0, 70),
               child: Expanded(
                 child: SingleChildScrollView(
-                  child: Column(
-                      children: [
-                        getRow('Al detectar alerta', "assets/images/Warning.png", 24),
-                        const SizedBox(height: 5),
-                        getLine("assets/images/line_small.png"),
-                        const SizedBox(height: 5),
-                        getRow("Enviarme notificación pasados", "assets/images/Email.png", 28),
-                        getRowWithPicker("assets/images/line_xlarge.png", emailPosition, 0),
-                        getRow("Enviar SMS a mis contactos pasados", "assets/images/Whatsapp.png", 24),
-                        getRowWithPicker("assets/images/line_xlarge.png", whatsappPosition, 1),
-                        getRow("Enviar llamada a mis contactos pasados", "assets/images/Phone.png", 24),
-                        getRowWithPicker("assets/images/line_xlarge.png", phonePosition, 2)
-                      ]
-                  ),
-
+                  child: Column(children: [
+                    getRow(
+                        'Al detectar alerta', "assets/images/Warning.png", 24),
+                    const SizedBox(height: 5),
+                    getLine("assets/images/line_small.png"),
+                    const SizedBox(height: 5),
+                    getRow("Enviarme notificación pasados",
+                        "assets/images/Email.png", 28),
+                    getRowWithPicker(
+                        "assets/images/line_xlarge.png", emailPosition, 0),
+                    getRow("Enviar SMS a mis contactos pasados",
+                        "assets/images/Whatsapp.png", 24),
+                    getRowWithPicker(
+                        "assets/images/line_xlarge.png", whatsappPosition, 1),
+                    getRow("Enviar llamada a mis contactos pasados",
+                        "assets/images/Phone.png", 24),
+                    getRowWithPicker(
+                        "assets/images/line_xlarge.png", phonePosition, 2)
+                  ]),
                 ),
               ),
             ),
@@ -112,8 +117,7 @@ class _ChangeNotificationTimePageState extends State<ChangeNotificationTimePage>
               child: Container(
                 decoration: const BoxDecoration(
                   color: Color.fromRGBO(219, 177, 42, 1),
-                  borderRadius:
-                  BorderRadius.all(Radius.circular(8)),
+                  borderRadius: BorderRadius.all(Radius.circular(8)),
                 ),
                 width: 138,
                 height: 42,
@@ -141,11 +145,8 @@ class _ChangeNotificationTimePageState extends State<ChangeNotificationTimePage>
               child: Container(
                 decoration: BoxDecoration(
                   color: Colors.transparent,
-                  border: Border.all(
-                      color: Color.fromRGBO(219, 177, 42, 1)
-                  ),
-                  borderRadius:
-                  BorderRadius.all(Radius.circular(8)),
+                  border: Border.all(color: Color.fromRGBO(219, 177, 42, 1)),
+                  borderRadius: BorderRadius.all(Radius.circular(8)),
                 ),
                 width: 138,
                 height: 42,
@@ -197,8 +198,7 @@ class _ChangeNotificationTimePageState extends State<ChangeNotificationTimePage>
                     letterSpacing: 1.2,
                     fontWeight: FontWeight.w500,
                     color: Colors.white,
-                  )
-              ),
+                  )),
             ),
           ),
         ),
@@ -224,83 +224,80 @@ class _ChangeNotificationTimePageState extends State<ChangeNotificationTimePage>
 
   Widget getPicker(int initialPosition, int pickerId) {
     return Expanded(
-      child: SizedBox(
-        height: 120,
-        child: CupertinoApp(
-          debugShowCheckedModeBanner: false,
-          theme: const CupertinoThemeData(brightness: Brightness.light,
-          ),
-          home: CupertinoPicker(
-            backgroundColor: Colors.transparent,
-            onSelectedItemChanged: (int value) {
-              if (_prefs.getUserPremium) {
-                switch (pickerId) {
-                  case 0:
-                    emailTime = Constant.timeDicExtended[value.toString()]!;
-                    break;
-                  case 1:
-                    smsTime = Constant.timeDicExtended[value.toString()]!;
-                    break;
-                  case 2:
-                    phoneTime = Constant.timeDicExtended[value.toString()]!;
-                    break;
-                }
-              } else {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const PremiumPage(
-                      img: 'Mask group-4',
-                      title: Constant.premiumChangeTimeTitle,
-                      subtitle: '')
-                  ),
-                );
-              }
-              //useMobilVC.saveTimeUseMobil(
-              //    context, Constant.timeDicExtended[value.toString()].toString());
-            },
-            scrollController: FixedExtentScrollController(initialItem: initialPosition),
-            itemExtent: 60.0,
-            children: [
-              for (var i = 0; i < Constant.timeDicExtended.length; i++)
-                Container(
-                  height: 24,
-                  width: 120,
-                  color: Colors.transparent,
-                  child: Column(
-                    children: [
-                      const SizedBox(height: 12),
-                      Text(
-                        Constant.timeDicExtended[i.toString()].toString(),
-                        textAlign: TextAlign.center,
-                        style: GoogleFonts.barlow(
-                          fontSize: 24.0,
-                          wordSpacing: 1,
-                          letterSpacing: 0.001,
-                          fontWeight: FontWeight.w700,
-                          color: Colors.white,
-                        ),
+        child: SizedBox(
+            height: 120,
+            child: CupertinoApp(
+              debugShowCheckedModeBanner: false,
+              theme: const CupertinoThemeData(
+                brightness: Brightness.light,
+              ),
+              home: CupertinoPicker(
+                backgroundColor: Colors.transparent,
+                onSelectedItemChanged: (int value) {
+                  if (_prefs.getUserPremium) {
+                    switch (pickerId) {
+                      case 0:
+                        emailTime = Constant.timeDicExtended[value.toString()]!;
+                        break;
+                      case 1:
+                        smsTime = Constant.timeDicExtended[value.toString()]!;
+                        break;
+                      case 2:
+                        phoneTime = Constant.timeDicExtended[value.toString()]!;
+                        break;
+                    }
+                  } else {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const PremiumPage(
+                              img: 'Mask group-4',
+                              title: Constant.premiumChangeTimeTitle,
+                              subtitle: '')),
+                    );
+                  }
+                  //useMobilVC.saveTimeUseMobil(
+                  //    context, Constant.timeDicExtended[value.toString()].toString());
+                },
+                scrollController:
+                    FixedExtentScrollController(initialItem: initialPosition),
+                itemExtent: 60.0,
+                children: [
+                  for (var i = 0; i < Constant.timeDicExtended.length; i++)
+                    Container(
+                      height: 24,
+                      width: 120,
+                      color: Colors.transparent,
+                      child: Column(
+                        children: [
+                          const SizedBox(height: 12),
+                          Text(
+                            Constant.timeDicExtended[i.toString()].toString(),
+                            textAlign: TextAlign.center,
+                            style: GoogleFonts.barlow(
+                              fontSize: 24.0,
+                              wordSpacing: 1,
+                              letterSpacing: 0.001,
+                              fontWeight: FontWeight.w700,
+                              color: Colors.white,
+                            ),
+                          ),
+                          Container(
+                            height: 2,
+                            width: 100,
+                            color: Colors.white,
+                          ),
+                        ],
                       ),
-                      Container(
-                        height: 2,
-                        width: 100,
-                        color: Colors.white,
-                      ),
-                    ],
-                  ),
-                ),
-            ],
-          ),
-        )
-      )
-    );
+                    ),
+                ],
+              ),
+            )));
   }
 
   Widget getRowWithPicker(String linePath, int initialPosition, int pickerId) {
     return Row(
-      children: [
-        getLine(linePath),
-        getPicker(initialPosition, pickerId)
-      ],
+      children: [getLine(linePath), getPicker(initialPosition, pickerId)],
     );
   }
 
@@ -311,11 +308,8 @@ class _ChangeNotificationTimePageState extends State<ChangeNotificationTimePage>
 
     updateContacts();
 
-    showSaveAlert(
-        context,
-        "Tiempo de notificaciones guardado",
-        "El tiempo de las notificaciones se ha guardado correctamente."
-    );
+    showSaveAlert(context, "Tiempo de notificaciones guardado",
+        "El tiempo de las notificaciones se ha guardado correctamente.");
   }
 
   void updateContacts() async {

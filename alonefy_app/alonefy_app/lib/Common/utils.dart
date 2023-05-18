@@ -273,7 +273,8 @@ DateTime parseTime(String str, DateTime dateTime) {
   var hour = int.parse(str.substring(0, 2));
   var minute = int.parse(str.substring(3, 5));
 
-  var time = DateTime(dateTime.year, dateTime.month, dateTime.day, hour, minute);
+  var time =
+      DateTime(dateTime.year, dateTime.month, dateTime.day, hour, minute);
   return time;
 }
 
@@ -606,4 +607,17 @@ extension StringExtension on String {
   String capitalize() {
     return "${this[0].toUpperCase()}${this.substring(1).toLowerCase()}";
   }
+}
+
+bool validatePhoneNumber(String phoneNumber) {
+  // Expresión regular para validar el número de teléfono (formato internacional)
+  final RegExp regex = RegExp(r'^\+(?:[0-9]●?){6,14}[0-9]$');
+  return regex.hasMatch(phoneNumber);
+}
+
+bool validateEmail(String email) {
+  // Expresión regular para validar el correo electrónico
+  final RegExp regex =
+      RegExp(r'^[\w-]+(\.[\w-]+)*@([a-z0-9]+(\.[a-z0-9]+)*\.)+[a-z]{2,}$');
+  return regex.hasMatch(email);
 }

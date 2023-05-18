@@ -9,6 +9,7 @@ import 'package:ifeelefine/Page/UseMobil/Controller/useMobileController.dart';
 
 import 'package:ifeelefine/Page/UserRest/PageView/configurationUserRest_page.dart';
 import 'package:flutter/material.dart';
+import 'package:ifeelefine/Provider/prefencesUser.dart';
 import 'package:ifeelefine/Utils/Widgets/elevateButtonCustomBorder.dart';
 import 'package:ifeelefine/Utils/Widgets/elevatedButtonFilling.dart';
 import 'package:slidable_button/slidable_button.dart';
@@ -27,6 +28,7 @@ class _UseMobilePageState extends State<UseMobilePage> {
   final UseMobilController useMobilVC = Get.put(UseMobilController());
   var indexSelect = 0;
   UserBD? userbd;
+  PreferenceUser prefs = PreferenceUser();
   // FlutterPay flutterPay = FlutterPay();
 
   void onGooglePayResult(paymentResult) {
@@ -35,9 +37,19 @@ class _UseMobilePageState extends State<UseMobilePage> {
 
   @override
   void initState() {
-    userbd = widget.userbd;
+    if (widget.userbd.idUser == "-1") {
+      _getUserData();
+    } else {
+      userbd = widget.userbd;
+    }
+    prefs.saveLastScreenRoute("useMobil");
 
     super.initState();
+  }
+
+  Future<UserBD> _getUserData() async {
+    userbd = await useMobilVC.getUserData();
+    return userbd!;
   }
 
   @override

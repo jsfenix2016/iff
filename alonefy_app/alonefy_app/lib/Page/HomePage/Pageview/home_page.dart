@@ -71,6 +71,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   void initState() {
     getUserData();
     getAlerts();
+    _prefs.saveLastScreenRoute("home");
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     serviceBackgroundPause();
@@ -147,7 +148,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     return GestureDetector(
       onTap: (() async {
         //RedirectViewNotifier.showNotifications();
-
+        getImageGallery(ImageSource.gallery);
       }),
       child: Container(
         width: 100,

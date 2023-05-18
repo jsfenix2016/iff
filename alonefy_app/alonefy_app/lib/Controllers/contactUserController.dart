@@ -25,7 +25,7 @@ class ContactUserController extends GetxController {
   Future<bool> saveListContact(BuildContext context, List<Contact> listContact,
       String timeSendSMS, String timeCall) async {
     try {
-      var contactBD = ContactBD(0, "", null, "", "", "", '', "pendiente");
+      var contactBD = ContactBD("", null, "", "", "", '', "pendiente");
       for (var element in listContact) {
         contactBD.displayName = element.displayName;
         contactBD.phones = element.phones.first.number;

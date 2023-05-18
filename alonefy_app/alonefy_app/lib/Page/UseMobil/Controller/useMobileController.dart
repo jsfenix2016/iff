@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:ifeelefine/Common/Constant.dart';
 import 'package:ifeelefine/Common/utils.dart';
+import 'package:ifeelefine/Data/hive_data.dart';
 import 'package:ifeelefine/Model/useMobilbd.dart';
 import 'package:ifeelefine/Model/userbd.dart';
 import 'package:ifeelefine/Page/UseMobil/Service/useMobilService.dart';
@@ -13,20 +15,20 @@ final _prefs = PreferenceUser();
 class UseMobilController extends GetxController {
   final UseMobilService useMobilServ = Get.put(UseMobilService());
 
+  Future<UserBD> getUserData() async {
+    try {
+      return await const HiveData().getuserbd;
+    } catch (error) {
+      return initUserBD();
+    }
+  }
+
   Future<bool> saveTimeUseMobil(
       BuildContext context, String time, UserBD userbd) async {
     _prefs.setUseMobil = time;
-    final List<String> tempNoSelectListDay = <String>[
-      "L",
-      "M",
-      "X",
-      "J",
-      "V",
-      "S",
-      "D",
-    ];
+
     final List<UseMobilBD> selectedDays = [];
-    for (var element in tempNoSelectListDay) {
+    for (var element in Constant.tempListShortDay) {
       UseMobilBD useDay =
           UseMobilBD(day: element, time: time, selection: 0, isSelect: true);
 

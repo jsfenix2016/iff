@@ -4,12 +4,69 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
+import 'package:ifeelefine/Model/userbd.dart';
 
 class UserService {
-  Future<Map<String, dynamic>> verificateSMS(int num, String name) async {
-    final authData = {"recipient": "$num", "originator": (name)};
+  Future<Map<String, dynamic>> validateCodeSMS(String id, String code) async {
+    // final authData = {"recipient": "$num", "originator": (code)};
     final headersData = {
-      "Authorization": "AccessKey slL8Vl8b2QKT0P54RC2rRjBqL"
+      "Authorization": "AccessKey ScW7OrkmUB6YPlsrPTGNx4Zwt"
+    };
+
+    try {
+      final resp = await http.get(
+        Uri.parse("${Constant.baseApiMessageBird}verify/'$id'?token='$code'"),
+        headers: headersData,
+      );
+
+      Map<String, dynamic> decodeResp = json.decode(resp.body);
+
+      // print(decodeResp);
+      if (decodeResp['errors'] != null) {
+        return {"ok": false, "mesaje": "error"};
+      }
+
+      if (decodeResp['id'] != null) {
+        return {"ok": true, "token": decodeResp['id']};
+      } else {
+        return {"ok": false, "mesaje": decodeResp['id']};
+      }
+    } catch (error) {
+      return {"ko": false, "mesaje": error.toString()};
+    }
+  }
+
+  Future<Map<String, dynamic>> validateCodeEmail(String id, String code) async {
+    final headersData = {
+      "Authorization": "AccessKey ScW7OrkmUB6YPlsrPTGNx4Zwt"
+    };
+
+    try {
+      final resp = await http.get(
+          Uri.parse("${Constant.baseApiMessageBird}verify/'$id'?token='$code'"),
+          headers: headersData);
+
+      Map<String, dynamic> decodeResp = json.decode(resp.body);
+
+      // print(decodeResp);
+      if (decodeResp['errors'] != null) {
+        return {"ok": false, "mesaje": "error"};
+      }
+
+      if (decodeResp['status'] != "verified") {
+        return {"ok": true, "status": decodeResp['status']};
+      } else {
+        return {"ok": false, "status": decodeResp['status']};
+      }
+    } catch (error) {
+      return {"ko": false, "mesaje": error.toString()};
+    }
+  }
+
+  Future<Map<String, dynamic>> verificateSMS(int num) async {
+    final authData = {"recipient": "$num", "originator": "$num"};
+    final headersData = {
+      "Authorization": "AccessKey ScW7OrkmUB6YPlsrPTGNx4Zwt"
     };
 
     try {
@@ -20,24 +77,29 @@ class UserService {
 
       Map<String, dynamic> decodeResp = json.decode(resp.body);
 
-      if (decodeResp['errors'] == null) {
+      if (decodeResp['errors'] != null) {
         return {"ok": false, "mesaje": decodeResp['description']};
       }
 
-      if (decodeResp['id'] != null) {
-        return {"ok": true, "token": decodeResp['id']};
+      if (decodeResp["id"] != null) {
+        return {"ok": true, "id": decodeResp["id"]};
       } else {
-        return {"ok": false, "mesaje": decodeResp['id']};
+        return {"ok": false, "id": decodeResp["id"]};
       }
     } catch (error) {
       return {"ko": false, "mesaje": error.toString()};
     }
   }
 
-  Future<Map<String, dynamic>> verificateEmail(int num, String name) async {
-    final authData = {"recipient": "$num", "originator": (name)};
+  Future<Map<String, dynamic>> validateEmailWithMessageBird(
+      String email) async {
+    final authData = {
+      "recipient": email,
+      "originator": ("hello@alertfriends.app"),
+      "type": "email",
+    };
     final headersData = {
-      "Authorization": "AccessKey slL8Vl8b2QKT0P54RC2rRjBqL"
+      "Authorization": "AccessKey ScW7OrkmUB6YPlsrPTGNx4Zwt"
     };
 
     try {
@@ -49,43 +111,14 @@ class UserService {
       Map<String, dynamic> decodeResp = json.decode(resp.body);
 
       // print(decodeResp);
-      if (decodeResp['id'] == null) {
+      if (decodeResp['errors'] != null) {
         return {"ok": false, "mesaje": "error"};
       }
 
-      if (decodeResp['id'] != null) {
-        return {"ok": true, "token": decodeResp['id']};
+      if (decodeResp["id"] != null) {
+        return {"ok": true, "id": decodeResp["id"]};
       } else {
-        return {"ok": false, "mesaje": decodeResp['id']};
-      }
-    } catch (error) {
-      return {"ko": false, "mesaje": error.toString()};
-    }
-  }
-
-  Future<Map<String, dynamic>> sendSMS(Map<dynamic, dynamic> data) async {
-    // final authData = {"recipient": "$num", "originator": (name), 'body': ""};
-    final headersData = {
-      "Authorization": "AccessKey slL8Vl8b2QKT0P54RC2rRjBqL"
-    };
-
-    try {
-      final resp = await http.post(
-          Uri.parse("${Constant.baseApiMessageBird}messages"),
-          headers: headersData,
-          body: data);
-
-      Map<String, dynamic> decodeResp = json.decode(resp.body);
-
-      // print(decodeResp);
-      if (decodeResp['id'] == null) {
-        return {"ok": false, "mesaje": "error"};
-      }
-
-      if (decodeResp['id'] != null) {
-        return {"ok": true, "token": decodeResp['id']};
-      } else {
-        return {"ok": false, "mesaje": decodeResp['id']};
+        return {"ko": false, "mesaje": "error"};
       }
     } catch (error) {
       return {"ko": false, "mesaje": error.toString()};

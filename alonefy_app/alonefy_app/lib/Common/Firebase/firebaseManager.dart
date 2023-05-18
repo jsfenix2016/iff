@@ -29,9 +29,9 @@ Future<void> setupFlutterNotifications() async {
   //  return;
   //}
   channel = const AndroidNotificationChannel(
-    'my_foreground', // id
-    'IFEELFINE – PERSONAL PROTECTION', // title
-    description: 'IFeelFine está activado.', // description
+    '5', // id
+    'AlertFriends – PERSONAL PROTECTION', // title
+    description: 'AlertFriends está activado.', // description
     importance: Importance.low, // importance must be at low or higher level
   );
 
@@ -43,7 +43,7 @@ Future<void> setupFlutterNotifications() async {
   /// default FCM channel to enable heads up notifications.
   await flutterLocalNotificationsPlugin
       .resolvePlatformSpecificImplementation<
-      AndroidFlutterLocalNotificationsPlugin>()
+          AndroidFlutterLocalNotificationsPlugin>()
       ?.createNotificationChannel(channel);
 
   /// Update the iOS foreground notification presentation options to allow
@@ -71,7 +71,7 @@ void showFlutterNotification(RemoteMessage message) {
           channelDescription: channel.description,
           // TODO add a proper drawable resource to android, for now using
           //      one that already exists in example app.
-          icon: 'launch_background',
+          icon: '@mipmap/logo_alertfriends',
         ),
       ),
     );

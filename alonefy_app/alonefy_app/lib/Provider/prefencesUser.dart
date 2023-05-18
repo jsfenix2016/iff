@@ -223,6 +223,30 @@ class PreferenceUser {
   get getNotificationAudio {
     return _prefs.getString('NotificationAudio') ?? '';
   }
+
+  Future<void> saveLastScreenRoute(String routeName) async {
+    await _prefs.setString('lastScreenRoute', routeName);
+  }
+
+  Future<String?> getLastScreenRoute() async {
+    return _prefs.getString('lastScreenRoute');
+  }
+
+  set setIdTokenEmail(String id) {
+    _prefs.setString('IdTokenEmail', id);
+  }
+
+  get geIdTokenEmail {
+    return _prefs.getString('IdTokenEmail') ?? '';
+  }
+
+  set setIdTokenSMS(String id) {
+    _prefs.setString('IdTokenSMS', id);
+  }
+
+  get getIdTokenSMS {
+    return _prefs.getString('IdTokenSMS') ?? '';
+  }
 }
 
 enum PreferencePermission { init, denied, deniedForever, allow, noAccepted }

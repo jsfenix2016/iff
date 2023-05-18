@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'dart:math';
 import 'dart:ui';
 import 'package:all_sensors2/all_sensors2.dart';
 
@@ -14,10 +15,14 @@ import 'package:ifeelefine/Model/activitydaybd.dart';
 import 'package:ifeelefine/Model/contactRiskBD.dart';
 
 import 'package:ifeelefine/Model/userbd.dart';
+import 'package:ifeelefine/Page/Contact/Notice/PageView/contactNotice_page.dart';
+import 'package:ifeelefine/Page/HomePage/Pageview/home_page.dart';
 
 import 'package:ifeelefine/Page/Premium/Controller/premium_controller.dart';
 
 import 'package:ifeelefine/Page/Risk/DateRisk/ListDateRisk/PageView/riskDatePage.dart';
+import 'package:ifeelefine/Page/UserConfig/PageView/userconfig_page.dart';
+import 'package:ifeelefine/Page/UserConfig2/Page/configuration2_page.dart';
 import 'package:ifeelefine/Services/mainService.dart';
 
 import 'package:intl/intl.dart';
@@ -89,8 +94,9 @@ Future<void> main() async {
   var premiumController = Get.put(PremiumController());
 
   premiumController.initPlatformState();
-
-  initApp = _prefs.isFirstConfig == false ? 'onboarding' : 'home';
+// Recupera la última ruta de pantalla visitada
+  final lastRoute = await _prefs.getLastScreenRoute();
+  initApp = _prefs.isFirstConfig == false ? 'onboarding' : lastRoute;
   final deviceInfo = DeviceInfoPlugin();
 
   if (Platform.isAndroid) {
@@ -99,9 +105,7 @@ Future<void> main() async {
   }
   runApp(
     GetMaterialApp(
-      home: MyApp(
-        initApp: initApp!,
-      ),
+      home: UserConfigPage(),
       debugShowCheckedModeBanner: false,
     ),
   );
@@ -118,9 +122,9 @@ Future activateService() async {
   /// OPTIONAL, using custom notification channel id
   const AndroidNotificationChannel channel = AndroidNotificationChannel(
     'my_foreground', // id
-    'IFEELFINE – PERSONAL PROTECTION', // title
-    description: 'IFeelFine está activado.', // description
-    importance: Importance.low, // importance must be at low or higher level
+    'AlertFriends – PERSONAL PROTECTION 1', // title
+    description: 'AlertFriends está activado.', // description
+    importance: Importance.high, // importance must be at low or higher level
   );
 
   await flutterLocalNotificationsPlugin
@@ -137,8 +141,8 @@ Future activateService() async {
       isForegroundMode: true,
 
       notificationChannelId: 'my_foreground',
-      initialNotificationTitle: 'IFEELFINE – PERSONAL PROTECTION',
-      initialNotificationContent: 'IFeelFine está activado',
+      initialNotificationTitle: 'AlertFriends – PERSONAL PROTECTION 2',
+      initialNotificationContent: 'AlertFriends está activado',
       foregroundServiceNotificationId: 888,
     ),
     iosConfiguration: IosConfiguration(
@@ -160,7 +164,7 @@ Future activateService() async {
   // }
 
   const AndroidInitializationSettings initializationSettingsAndroid =
-      AndroidInitializationSettings('ic_bg_service_small');
+      AndroidInitializationSettings('@mipmap/logo_alertfriends');
   final List<DarwinNotificationCategory> darwinNotificationCategories =
       <DarwinNotificationCategory>[];
   final DarwinInitializationSettings initializationSettingsDarwin =
@@ -354,10 +358,11 @@ Future accelerometer() async {
 
   _streamSubscriptions.add(
     accelerometerEvents!.listen((AccelerometerEvent event) {
-      userAccelerometerValues = <double>[event.x, event.y, event.z];
-      if (event.x >= 11.0 || event.y >= 11.0 || event.z >= 11.0) {
+      double accelerationMagnitude =
+          sqrt(event.x * event.x + event.y * event.y + event.z * event.z);
+      if (accelerationMagnitude > 19) {
         isMovRude = true;
-        print("movimiento rudo");
+        print("movimiento rudo $accelerationMagnitude");
         if (user != null) {
           MainService().saveDrop(user!);
         }
@@ -366,7 +371,7 @@ Future accelerometer() async {
         mainController.saveUserLog("Movimiento brusco a ", now);
       } else {
         isMovRude = false;
-        if (event.x >= 0.07 || event.y >= 0.02 || event.z >= 9.9) {
+        if (accelerationMagnitude < 19 && accelerationMagnitude > 10) {
           print("me movi");
           if (_logActivityTimer >= _logActivityTimerRefresh) {
             print("Movimiento normal");

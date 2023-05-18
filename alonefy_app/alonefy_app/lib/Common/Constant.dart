@@ -239,13 +239,20 @@ class Constant {
   static const String enableLocalPermission = "¿Aceptas el permiso de";
   static const String verifyPhoneNumber =
       'Debe verificar su numero de telefono';
-
+  static const String validatePhoneNumber =
+      'Debe colocar un numero de telefono valido';
   static const String info = 'Información';
 
+  static const String validateEmail = 'Debe colocar un email valido';
+
   static const String premiumHabitsTitle = 'Aprende de tus hábitos';
-  static const String premiumChangeTimeTitle = 'Modifica los tiempos para enviar sms, whatsapp y llamadas';
-  static const String premiumMapTitle = 'Envía tu ubicación cuando envíes una alerta';
+  static const String premiumChangeTimeTitle =
+      'Modifica los tiempos para enviar sms, whatsapp y llamadas';
+  static const String premiumMapTitle =
+      'Envía tu ubicación cuando envíes una alerta';
   static const String premiumRestoreTitle = 'Restaura tú cuenta';
-  static const String premiumContactsTitle = 'Asegurarte que responden a tu emergencia, añade más contactos';
-  static const String premiumFallTitle = 'Cuando tu smartphone detecte una caída avisará al amigo o familiar que desees';
+  static const String premiumContactsTitle =
+      'Asegurarte que responden a tu emergencia, añade más contactos';
+  static const String premiumFallTitle =
+      'Cuando tu smartphone detecte una caída avisará al amigo o familiar que desees';
 }

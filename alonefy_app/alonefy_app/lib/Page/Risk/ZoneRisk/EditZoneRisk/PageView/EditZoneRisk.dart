@@ -113,15 +113,12 @@ class _EditZoneRiskPageState extends State<EditZoneRiskPage> {
       ),
     );
     Navigator.pushReplacement(context, route);
+  }
 
-    // Navigator.push(
-    //   context,
-    //   MaterialPageRoute(
-    //     builder: (context) => PushAlertPage(
-    //       contactZone: widget.contactRisk,
-    //     ),
-    //   ),
-    // );
+  Widget space(double heigth) {
+    return SizedBox(
+      height: heigth,
+    );
   }
 
   @override
@@ -131,7 +128,7 @@ class _EditZoneRiskPageState extends State<EditZoneRiskPage> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.brown,
-        title: const Center(child: Text("Edición de mensaje de zona")),
+        title: const Text("Edición zona de riesgo"),
       ),
       body: Container(
         decoration: decorationCustom(),
@@ -144,9 +141,7 @@ class _EditZoneRiskPageState extends State<EditZoneRiskPage> {
                     height: 10.0,
                   ),
                 ),
-                const SizedBox(
-                  height: 20,
-                ),
+                space(20),
                 SizedBox(
                   child: Column(
                     children: [
@@ -164,7 +159,7 @@ class _EditZoneRiskPageState extends State<EditZoneRiskPage> {
                         ),
                       ),
                       Padding(
-                        padding: const EdgeInsets.only(left: 12.0, right: 24),
+                        padding: const EdgeInsets.only(left: 0.0, right: 0),
                         child: Column(
                           mainAxisSize: MainAxisSize.max,
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -190,19 +185,6 @@ class _EditZoneRiskPageState extends State<EditZoneRiskPage> {
                                       ),
                                     ),
                                   ),
-                                  // CupertinoSwitch(
-                                  //   value: widget.contactRisk.sendWhatsapp,
-                                  //   onChanged: (value) {
-                                  //     sendWhatsappSMS = value;
-                                  //     widget.contactRisk.sendWhatsapp = value;
-                                  //     setState(() {});
-                                  //   },
-                                  //   trackColor:
-                                  //       Color.fromRGBO(169, 146, 125, 0.5),
-                                  //   thumbColor: CupertinoColors.white,
-                                  //   activeColor:
-                                  //       Color.fromRGBO(169, 146, 125, 0.5),
-                                  // ),
                                   SizedBox(
                                     width: size.width / 6,
                                     child: Switch(
@@ -214,6 +196,7 @@ class _EditZoneRiskPageState extends State<EditZoneRiskPage> {
                                       value: widget.contactRisk.sendWhatsapp,
                                     ),
                                   ),
+                                  space(20),
                                 ],
                               ),
                             ),
@@ -250,6 +233,7 @@ class _EditZoneRiskPageState extends State<EditZoneRiskPage> {
                                       value: widget.contactRisk.callme,
                                     ),
                                   ),
+                                  space(20),
                                 ],
                               ),
                             ),
@@ -259,15 +243,11 @@ class _EditZoneRiskPageState extends State<EditZoneRiskPage> {
                     ],
                   ),
                 ),
-                const SizedBox(
-                  height: 40,
-                ),
+                space(40),
                 SizedBox(
                   child: Column(
                     children: [
-                      const SizedBox(
-                        height: 12,
-                      ),
+                      space(12),
                       CardContact(
                         visible: true,
                         photo: (indexSelect != -1 &&
@@ -292,18 +272,19 @@ class _EditZoneRiskPageState extends State<EditZoneRiskPage> {
                               height: size.height,
                               color: const Color.fromRGBO(169, 146, 125, 1),
                               child: Padding(
-                                  padding: const EdgeInsets.only(
-                                      top: 28.0, left: 8, right: 8),
-                                  child: PopUpContact(
-                                    listcontact: contactlist,
-                                    onChanged: (int value) {
-                                      indexSelect = value;
-                                      contactSelect = contactlist[value];
-                                      widget.contactRisk.name =
-                                          contactSelect.displayName;
-                                      setState(() {});
-                                    },
-                                  )),
+                                padding: const EdgeInsets.only(
+                                    top: 28.0, left: 8, right: 8),
+                                child: PopUpContact(
+                                  listcontact: contactlist,
+                                  onChanged: (int value) {
+                                    indexSelect = value;
+                                    contactSelect = contactlist[value];
+                                    widget.contactRisk.name =
+                                        contactSelect.displayName;
+                                    setState(() {});
+                                  },
+                                ),
+                              ),
                             ),
                           );
                         },
@@ -311,9 +292,7 @@ class _EditZoneRiskPageState extends State<EditZoneRiskPage> {
                     ],
                   ),
                 ),
-                const SizedBox(
-                  height: 20,
-                ),
+                space(20),
                 Padding(
                   padding: const EdgeInsets.all(0.0),
                   child: Column(
@@ -324,7 +303,7 @@ class _EditZoneRiskPageState extends State<EditZoneRiskPage> {
                         color: Colors.transparent,
                         height: 60.0,
                         child: Padding(
-                          padding: const EdgeInsets.only(left: 12.0, right: 24),
+                          padding: const EdgeInsets.only(left: 0.0, right: 0),
                           child: Row(
                             mainAxisSize: MainAxisSize.max,
                             mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -355,12 +334,13 @@ class _EditZoneRiskPageState extends State<EditZoneRiskPage> {
                                   value: widget.contactRisk.sendWhatsappContact,
                                 ),
                               ),
+                              space(20)
                             ],
                           ),
                         ),
                       ),
                       Padding(
-                        padding: const EdgeInsets.only(left: 12.0, right: 24),
+                        padding: const EdgeInsets.only(left: 0.0, right: 0),
                         child: SizedBox(
                           height: 50.0,
                           child: Row(
@@ -392,6 +372,7 @@ class _EditZoneRiskPageState extends State<EditZoneRiskPage> {
                                   value: widget.contactRisk.sendLocation,
                                 ),
                               ),
+                              space(20)
                             ],
                           ),
                         ),
@@ -399,9 +380,7 @@ class _EditZoneRiskPageState extends State<EditZoneRiskPage> {
                     ],
                   ),
                 ),
-                const SizedBox(
-                  height: 20,
-                ),
+                space(20),
                 Expanded(
                   flex: 0,
                   child: Container(
@@ -436,11 +415,9 @@ class _EditZoneRiskPageState extends State<EditZoneRiskPage> {
                             ],
                           ),
                         ),
-                        const SizedBox(
-                          height: 20,
-                        ),
+                        space(20),
                         Padding(
-                          padding: const EdgeInsets.only(left: 12.0, right: 24),
+                          padding: const EdgeInsets.only(left: 0.0, right: 0),
                           child: Row(
                             mainAxisSize: MainAxisSize.max,
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -470,6 +447,7 @@ class _EditZoneRiskPageState extends State<EditZoneRiskPage> {
                                   value: widget.contactRisk.save,
                                 ),
                               ),
+                              space(20)
                             ],
                           ),
                         ),
@@ -477,9 +455,7 @@ class _EditZoneRiskPageState extends State<EditZoneRiskPage> {
                     ),
                   ),
                 ),
-                const SizedBox(
-                  height: 20,
-                ),
+                space(20),
                 ElevateButtonCustomBorder(
                   onChanged: (value) {
                     // if (saveConfig) {
@@ -488,10 +464,7 @@ class _EditZoneRiskPageState extends State<EditZoneRiskPage> {
                   },
                   mensaje: 'Iniciar',
                 ),
-                Container(
-                  height: 20,
-                  color: Colors.transparent,
-                ),
+                space(20),
               ],
             ),
           ),

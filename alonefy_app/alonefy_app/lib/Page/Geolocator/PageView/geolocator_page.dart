@@ -253,11 +253,11 @@ class _InitGeolocatorState extends State<InitGeolocator> {
                               } else {
                                 Navigator.push(
                                   context,
-                                  MaterialPageRoute(builder: (context) => const PremiumPage(
-                                      img: 'Mask group-4',
-                                      title: Constant.premiumMapTitle,
-                                      subtitle: '')
-                                  ),
+                                  MaterialPageRoute(
+                                      builder: (context) => const PremiumPage(
+                                          img: 'assets/images/Mask group-4',
+                                          title: Constant.premiumMapTitle,
+                                          subtitle: '')),
                                 );
 
                                 setState(() {

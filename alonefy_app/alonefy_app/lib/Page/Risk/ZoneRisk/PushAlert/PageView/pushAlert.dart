@@ -1,6 +1,9 @@
+import 'dart:async';
 import 'dart:ffi';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:gallery_saver/gallery_saver.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -13,6 +16,7 @@ import 'package:ifeelefine/Page/FallDetected/Controller/fall_detectedController.
 import 'package:ifeelefine/Page/HomePage/Pageview/home_page.dart';
 import 'package:ifeelefine/Page/Risk/ZoneRisk/CancelAlert/PageView/cancelAlert.dart';
 import 'package:ifeelefine/Utils/Widgets/elevatedButtonFilling.dart';
+import 'package:camera/camera.dart';
 
 class PushAlertPage extends StatefulWidget {
   /// Creates a new GeolocatorWidget.
@@ -26,15 +30,77 @@ class PushAlertPage extends StatefulWidget {
 
 class _PushAlertPageState extends State<PushAlertPage> {
   final FallDetectedController fallVC = Get.put(FallDetectedController());
-
+  bool _isRecording = false;
+  late CameraController _cameraController;
   late bool isActive = false;
+  bool _isLoading = true;
+  bool isMenu = false;
 
   @override
   void initState() {
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+    ]).then((_) {
+      // Iniciar la grabación de video
+    });
+    _initCamera();
     super.initState();
   }
 
-  bool isMenu = false;
+  @override
+  void dispose() {
+    _cameraController.dispose();
+    super.dispose();
+  }
+
+  _initCamera() async {
+    final cameras = await availableCameras();
+    final front = cameras.firstWhere(
+        (camera) => camera.lensDirection == CameraLensDirection.back);
+    _cameraController = CameraController(front, ResolutionPreset.max);
+    await _cameraController.initialize();
+    setState(() => _isLoading = false);
+  }
+
+  _recordVideo() async {
+    if (_isRecording) {
+      stopRecording();
+    } else {
+      await _cameraController.prepareForVideoRecording();
+
+      await _cameraController.startVideoRecording();
+      _elapsedTime = 0;
+      startRecording();
+      setState(() => _isRecording = true);
+    }
+  }
+
+  int _elapsedTime = 0;
+  late Timer _timer;
+  void startRecording() {
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      setState(() {
+        _elapsedTime++;
+      });
+    });
+  }
+
+  void stopRecording() async {
+    final file = await _cameraController.stopVideoRecording();
+    setState(() => _isRecording = false);
+
+    // Detener la grabación de video y detener el timer
+    _timer.cancel();
+
+    var video = await GallerySaver.saveVideo(file.path);
+    Route route = MaterialPageRoute(
+      builder: (context) => CancelAlertPage(
+        contactRisk: widget.contactZone,
+      ),
+    );
+    Navigator.pushReplacement(context, route);
+  }
+
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
@@ -47,40 +113,13 @@ class _PushAlertPageState extends State<PushAlertPage> {
           : null,
       body: GestureDetector(
         onTapDown: (details) {
-          // El usuario ha tocado la pantalla
-          print('El usuario ha tocado la pantalla');
+          _recordVideo();
         },
         onTapUp: (details) {
-          // Navigator.push(
-          //   context,
-          //   MaterialPageRoute(
-          //     builder: (context) => CancelAlertPage(
-          //       contactRisk: widget.contactZone,
-          //     ),
-          //   ),
-          // );
-
-          Route route = MaterialPageRoute(
-            builder: (context) => CancelAlertPage(
-              contactRisk: widget.contactZone,
-            ),
-          );
-          Navigator.pushReplacement(context, route);
-
-          // El usuario ha dejado de tocar la pantalla
-          print('El usuario ha dejado de tocar la pantalla');
+          _recordVideo();
         },
         onPanEnd: (details) {
-          Route route = MaterialPageRoute(
-            builder: (context) => CancelAlertPage(
-              contactRisk: widget.contactZone,
-            ),
-          );
-          Navigator.pushReplacement(context, route);
-
-          // El usuario ha dejado de tocar la pantalla después de haber arrastrado el dedo por la pantalla
-          print(
-              'El usuario ha dejado de tocar la pantalla después de haber arrastrado el dedo por la pantalla');
+          _recordVideo();
         },
         child: Container(
           decoration: decorationCustom(),

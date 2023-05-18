@@ -3,30 +3,32 @@ import 'package:flutter_contacts/flutter_contacts.dart';
 
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:ifeelefine/Common/colorsPalette.dart';
 
 import 'package:ifeelefine/Common/utils.dart';
 import 'package:ifeelefine/Controllers/contactUserController.dart';
 
 import 'package:ifeelefine/Page/Geolocator/PageView/geolocator_page.dart';
+import 'package:ifeelefine/Provider/prefencesUser.dart';
 import 'package:ifeelefine/Utils/Widgets/CustomDropdownButtonWidgetContact.dart';
 
 import 'package:ifeelefine/Page/UserInactivityPage/PageView/configurationUserInactivity_page.dart';
 import 'package:ifeelefine/Utils/Widgets/elevateButtonCustomBorder.dart';
 import 'package:ifeelefine/Utils/Widgets/selectTimerCallSendSMS.dart';
 import 'package:ifeelefine/Utils/Widgets/widgedContact.dart';
+import 'package:notification_center/notification_center.dart';
 
 class ContactList extends StatefulWidget {
   const ContactList({super.key, required this.isMenu});
   final bool isMenu;
 
   @override
-  // ignore: library_private_types_in_public_api
-  _ContactListState createState() => _ContactListState();
+  State<ContactList> createState() => _ContactListState();
 }
 
 class _ContactListState extends State<ContactList> {
   final ContactUserController contactVC = Get.put(ContactUserController());
-
+  final PreferenceUser _prefs = PreferenceUser();
   final List<Contact> _selectedContacts = [];
   var indexSelect = -1;
 
@@ -36,8 +38,7 @@ class _ContactListState extends State<ContactList> {
 
   @override
   void initState() {
-    // userVC.g
-
+    _prefs.saveLastScreenRoute("contact");
     super.initState();
   }
 
@@ -193,17 +194,24 @@ class _ContactListState extends State<ContactList> {
               ),
             ),
             ElevateButtonCustomBorder(
-              onChanged: (value) {
+              onChanged: (value) async {
                 if (value) {
                   // ignore: use_build_context_synchronously
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const InitGeolocator()),
-                  );
+                  await contactVC.saveListContact(
+                      context, _selectedContacts, timeSMS, timeCall);
+                  if (widget.isMenu == false) {
+                    // ignore: use_build_context_synchronously
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const InitGeolocator()),
+                    );
+                  } else {
+                    NotificationCenter().notify('getContact');
+                  }
                 }
               },
-              mensaje: "Continuar",
+              mensaje: widget.isMenu == false ? "Guardar" : "Continuar",
             ),
           ],
         ),

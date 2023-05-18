@@ -7,63 +7,6 @@ import 'package:http/http.dart' as http;
 import 'package:ifeelefine/Common/Constant.dart';
 
 class UsuarioProvider {
-  Future<Map<String, dynamic>> verificateSMS(int num, String name) async {
-    final authData = {"recipient": "$num", "originator": (name)};
-    final headersData = {
-      "Authorization": "AccessKey slL8Vl8b2QKT0P54RC2rRjBqL"
-    };
-
-    try {
-      final resp = await http.post(
-          Uri.parse("${Constant.baseApiMessageBird}verify"),
-          headers: headersData,
-          body: authData);
-
-      Map<String, dynamic> decodeResp = json.decode(resp.body);
-
-      if (decodeResp['errors'] == null) {
-        return {"ok": false, "mesaje": decodeResp['description']};
-      }
-
-      if (decodeResp['id'] != null) {
-        return {"ok": true, "token": decodeResp['id']};
-      } else {
-        return {"ok": false, "mesaje": decodeResp['id']};
-      }
-    } catch (error) {
-      return {"ko": false, "mesaje": error.toString()};
-    }
-  }
-
-  Future<Map<String, dynamic>> verificateEmail(int num, String name) async {
-    final authData = {"recipient": "$num", "originator": (name)};
-    final headersData = {
-      "Authorization": "AccessKey slL8Vl8b2QKT0P54RC2rRjBqL"
-    };
-
-    try {
-      final resp = await http.post(
-          Uri.parse("${Constant.baseApiMessageBird}verify"),
-          headers: headersData,
-          body: authData);
-
-      Map<String, dynamic> decodeResp = json.decode(resp.body);
-
-      // print(decodeResp);
-      if (decodeResp['id'] == null) {
-        return {"ok": false, "mesaje": "error"};
-      }
-
-      if (decodeResp['id'] != null) {
-        return {"ok": true, "token": decodeResp['id']};
-      } else {
-        return {"ok": false, "mesaje": decodeResp['id']};
-      }
-    } catch (error) {
-      return {"ko": false, "mesaje": error.toString()};
-    }
-  }
-
   Future<Map<String, dynamic>> sendSMS(Map<dynamic, dynamic> data) async {
     // final authData = {"recipient": "$num", "originator": (name), 'body': ""};
     final headersData = {

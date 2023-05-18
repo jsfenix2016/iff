@@ -273,7 +273,7 @@ class _ZoneRiskPageState extends State<ZoneRiskPage> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.brown,
-        title: const Center(child: Text("Zona de riesgo")),
+        title: const Text("Zona de riesgo"),
       ),
       body: Container(
         decoration: const BoxDecoration(

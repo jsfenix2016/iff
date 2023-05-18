@@ -15,6 +15,7 @@ import 'package:ifeelefine/Model/restdaybd.dart';
 import 'package:ifeelefine/Page/UserInactivityPage/PageView/configurationUserInactivity_page.dart';
 import 'package:ifeelefine/Page/UserRest/Controller/userRestController.dart';
 import 'package:ifeelefine/Page/UserRest/Widgets/rowSelectTimer.dart';
+import 'package:ifeelefine/Provider/prefencesUser.dart';
 import 'package:ifeelefine/Utils/Widgets/elevateButtonCustomBorder.dart';
 import 'package:ifeelefine/Utils/Widgets/listDayweekCustom.dart';
 import 'package:collection/collection.dart';
@@ -30,7 +31,7 @@ class PreviewRestTimePage extends StatefulWidget {
 class _PreviewRestTimePageState extends State<PreviewRestTimePage> {
   final scaffoldKey = GlobalKey<ScaffoldState>();
   final UserRestController restVC = Get.put(UserRestController());
-
+  final PreferenceUser _prefs = PreferenceUser();
   late String timeLblAM = "00:00"; //AM
   late String timeLblPM = "00:00"; //PM
 
@@ -42,9 +43,11 @@ class _PreviewRestTimePageState extends State<PreviewRestTimePage> {
   List<RestDayBD> lista = [];
   int indexFile = 0;
   var indexSelect = -1;
+
   @override
   void initState() {
     getInactivity();
+    _prefs.saveLastScreenRoute("previewRestDay");
     super.initState();
   }
 

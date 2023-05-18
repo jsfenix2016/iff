@@ -14,7 +14,7 @@ class UserConfig2Service {
       "gender": (user.gender),
       "maritalStatus": (user.maritalStatus),
       "stylelife": (user.styleLife),
-      "pathImage": (user.pathImage),
+      "pathImage": null,
       "age": (user.age),
       "country": (user.country),
       "city": (user.city)

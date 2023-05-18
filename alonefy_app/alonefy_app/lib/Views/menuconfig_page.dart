@@ -4,6 +4,7 @@ import 'package:ifeelefine/Common/colorsPalette.dart';
 import 'package:ifeelefine/Common/habits.dart';
 
 import 'package:ifeelefine/Page/ChangeNotificationTime/PageView/changeNotificationTime_page.dart';
+import 'package:ifeelefine/Page/Contact/Notice/PageView/contactNotice_page.dart';
 import 'package:ifeelefine/Page/Contact/PageView/addContact_page.dart';
 import 'package:ifeelefine/Page/Disamble/Pageview/disambleIfeelfine_page.dart';
 import 'package:ifeelefine/Page/EditUseMobil/Page/editUseMobil.dart';
@@ -73,7 +74,7 @@ class _MenuConfigurationPageState extends State<MenuConfigurationPage> {
     MenuConfigModel(
         "Desactivar mi instalación", 'assets/images/Group 533.png', 21, 17),
   ];
-  
+
   final _prefs = PreferenceUser();
 
   @override
@@ -149,9 +150,7 @@ class _MenuConfigurationPageState extends State<MenuConfigurationPage> {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => const ContactList(
-              isMenu: true,
-            ),
+            builder: (context) => const ContactNoticePage(),
           ),
         );
         break;
@@ -240,11 +239,11 @@ class _MenuConfigurationPageState extends State<MenuConfigurationPage> {
         } else {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => const PremiumPage(
-                img: 'Mask group-4',
-                title: Constant.premiumRestoreTitle,
-                subtitle: '')
-            ),
+            MaterialPageRoute(
+                builder: (context) => const PremiumPage(
+                    img: 'Mask group-4',
+                    title: Constant.premiumRestoreTitle,
+                    subtitle: '')),
           );
         }
         break;
@@ -308,7 +307,7 @@ class _MenuConfigurationPageState extends State<MenuConfigurationPage> {
                                 decoration: const BoxDecoration(
                                   color: Colors.transparent,
                                   borderRadius:
-                                  BorderRadius.all(Radius.circular(8)),
+                                      BorderRadius.all(Radius.circular(8)),
                                 ),
                                 height: 38,
                                 width: 312,
@@ -359,11 +358,7 @@ class _MenuConfigurationPageState extends State<MenuConfigurationPage> {
               ),
             ),
             Positioned(
-              bottom: 32,
-              left: 32,
-              right: 32,
-              child: getHorizontalSlide()
-            )
+                bottom: 32, left: 32, right: 32, child: getHorizontalSlide())
           ],
         ),
       ),
@@ -393,11 +388,11 @@ class _MenuConfigurationPageState extends State<MenuConfigurationPage> {
         } else if (value == SlidableButtonPosition.end) {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => const PremiumPage(
-                img: 'Mask group-4',
-                title: Constant.premiumHabitsTitle,
-                subtitle: '')
-            ),
+            MaterialPageRoute(
+                builder: (context) => const PremiumPage(
+                    img: 'Mask group-4',
+                    title: Constant.premiumHabitsTitle,
+                    subtitle: '')),
           );
         }
       },
@@ -427,7 +422,7 @@ class _MenuConfigurationPageState extends State<MenuConfigurationPage> {
       ),
     );
   }
-  
+
   void updateHabits() async {
     var habits = Habits();
     await habits.fillHabits();

@@ -44,11 +44,11 @@ class RedirectViewNotifier with ChangeNotifier {
       '¿Te encuentras bien?',
       const NotificationDetails(
         android: AndroidNotificationDetails(
-          'my_foreground',
+          '0',
           'MY FOREGROUND SERVICE',
-          icon: 'ic_bg_service_small',
+          icon: '@mipmap/logo_alertfriends',
           color: ColorPalette.principal,
-          importance: Importance.max,
+          importance: Importance.high,
           ongoing: true,
           enableLights: true,
           playSound: true,
@@ -56,21 +56,21 @@ class RedirectViewNotifier with ChangeNotifier {
           channelShowBadge: false,
           priority: Priority.high,
 
-          largeIcon: DrawableResourceAndroidBitmap('ic_bg_service_small'),
+          largeIcon: DrawableResourceAndroidBitmap('@mipmap/logo_alertfriends'),
           // sound: RawResourceAndroidNotificationSound(
           //     "content://media/internal/audio/media/26.wav"),
           actions: <AndroidNotificationAction>[
             AndroidNotificationAction(
               "helpID",
               "ayuda",
-              icon: DrawableResourceAndroidBitmap('ic_bg_service_small'),
+              icon: DrawableResourceAndroidBitmap('@mipmap/logo_alertfriends'),
               showsUserInterface: true,
               cancelNotification: true,
             ),
             AndroidNotificationAction(
               "imgoodId",
               "Estoy bien",
-              icon: DrawableResourceAndroidBitmap('ic_bg_service_small'),
+              icon: DrawableResourceAndroidBitmap('@mipmap/logo_alertfriends'),
               showsUserInterface: true,
               cancelNotification: true,
             ),
@@ -116,9 +116,9 @@ class RedirectViewNotifier with ChangeNotifier {
       'Se a iniciado el horario de cita',
       const NotificationDetails(
         android: AndroidNotificationDetails(
-          'my_foreground',
+          '1',
           'MY FOREGROUND SERVICE',
-          icon: 'ic_bg_service_small',
+          icon: '@mipmap/logo_alertfriends',
           color: ColorPalette.principal,
           importance: Importance.max,
           ongoing: true,
@@ -129,14 +129,14 @@ class RedirectViewNotifier with ChangeNotifier {
           //groupAlertBehavior: GroupAlertBehavior.children,
           priority: Priority.high,
 
-          largeIcon: DrawableResourceAndroidBitmap('ic_bg_service_small'),
+          largeIcon: DrawableResourceAndroidBitmap('@mipmap/logo_alertfriends'),
           // sound: RawResourceAndroidNotificationSound(
           //     "content://media/internal/audio/media/26.wav"),
           actions: <AndroidNotificationAction>[
             AndroidNotificationAction(
               "date",
               "Cancelar cita",
-              icon: DrawableResourceAndroidBitmap('ic_bg_service_small'),
+              icon: DrawableResourceAndroidBitmap('@mipmap/logo_alertfriends'),
               showsUserInterface: true,
               cancelNotification: true,
             ),
@@ -154,9 +154,9 @@ class RedirectViewNotifier with ChangeNotifier {
       'Se a finalizado el horario de cita',
       const NotificationDetails(
         android: AndroidNotificationDetails(
-          'my_foreground',
+          '2',
           'MY FOREGROUND SERVICE',
-          icon: 'ic_bg_service_small',
+          icon: '@mipmap/logo_alertfriends',
           color: ColorPalette.principal,
           importance: Importance.max,
           ongoing: true,
@@ -167,14 +167,14 @@ class RedirectViewNotifier with ChangeNotifier {
           // groupAlertBehavior: GroupAlertBehavior.children,
           priority: Priority.high,
 
-          largeIcon: DrawableResourceAndroidBitmap('ic_bg_service_small'),
+          largeIcon: DrawableResourceAndroidBitmap('@mipmap/logo_alertfriends'),
           // sound: RawResourceAndroidNotificationSound(
           //     "content://media/internal/audio/media/26.wav"),
           actions: <AndroidNotificationAction>[
             AndroidNotificationAction(
               "date",
               "Cancelar cita",
-              icon: DrawableResourceAndroidBitmap('ic_bg_service_small'),
+              icon: DrawableResourceAndroidBitmap('@mipmap/logo_alertfriends'),
               showsUserInterface: true,
               cancelNotification: true,
             ),

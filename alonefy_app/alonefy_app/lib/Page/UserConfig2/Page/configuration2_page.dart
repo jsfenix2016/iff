@@ -13,6 +13,7 @@ import 'package:ifeelefine/Model/userbd.dart';
 import 'package:ifeelefine/Page/UseMobil/PageView/configurationUseMobile_page.dart';
 import 'package:ifeelefine/Page/UserConfig/Controller/userConfigController.dart';
 import 'package:ifeelefine/Page/UserConfig2/Controller/userConfig2Controller.dart';
+import 'package:ifeelefine/Provider/prefencesUser.dart';
 import 'package:ifeelefine/Utils/Widgets/CustomDropdownMaritalState.dart';
 import 'package:ifeelefine/Utils/Widgets/CustomDropdownStylelive.dart';
 import 'package:ifeelefine/Utils/Widgets/customDropDown.dart';
@@ -55,14 +56,26 @@ class _UserConfigPageState2 extends State<UserConfigPage2> {
 
   List<dynamic> countryres = [];
   List<dynamic> stateTemp = [];
-
+  final PreferenceUser _prefs = PreferenceUser();
   @override
   void initState() {
     user = initUser();
-    userbd = widget.userbd;
+
+    if (widget.userbd.idUser == "-1") {
+      _getUserData();
+    } else {
+      userbd = widget.userbd;
+    }
+
+    _prefs.saveLastScreenRoute("config2");
     super.initState();
 
     _getAge();
+  }
+
+  Future<UserBD> _getUserData() async {
+    userbd = await userConfigVC.getUserData();
+    return userbd!;
   }
 
   Future<Map<String, String>> _getAge() async {

@@ -81,7 +81,7 @@ class _PreviewInactivityPageState extends State<PreviewInactivityPage> {
       key: scaffoldKey,
       appBar: AppBar(
         backgroundColor: Colors.brown,
-        title: const Center(child: Text("Previsualizar actividades")),
+        title: const Text("Previsualizar actividades"),
       ),
       body: Container(
         decoration: decorationCustom(),

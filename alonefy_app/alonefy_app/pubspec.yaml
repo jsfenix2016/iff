@@ -77,16 +77,15 @@ dependencies:
   avatar_glow: ^2.0.2 #Animacion tipo radar
   grouped_list: ^5.1.2
   google_sign_in: ^5.2.1
- 
-  url_launcher: ^6.1.7
-  whatsapp_unilink: ^2.1.0
   
   country_state_city_picker: ^1.2.8
   google_fonts: ^3.0.1
   notification_center: ^0.0.2
   camera: ^0.10.3+2
+  camerax: ^0.1.1
   gallery_saver: ^2.3.2
- 
+  flutter_phoenix: ^1.1.1
+  
   
 dev_dependencies:
   flutter_test:

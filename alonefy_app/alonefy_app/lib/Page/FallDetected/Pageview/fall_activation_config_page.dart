@@ -243,11 +243,11 @@ class _FallActivationConfigPageState extends State<FallActivationConfigPage> {
         } else if (value == SlidableButtonPosition.end) {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => const PremiumPage(
-                img: 'Mask group-4',
-                title: Constant.premiumFallTitle,
-                subtitle: '')
-            ),
+            MaterialPageRoute(
+                builder: (context) => const PremiumPage(
+                    img: 'assets/images/Mask group-4',
+                    title: Constant.premiumFallTitle,
+                    subtitle: '')),
           );
         }
       },

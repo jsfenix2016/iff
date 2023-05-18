@@ -78,7 +78,7 @@ class _AlertsPageState extends State<AlertsPage> {
       key: scaffoldKey,
       appBar: AppBar(
         backgroundColor: Colors.brown,
-        title: const Center(child: Text("Alertas")),
+        title: const Text("Alertas"),
       ),
       body: Container(
         decoration: const BoxDecoration(

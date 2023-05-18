@@ -55,9 +55,11 @@
     </queries>
 
     <application
-        android:label="iFeelFine"
+        android:label="AlertFriends"
         android:name="${applicationName}"
+        
         android:icon="@mipmap/logo_alertfriends">
+        
         <activity
             android:name=".MainActivity"
             android:exported="true"

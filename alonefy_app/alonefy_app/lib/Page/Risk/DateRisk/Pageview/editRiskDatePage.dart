@@ -245,7 +245,7 @@ class _EditRiskPageState extends State<EditRiskPage> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.brown,
-        title: const Center(child: Text("Edición de mensaje de cita")),
+        title: const Text("Edición de mensaje de cita"),
       ),
       body: Container(
         decoration: decorationCustom(),

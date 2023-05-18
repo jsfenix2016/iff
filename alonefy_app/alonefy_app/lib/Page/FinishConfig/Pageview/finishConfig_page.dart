@@ -18,6 +18,14 @@ class FinishConfigPage extends StatefulWidget {
 
 class _FinishConfigPageState extends State<FinishConfigPage> {
   final _prefs = PreferenceUser();
+
+  @override
+  void initState() {
+    _prefs.saveLastScreenRoute("finishConfig");
+    // TODO: implement initState
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(

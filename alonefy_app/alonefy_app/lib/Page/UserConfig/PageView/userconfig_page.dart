@@ -39,9 +39,6 @@ class _UserConfigPageState extends State<UserConfigPage> {
     user = initUser();
 
     super.initState();
-
-    isValidEmail = userVC.validateEmail.isFalse;
-    isValidSms = userVC.validateSms.isFalse;
   }
 
   @override
@@ -85,7 +82,7 @@ class _UserConfigPageState extends State<UserConfigPage> {
                         labelText: Constant.telephone,
                         mesaje: "",
                         onChanged: (String value) {
-                          user?.telephone = value;
+                          user?.telephone = "+34$value";
                         },
                         placeholder: Constant.telephonePlaceholder,
                         typeInput: TextInputType.number,
@@ -95,9 +92,9 @@ class _UserConfigPageState extends State<UserConfigPage> {
                         labelText: Constant.email,
                         mesaje: "",
                         onChanged: (String value) {
-                          user?.email = value;
+                          user!.email = value;
 
-                          GetUtils.isEmail(value) ? "" : "";
+                          //GetUtils.isEmail(value) ? "" : "";
                         },
                         placeholder: Constant.email,
                         typeInput: TextInputType.emailAddress,
@@ -125,7 +122,7 @@ class _UserConfigPageState extends State<UserConfigPage> {
                               width: 227,
                               child: Center(
                                 child: Text(
-                                  'Enviar código de verificación',
+                                  'Solicitar códigos de verificación',
                                   textAlign: TextAlign.center,
                                   style: GoogleFonts.barlow(
                                     fontSize: 16.0,
@@ -138,8 +135,7 @@ class _UserConfigPageState extends State<UserConfigPage> {
                               ),
                             ),
                             onPressed: () async {
-                              isValidSms = await userVC.validateSmsUser(context,
-                                  int.parse(user!.telephone), user!.name);
+                              await userVC.requestCode(context, user!);
                             },
                           ),
                         ),
@@ -163,7 +159,12 @@ class _UserConfigPageState extends State<UserConfigPage> {
                                 Colors.transparent,
                               ),
                             ),
-                            onPressed: _submit,
+                            onPressed: (isValidSms && isValidEmail)
+                                ? _submit
+                                : () {
+                                    showAlert(context,
+                                        "Debe tener el telefono e email validado para continuar.");
+                                  },
                             child: Container(
                               decoration: BoxDecoration(
                                 color: Colors.transparent,
@@ -259,14 +260,33 @@ class _UserConfigPageState extends State<UserConfigPage> {
                 validator: (value) {
                   return Constant.codeEmailPlaceholder;
                 },
+                style: GoogleFonts.barlow(
+                    fontSize: 14.0,
+                    wordSpacing: 1,
+                    letterSpacing: 1,
+                    fontWeight: FontWeight.normal,
+                    color: Colors.white),
                 onChanged: (value) async {
-                  if (value.length == 6) {
-                    if (type == "email") {
-                      isValidEmail = await userVC.validateEmailUser(context);
-                    } else {
-                      isValidSms = await userVC.validateSmsUser(
-                          context, int.parse(value), user!.name);
-                    }
+                  if (value.length < 6) {
+                    return;
+                  }
+                  if (type == 'sms' && !validatePhoneNumber(user!.telephone)) {
+                    showAlert(context, Constant.validatePhoneNumber);
+                    return;
+                  }
+
+                  if (type == 'email' && !validateEmail(user!.email)) {
+                    // El correo electrónico no es válido
+                    showAlert(context, Constant.validateEmail);
+                    return;
+                  }
+
+                  if (type == 'Sms') {
+                    isValidSms = await userVC.validateCodeSMS(context, value);
+                  }
+                  if (type == 'email') {
+                    isValidEmail =
+                        await userVC.validateCodeEmail(context, value);
                   }
                 },
               ),
@@ -278,37 +298,66 @@ class _UserConfigPageState extends State<UserConfigPage> {
   }
 
   void _submit() async {
-    if (isValidSms == false) {
-      showAlert(context, Constant.verifyPhoneNumber);
+    if (!validatePhoneNumber(user!.telephone)) {
+      // El número de teléfono no es inválido
+      showAlert(context, Constant.validatePhoneNumber);
       return;
     }
 
-    UserBD resp = await userVC.saveUserData(context, user!, const Uuid().v1());
-
-    if (resp.idUser != "-1") {
-      showDialog(
-          context: context,
-          builder: (context) {
-            return AlertDialog(
-              title: const Text(Constant.info),
-              content: Text("Datos guardados".tr),
-              actions: <Widget>[
-                TextButton(
-                  child: const Text("Ok"),
-                  onPressed: () {
-                    print(resp);
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => UserConfigPage2(
-                                userbd: resp,
-                              )),
-                    );
-                  },
-                )
-              ],
-            );
-          });
+    if (!validateEmail(user!.email)) {
+      // El correo electrónico no es válido
+      showAlert(context, Constant.validateEmail);
+      return;
     }
+
+    if (isValidSms && isValidEmail) {
+      UserBD resp =
+          await userVC.saveUserData(context, user!, const Uuid().v1());
+
+      if (resp.idUser != "-1") {
+        Future.delayed(const Duration(milliseconds: 10), () {
+          showDialog(
+              context: context,
+              builder: (context) {
+                return AlertDialog(
+                  title: const Text(Constant.info),
+                  content: Text("Datos guardados".tr),
+                  actions: <Widget>[
+                    TextButton(
+                      child: const Text("Ok"),
+                      onPressed: () {
+                        print(resp);
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => UserConfigPage2(
+                                    userbd: resp,
+                                  )),
+                        );
+                      },
+                    )
+                  ],
+                );
+              });
+        });
+      }
+    }
+  }
+
+  void showAlert(BuildContext context, String mensaje) {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: const Text("Informacion "),
+            content: Text(mensaje),
+            actions: <Widget>[
+              TextButton(
+                child: const Text("Ok"),
+                onPressed: () => Navigator.of(context).pop(),
+              )
+            ],
+          );
+        });
   }
 }

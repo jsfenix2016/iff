@@ -16,6 +16,7 @@ import 'package:ifeelefine/Page/UserRest/Controller/userRestController.dart';
 import 'package:flutter/material.dart';
 import 'package:ifeelefine/Page/UserRest/PageView/previewRestTime.dart';
 import 'package:ifeelefine/Page/UserRest/Widgets/rowSelectTimer.dart';
+import 'package:ifeelefine/Provider/prefencesUser.dart';
 import 'package:ifeelefine/Utils/Widgets/elevatedButtonFilling.dart';
 import 'package:ifeelefine/Utils/Widgets/listDayweekCustom.dart';
 import 'package:ifeelefine/Utils/Widgets/widgetLogo.dart';
@@ -50,10 +51,11 @@ class _UserRestPageState extends State<UserRestPage> {
   ];
 
   List<RestDayBD> tempRestDays = [];
+  final PreferenceUser _prefs = PreferenceUser();
   @override
   void initState() {
     // restDays.add(tempDicRest);
-
+    _prefs.saveLastScreenRoute("restDay");
     super.initState();
     if (tempRestDays.isEmpty) {
       for (var element in tempNoSelectListDay) {

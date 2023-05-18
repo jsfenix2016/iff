@@ -176,7 +176,7 @@ class _RiskPageState extends State<RiskPage> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.brown,
-        title: const Center(child: Text("Cita de riesgo")),
+        title: const Text("Cita de riesgo"),
       ),
       body: Container(
         decoration: const BoxDecoration(
