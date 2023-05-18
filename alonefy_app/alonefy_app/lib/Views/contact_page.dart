@@ -38,7 +38,7 @@ class _ContactListState extends State<ContactList> {
 
   @override
   void initState() {
-    _prefs.saveLastScreenRoute("contact");
+    if (!widget.isMenu) _prefs.saveLastScreenRoute("contact");
     super.initState();
   }
 
@@ -198,7 +198,7 @@ class _ContactListState extends State<ContactList> {
                 if (value) {
                   // ignore: use_build_context_synchronously
                   await contactVC.saveListContact(
-                      context, _selectedContacts, timeSMS, timeCall);
+                      context, _selectedContacts, timeSMS, timeCall, "5 min");
                   if (widget.isMenu == false) {
                     // ignore: use_build_context_synchronously
                     Navigator.push(

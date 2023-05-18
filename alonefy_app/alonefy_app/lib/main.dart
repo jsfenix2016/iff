@@ -24,6 +24,7 @@ import 'package:ifeelefine/Page/Risk/DateRisk/ListDateRisk/PageView/riskDatePage
 import 'package:ifeelefine/Page/UserConfig/PageView/userconfig_page.dart';
 import 'package:ifeelefine/Page/UserConfig2/Page/configuration2_page.dart';
 import 'package:ifeelefine/Services/mainService.dart';
+import 'package:ifeelefine/Views/contact_page.dart';
 
 import 'package:intl/intl.dart';
 import 'package:ifeelefine/Common/idleLogic.dart';
@@ -105,7 +106,9 @@ Future<void> main() async {
   }
   runApp(
     GetMaterialApp(
-      home: UserConfigPage(),
+      home: ContactList(
+        isMenu: false,
+      ),
       debugShowCheckedModeBanner: false,
     ),
   );
