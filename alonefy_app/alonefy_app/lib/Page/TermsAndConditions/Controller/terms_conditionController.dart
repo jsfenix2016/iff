@@ -13,26 +13,35 @@ final _prefs = PreferenceUser();
 class TermsAndConditionsController extends GetxController {
   late var validateEmail = false.obs;
   late var validateSms = false.obs;
-
+  late BuildContext contextTemp;
   Future<void> saveConditions(
       BuildContext context, bool terms, bool sendSms) async {
+    contextTemp = context;
     _prefs.setAceptedTerms = terms;
     _prefs.setAceptedSendSMS = sendSms;
 
     final MainController mainController = Get.put(MainController());
     var user = await mainController.getUserData();
-    var termsAndConditionsApi = TermsAndConditionsApi(
-      user.telephone,
-      true
-    );
+    var termsAndConditionsApi = TermsAndConditionsApi(user.telephone, true);
 
-    TermsAndConditionsService().saveData(termsAndConditionsApi);
+    var resp =
+        await TermsAndConditionsService().saveData(termsAndConditionsApi);
+    if (resp) {
+      showAlertTemp("Se guardo correctamente");
+      goTO();
+    } else {
+      showAlertTemp("Seprodujo un error");
+    }
+  }
 
-    showAlert(context, "Se guardo correctamente");
-
+  void goTO() {
     Navigator.push(
-      context,
+      contextTemp,
       MaterialPageRoute(builder: (context) => const FinishConfigPage()),
     );
+  }
+
+  void showAlertTemp(String text) {
+    showAlert(contextTemp, text);
   }
 }

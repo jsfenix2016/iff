@@ -259,4 +259,7 @@ class Constant {
       'Asegurarte que responden a tu emergencia, añade más contactos';
   static const String premiumFallTitle =
       'Cuando tu smartphone detecte una caída avisará al amigo o familiar que desees';
+
+  static const String conexionFail =
+      "Se produjo algún error, compruebe sú conexión";
 }

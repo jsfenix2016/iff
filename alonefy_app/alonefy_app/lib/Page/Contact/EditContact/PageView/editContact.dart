@@ -1,16 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_contacts/flutter_contacts.dart';
-
 import 'package:get/get.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:ifeelefine/Common/colorsPalette.dart';
-
 import 'package:ifeelefine/Common/utils.dart';
 import 'package:ifeelefine/Controllers/contactUserController.dart';
 import 'package:ifeelefine/Model/contact.dart';
-
-import 'package:ifeelefine/Utils/Widgets/CustomDropdownButtonWidgetContact.dart';
-
+import 'package:ifeelefine/Page/Contact/EditContact/Controller/edit_controller.dart';
 import 'package:ifeelefine/Utils/Widgets/elevateButtonCustomBorder.dart';
 import 'package:ifeelefine/Utils/Widgets/selectTimerCallSendSMS.dart';
 import 'package:ifeelefine/Utils/Widgets/widgedContact.dart';
@@ -25,7 +19,7 @@ class EditContact extends StatefulWidget {
 }
 
 class _EditContactState extends State<EditContact> {
-  final ContactUserController contactVC = Get.put(ContactUserController());
+  final EditContactController contactVC = Get.put(EditContactController());
 
   final List<Contact> _selectedContacts = [];
   var indexSelect = -1;
@@ -106,17 +100,12 @@ class _EditContactState extends State<EditContact> {
                         color: Colors.transparent,
                         child: SelectTimerCallSendSMS(
                           onChanged: (TimerCallSendSmsModel value) {
-                            print(value);
                             timeSMS = value.sendSMS;
                             timeCall = value.call;
                           },
+                          sendSm: widget.contact.timeSendSMS,
+                          timeCall: widget.contact.timeCall,
                         ),
-                      ),
-                      ElevateButtonCustomBorder(
-                        onChanged: (value) async {
-                          contactVC.authoritationContact(context);
-                        },
-                        mensaje: "Solicitar autorización",
                       ),
                     ],
                   ),
@@ -127,8 +116,17 @@ class _EditContactState extends State<EditContact> {
               onChanged: (value) async {
                 if (value) {
                   // ignore: use_build_context_synchronously
-                  await contactVC.saveListContact(context, _selectedContacts,
-                      timeSMS, timeCall, widget.contact.timeWhatsapp);
+                  var contactBD =
+                      ContactBD("", null, "", "", "", "", "", "Pendiente");
+
+                  contactBD.displayName = widget.contact.displayName;
+                  contactBD.phones = widget.contact.phones;
+                  contactBD.photo = widget.contact.photo;
+                  contactBD.timeSendSMS = timeSMS;
+                  contactBD.timeCall = timeCall;
+                  contactBD.timeWhatsapp = widget.contact.timeWhatsapp;
+                  await contactVC.saveContact(context, contactBD, timeSMS,
+                      timeCall, widget.contact.timeWhatsapp);
 
                   NotificationCenter().notify('getContact');
                 }

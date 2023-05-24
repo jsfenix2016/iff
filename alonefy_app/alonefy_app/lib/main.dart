@@ -15,7 +15,9 @@ import 'package:ifeelefine/Model/activitydaybd.dart';
 import 'package:ifeelefine/Model/contactRiskBD.dart';
 
 import 'package:ifeelefine/Model/userbd.dart';
+import 'package:ifeelefine/Page/Contact/ListContact/PageView/list_contact_page.dart';
 import 'package:ifeelefine/Page/Contact/Notice/PageView/contactNotice_page.dart';
+import 'package:ifeelefine/Page/Contact/PageView/addContact_page.dart';
 import 'package:ifeelefine/Page/HomePage/Pageview/home_page.dart';
 
 import 'package:ifeelefine/Page/Premium/Controller/premium_controller.dart';
@@ -106,8 +108,8 @@ Future<void> main() async {
   }
   runApp(
     GetMaterialApp(
-      home: ContactList(
-        isMenu: false,
+      home: MyApp(
+        initApp: initApp!,
       ),
       debugShowCheckedModeBanner: false,
     ),

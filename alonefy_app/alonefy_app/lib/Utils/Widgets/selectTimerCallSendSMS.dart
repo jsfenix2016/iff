@@ -11,7 +11,13 @@ class TimerCallSendSmsModel {
 }
 
 class SelectTimerCallSendSMS extends StatefulWidget {
-  const SelectTimerCallSendSMS({super.key, required this.onChanged});
+  final String sendSm;
+  final String timeCall;
+  const SelectTimerCallSendSMS(
+      {super.key,
+      required this.onChanged,
+      required this.sendSm,
+      required this.timeCall});
 
   final ValueChanged<TimerCallSendSmsModel> onChanged;
   @override
@@ -24,7 +30,7 @@ class _SelectTimerCallSendSMSState extends State<SelectTimerCallSendSMS> {
   @override
   void initState() {
     // TODO: implement initState
-    timer = TimerCallSendSmsModel("5 min", "10 min");
+    timer = TimerCallSendSmsModel(widget.sendSm, widget.timeCall);
     super.initState();
   }
 
@@ -121,6 +127,7 @@ class _SelectTimerCallSendSMSState extends State<SelectTimerCallSendSMS> {
                   timer.call = call;
                   widget.onChanged(timer);
                 },
+                scrollController: FixedExtentScrollController(initialItem: 1),
                 itemExtent: 56.0,
                 children: [
                   for (var i = 0; i <= Constant.timeDic.length; i++)

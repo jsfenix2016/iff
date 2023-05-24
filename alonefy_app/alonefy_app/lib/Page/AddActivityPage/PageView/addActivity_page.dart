@@ -111,10 +111,10 @@ class _AddActivityPageState extends State<AddActivityPage>
     return Scaffold(
       appBar: widget.isMenu
           ? AppBar(
-            backgroundColor: ColorPalette.backgroundAppBar,
-            title: Text("Configuración"),
-      )
-      : null,
+              backgroundColor: ColorPalette.backgroundAppBar,
+              title: Text("Configuración"),
+            )
+          : null,
       body: Container(
         decoration: decorationCustom(),
         width: size.width,
@@ -329,7 +329,8 @@ class _AddActivityPageState extends State<AddActivityPage>
                           "Se ha alcanzado el máximo de tiempos de inactividad. Para poder programar más, hazte Premium.");
                     } else {
                       var activity = createActivity();
-                      var activityApiResponse = await controller.saveActivityApi(activity);
+                      var activityApiResponse =
+                          await controller.saveActivityApi(activity);
                       if (activityApiResponse != null) {
                         activity.id = activityApiResponse.id;
                         await controller.saveActivity(context, activity);

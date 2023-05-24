@@ -1,8 +1,12 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_contacts/contact.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
+
 import 'package:google_fonts/google_fonts.dart';
+import 'package:ifeelefine/Common/utils.dart';
+import 'package:ifeelefine/Page/Contact/ListContact/PageView/list_contact_page.dart';
+import 'package:ifeelefine/Utils/Widgets/widgetLogo.dart';
+import 'package:ifeelefine/Views/contact_page.dart';
 
 import '../../../Common/Constant.dart';
 import '../../../Common/colorsPalette.dart';
@@ -18,8 +22,7 @@ class AddContactPage extends StatefulWidget {
   const AddContactPage({super.key});
 
   @override
-  // ignore: library_private_types_in_public_api
-  _AddContactPageState createState() => _AddContactPageState();
+  State<AddContactPage> createState() => _AddContactPageState();
 }
 
 class _AddContactPageState extends State<AddContactPage> {
@@ -31,15 +34,7 @@ class _AddContactPageState extends State<AddContactPage> {
       debugShowCheckedModeBanner: false,
       home: Scaffold(
         body: Container(
-          decoration: const BoxDecoration(
-            gradient: RadialGradient(
-              radius: 1,
-              colors: [
-                ColorPalette.secondView,
-                ColorPalette.principalView,
-              ],
-            ),
-          ),
+          decoration: decorationCustom(),
           child: Stack(
             children: [
               Center(
@@ -50,8 +45,9 @@ class _AddContactPageState extends State<AddContactPage> {
                         height: 100.0,
                       ),
                     ),
+                    const WidgetLogoApp(),
                     Padding(
-                      padding: EdgeInsets.fromLTRB(40, 0, 40, 0),
+                      padding: const EdgeInsets.fromLTRB(40, 0, 40, 0),
                       child: Text.rich(
                         TextSpan(
                           children: [
@@ -67,7 +63,7 @@ class _AddContactPageState extends State<AddContactPage> {
                                   height: 1.5),
                             ),
                             TextSpan(
-                              text: "I'm fine ",
+                              text: "AlertFriends ",
                               style: GoogleFonts.barlow(
                                   fontSize: 24.0,
                                   wordSpacing: 1,
@@ -97,20 +93,26 @@ class _AddContactPageState extends State<AddContactPage> {
                     Center(
                       child: ElevateButtonFilling(
                           onChanged: ((value) async {
-                            var listContact =
-                                await const HiveData().listUserContactbd;
-                            if (!_prefs.getUserPremium &&
-                                listContact.isNotEmpty) {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => const PremiumPage(
-                                        isFreeTrial: false,
-                                        img: 'Pantalla5.jpg',
-                                        title: Constant.premiumContactsTitle,
-                                        subtitle: '')),
-                              );
-                            } else {}
+                            await showDialog(
+                              context: context,
+                              builder: (BuildContext context) => AlertDialog(
+                                contentPadding: const EdgeInsets.all(0),
+                                content: ListContact(
+                                  onSelectContact: (Contact value) {
+                                    Navigator.pushReplacement(
+                                      context,
+                                      MaterialPageRoute(
+                                        settings:
+                                            RouteSettings(arguments: value),
+                                        builder: (context) => const ContactList(
+                                          isMenu: false,
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ),
+                            );
                           }),
                           mensaje: 'Añadir contacto'),
                     ),

@@ -1,4 +1,5 @@
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:ifeelefine/Common/utils.dart';
 import 'package:ifeelefine/Model/activitydaybd.dart';
 import 'package:ifeelefine/Model/contact.dart';
 import 'package:ifeelefine/Model/logActivityBd.dart';
@@ -39,19 +40,7 @@ class HiveData {
 
   Future<UserBD> get getuserbd async {
     final Box<UserBD> box = await Hive.openBox<UserBD>('userBD');
-    UserBD person = UserBD(
-        idUser: '-1',
-        name: '',
-        lastname: '',
-        email: '',
-        telephone: '',
-        gender: '',
-        maritalStatus: '',
-        styleLife: '',
-        pathImage: '',
-        age: '18',
-        country: '',
-        city: '');
+    UserBD person = initUserBD();
 
     if (box.isEmpty == false) {
       person = box.getAt(0)!;
@@ -63,7 +52,7 @@ class HiveData {
 
   Future<List<ContactBD>> get listUserContactbd async {
     final Box<ContactBD> box = await Hive.openBox<ContactBD>('contactBD');
-    late final List<ContactBD> allMovTime = [];
+
     var listContact = box.values.toList();
 
     return listContact;
@@ -78,13 +67,13 @@ class HiveData {
   Future<int> saveUserContact(ContactBD user) async {
     final Box<ContactBD> box = await Hive.openBox<ContactBD>('contactBD');
 
-    return box.add(user);
+    return await box.add(user);
   }
 
-  Future<void> deleteUserContact(ContactBD user) async {
+  Future<void> deleteUserContact(ContactBD contact) async {
     final Box<ContactBD> box = await Hive.openBox<ContactBD>('contactBD');
 
-    return box.delete(user);
+    return box.delete(contact.key);
   }
 
   Future<int> deleteListAlerts(List<LogAlertsBD> listAlerts) async {
