@@ -22,8 +22,8 @@ class TermsAndConditionsController extends GetxController {
     final MainController mainController = Get.put(MainController());
     var user = await mainController.getUserData();
     var termsAndConditionsApi = TermsAndConditionsApi(
-      user.telephone,
-      true
+      phoneNumber: user.telephone,
+      smsCallAccepted: true
     );
 
     TermsAndConditionsService().saveData(termsAndConditionsApi);

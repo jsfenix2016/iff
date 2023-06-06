@@ -14,9 +14,6 @@ import 'package:flutter/foundation.dart'
 /// ```
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
-    if (kIsWeb) {
-      return web;
-    }
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
         return android;
@@ -42,25 +39,23 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyB7wZb2tO1-Fs6GbDADUSTs2Qs3w08Hovw',
-    appId: '1:406099696497:web:87e25e51afe982cd3574d0',
-    messagingSenderId: '406099696497',
-    projectId: 'flutterfire-e2e-tests',
+    apiKey: 'AIzaSyAgl25m_sziseckcMNDOsoHt9vLvPEhYHU',
+    appId: '1:509585336823:android:51d1249374216cabe8e6f2',
+    messagingSenderId: '509585336823',
+    projectId: 'alertfriends-72e7a',
     authDomain: 'flutterfire-e2e-tests.firebaseapp.com',
-    databaseURL:
-    'https://flutterfire-e2e-tests-default-rtdb.europe-west1.firebasedatabase.app',
-    storageBucket: 'flutterfire-e2e-tests.appspot.com',
+    //databaseURL:
+    //'https://flutterfire-e2e-tests-default-rtdb.europe-west1.firebasedatabase.app',
+    storageBucket: 'alertfriends-72e7a.appspot.com',
     measurementId: 'G-JN95N1JV2E',
   );
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyCdRjCVZlhrq72RuEklEyyxYlBRCYhI2Sw',
-    appId: '1:406099696497:android:74ebb073d7727cd43574d0',
-    messagingSenderId: '406099696497',
-    projectId: 'flutterfire-e2e-tests',
-    databaseURL:
-    'https://flutterfire-e2e-tests-default-rtdb.europe-west1.firebasedatabase.app',
-    storageBucket: 'flutterfire-e2e-tests.appspot.com',
+    apiKey: 'AIzaSyAgl25m_sziseckcMNDOsoHt9vLvPEhYHU',
+    appId: '1:509585336823:android:51d1249374216cabe8e6f2',
+    messagingSenderId: '509585336823',
+    projectId: 'alertfriends-72e7a',
+    storageBucket: 'alertfriends-72e7a.appspot.com',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(

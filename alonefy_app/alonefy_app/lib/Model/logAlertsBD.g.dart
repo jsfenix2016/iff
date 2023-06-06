@@ -17,18 +17,21 @@ class LogAlertsBDAdapter extends TypeAdapter<LogAlertsBD> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return LogAlertsBD(
-      typeAction: fields[0] as String,
-      time: fields[1] as DateTime,
+      id: fields[0] as int,
+      typeAction: fields[1] as String,
+      time: fields[2] as DateTime,
     );
   }
 
   @override
   void write(BinaryWriter writer, LogAlertsBD obj) {
     writer
-      ..writeByte(2)
+      ..writeByte(3)
       ..writeByte(0)
-      ..write(obj.typeAction)
+      ..write(obj.id)
       ..writeByte(1)
+      ..write(obj.typeAction)
+      ..writeByte(2)
       ..write(obj.time);
   }
 

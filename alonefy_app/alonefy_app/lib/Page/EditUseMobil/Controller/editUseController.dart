@@ -50,16 +50,39 @@ class EditUseMobilController extends GetxController {
 
     for (var useMobil in listMobilBD) {
       var useMobilApi = UseMobilApi(
-          phoneNumber,
-          useMobil.day,
-          _convertTimeToInt(useMobil.time),
-          useMobil.selection
+          phoneNumber: phoneNumber,
+          dayOfWeek: useMobil.day,
+          time: stringTimeToInt(useMobil.time),
+          index: useMobil.selection,
+          isSelect: useMobil.isSelect
       );
 
       listMobilApi.add(useMobilApi);
     }
 
     return listMobilApi;
+  }
+
+  Future<void> saveUseMobilFromApi(List<UseMobilApi> useMobilApiList) async {
+    var list = _convertFromApi(useMobilApiList);
+    await const HiveData().saveListTimeUseMobil(list);
+  }
+
+  List<UseMobilBD> _convertFromApi(List<UseMobilApi> useMobilApiList) {
+    List<UseMobilBD> list = [];
+
+    for (var useMobilApi in useMobilApiList) {
+      var useMobil = UseMobilBD(
+          day: useMobilApi.dayOfWeek,
+          time: minutesToString(useMobilApi.time),
+          selection: useMobilApi.index,
+          isSelect: useMobilApi.isSelect
+      );
+
+      list.add(useMobil);
+    }
+
+    return list;
   }
 
   int _convertTimeToInt(String strTime) {

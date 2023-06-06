@@ -5,11 +5,15 @@ part 'logAlertsBD.g.dart';
 
 @HiveType(typeId: 2)
 class LogAlertsBD extends HiveObject {
-  LogAlertsBD({required this.typeAction, required this.time});
+  LogAlertsBD({required this.id, required this.typeAction, required this.time});
 
   @HiveField(0)
-  late String typeAction;
+  late int id;
 
   @HiveField(1)
+  late String typeAction;
+
+  @HiveField(2)
   late DateTime time;
+
 }

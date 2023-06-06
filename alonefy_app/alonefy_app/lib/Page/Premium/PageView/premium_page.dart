@@ -47,11 +47,29 @@ class _PremiumPageState extends State<PremiumPage> {
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
     return Scaffold(
       body: Container(
         decoration: decorationCustom(),
         child: Stack(
           children: [
+            Container(
+              height: size.height,
+              width: size.width,
+              decoration: BoxDecoration(
+               gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: const Alignment(0, 1),
+                  colors: <Color>[
+                   Colors.black,
+                   Colors.black.withAlpha(450),
+                   Colors.transparent,
+
+                  ],
+                 tileMode: TileMode.mirror,
+               ),
+              ),
+            ),
             Positioned(
               top: 0,
               left: 0,

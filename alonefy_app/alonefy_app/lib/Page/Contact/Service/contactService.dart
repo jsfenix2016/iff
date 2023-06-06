@@ -1,9 +1,15 @@
+import 'dart:io';
+import 'dart:typed_data';
+import 'package:http_parser/http_parser.dart';
+
 import 'package:http/http.dart' as http;
 import 'package:ifeelefine/Common/Constant.dart';
 import 'package:ifeelefine/Model/ApiRest/ContactApi.dart';
 import 'dart:convert';
 
 import 'package:ifeelefine/Model/contact.dart';
+
+import '../../../Utils/MimeType/mime_type.dart';
 
 class ContactService {
 
@@ -65,6 +71,36 @@ class ContactService {
     if (response.statusCode == 200) {
       var list = responseBody.map((contact) => ContactApi.fromJson(contact)).toList();
       return list;
+    } else {
+      return null;
+    }
+  }
+
+  Future<void> updateImage(String phoneNumber, String contactPhoneNumber, Uint8List bytes) async {
+    var postUri = Uri.parse("${Constant.baseApi}/v1/contact/setPhoto");
+    var request = new http.MultipartRequest("PUT", postUri);
+    request.fields['phoneNumber'] = phoneNumber;
+    request.fields['contactPhoneNumber'] = contactPhoneNumber;
+
+    var mime = lookupMimeType('', headerBytes: bytes);
+    var extension = "";
+    if (mime != null) {
+      extension = extensionFromMime(mime);
+    }
+
+    request.files.add(http.MultipartFile.fromBytes('file', bytes, contentType: MediaType(mime ?? "", extension)));
+
+    request.send().then((response) {
+      if (response.statusCode == 200) print("Uploaded!");
+    });
+  }
+
+  Future<Uint8List?> getContactImage(String url) async {
+
+    final resp = await http.get(Uri.parse(url));
+
+    if (resp.statusCode == 200) {
+      return resp.bodyBytes;
     } else {
       return null;
     }

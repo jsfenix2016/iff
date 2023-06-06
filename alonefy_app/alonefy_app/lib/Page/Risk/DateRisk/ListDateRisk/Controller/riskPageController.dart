@@ -1,9 +1,12 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
 import 'package:ifeelefine/Common/utils.dart';
 import 'package:ifeelefine/Data/hiveRisk_data.dart';
 import 'package:ifeelefine/Model/contactRiskBD.dart';
+import 'package:ifeelefine/Page/Risk/DateRisk/Service/contactRiskService.dart';
 
 class RiskController extends GetxController {
   Future<List<ContactRiskBD>> getContactsRisk() async {
@@ -22,10 +25,15 @@ class RiskController extends GetxController {
     try {
       // Map info
       var delete = await const HiveDataRisk().deleteDate(contact);
+      await ContactRiskService().deleteContactsRisk(contact.id);
       showAlert(context, "Contacto guardado correctamente".tr);
       return true;
     } catch (error) {
       return false;
     }
+  }
+
+  Future<Uint8List?> getContactRiskImage(String url) async {
+    return await ContactRiskService().getContactImage(url);
   }
 }

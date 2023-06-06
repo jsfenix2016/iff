@@ -10,6 +10,8 @@ import 'package:ifeelefine/Model/logAlertsBD.dart';
 import 'package:ifeelefine/Page/UserConfig/Controller/userConfigController.dart';
 import 'package:ifeelefine/Model/user.dart';
 import 'package:ifeelefine/Model/userbd.dart';
+import 'package:ifeelefine/Page/UserConfig2/Controller/userConfig2Controller.dart';
+import 'package:ifeelefine/Page/UserEdit/Controller/editController.dart';
 import 'package:uuid/uuid.dart';
 import 'package:intl/intl.dart';
 import 'package:collection/collection.dart';
@@ -65,7 +67,8 @@ class HomeController extends GetxController {
             age: user.age,
             country: user.country,
             city: user.city);
-        await userVC.updateUserDate(context, userbd);
+        await UserConfig2COntroller().updateUserDate(context, userbd);
+        await EditConfigController().updateUserImage(userbd);
       } else {
         await userVC.saveUserData(context, user, const Uuid().v1());
       }

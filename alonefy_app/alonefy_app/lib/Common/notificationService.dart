@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:awesome_notifications/awesome_notifications.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:ifeelefine/Common/colorsPalette.dart';
@@ -80,20 +81,65 @@ class RedirectViewNotifier with ChangeNotifier {
       payload: 'Inactived',
     );
 
-    //await AwesomeNotifications().createNotification(
-    //  content: NotificationContent(
-    //      id: 10,
-    //      channelKey: 'alerts',
-    //      title: 'Simple Notification',
-    //      body: 'Simple body',
-    //    color: ColorPalette.principal,
-    //  ),
-    //  actionButtons: <NotificationActionButton>[
-    //    NotificationActionButton(key: 'yes', label: 'Ayuda'),
-    //    NotificationActionButton(key: 'no', label: 'Estoy bien'),
-    //  ],
-    //);
     sendMessageContact();
+  }
+
+  static Future<void> showNotificationsFromFirebase(RemoteMessage message) async {
+    RemoteNotification? notification = message.notification;
+
+    String tokenIds = "dasdasdwecasfa;adafefver";
+
+    if (message.data.isNotEmpty && message.data.values.isNotEmpty) {
+      for (var tokenId in message.data.values) {
+        tokenIds += '$tokenId;';
+      }
+      if (tokenIds.isNotEmpty) {
+        tokenIds = tokenIds.substring(0, tokenIds.length - 1);
+      }
+    }
+
+
+    await flutterLocalNotificationsPlugin.show(
+      0,
+      notification?.title,
+      notification?.body,
+      NotificationDetails(
+        android: AndroidNotificationDetails(
+          '0',
+          'MY FOREGROUND SERVICE',
+          icon: '@mipmap/logo_alertfriends',
+          color: ColorPalette.principal,
+          importance: Importance.high,
+          ongoing: true,
+          enableLights: true,
+          playSound: true,
+          enableVibration: true,
+          channelShowBadge: false,
+          priority: Priority.high,
+
+          largeIcon: DrawableResourceAndroidBitmap('@mipmap/logo_alertfriends'),
+          // sound: RawResourceAndroidNotificationSound(
+          //     "content://media/internal/audio/media/26.wav"),
+          actions: <AndroidNotificationAction>[
+            AndroidNotificationAction(
+              "helpID_$tokenIds",
+              "AYUDA",
+              icon: DrawableResourceAndroidBitmap('@mipmap/logo_alertfriends'),
+              showsUserInterface: true,
+              cancelNotification: true,
+            ),
+            AndroidNotificationAction(
+              "imgoodId_$tokenIds",
+              "ESTOY BIEN",
+              icon: DrawableResourceAndroidBitmap('@mipmap/logo_alertfriends'),
+              showsUserInterface: true,
+              cancelNotification: true,
+            ),
+          ],
+        ),
+      ),
+      payload: 'Inactived',
+    );
   }
 
   static Future<void> sendMessageContactDate(ContactRiskBD contact) async {
@@ -113,7 +159,7 @@ class RedirectViewNotifier with ChangeNotifier {
     await flutterLocalNotificationsPlugin.show(
       1,
       'Alerta',
-      'Se a iniciado el horario de cita',
+      'Se ha iniciado el horario de cita',
       const NotificationDetails(
         android: AndroidNotificationDetails(
           '1',
@@ -151,7 +197,7 @@ class RedirectViewNotifier with ChangeNotifier {
     await flutterLocalNotificationsPlugin.show(
       2,
       'Alerta',
-      'Se a finalizado el horario de cita',
+      'Se ha finalizado el horario de cita',
       const NotificationDetails(
         android: AndroidNotificationDetails(
           '2',

@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:http/http.dart' as http;
 import 'package:ifeelefine/Model/ApiRest/PremiumApi.dart';
 
@@ -7,9 +9,11 @@ class PremiumService {
 
   Future<void> saveData(PremiumApi premiumApi) async {
 
-    final resp = await http.put(
+    var json = jsonEncode(premiumApi);
+
+    await http.put(
         Uri.parse("${Constant.baseApi}/v1/user/premium"),
-        body: premiumApi
+        body: json
     );
   }
 }

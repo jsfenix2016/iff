@@ -7,6 +7,7 @@ import 'package:ifeelefine/Model/userbd.dart';
 class UserConfig2Service {
   Future<Map<String, dynamic>> saveData(UserBD user) async {
     final authData = {
+      "phoneNumber": (user.telephone),
       "idUser": (user.idUser),
       "name": (user.name),
       "lastname": (user.lastname),
@@ -21,10 +22,14 @@ class UserConfig2Service {
     };
 
     try {
-      final resp = await http.put(
+      final resp = await http.post(
           Uri.parse(
-              "${Constant.baseApi}/v1/user/${user.telephone}/personalData"),
+              "${Constant.baseApi}/v1/user"),
           body: authData);
+
+          //Uri.parse(
+          //    "${Constant.baseApi}/v1/user/${user.telephone}/personalData"),
+          //body: authData);
 
       Map<String, dynamic> decodeResp = json.decode(resp.body);
 

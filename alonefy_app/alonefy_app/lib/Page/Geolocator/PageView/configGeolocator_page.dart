@@ -33,6 +33,7 @@ class _ConfigGeolocatorState extends State<ConfigGeolocator> {
 
   late bool isActive = false;
   final _prefs = PreferenceUser();
+  final _locationController = Get.put(ConfigGeolocatorController());
   PreferencePermission preferencePermission = PreferencePermission.init;
 
   /// Determine the current position of the device.
@@ -80,22 +81,27 @@ class _ConfigGeolocatorState extends State<ConfigGeolocator> {
 
         switch (preferencePermission) {
           case PreferencePermission.init:
-            _prefs.setAcceptedSendLocation = PreferencePermission.denied;
+            _locationController.activateLocation(PreferencePermission.denied);
+            //_prefs.setAcceptedSendLocation = PreferencePermission.denied;
             break;
           case PreferencePermission.denied:
-            _prefs.setAcceptedSendLocation = PreferencePermission.deniedForever;
+            _locationController.activateLocation(PreferencePermission.deniedForever);
+            //_prefs.setAcceptedSendLocation = PreferencePermission.deniedForever;
             break;
           case PreferencePermission.deniedForever:
-            _prefs.setAcceptedSendLocation = PreferencePermission.deniedForever;
+            _locationController.activateLocation(PreferencePermission.deniedForever);
+            //_prefs.setAcceptedSendLocation = PreferencePermission.deniedForever;
             if (permission == LocationPermission.deniedForever) {
               showPermissionDialog(context, Constant.enablePermission);
             }
             break;
           case PreferencePermission.allow:
-            _prefs.setAcceptedSendLocation = PreferencePermission.deniedForever;
+            _locationController.activateLocation(PreferencePermission.deniedForever);
+            //_prefs.setAcceptedSendLocation = PreferencePermission.deniedForever;
             break;
           case PreferencePermission.noAccepted:
-            _prefs.setAcceptedSendLocation = PreferencePermission.deniedForever;
+            _locationController.activateLocation(PreferencePermission.deniedForever);
+            //_prefs.setAcceptedSendLocation = PreferencePermission.deniedForever;
             break;
         }
       } else {
@@ -112,10 +118,12 @@ class _ConfigGeolocatorState extends State<ConfigGeolocator> {
 
   void savePermission() {
     if (isActive) {
-      _prefs.setAcceptedSendLocation = PreferencePermission.allow;
+      //_prefs.setAcceptedSendLocation = PreferencePermission.allow;
+      _locationController.activateLocation(PreferencePermission.allow);
     } else {
       if (_prefs.getAcceptedSendLocation == PreferencePermission.allow) {
-        _prefs.setAcceptedSendLocation = PreferencePermission.noAccepted;
+        _locationController.activateLocation(PreferencePermission.noAccepted);
+        //_prefs.setAcceptedSendLocation = PreferencePermission.noAccepted;
       }
     }
 

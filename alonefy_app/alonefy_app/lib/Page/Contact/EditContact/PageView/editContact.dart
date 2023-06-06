@@ -127,7 +127,7 @@ class _EditContactState extends State<EditContact> {
               onChanged: (value) async {
                 if (value) {
                   // ignore: use_build_context_synchronously
-                  await contactVC.saveListContact(context, _selectedContacts,
+                  await contactVC.updateContacts(context, _selectedContacts,
                       timeSMS, timeCall, widget.contact.timeWhatsapp);
 
                   NotificationCenter().notify('getContact');

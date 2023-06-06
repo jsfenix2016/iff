@@ -231,13 +231,13 @@ class _RiskPageState extends State<RiskPage> {
                 onChanged: (value) {
                   initContact();
                   final _prefs = PreferenceUser();
-                  if (!_prefs.isConfig) {
-                    Route route = MaterialPageRoute(
-                      builder: (context) => const UserConfigPage(),
-                    );
-                    Navigator.pushReplacement(context, route);
-                    return;
-                  }
+                  //if (!_prefs.isConfig) {
+                  //  Route route = MaterialPageRoute(
+                  //    builder: (context) => const UserConfigPage(),
+                  //  );
+                  //  Navigator.pushReplacement(context, route);
+                  //  return;
+                  //}
                   Navigator.push(
                     context,
                     MaterialPageRoute(

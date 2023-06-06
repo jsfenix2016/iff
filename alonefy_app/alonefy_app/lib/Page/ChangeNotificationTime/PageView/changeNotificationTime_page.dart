@@ -322,21 +322,7 @@ class _ChangeNotificationTimePageState
   void updateContacts() async {
     var listContact = await const HiveData().listUserContactbd;
 
-    for (var contact in listContact) {
-      contact.timeSendSMS = emailTime;
-      contact.timeCall = phoneTime;
-      contact.timeWhatsapp = smsTime;
-
-      const HiveData().updateContact(contact);
-
-      final MainController mainController = Get.put(MainController());
-      var user = await mainController.getUserData();
-      final ContactUserController contactUserController =
-          Get.put(ContactUserController());
-      ContactApi contactApi =
-          contactUserController.convertToApi(contact, user.telephone);
-
-      //ContactService().saveContact(contactcamApi);
-    }
+    var contactController = Get.put(ContactUserController());
+    contactController.updateContactsBD(listContact, emailTime, phoneTime, smsTime);
   }
 }

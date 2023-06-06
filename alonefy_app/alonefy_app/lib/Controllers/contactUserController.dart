@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:get/get.dart';
@@ -42,7 +44,10 @@ class ContactUserController extends GetxController {
 
         final MainController mainController = Get.put(MainController());
         var user = await mainController.getUserData();
-        contactServ.saveContact(convertToApi(contactBD, user.telephone));
+        await contactServ.saveContact(convertToApi(contactBD, user.telephone));
+        if (contactBD.photo != null) {
+          contactServ.updateImage(user.telephone, contactBD.phones, contactBD.photo!);
+        }
       }
       // Map info
 
@@ -54,7 +59,7 @@ class ContactUserController extends GetxController {
     }
   }
 
-  Future<void> updateContacts(
+  Future<void> updateContactsBD(
       List<ContactBD> contacts, emailTime, phoneTime, smsTime) async {
     for (var contact in contacts) {
       contact.timeSendSMS = emailTime;
@@ -68,6 +73,49 @@ class ContactUserController extends GetxController {
       ContactApi contactApi = convertToApi(contact, user.telephone);
 
       contactServ.updateContact(contactApi);
+    }
+  }
+
+  Future<void> updateContacts(BuildContext context, List<Contact> contacts, String timeSendSMS,
+      String timeCall, String timeWhatsapp) async {
+    var contactBD = ContactBD("", null, "", "", "", "", "", "pendiente");
+
+    for (var element in contacts) {
+      contactBD.displayName = element.displayName;
+      contactBD.phones = element.phones.first.number;
+      contactBD.photo = element.photo;
+      contactBD.timeSendSMS = timeSendSMS;
+      contactBD.timeCall = timeCall;
+      contactBD.timeWhatsapp = timeWhatsapp;
+
+      const HiveData().updateContact(contactBD);
+
+      final MainController mainController = Get.put(MainController());
+      var user = await mainController.getUserData();
+      ContactApi contactApi = convertToApi(contactBD, user.telephone);
+
+      contactServ.updateContact(contactApi);
+    }
+
+    showAlert(context, "Contacto guardado correctamente".tr);
+  }
+
+  Future<void> saveFromApi(List<ContactApi> contactsApi) async {
+    for (var contactApi in contactsApi) {
+      if (contactApi.photo != null && contactApi.photo.isNotEmpty) {
+        var bytes = await contactServ.getContactImage(contactApi.photo);
+        var contact = ContactBD(
+            contactApi.displayName,
+            bytes,
+            contactApi.name,
+            minutesToString(contactApi.timeSendSms),
+            minutesToString(contactApi.timeCall),
+            minutesToString(contactApi.timeWhatsapp),
+            contactApi.phoneNumber,
+            contactApi.status
+        );
+        const HiveData().saveUserContact(contact);
+      }
     }
   }
 

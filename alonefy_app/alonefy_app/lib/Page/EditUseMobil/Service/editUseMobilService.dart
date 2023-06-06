@@ -10,34 +10,15 @@ import '../../../Model/ApiRest/UseMobilApi.dart';
 class EditUseMobilService {
   Future<Map<String, List<UseMobilBD>>> getUseMobil(UserBD user) async {
     return {};
-    // try {
-    //   final resp = await http.post(Uri.parse(
-    //       "${Constant.baseApi}/v1/user/${user.telephone}/personalData"));
-
-    //   Map<String, dynamic> decodeResp = json.decode(resp.body);
-
-    //   if (decodeResp['errors'] == null) {
-    //     return {"ok": false, "mesaje": decodeResp['description']};
-    //   }
-
-    //   if (decodeResp['id'] != null) {
-    //     return {"ok": true, "token": decodeResp['id']};
-    //   } else {
-    //     return {"ok": false, "mesaje": decodeResp['id']};
-    //   }
-    // } catch (error) {
-    //   return {"ko": false, "mesaje": error.toString()};
-    // }
   }
 
   Future<void> saveUseMobil(List<UseMobilApi> listuse) async {
 
     var json = jsonEncode(listuse);
 
-    final resp = await http.put(
+    await http.put(
         Uri.parse("${Constant.baseApi}/v1/inactivityTime"),
         body: json);
 
-    //Map<String, dynamic> decodeResp = json.decode(resp.body);
   }
 }

@@ -219,13 +219,8 @@ class _DesactivePageState extends State<DesactivePage> {
   void saveDisamble() {
     for (var i = 0; i < listDisamble.length; i++) {
       if (listDisambleEnabled[i]) {
-        _prefs.setDisambleIFF = listDisamble[i];
-        _prefs.setEnableIFF = false;
+        DisambleController().saveDisamble(context, listDisamble[i]);
         break;
-      }
-
-      if (i == listDisamble.length - 1) {
-        _prefs.setDisambleIFF = '';
       }
     }
 
