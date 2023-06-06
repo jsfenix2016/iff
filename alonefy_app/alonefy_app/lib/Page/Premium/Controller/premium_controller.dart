@@ -148,9 +148,10 @@ class PremiumController extends GetxController {
   void _updatePremiumAPI() async {
     final MainController mainController = Get.put(MainController());
     var user = await mainController.getUserData();
-    PremiumApi premiumApi = PremiumApi();
-    premiumApi.phoneNumber = user.telephone;
-    premiumApi.premium = _prefs.getUserPremium;
+    PremiumApi premiumApi = PremiumApi(
+        phoneNumber: user.telephone,
+        premium: _prefs.getUserPremium
+    );
     PremiumService().saveData(premiumApi);
   }
 }

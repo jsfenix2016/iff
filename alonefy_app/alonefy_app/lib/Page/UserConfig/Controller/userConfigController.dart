@@ -7,6 +7,7 @@ import 'package:ifeelefine/Data/hive_data.dart';
 import 'package:ifeelefine/Model/user.dart';
 import 'package:ifeelefine/Model/userbd.dart';
 import 'package:ifeelefine/Page/UserConfig/Service/userService.dart';
+import 'package:ifeelefine/Page/UserConfig2/Service/userConfig2Service.dart';
 import 'package:ifeelefine/Provider/prefencesUser.dart';
 import 'package:ifeelefine/Provider/user_provider.dart';
 
@@ -80,6 +81,8 @@ class UserConfigCOntroller extends GetxController {
     try {
       user.idUser = (uuid);
       UserBD usertemp = await const HiveData().saveUser(user);
+
+      await UserConfig2Service().saveData(usertemp);
 
       return usertemp;
     } catch (error) {

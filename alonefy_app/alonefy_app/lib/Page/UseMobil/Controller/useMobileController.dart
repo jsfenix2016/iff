@@ -57,8 +57,12 @@ class UseMobilController extends GetxController {
     List<UseMobilApi> listMobilApi = [];
 
     for (var useMobil in listMobilBD) {
-      var useMobilApi = UseMobilApi(userBD.telephone, useMobil.day,
-          _convertTimeToInt(useMobil.time), useMobil.selection);
+      var useMobilApi = UseMobilApi(
+          phoneNumber: userBD.telephone,
+          dayOfWeek: useMobil.day,
+          time: _convertTimeToInt(useMobil.time),
+          index: useMobil.selection,
+          isSelect: useMobil.isSelect);
 
       listMobilApi.add(useMobilApi);
     }

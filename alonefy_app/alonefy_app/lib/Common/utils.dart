@@ -2,7 +2,10 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:ifeelefine/Model/userbd.dart';
+import 'package:ifeelefine/Page/Geolocator/Controller/configGeolocatorController.dart';
 import 'package:intl/intl.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
@@ -15,6 +18,7 @@ import 'package:ifeelefine/Provider/prefencesUser.dart';
 
 import 'package:image_picker/image_picker.dart';
 import 'package:jiffy/jiffy.dart';
+import 'package:path_provider/path_provider.dart';
 
 import 'package:permission_handler/permission_handler.dart';
 
@@ -22,6 +26,7 @@ import 'Constant.dart';
 
 // import 'package:flutter_pay/flutter_pay.dart';
 final _prefs = PreferenceUser();
+final _locationController = Get.put(ConfigGeolocatorController());
 
 class Utils {}
 
@@ -162,6 +167,21 @@ Future<File> procesarImagen(ImageSource origen) async {
   }
   file = File(image.path);
   return file;
+}
+
+Future<File> convertUint8ToFile(Uint8List bytes) async {
+  return File.fromRawPath(bytes);
+}
+
+Future<String> saveImageFromUrl(Uint8List bytes, String imageName) async {
+  var documentDirectory = await getApplicationDocumentsDirectory();
+  var firstPath = documentDirectory.path + "/images";
+  var filePathAndName = '${documentDirectory.path}/images/$imageName';
+  await Directory(firstPath).create(recursive: true);
+  File file = File(filePathAndName);
+  file.writeAsBytesSync(bytes);
+
+  return filePathAndName;
 }
 
 Future<String> displayTimePicker(BuildContext context, String key) async {
@@ -406,7 +426,7 @@ LinearGradient linerGradientButtonFilling() {
 Future<Position> determinePosition() async {
   bool serviceEnabled;
   LocationPermission permission;
-  if (_prefs.getAceptedSendLocation && _prefs.getUserPremium) {
+  if (_prefs.getAcceptedSendLocation == PreferencePermission.allow && _prefs.getUserPremium) {
     Geolocator.openAppSettings();
   }
   // Test if location services are enabled.
@@ -415,11 +435,12 @@ Future<Position> determinePosition() async {
     // Location services are not enabled don't continue
     // accessing the position and request users of the
     // App to enable the location services.
-    _prefs.setAceptedSendLocation = false;
+    //_prefs.setAcceptedSendLocation = PreferencePermission.noAccepted;
+    _locationController.activateLocation(PreferencePermission.noAccepted);
     return Future.error('Location services are disabled.');
   }
 
-  if (!_prefs.getAceptedSendLocation && !_prefs.getUserPremium) {
+  if (_prefs.getAcceptedSendLocation != PreferencePermission.allow && !_prefs.getUserPremium) {
     return Future.error('');
   }
   permission = await Geolocator.checkPermission();
@@ -431,14 +452,16 @@ Future<Position> determinePosition() async {
       // Android's shouldShowRequestPermissionRationale
       // returned true. According to Android guidelines
       // your App should show an explanatory UI now.
-      _prefs.setAceptedSendLocation = false;
+      //_prefs.setAcceptedSendLocation = PreferencePermission.noAccepted;
+      _locationController.activateLocation(PreferencePermission.noAccepted);
       return Future.error('Location permissions are denied');
     }
   }
 
   if (permission == LocationPermission.deniedForever) {
     // Permissions are denied forever, handle appropriately.
-    _prefs.setAceptedSendLocation = false;
+    //_prefs.setAcceptedSendLocation = PreferencePermission.noAccepted;
+    _locationController.activateLocation(PreferencePermission.noAccepted);
     return Future.error(
         'Location permissions are permanently denied, we cannot request permissions.');
   }
@@ -638,9 +661,34 @@ int hourToInt(String time) {
 }
 
 int stringTimeToInt(String strTime) {
-  strTime = strTime.replaceAll(" min", "");
-  strTime = strTime.replaceAll(" hora", "");
-  return int.parse(strTime);
+  var time = strTime.replaceAll(" min", "");
+  time = time.replaceAll(" hora", "");
+
+  if (strTime.contains('hora')) {
+    return int.parse(time) * 60;
+  }
+
+  return int.parse(time);
+}
+
+int deactivateTimeToMinutes(String strTime) {
+  var time = strTime.replaceAll(" hora", "");
+  time = time.replaceAll(" horas", "");
+  time = time.replaceAll(" semana", "");
+  time = time.replaceAll(" mes", "");
+  time = time.replaceAll(" año", "");
+
+  if (strTime.contains('hora')) {
+    return int.parse(time) * 60;
+  } else if (strTime.contains('semana')) {
+    return int.parse(time) * 60 * 24 * 7;
+  } else if (strTime.contains('mes')) {
+    return int.parse(time) * 60 * 24 * 30;
+  } else if (strTime.contains('año')) {
+    return int.parse(time) * 60 * 24 * 365;
+  } else {
+    return int.parse(time) * 60 * 24 * 365 * 10;
+  }
 }
 
 String minutesToString(int minutes) {

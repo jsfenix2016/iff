@@ -104,7 +104,7 @@ class _FallActivationPageState extends State<FallActivationPage> {
                       child: ElevateButtonFilling(
                         onChanged: (value) {
                           isActive = !isActive;
-                          fallVC.setDetectedFall(context, isActive);
+                          fallVC.setDetectedFall(isActive);
                           setState(() {});
                         },
                         mensaje: isActive ? 'Desactivar' : 'Activar',

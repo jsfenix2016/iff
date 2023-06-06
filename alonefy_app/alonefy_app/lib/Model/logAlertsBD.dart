@@ -8,17 +8,20 @@ part 'Adapters/logAlertsBD.g.dart';
 @HiveType(typeId: 2)
 class LogAlertsBD extends HiveObject {
   LogAlertsBD(
-      {required this.type, required this.time, this.photoDate, this.video});
+      {required this.id, required this.type, required this.time, this.photoDate, this.video});
 
   @HiveField(0)
-  late String type;
+  late int id;
 
   @HiveField(1)
-  late DateTime time;
+  late String type;
 
   @HiveField(2)
-  List<Uint8List>? photoDate;
+  late DateTime time;
 
   @HiveField(3)
+  List<Uint8List>? photoDate;
+
+  @HiveField(4)
   Uint8List? video;
 }

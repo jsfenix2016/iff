@@ -24,12 +24,12 @@ class ActivityService {
      }
   }
 
-  Future<void> updateData(ActivityDayApi activityDayApi) async {
+  Future<void> updateData(ActivityDayApi activityDayApi, int id) async {
 
     var json = jsonEncode(activityDayApi);
 
     await http.put(
-        Uri.parse("${Constant.baseApi}/v1/activity"),
+        Uri.parse("${Constant.baseApi}/v1/activity/$id"),
         body: json
     );
 

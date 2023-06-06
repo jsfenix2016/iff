@@ -31,6 +31,18 @@ class MainService {
     }
   }
 
+  Future<void> cancelAllNotifications(List<String> taskIds) async {
+
+    final response = http.post(Uri.parse("${Constant.baseApi}/v1/notifications/cancel"),
+        body: taskIds);
+  }
+
+  Future<void> sendAlertToContactImmediately(List<String> taskIds) async {
+
+    final response = http.post(Uri.parse("${Constant.baseApi}/v1/notifications/send"),
+        body: taskIds);
+  }
+
   Future<Map<String, dynamic>> saveDrop(UserBD user) async {
     Map<String, dynamic> authData = {};
 

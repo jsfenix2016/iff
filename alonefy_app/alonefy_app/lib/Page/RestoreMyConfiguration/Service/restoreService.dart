@@ -4,24 +4,21 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
+import 'package:ifeelefine/Model/ApiRest/RestoreApi.dart';
 
 class RestoreService {
-  Future<bool> restoreData(String num, String email) async {
-    final authData = {"recipient": "$num", "originator": (email)};
 
+  Future<RestoreApi?> restoreData(String phoneNumber, String email) async {
     try {
-      final resp = await http.post(Uri.parse("${Constant.baseApi}/$num"),
-          body: authData);
+      final response = await http.get(Uri.parse("${Constant.baseApi}/v1/user/all/$phoneNumber"));
 
-      Map<String, dynamic> decodeResp = json.decode(resp.body);
-
-      if (decodeResp['id'] != null) {
-        return true;
+      if (response.statusCode == 200) {
+        return jsonDecode(response.body);
       } else {
-        return false;
+        return null;
       }
     } catch (error) {
-      return false;
+      return null;
     }
   }
 }

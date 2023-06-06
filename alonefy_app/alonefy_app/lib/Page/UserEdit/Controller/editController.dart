@@ -8,6 +8,7 @@ import 'package:ifeelefine/Common/utils.dart';
 import 'package:ifeelefine/Data/hive_data.dart';
 import 'package:ifeelefine/Model/user.dart';
 import 'package:ifeelefine/Model/userbd.dart';
+import 'package:ifeelefine/Page/UserEdit/Service/editUserService.dart';
 import 'package:ifeelefine/Provider/user_provider.dart';
 import 'package:country_state_city_picker/model/select_status_model.dart'
     as StatusModel;
@@ -169,10 +170,16 @@ class EditConfigController extends GetxController {
 
       await const HiveData().updateUser(userbd);
 
+      EditUserService().updateUser(userbd);
+
       return true;
     } catch (error) {
       return false;
     }
+  }
+
+  Future<void> updateUserImage(UserBD user) async {
+    await EditUserService().updateImage(user.telephone, user.pathImage);
   }
 
   Future<User> getUserDate() async {

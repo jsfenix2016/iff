@@ -30,6 +30,7 @@ class FallActivationConfigPage extends StatefulWidget {
 
 class _FallActivationConfigPageState extends State<FallActivationConfigPage> {
   final _prefs = PreferenceUser();
+  final _fallController = Get.put(FallDetectedController());
 
   late bool isActive = false;
 
@@ -280,8 +281,10 @@ class _FallActivationConfigPageState extends State<FallActivationConfigPage> {
   }
 
   void saveFall() {
-    _prefs.setDetectedFall = isActive;
-    _prefs.setFallTime = fallTime;
+    _fallController.setDetectedFall(isActive);
+    //_prefs.setDetectedFall = isActive;
+    _fallController.setFallTime(fallTime);
+    //_prefs.setFallTime = fallTime;
 
     showSaveAlert(context, "Tiempo de caída",
         "El tiempo de caída se ha guardado correctamente");

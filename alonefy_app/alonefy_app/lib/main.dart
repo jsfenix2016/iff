@@ -20,12 +20,15 @@ import 'package:ifeelefine/Page/Contact/Notice/PageView/contactNotice_page.dart'
 import 'package:ifeelefine/Page/Contact/PageView/addContact_page.dart';
 import 'package:ifeelefine/Page/Historial/PageView/historial_page.dart';
 import 'package:ifeelefine/Page/HomePage/Pageview/home_page.dart';
+import 'package:ifeelefine/Page/Onboarding/PageView/onboarding_page.dart';
 
 import 'package:ifeelefine/Page/Premium/Controller/premium_controller.dart';
+import 'package:ifeelefine/Page/RestoreMyConfiguration/Controller/restoreController.dart';
 
 import 'package:ifeelefine/Page/Risk/DateRisk/ListDateRisk/PageView/riskDatePage.dart';
 import 'package:ifeelefine/Page/UserConfig/PageView/userconfig_page.dart';
 import 'package:ifeelefine/Page/UserConfig2/Page/configuration2_page.dart';
+import 'package:ifeelefine/Page/UserEdit/Controller/getUserController.dart';
 import 'package:ifeelefine/Services/mainService.dart';
 import 'package:ifeelefine/Views/contact_page.dart';
 
@@ -51,6 +54,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'Common/Firebase/firebaseManager.dart';
 
+import 'Page/Geolocator/Controller/configGeolocatorController.dart';
 import 'Page/LogActivity/Controller/logActivity_controller.dart';
 
 DateTime now = DateTime.now();
@@ -82,6 +86,8 @@ final MainController mainController = Get.put(MainController());
 int _logActivityTimer = 60;
 const int _logActivityTimerRefresh = 60;
 
+final _locationController = Get.put(ConfigGeolocatorController());
+
 String? device;
 String? initApp;
 UserBD? user;
@@ -96,6 +102,17 @@ Future<void> main() async {
   await initializeService();
 
   user = await mainController.getUserData();
+
+  if (user != null) {
+    var userApi = null;//await GetUserController().getUser(user!.telephone);
+
+    if (userApi != null && userApi.idUser != user!.idUser) {
+      await RestoreController().deleteAllData();
+
+      user = null;
+    }
+  }
+
   var premiumController = Get.put(PremiumController());
 
   premiumController.initPlatformState();
@@ -228,14 +245,19 @@ Future activateService() async {
           }
           break;
         case NotificationResponseType.selectedNotificationAction:
-          if (notificationResponse.actionId == "helpID") {
-            IdleLogic().notifyContact();
+          if (notificationResponse.actionId != null && notificationResponse.actionId!.contains("helpID")) {
+            String taskIds = notificationResponse.actionId!.replaceAll("helpID_", "");
+            var taskIdList = taskIds.split(";");
+            //IdleLogic().notifyContact();
             mainController.saveUserLog("Envio de SMS", now);
+            MainService().sendAlertToContactImmediately(taskIdList);
           }
-          if (notificationResponse.actionId == "imgoodId") {
+          if (notificationResponse.actionId != null && notificationResponse.actionId!.contains("imgoodId")) {
+            String taskIds = notificationResponse.actionId!.replaceAll("imgoodId_", "");
+            var taskIdList = taskIds.split(";");
             ismove = false;
             timerActive = true;
-            MainService().cancelNotifications();
+            MainService().cancelAllNotifications(taskIdList);
             _timer.cancel();
           }
           if (notificationResponse.actionId == "date") {
@@ -245,6 +267,12 @@ Future activateService() async {
       }
     },
     onDidReceiveBackgroundNotificationResponse: notificationTapBackground,
+  );
+
+  await FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(
+    alert: true,
+    badge: true,
+    sound: true,
   );
 }
 
@@ -526,8 +554,6 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
-
-    FirebaseMessaging.onMessage.listen(showFlutterNotification);
   }
 
   @override
@@ -543,7 +569,7 @@ class _MyAppState extends State<MyApp> {
 Future<Position> determinePosition() async {
   bool serviceEnabled;
   LocationPermission permission;
-  if (_prefs.getAceptedSendLocation) {
+  if (_prefs.getAcceptedSendLocation == PreferencePermission.allow) {
     Geolocator.openAppSettings();
   }
   // Test if location services are enabled.
@@ -552,7 +578,8 @@ Future<Position> determinePosition() async {
     // Location services are not enabled don't continue
     // accessing the position and request users of the
     // App to enable the location services.
-    _prefs.setAceptedSendLocation = false;
+    _locationController.activateLocation(PreferencePermission.noAccepted);
+    //_prefs.setAcceptedSendLocation = PreferencePermission.noAccepted;
     return Future.error('Location services are disabled.');
   }
 
@@ -565,14 +592,16 @@ Future<Position> determinePosition() async {
       // Android's shouldShowRequestPermissionRationale
       // returned true. According to Android guidelines
       // your App should show an explanatory UI now.
-      _prefs.setAceptedSendLocation = false;
+      //_prefs.setAcceptedSendLocation = PreferencePermission.noAccepted;
+      _locationController.activateLocation(PreferencePermission.noAccepted);
       return Future.error('Location permissions are denied');
     }
   }
 
   if (permission == LocationPermission.deniedForever) {
     // Permissions are denied forever, handle appropriately.
-    _prefs.setAceptedSendLocation = false;
+    //_prefs.setAcceptedSendLocation = PreferencePermission.noAccepted;
+    _locationController.activateLocation(PreferencePermission.noAccepted);
     return Future.error(
         'Location permissions are permanently denied, we cannot request permissions.');
   }

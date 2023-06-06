@@ -7,6 +7,7 @@ import 'package:ifeelefine/Data/hive_data.dart';
 import 'package:ifeelefine/Model/user.dart';
 import 'package:ifeelefine/Model/userbd.dart';
 import 'package:ifeelefine/Page/UserConfig2/Service/userConfig2Service.dart';
+import 'package:ifeelefine/Page/UserEdit/Service/editUserService.dart';
 
 class UserConfig2COntroller extends GetxController {
   final UserConfig2Service config2Serv = Get.put(UserConfig2Service());
@@ -19,23 +20,12 @@ class UserConfig2COntroller extends GetxController {
     }
   }
 
-  Future<UserBD> saveUserData(
-      BuildContext context, User user, String uuid) async {
-    try {
-      user.idUser = (uuid);
-
-      return await const HiveData().saveUser(user);
-    } catch (error) {
-      return initUserBD();
-    }
-  }
-
   Future<bool> updateUserDate(BuildContext context, UserBD user) async {
     try {
       // Map info
 
       await const HiveData().updateUser(user);
-      var resp = await config2Serv.saveData(user);
+      var resp = await EditUserService().updateUser(user);
       if (resp['errors'] != null) {
         // return false;
       }

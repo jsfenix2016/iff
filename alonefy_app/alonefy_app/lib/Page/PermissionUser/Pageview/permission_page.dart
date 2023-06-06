@@ -4,14 +4,21 @@ import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ifeelefine/Common/Constant.dart';
 import 'package:ifeelefine/Common/colorsPalette.dart';
 import 'package:ifeelefine/Common/utils.dart';
+import 'package:ifeelefine/Page/PermissionUser/Controller/permission_controller.dart';
 import 'package:ifeelefine/Provider/prefencesUser.dart';
 import 'package:permission_handler/permission_handler.dart';
 
+import '../../Geolocator/Controller/configGeolocatorController.dart';
+
 final _prefs = PreferenceUser();
+final _locationController = Get.put(ConfigGeolocatorController());
+
 
 class PermitionUserPage extends StatefulWidget {
   const PermitionUserPage({super.key});
@@ -102,7 +109,8 @@ class _PermitionUserPageState extends State<PermitionUserPage> {
             _prefs.setAcceptedContacts = preferencePermission;
             break;
           case 3:
-            _prefs.setAcceptedSendLocation = preferencePermission;
+            _locationController.activateLocation(preferencePermission);
+            //_prefs.setAcceptedSendLocation = preferencePermission;
             break;
           case 4:
             _prefs.setAcceptedScheduleExactAlarm = preferencePermission;
@@ -130,7 +138,8 @@ class _PermitionUserPageState extends State<PermitionUserPage> {
             break;
           case 3:
             if (_prefs.getAcceptedSendLocation == PreferencePermission.allow) {
-              _prefs.setAcceptedSendLocation = PreferencePermission.noAccepted;
+              _locationController.activateLocation(PreferencePermission.noAccepted);
+              //_prefs.setAcceptedSendLocation = PreferencePermission.noAccepted;
             }
             break;
           case 4:
@@ -150,6 +159,18 @@ class _PermitionUserPageState extends State<PermitionUserPage> {
         "Permisos guardados",
         "Los permisos se han guardado correctamente."
     );
+  }
+
+  void savePermissions() async {
+    var response = await PermissionController().savePermissions(permissionStatus);
+
+    if (response) {
+      showSaveAlert(
+          context,
+          "Permisos guardados",
+          "Los permisos se han guardado correctamente."
+      );
+    }
   }
 
   void getPermissions() async {
@@ -280,7 +301,7 @@ class _PermitionUserPageState extends State<PermitionUserPage> {
                           color: Colors.black,
                         )),
                     onPressed: () async {
-                      savePermission();
+                      savePermissions();
                     },
                   ),
                 ),

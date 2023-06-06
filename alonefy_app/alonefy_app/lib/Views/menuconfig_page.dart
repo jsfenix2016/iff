@@ -221,14 +221,6 @@ class _MenuConfigurationPageState extends State<MenuConfigurationPage> {
           redirectToConfigUser();
           return;
         }
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => const RestoreMyConfigPage(),
-          ),
-        );
-        break;
-      case 11:
         if (_prefs.getUserPremium) {
           Navigator.push(
             context,
@@ -248,7 +240,7 @@ class _MenuConfigurationPageState extends State<MenuConfigurationPage> {
           );
         }
         break;
-      case 12:
+      case 11:
         Navigator.push(
           context,
           MaterialPageRoute(

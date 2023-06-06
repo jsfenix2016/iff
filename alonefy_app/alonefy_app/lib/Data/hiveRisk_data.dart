@@ -54,6 +54,14 @@ class HiveDataRisk {
     }
   }
 
+  Future<void> deleteAllContactRisk() async {
+    Box<ContactRiskBD> box = await Hive.openBox<ContactRiskBD>('contactriskbd');
+
+    for (var element in box.values) {
+      box.delete(element);
+    }
+  }
+
   ///ZONE RISK
   Future<List<ContactZoneRiskBD>> get getcontactZoneRiskbd async {
     try {
@@ -107,6 +115,14 @@ class HiveDataRisk {
     } catch (error) {
       print(error);
       return false;
+    }
+  }
+
+  Future<void> deleteAllContactZoneRisk() async {
+    Box<ContactZoneRiskBD> box = await Hive.openBox<ContactZoneRiskBD>('ContactZoneRiskBD');
+
+    for (var element in box.values) {
+      box.delete(element);
     }
   }
 }

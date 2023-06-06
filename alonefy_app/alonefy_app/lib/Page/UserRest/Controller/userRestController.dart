@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:ifeelefine/Common/utils.dart';
 import 'package:ifeelefine/Data/hive_data.dart';
 import 'package:ifeelefine/Model/restday.dart';
 import 'package:ifeelefine/Model/restdaybd.dart';
 import 'package:ifeelefine/Page/UserRest/Service/userRestService.dart';
+
+import '../../../Model/ApiRest/UserRestApi.dart';
 
 class UserRestController extends GetxController {
   final UserRestService userRestServ = Get.put(UserRestService());
@@ -69,6 +72,29 @@ class UserRestController extends GetxController {
     }
 
     return restDays;
+  }
+
+  Future<void> saveFromApi(List<UserRestApi> userRestApiList) async {
+    var list = _convertFromApi(userRestApiList);
+    await const HiveData().saveListTimeRest(list);
+  }
+
+  List<RestDayBD> _convertFromApi(List<UserRestApi> userRestApiList) {
+    List<RestDayBD> list = [];
+
+    for (var userRestApi in userRestApiList) {
+      var restDay = RestDayBD(
+          day: userRestApi.dayOfWeek,
+          timeWakeup: minutesToString(userRestApi.wakeUpHour),
+          timeSleep: minutesToString(userRestApi.retireHour),
+          selection: userRestApi.index,
+          isSelect: userRestApi.isSelect
+      );
+
+      list.add(restDay);
+    }
+
+    return list;
   }
 
   Future<List<RestDayBD>> getUserRest() async {

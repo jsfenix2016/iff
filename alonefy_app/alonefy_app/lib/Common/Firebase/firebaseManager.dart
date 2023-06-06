@@ -4,19 +4,16 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:get/get.dart';
+import 'package:ifeelefine/Common/Firebase/FirebaseService.dart';
 import 'package:ifeelefine/Common/notificationService.dart';
+import 'package:ifeelefine/Model/ApiRest/FirebaseTokenApi.dart';
 
-import '../../main.dart';
-import '../colorsPalette.dart';
-import 'firebaseOptions.dart';
+import '../../Controllers/mainController.dart';
 
 @pragma('vm:entry-point')
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  await setupFlutterNotifications();
   showFlutterNotification(message);
-  // If you're going to use other Firebase services in the background, such as Firestore,
-  // make sure you call `initializeApp` before using other Firebase services.
   print('Handling a background message ${message.messageId}');
 }
 
@@ -24,58 +21,8 @@ late AndroidNotificationChannel channel;
 
 bool isFlutterLocalNotificationsInitialized = false;
 
-Future<void> setupFlutterNotifications() async {
-  //if (isFlutterLocalNotificationsInitialized) {
-  //  return;
-  //}
-  channel = const AndroidNotificationChannel(
-    '5', // id
-    'AlertFriends – PERSONAL PROTECTION', // title
-    description: 'AlertFriends está activado.', // description
-    importance: Importance.low, // importance must be at low or higher level
-  );
-
-  flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
-
-  /// Create an Android Notification Channel.
-  ///
-  /// We use this channel in the `AndroidManifest.xml` file to override the
-  /// default FCM channel to enable heads up notifications.
-  await flutterLocalNotificationsPlugin
-      .resolvePlatformSpecificImplementation<
-          AndroidFlutterLocalNotificationsPlugin>()
-      ?.createNotificationChannel(channel);
-
-  /// Update the iOS foreground notification presentation options to allow
-  /// heads up notifications.
-  await FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(
-    alert: true,
-    badge: true,
-    sound: true,
-  );
-  isFlutterLocalNotificationsInitialized = true;
-}
-
 void showFlutterNotification(RemoteMessage message) {
-  RemoteNotification? notification = message.notification;
-  AndroidNotification? android = message.notification?.android;
-  if (notification != null && android != null && !kIsWeb) {
-    flutterLocalNotificationsPlugin.show(
-      notification.hashCode,
-      notification.title,
-      notification.body,
-      NotificationDetails(
-        android: AndroidNotificationDetails(
-          channel.id,
-          channel.name,
-          channelDescription: channel.description,
-          // TODO add a proper drawable resource to android, for now using
-          //      one that already exists in example app.
-          icon: '@mipmap/logo_alertfriends',
-        ),
-      ),
-    );
-  }
+  RedirectViewNotifier.showNotificationsFromFirebase(message);
 }
 
 Future<void> showNotification() async {
@@ -90,13 +37,19 @@ Future<void> showRiskNotification() async {
 late FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
 
 Future<void> initializeFirebase() async {
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  //await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  await Firebase.initializeApp();
+
+  await FirebaseMessaging.instance.getInitialMessage();
+
+  onActionSelected("get_apns_token");
+  FirebaseMessaging.onMessage.listen(showFlutterNotification);
   // Set the background messaging handler early on, as a named top-level function
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
-  if (!kIsWeb) {
-    await setupFlutterNotifications();
-  }
+  //if (!kIsWeb) {
+    //await setupFlutterNotifications();
+  //}
 }
 
 int _messageCount = 0;
@@ -148,6 +101,16 @@ Future<void> onActionSelected(String value) async {
           String? token = await FirebaseMessaging.instance.getAPNSToken();
           print('FlutterFire Messaging Example: Got APNs token: $token');
         } else {
+          String? token = await FirebaseMessaging.instance.getToken();
+
+          final MainController mainController = Get.put(MainController());
+          var user = await mainController.getUserData();
+
+          if (user.telephone != "" && token != null) {
+            var firebaseTokenApi = FirebaseTokenApi(phoneNumber: user.telephone, fcmToken: token);
+            FirebaseService().saveData(firebaseTokenApi);
+          }
+          
           print(
             'FlutterFire Messaging Example: Getting an APNs token is only supported on iOS and macOS platforms.',
           );

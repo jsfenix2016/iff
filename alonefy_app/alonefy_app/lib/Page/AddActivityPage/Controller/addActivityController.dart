@@ -37,6 +37,15 @@ class AddActivityController extends GetxController {
     return await const HiveData().saveActivity(activitybd);
   }
 
+  Future<void> saveFromApi(List<ActivityDayApiResponse> activitiesApi) async {
+    var activities = await convertToApk(activitiesApi);
+
+    for (var activity in activities) {
+      var activityBD = await convertActivityDayToBD(activity);
+      await const HiveData().saveActivity(activityBD);
+    }
+  }
+
   Future<ActivityDayBD> convertActivityDayToBD(ActivityDay activity) async {
     ActivityDayBD activitybd = ActivityDayBD(
         id: activity.id,
@@ -92,7 +101,7 @@ class AddActivityController extends GetxController {
     final MainController mainController = Get.put(MainController());
     var user = await mainController.getUserData();
     var activityApi = await _convertToApi(activity, user.telephone);
-    ActivityService().updateData(activityApi);
+    ActivityService().updateData(activityApi, activity.id);
   }
 
   Future<ActivityDayApi> _convertToApi(ActivityDay activity, String phoneNumber) async {

@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:ifeelefine/Common/utils.dart';
 import 'package:ifeelefine/Data/hive_data.dart';
 import 'package:ifeelefine/Model/logAlertsBD.dart';
+import 'package:ifeelefine/Page/Alerts/Service/alerts_service.dart';
 import 'package:ifeelefine/Provider/prefencesUser.dart';
 import 'package:intl/intl.dart';
 import 'package:collection/collection.dart';
@@ -12,6 +13,10 @@ final _prefs = PreferenceUser();
 class AlertsController extends GetxController {
   Future<int> deleteAlerts(
       BuildContext context, List<LogAlertsBD> listAlerts) async {
+    for (var logAlert in listAlerts) {
+      AlertsService().deleteAlert(logAlert.id);
+    }
+
     return await const HiveData().deleteListAlerts(listAlerts);
   }
 

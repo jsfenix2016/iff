@@ -37,14 +37,6 @@ class PreferenceUser {
     _prefs.setBool('isConfig', value);
   }
 
-  get getTimeUse {
-    return _prefs.getBool('timeUse') ?? false;
-  }
-
-  set setTimeUse(bool value) {
-    _prefs.setBool('timeUse', value);
-  }
-
   get isNotConfigUser {
     return _prefs.getBool('notConfig') ?? false;
   }
@@ -115,14 +107,6 @@ class PreferenceUser {
 
   set setAceptedSendSMS(bool value) {
     _prefs.setBool('AceptedSendSMS', value);
-  }
-
-  get getAceptedSendLocation {
-    return _prefs.getBool('AceptedSendLocation') ?? false;
-  }
-
-  set setAceptedSendLocation(bool value) {
-    _prefs.setBool('AceptedSendLocation', value);
   }
 
   get getAcceptedSendLocation {
@@ -222,6 +206,14 @@ class PreferenceUser {
 
   set setEnableIFF(bool value) {
     _prefs.setBool('EnableIFF', value);
+  }
+
+  get getStartDateTimeDisambleIFF {
+    return _prefs.getString('StartDateTimeDisambleIFF') ?? "";
+  }
+
+  set setStartDateTimeDisambleIFF(String value) {
+    _prefs.setString('StartDateTimeDisambleIFF', value);
   }
 
   set setDisambleIFFForActivity(int value) {

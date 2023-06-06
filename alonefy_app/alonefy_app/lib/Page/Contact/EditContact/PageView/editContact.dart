@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_contacts/flutter_contacts.dart';
+
 import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:ifeelefine/Common/colorsPalette.dart';
+
 import 'package:ifeelefine/Common/utils.dart';
 import 'package:ifeelefine/Controllers/contactUserController.dart';
 import 'package:ifeelefine/Model/contact.dart';

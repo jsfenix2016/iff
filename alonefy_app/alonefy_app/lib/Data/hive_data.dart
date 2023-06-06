@@ -12,6 +12,11 @@ import 'package:ifeelefine/Model/logAlertsBD.dart';
 class HiveData {
   const HiveData();
 
+  Future<void> saveUserBD(UserBD user) async {
+    final Box<UserBD> box = await Hive.openBox<UserBD>('userBD');
+    await box.add(user);
+  }
+
   Future<UserBD> saveUser(User user) async {
     var person = UserBD(
         idUser: user.idUser,
@@ -47,6 +52,14 @@ class HiveData {
       return person;
     } else {
       return person;
+    }
+  }
+
+  Future<void> deleteUsers() async {
+    Box<UserBD> box = await Hive.openBox<UserBD>('userBD');
+
+    for (var element in box.values) {
+      box.delete(element);
     }
   }
 
@@ -108,11 +121,27 @@ class HiveData {
     return box.values.toList();
   }
 
+  Future<void> deleteAllAlerts() async {
+    Box<LogAlertsBD> box = await Hive.openBox<LogAlertsBD>('UserPositionBD');
+
+    for (var element in box.values) {
+      box.delete(element);
+    }
+  }
+
   Future<List<ContactBD>> get listUserPositionbd async {
     final Box<List<ContactBD>> box =
         await Hive.openBox<List<ContactBD>>('listUserContactBD');
 
     return box.values.first;
+  }
+
+  Future<void> deleteAllContacts() async {
+    Box<ContactBD> box = await Hive.openBox<ContactBD>('listUserContactBD');
+
+    for (var element in box.values) {
+      box.delete(element);
+    }
   }
 
   Future<List<ActivityDayBD>> get listUserActivitiesbd async {
@@ -171,6 +200,14 @@ class HiveData {
           element.activity == activities.activity) {
         await box.delete(element.key);
       }
+    }
+  }
+
+  Future<void> deleteAllActivities() async {
+    Box<ActivityDayBD> box = await Hive.openBox<ActivityDayBD>('listActivityDayBD');
+
+    for (var element in box.values) {
+      box.delete(element);
     }
   }
 
@@ -247,6 +284,14 @@ class HiveData {
     }
   }
 
+  Future<void> deleteAllRestDays() async {
+    Box<RestDayBD> box = await Hive.openBox<RestDayBD>('RestDayBD');
+
+    for (var element in box.values) {
+      box.delete(element);
+    }
+  }
+
   Future<List<LogActivityBD>> get listLogActivitybd async {
     final box = await Hive.openBox<LogActivityBD>('LogActivityBD');
     return box.values.toList();
@@ -257,6 +302,14 @@ class HiveData {
         await Hive.openBox<LogActivityBD>('LogActivityBD');
 
     return box.add(logActivityBD);
+  }
+
+  Future<void> deleteAllLogActivities() async {
+    Box<LogActivityBD> box = await Hive.openBox<LogActivityBD>('LogActivityBD');
+
+    for (var element in box.values) {
+      box.delete(element);
+    }
   }
 
   Future<int> saveListTimeUseMobil(List<UseMobilBD> useMobilDays) async {
@@ -282,6 +335,14 @@ class HiveData {
   Future<List<UseMobilBD>> get listUseMobilBd async {
     final box = await Hive.openBox<UseMobilBD>('TimeUseMobilBD');
     return box.values.toList();
+  }
+
+  Future<void> deleteAllUseMobil() async {
+    Box<UseMobilBD> box = await Hive.openBox<UseMobilBD>('TimeUseMobilBD');
+
+    for (var element in box.values) {
+      box.delete(element);
+    }
   }
 
   // Future<bool> updateUserRestTime(RestDayBD user) async {
