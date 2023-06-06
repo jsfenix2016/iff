@@ -38,7 +38,7 @@ class EditZoneController extends GetxController {
 
   Future<void> saveActivityLog(ContactZoneRiskBD contact) async {
     LogAlertsBD mov = LogAlertsBD(
-        type: "Zona de riesgo", time: DateTime.now(), video: contact.photo);
+        id: 0, type: "Zona de riesgo", time: DateTime.now(), video: contact.photo);
     await const HiveData().saveUserPositionBD(mov);
   }
 
@@ -97,7 +97,8 @@ class EditZoneController extends GetxController {
             isActived: contactZoneRiskApi.isactived,
             sendWhatsappContact: contactZoneRiskApi.sendwhatsappcontact,
             callme: contactZoneRiskApi.callme,
-            save: contactZoneRiskApi.save
+            save: contactZoneRiskApi.save,
+            createDate: DateTime.now()
         );
         const HiveDataRisk().saveContactZoneRisk(contact);
       }

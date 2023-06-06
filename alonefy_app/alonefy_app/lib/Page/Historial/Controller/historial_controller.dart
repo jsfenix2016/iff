@@ -83,7 +83,7 @@ class HistorialController extends GetxController {
         convertDateTimeToString(date.createDate);
         // tempDynamic.add(_activity);
         var tempAct = LogAlertsBD(
-            time: date.createDate, type: "Cita", photoDate: date.photoDate);
+            id: 0, time: date.createDate, type: "Cita", photoDate: date.photoDate);
         tempDynamic.add(tempAct);
       }
     }
@@ -92,7 +92,7 @@ class HistorialController extends GetxController {
         convertDateTimeToString(date.createDate);
 
         var tempAct =
-            LogAlertsBD(time: date.createDate, type: "Zona", video: date.video);
+            LogAlertsBD(id: 0, time: date.createDate, type: "Zona", video: date.video);
         tempDynamic.add(tempAct);
       }
     }
@@ -101,7 +101,7 @@ class HistorialController extends GetxController {
         convertDateTimeToString(activityItem.time);
 
         var tempAct = LogAlertsBD(
-            time: activityItem.time, type: activityItem.movementType);
+            id: 0, time: activityItem.time, type: activityItem.movementType);
         tempDynamic.add(tempAct);
       }
     }

@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'logAlertsBD.dart';
+part of '../logAlertsBD.dart';
 
 // **************************************************************************
 // TypeAdapterGenerator

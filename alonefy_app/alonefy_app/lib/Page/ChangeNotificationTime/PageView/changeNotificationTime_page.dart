@@ -323,6 +323,6 @@ class _ChangeNotificationTimePageState
     var listContact = await const HiveData().listUserContactbd;
 
     var contactController = Get.put(ContactUserController());
-    contactController.updateContactsBD(listContact, emailTime, phoneTime, smsTime);
+    contactController.updateContacts(listContact, emailTime, phoneTime, smsTime);
   }
 }

@@ -18,7 +18,7 @@ class AlertApi {
     required this.startdate});
 
   AlertApi.fromAlert(LogAlertsBD logAlertsBD) {
-    typeaction = logAlertsBD.typeAction;
+    typeaction = logAlertsBD.type;
     startdate = logAlertsBD.time;
   }
 

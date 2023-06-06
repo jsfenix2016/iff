@@ -88,29 +88,29 @@ class ContactUserController extends GetxController {
     }
   }
 
-  Future<void> updateContacts(BuildContext context, List<Contact> contacts, String timeSendSMS,
-      String timeCall, String timeWhatsapp) async {
-    var contactBD = ContactBD("", null, "", "", "", "", "", "pendiente");
-
-    for (var element in contacts) {
-      contactBD.displayName = element.displayName;
-      contactBD.phones = element.phones.first.number;
-      contactBD.photo = element.photo;
-      contactBD.timeSendSMS = timeSendSMS;
-      contactBD.timeCall = timeCall;
-      contactBD.timeWhatsapp = timeWhatsapp;
-
-      const HiveData().updateContact(contactBD);
-
-      final MainController mainController = Get.put(MainController());
-      var user = await mainController.getUserData();
-      ContactApi contactApi = convertToApi(contactBD, user.telephone);
-
-      contactServ.updateContact(contactApi);
-    }
-
-    showAlert(context, "Contacto guardado correctamente".tr);
-  }
+  //Future<void> updateContacts(BuildContext context, List<Contact> contacts, String timeSendSMS,
+  //    String timeCall, String timeWhatsapp) async {
+  //  var contactBD = ContactBD("", null, "", "", "", "", "", "pendiente");
+//
+  //  for (var element in contacts) {
+  //    contactBD.displayName = element.displayName;
+  //    contactBD.phones = element.phones.first.number;
+  //    contactBD.photo = element.photo;
+  //    contactBD.timeSendSMS = timeSendSMS;
+  //    contactBD.timeCall = timeCall;
+  //    contactBD.timeWhatsapp = timeWhatsapp;
+//
+  //    const HiveData().updateContact(contactBD);
+//
+  //    final MainController mainController = Get.put(MainController());
+  //    var user = await mainController.getUserData();
+  //    ContactApi contactApi = convertToApi(contactBD, user.telephone);
+//
+  //    contactServ.updateContact(contactApi);
+  //  }
+//
+  //  showAlert(context, "Contacto guardado correctamente".tr);
+  //}
 
   Future<void> saveFromApi(List<ContactApi> contactsApi) async {
     for (var contactApi in contactsApi) {

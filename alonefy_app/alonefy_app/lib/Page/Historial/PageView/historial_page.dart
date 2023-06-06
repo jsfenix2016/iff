@@ -31,6 +31,7 @@ class _HistorialPageState extends State<HistorialPage> {
 
   Future<void> getLog() async {
     listLog = LogAlertsBD(
+      id: 0,
       type: "no hay alertas",
       time: DateTime.now(),
     );

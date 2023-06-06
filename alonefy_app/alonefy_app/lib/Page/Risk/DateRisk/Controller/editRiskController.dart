@@ -37,6 +37,7 @@ class EditRiskController extends GetxController {
 
   Future<void> saveActivityLog(ContactRiskBD contact) async {
     LogAlertsBD mov = LogAlertsBD(
+        id: 0,
         type: "Cita de riesgo",
         time: DateTime.now(),
         photoDate: contact.photoDate);
@@ -111,7 +112,8 @@ class EditRiskController extends GetxController {
             isActived: contactRiskApi.isactived,
             isprogrammed: contactRiskApi.isprogrammed,
             photoDate: [],
-            saveContact: contactRiskApi.savecontact
+            saveContact: contactRiskApi.savecontact,
+            createDate: DateTime.now()
         );
         const HiveDataRisk().saveContactRisk(contact);
       }
