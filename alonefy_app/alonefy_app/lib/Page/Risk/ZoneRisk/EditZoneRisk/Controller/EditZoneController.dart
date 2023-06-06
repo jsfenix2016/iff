@@ -8,6 +8,7 @@ import 'package:ifeelefine/Model/contact.dart';
 import 'package:ifeelefine/Model/contactRiskBD.dart';
 import 'package:ifeelefine/Model/contactZoneRiskBD.dart';
 import 'package:ifeelefine/Page/Risk/ZoneRisk/Service/zone_risk_service.dart';
+import 'package:ifeelefine/Model/logAlertsBD.dart';
 import 'package:notification_center/notification_center.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -35,6 +36,12 @@ class EditZoneController extends GetxController {
     }
   }
 
+  Future<void> saveActivityLog(ContactZoneRiskBD contact) async {
+    LogAlertsBD mov = LogAlertsBD(
+        type: "Zona de riesgo", time: DateTime.now(), video: contact.photo);
+    await const HiveData().saveUserPositionBD(mov);
+  }
+
   Future<bool> saveContactZoneRisk(
       BuildContext context, ContactZoneRiskBD contact) async {
     try {
@@ -46,7 +53,7 @@ class EditZoneController extends GetxController {
       }
       if (contactZoneRiskApi != null) {
         contact.id = contactZoneRiskApi.id;
-        var save = const HiveDataRisk().saveContactZoneRisk(contact);
+        var save = await const HiveDataRisk().saveContactZoneRisk(contact);
         NotificationCenter().notify('getContactZoneRisk');
         showAlert(context, "Contacto guardado correctamente".tr);
         return true;

@@ -1,43 +1,40 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'restdaybd.dart';
+part of '../useMobilbd.dart';
 
 // **************************************************************************
 // TypeAdapterGenerator
 // **************************************************************************
 
-class RestDayBDAdapter extends TypeAdapter<RestDayBD> {
+class UseMobilBDAdapter extends TypeAdapter<UseMobilBD> {
   @override
-  final int typeId = 1;
+  final int typeId = 8;
 
   @override
-  RestDayBD read(BinaryReader reader) {
+  UseMobilBD read(BinaryReader reader) {
     final numOfFields = reader.readByte();
     final fields = <int, dynamic>{
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
-    return RestDayBD(
+    return UseMobilBD(
       day: fields[0] as String,
-      timeWakeup: fields[1] as String,
-      timeSleep: fields[2] as String,
-      selection: fields[3] as int,
-      isSelect: fields[4] as bool,
+      time: fields[1] as String,
+      selection: fields[2] as int,
+      isSelect: fields[3] as bool,
     );
   }
 
   @override
-  void write(BinaryWriter writer, RestDayBD obj) {
+  void write(BinaryWriter writer, UseMobilBD obj) {
     writer
-      ..writeByte(5)
+      ..writeByte(4)
       ..writeByte(0)
       ..write(obj.day)
       ..writeByte(1)
-      ..write(obj.timeWakeup)
+      ..write(obj.time)
       ..writeByte(2)
-      ..write(obj.timeSleep)
-      ..writeByte(3)
       ..write(obj.selection)
-      ..writeByte(4)
+      ..writeByte(3)
       ..write(obj.isSelect);
   }
 
@@ -47,7 +44,7 @@ class RestDayBDAdapter extends TypeAdapter<RestDayBD> {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is RestDayBDAdapter &&
+      other is UseMobilBDAdapter &&
           runtimeType == other.runtimeType &&
           typeId == other.typeId;
 }

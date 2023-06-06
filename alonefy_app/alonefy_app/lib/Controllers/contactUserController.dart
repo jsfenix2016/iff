@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:get/get.dart';
+import 'package:ifeelefine/Common/Constant.dart';
 import 'package:ifeelefine/Common/utils.dart';
 import 'package:ifeelefine/Data/hive_data.dart';
 import 'package:ifeelefine/Model/ApiRest/ContactApi.dart';
@@ -14,23 +15,27 @@ import 'mainController.dart';
 
 class ContactUserController extends GetxController {
   final ContactService contactServ = Get.put(ContactService());
-
+  late BuildContext contextTemp;
   Future<bool> authoritationContact(BuildContext context) async {
+    contextTemp = context;
     try {
       // Map info
-      await Future.delayed(const Duration(seconds: 5));
-      showAlert(context, "Ususario o password incorrecto".tr);
+      await Future.delayed(const Duration(seconds: 2));
+
+      showAlertTemp("Se ha realizado la solicitud correctamente");
+
       return true;
     } catch (error) {
-      print(error);
+      showAlertTemp(Constant.conexionFail);
       return false;
     }
   }
 
   Future<bool> saveListContact(BuildContext context, List<Contact> listContact,
       String timeSendSMS, String timeCall, String timeWhatsapp) async {
+    contextTemp = context;
     try {
-      var contactBD = ContactBD("", null, "", "", "", "", "", "pendiente");
+      var contactBD = ContactBD("", null, "", "", "", "", "", "Pendiente");
 
       for (var element in listContact) {
         contactBD.displayName = element.displayName;
@@ -40,33 +45,40 @@ class ContactUserController extends GetxController {
         contactBD.timeCall = timeCall;
         contactBD.timeWhatsapp = timeWhatsapp;
 
-        var save = const HiveData().saveUserContact(contactBD);
-
-        final MainController mainController = Get.put(MainController());
-        var user = await mainController.getUserData();
-        await contactServ.saveContact(convertToApi(contactBD, user.telephone));
-        if (contactBD.photo != null) {
-          contactServ.updateImage(user.telephone, contactBD.phones, contactBD.photo!);
+        int save = await const HiveData().saveUserContact(contactBD);
+        if (save == 0) {
+          final MainController mainController = Get.put(MainController());
+          var user = await mainController.getUserData();
+          await contactServ.saveContact(convertToApi(contactBD, user.telephone));
+          if (contactBD.photo != null) {
+            contactServ.updateImage(user.telephone, contactBD.phones, contactBD.photo!);
+          }
         }
       }
       // Map info
 
-      showAlert(context, "Contacto guardado correctamente".tr);
+      showAlertTemp(
+          "Contacto guardado correctamente, se ha realizado la solicitud de autorización correctamente");
       return true;
     } catch (error) {
-      print(error);
+      showAlertTemp(Constant.conexionFail);
+
       return false;
     }
   }
 
-  Future<void> updateContactsBD(
+  void showAlertTemp(String text) {
+    showAlert(contextTemp, text);
+  }
+
+  Future<void> updateContacts(
       List<ContactBD> contacts, emailTime, phoneTime, smsTime) async {
     for (var contact in contacts) {
       contact.timeSendSMS = emailTime;
       contact.timeCall = phoneTime;
       contact.timeWhatsapp = smsTime;
 
-      const HiveData().updateContact(contact);
+      await const HiveData().updateContact(contact);
 
       final MainController mainController = Get.put(MainController());
       var user = await mainController.getUserData();

@@ -25,7 +25,7 @@ class MainController extends GetxController {
 
   Future<void> saveUserLog(String messaje, DateTime time) async {
     await inicializeHiveBD();
-    LogAlertsBD mov = LogAlertsBD(id: -1, typeAction: messaje, time: time);
+    LogAlertsBD mov = LogAlertsBD(id: -1, type: messaje, time: time);
 
     var alertApi = await AlertsService().saveAlert(AlertApi.fromAlert(mov));
 
@@ -38,7 +38,7 @@ class MainController extends GetxController {
   Future<void> saveActivityLog(DateTime dateTime, String movementType) async {
     await inicializeHiveBD();
     LogActivityBD activityBD =
-        LogActivityBD(dateTime: dateTime, movementType: movementType);
+        LogActivityBD(time: dateTime, movementType: movementType);
     await logActivityController.saveLogActivity(activityBD);
   }
 }

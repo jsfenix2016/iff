@@ -1,7 +1,7 @@
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:ifeelefine/Data/hive_constant_adapterInit.dart';
 
-part 'useMobilbd.g.dart';
+part 'Adapters/useMobilbd.g.dart';
 
 @HiveType(typeId: HiveConstantAdapterInit.idUseMobilBDAdapter)
 class UseMobilBD extends HiveObject {

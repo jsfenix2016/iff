@@ -64,7 +64,8 @@ class _RiskPageState extends State<RiskPage> {
         isActived: false,
         isprogrammed: false,
         photoDate: [],
-        saveContact: false);
+        saveContact: false,
+        createDate: DateTime.now());
   }
 
   void deleteContactRisk(BuildContext context, ContactRiskBD contact) async {
@@ -179,15 +180,7 @@ class _RiskPageState extends State<RiskPage> {
         title: const Text("Cita de riesgo"),
       ),
       body: Container(
-        decoration: const BoxDecoration(
-          gradient: RadialGradient(
-            radius: 1,
-            colors: [
-              ColorPalette.secondView,
-              ColorPalette.principalView,
-            ],
-          ),
-        ),
+        decoration: decorationCustom(),
         child: Stack(
           children: [
             SafeArea(
@@ -226,28 +219,32 @@ class _RiskPageState extends State<RiskPage> {
             ),
             Positioned(
               bottom: 10,
-              left: (size.width / 2) - 100,
-              child: ElevateButtonFilling(
-                onChanged: (value) {
-                  initContact();
-                  final _prefs = PreferenceUser();
-                  //if (!_prefs.isConfig) {
-                  //  Route route = MaterialPageRoute(
-                  //    builder: (context) => const UserConfigPage(),
-                  //  );
-                  //  Navigator.pushReplacement(context, route);
-                  //  return;
-                  //}
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => EditRiskPage(
-                              contactRisk: contactTemp,
-                              index: listContact.length,
-                            )),
-                  );
-                },
-                mensaje: "Crear nuevo",
+              child: Container(
+                height: 50,
+                width: size.width,
+                color: Colors.transparent,
+                child: ElevateButtonFilling(
+                  onChanged: (value) {
+                    initContact();
+                    final _prefs = PreferenceUser();
+                    if (!_prefs.isConfig) {
+                      Route route = MaterialPageRoute(
+                        builder: (context) => const UserConfigPage(),
+                      );
+                      Navigator.pushReplacement(context, route);
+                      return;
+                    }
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => EditRiskPage(
+                                contactRisk: contactTemp,
+                                index: listContact.length,
+                              )),
+                    );
+                  },
+                  mensaje: "Crear nuevo",
+                ),
               ),
             ),
           ],

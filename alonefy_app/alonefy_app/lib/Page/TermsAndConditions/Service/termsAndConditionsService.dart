@@ -6,14 +6,19 @@ import 'package:ifeelefine/Model/ApiRest/TermsAndConditionsApi.dart';
 import '../../../Common/Constant.dart';
 
 class TermsAndConditionsService {
+  Future<bool> saveData(TermsAndConditionsApi termsAndConditionsApi) async {
+    try {
+      var json = jsonEncode(termsAndConditionsApi);
 
-  Future<void> saveData(TermsAndConditionsApi termsAndConditionsApi) async {
+      final resp = await http.post(Uri.parse("${Constant.baseApi}/v1/contact"),
+          body: json);
 
-    var json = jsonEncode(termsAndConditionsApi);
+      Map<String, dynamic> decodeResp = jsonDecode(resp.body);
 
-    await http.put(
-        Uri.parse("${Constant.baseApi}/v1/user/termsAndConditions"),
-        body: json
-    );
+      if (decodeResp['errors'] != null) {}
+      return true;
+    } catch (error) {
+      return false;
+    }
   }
 }

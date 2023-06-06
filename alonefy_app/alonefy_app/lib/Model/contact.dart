@@ -3,7 +3,7 @@ import 'dart:typed_data';
 import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:hive/hive.dart';
 import 'package:ifeelefine/Data/hive_constant_adapterInit.dart';
-part 'contact.g.dart';
+part 'Adapters/contact.g.dart';
 
 @HiveType(typeId: HiveConstantAdapterInit.idContactBDAdapter)
 class ContactBD extends HiveObject {

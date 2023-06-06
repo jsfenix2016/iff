@@ -11,9 +11,7 @@ class LogActivityBDAdapter extends TypeAdapter<LogActivityBD> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return LogActivityBD(
-        dateTime: fields[0] as DateTime,
-        movementType: fields[1] as String
-    );
+        time: fields[0] as DateTime, movementType: fields[1] as String);
   }
 
   @override
@@ -21,7 +19,7 @@ class LogActivityBDAdapter extends TypeAdapter<LogActivityBD> {
     writer
       ..writeByte(2)
       ..writeByte(0)
-      ..write(obj.dateTime)
+      ..write(obj.time)
       ..writeByte(1)
       ..write(obj.movementType);
   }
@@ -32,7 +30,7 @@ class LogActivityBDAdapter extends TypeAdapter<LogActivityBD> {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-          other is LogActivityBDAdapter &&
-              runtimeType == other.runtimeType &&
-              typeId == other.typeId;
+      other is LogActivityBDAdapter &&
+          runtimeType == other.runtimeType &&
+          typeId == other.typeId;
 }

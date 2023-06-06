@@ -89,8 +89,8 @@ class _EditZoneRiskPageState extends State<EditZoneRiskPage> {
       return;
     }
     var contactRisk = ContactZoneRiskBD(
-        id: widget.contactRisk.id,
-        photo: widget.contactRisk.photo,
+        id: widget.index,
+        photo: contactSelect.photo,
         name: widget.contactRisk.name,
         phones: widget.contactRisk.phones.toString(),
         sendLocation: widget.contactRisk.sendLocation,
@@ -99,17 +99,18 @@ class _EditZoneRiskPageState extends State<EditZoneRiskPage> {
         isActived: true,
         sendWhatsappContact: widget.contactRisk.sendWhatsappContact,
         callme: widget.contactRisk.callme,
-        save: widget.contactRisk.save);
+        save: widget.contactRisk.save,
+        createDate: DateTime.now());
     if (widget.contactRisk.id == -1) {
-      contactRisk.id = widget.index;
       await editZoneVC.saveContactZoneRisk(context, contactRisk);
     } else {
+      contactRisk.id = widget.index;
       await editZoneVC.updateContactZoneRisk(context, contactRisk);
     }
 
     Route route = MaterialPageRoute(
       builder: (context) => PushAlertPage(
-        contactZone: widget.contactRisk,
+        contactZone: contactRisk,
       ),
     );
     Navigator.pushReplacement(context, route);

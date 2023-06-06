@@ -354,6 +354,30 @@ UserBD initUserBD() {
       city: '');
 }
 
+Container searchImageForIcon(String typeAction) {
+  AssetImage name = const AssetImage('assets/images/Email.png');
+  if (typeAction.contains("SMS")) {
+    name = const AssetImage('assets/images/Email.png');
+  } else if (typeAction.contains("inactividad")) {
+    name = const AssetImage('assets/images/Warning.png');
+  } else if (typeAction.contains("Notificación")) {
+    name = const AssetImage('assets/images/Group 1283.png');
+  } else if (typeAction.contains("Movimiento")) {
+    name = const AssetImage('assets/images/actividad 1.png');
+  }
+
+  return Container(
+    height: 32,
+    width: 31.2,
+    decoration: BoxDecoration(
+      image: DecorationImage(
+        image: name,
+      ),
+      color: Colors.transparent,
+    ),
+  );
+}
+
 BoxDecoration decorationCustom() {
   return const BoxDecoration(
     gradient: LinearGradient(

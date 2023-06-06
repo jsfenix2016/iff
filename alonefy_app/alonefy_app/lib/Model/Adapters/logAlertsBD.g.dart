@@ -18,21 +18,27 @@ class LogAlertsBDAdapter extends TypeAdapter<LogAlertsBD> {
     };
     return LogAlertsBD(
       id: fields[0] as int,
-      typeAction: fields[1] as String,
+      type: fields[1] as String,
       time: fields[2] as DateTime,
+      photoDate: (fields[3] as List?)?.cast<Uint8List>(),
+      video: fields[4] as Uint8List?,
     );
   }
 
   @override
   void write(BinaryWriter writer, LogAlertsBD obj) {
     writer
-      ..writeByte(3)
+      ..writeByte(5)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
-      ..write(obj.typeAction)
+      ..write(obj.type)
       ..writeByte(2)
-      ..write(obj.time);
+      ..write(obj.time)
+      ..writeByte(3)
+      ..write(obj.photoDate)
+      ..writeByte(4)
+      ..write(obj.video);
   }
 
   @override

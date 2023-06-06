@@ -47,49 +47,6 @@ class HiveDataRisk {
     try {
       final box = await Hive.openBox<ContactRiskBD>('contactriskbd');
 
-      late List<ContactRiskBD> allDate = [];
-
-      // ContactRiskBD contactTemp = ContactRiskBD(
-      //     id: -1,
-      //     photo: null,
-      //     name: '',
-      //     timeinit: '00:00',
-      //     timefinish: '00:00',
-      //     phones: '',
-      //     titleMessage: '',
-      //     messages: '',
-      //     sendLocation: false,
-      //     sendWhatsapp: false,
-      //     isInitTime: false,
-      //     isFinishTime: false,
-      //     code: '',
-      //     isActived: false,
-      //     isprogrammed: false);
-
-      // for (var element in box.values.toList()) {
-      //   contactTemp.id = element.id;
-      //   contactTemp.photo = element.photo;
-
-      //   contactTemp.name = element.name;
-      //   contactTemp.photo = element.photo;
-      //   contactTemp.timeinit = element.timeinit;
-      //   contactTemp.timefinish = element.timefinish;
-
-      //   contactTemp.phones = element.phones;
-      //   contactTemp.titleMessage = element.titleMessage;
-      //   contactTemp.messages = element.messages;
-      //   contactTemp.sendLocation = element.sendLocation;
-
-      //   contactTemp.sendWhatsapp = element.sendWhatsapp;
-      //   contactTemp.isInitTime = element.isInitTime;
-      //   contactTemp.isFinishTime = element.isFinishTime;
-      //   contactTemp.code = element.code;
-
-      //   contactTemp.isActived = element.isActived;
-      //   contactTemp.isprogrammed = element.isprogrammed;
-      //   allDate.add(contactTemp);
-      // }
-
       return box.values.toList();
     } catch (error) {
       print(error);
@@ -111,7 +68,7 @@ class HiveDataRisk {
       final Box<ContactZoneRiskBD> box =
           await Hive.openBox<ContactZoneRiskBD>('ContactZoneRiskBD');
       var listZone = box.values.toList();
-      await Hive.close();
+
       return listZone;
     } catch (error) {
       print(error);
@@ -124,9 +81,9 @@ class HiveDataRisk {
       final Box<ContactZoneRiskBD> box =
           await Hive.openBox<ContactZoneRiskBD>('ContactZoneRiskBD');
 
-      await box.add(contact);
-      await Hive.close();
-      return 0;
+      var temp = await box.add(contact);
+
+      return temp;
     } catch (error) {
       print(error);
       return -1;
@@ -138,9 +95,11 @@ class HiveDataRisk {
       final Box<ContactZoneRiskBD> box =
           await Hive.openBox<ContactZoneRiskBD>('ContactZoneRiskBD');
 
-      await box.put((contact.id), contact);
+      final listDate = box.values.toList();
 
-      await Hive.close();
+      await box.putAt(contact.id, contact);
+
+      print(listDate);
     } catch (error) {
       print(error);
     }
@@ -150,7 +109,7 @@ class HiveDataRisk {
     try {
       final Box<ContactZoneRiskBD> box =
           await Hive.openBox<ContactZoneRiskBD>('ContactZoneRiskBD');
-      await box.deleteAt(contact.id);
+      await box.delete(contact);
 
       return true;
     } catch (error) {

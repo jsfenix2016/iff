@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ifeelefine/Common/colorsPalette.dart';
+import 'package:ifeelefine/Page/Historial/PageView/historial_page.dart';
 import 'package:ifeelefine/Page/LogActivity/PageView/logActivity_page.dart';
 
 import 'package:ifeelefine/Page/Risk/DateRisk/ListDateRisk/PageView/riskDatePage.dart';
@@ -110,8 +111,7 @@ class _CustomNavbarState extends State<CustomNavbar> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) =>
-                                      const MenuConfigurationPage()),
+                                  builder: (context) => const HistorialPage()),
                             );
                             // setBottomBarIndex(0);
                           },

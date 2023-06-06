@@ -102,15 +102,15 @@ class _CellContactStatusState extends State<CellContactStatus> {
                           Padding(
                             padding: const EdgeInsets.all(4.0),
                             child: SizedBox(
-                              height: 30,
+                              height: 35,
                               width: 150,
                               child: Text(
                                 widget.contact.displayName,
                                 textAlign: TextAlign.left,
                                 style: GoogleFonts.barlow(
-                                  fontSize: 18.0,
+                                  fontSize: 15.0,
                                   wordSpacing: 1,
-                                  letterSpacing: 1,
+                                  letterSpacing: 0.001,
                                   fontWeight: FontWeight.normal,
                                   color: Colors.white,
                                 ),
@@ -119,7 +119,7 @@ class _CellContactStatusState extends State<CellContactStatus> {
                           ),
                           Container(
                             color: Colors.transparent,
-                            height: 26,
+                            height: 24,
                             width: 150,
                             child: Padding(
                               padding: const EdgeInsets.only(left: 0.0),
@@ -129,8 +129,8 @@ class _CellContactStatusState extends State<CellContactStatus> {
                                 decoration: BoxDecoration(
                                   color: getColorStatus(
                                       widget.contact.requestStatus),
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(5)),
+                                  borderRadius: const BorderRadius.all(
+                                      Radius.circular(5)),
                                 ),
                                 height: 24,
                                 width: 77,

@@ -8,7 +8,7 @@ part of '../contactZoneRiskBD.dart';
 
 class ContactZoneRiskBDAdapter extends TypeAdapter<ContactZoneRiskBD> {
   @override
-  final int typeId = HiveConstantAdapterInit.idContactZoneRiskBDAdapter;
+  final int typeId = 6;
 
   @override
   ContactZoneRiskBD read(BinaryReader reader) {
@@ -28,13 +28,15 @@ class ContactZoneRiskBDAdapter extends TypeAdapter<ContactZoneRiskBD> {
       sendWhatsappContact: fields[8] as bool,
       callme: fields[9] as bool,
       save: fields[10] as bool,
+      createDate: fields[11] as DateTime,
+      video: fields[12] as Uint8List?,
     );
   }
 
   @override
   void write(BinaryWriter writer, ContactZoneRiskBD obj) {
     writer
-      ..writeByte(11)
+      ..writeByte(13)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
@@ -56,7 +58,11 @@ class ContactZoneRiskBDAdapter extends TypeAdapter<ContactZoneRiskBD> {
       ..writeByte(9)
       ..write(obj.callme)
       ..writeByte(10)
-      ..write(obj.save);
+      ..write(obj.save)
+      ..writeByte(11)
+      ..write(obj.createDate)
+      ..writeByte(12)
+      ..write(obj.video);
   }
 
   @override

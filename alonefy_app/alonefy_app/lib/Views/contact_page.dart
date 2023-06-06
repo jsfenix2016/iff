@@ -3,20 +3,21 @@ import 'package:flutter_contacts/flutter_contacts.dart';
 
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:ifeelefine/Common/Constant.dart';
 import 'package:ifeelefine/Common/colorsPalette.dart';
 
 import 'package:ifeelefine/Common/utils.dart';
 import 'package:ifeelefine/Controllers/contactUserController.dart';
+import 'package:ifeelefine/Page/Contact/ListContact/PageView/list_contact_page.dart';
 
 import 'package:ifeelefine/Page/Geolocator/PageView/geolocator_page.dart';
+import 'package:ifeelefine/Page/Premium/PageView/premium_page.dart';
 import 'package:ifeelefine/Provider/prefencesUser.dart';
-import 'package:ifeelefine/Utils/Widgets/CustomDropdownButtonWidgetContact.dart';
-
-import 'package:ifeelefine/Page/UserInactivityPage/PageView/configurationUserInactivity_page.dart';
 import 'package:ifeelefine/Utils/Widgets/elevateButtonCustomBorder.dart';
 import 'package:ifeelefine/Utils/Widgets/selectTimerCallSendSMS.dart';
 import 'package:ifeelefine/Utils/Widgets/widgedContact.dart';
 import 'package:notification_center/notification_center.dart';
+import 'package:slidable_button/slidable_button.dart';
 
 class ContactList extends StatefulWidget {
   const ContactList({super.key, required this.isMenu});
@@ -33,17 +34,100 @@ class _ContactListState extends State<ContactList> {
   var indexSelect = -1;
 
   bool isPremium = true;
+  bool isDeleteContact = false;
   late String timeSMS = "00:00 AM";
   late String timeCall = "00:00 AM";
 
   @override
   void initState() {
     if (!widget.isMenu) _prefs.saveLastScreenRoute("contact");
+
     super.initState();
+  }
+
+  Widget getHorizontalSlide() {
+    return HorizontalSlidableButton(
+      isRestart: true,
+      borderRadius: const BorderRadius.all(Radius.circular(2)),
+      height: 55,
+      width: 296,
+      buttonWidth: 60.0,
+      color: ColorPalette.principal,
+      buttonColor: const Color.fromRGBO(157, 123, 13, 1),
+      dismissible: false,
+      label: Image.asset(
+        scale: 1,
+        fit: BoxFit.fill,
+        'assets/images/Group 969.png',
+        height: 13,
+        width: 21,
+      ),
+      onChanged: (SlidableButtonPosition value) async {
+        if (value == SlidableButtonPosition.end) {
+          if (_prefs.getUserPremium || _selectedContacts.isEmpty) {
+            await showDialog(
+              context: context,
+              builder: (BuildContext context) => AlertDialog(
+                contentPadding: const EdgeInsets.all(0),
+                content: ListContact(
+                  onSelectContact: (Contact value) {
+                    _selectedContacts.add(value);
+
+                    setState(() {
+                      Navigator.of(context).pop();
+                    });
+                  },
+                ),
+              ),
+            );
+          } else {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => const PremiumPage(
+                      isFreeTrial: false,
+                      img: 'Pantalla5.jpg',
+                      title: Constant.premiumChangeTimeTitle,
+                      subtitle: '')),
+            );
+          }
+        }
+      },
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(left: 48.0),
+              child: Center(
+                child: Text(
+                  "Obtener Premium",
+                  textAlign: TextAlign.center,
+                  style: GoogleFonts.barlow(
+                    fontSize: 16.0,
+                    wordSpacing: 1,
+                    letterSpacing: 1,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
+    var temp = ModalRoute.of(context)!.settings.arguments;
+    if (_selectedContacts.isEmpty && isDeleteContact == false && temp != null) {
+      final parametro = temp as Contact;
+      _selectedContacts.add(parametro);
+    }
+
     return Scaffold(
       appBar: widget.isMenu
           ? AppBar(
@@ -74,19 +158,6 @@ class _ContactListState extends State<ContactList> {
                 ),
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.only(left: 8.0, right: 8.0),
-              child: ContactDropdownButton(
-                onChanged: (value) {
-                  print(value);
-                  if (_selectedContacts.length >= 1 && !isPremium) {
-                    return;
-                  }
-                  _selectedContacts.add(value);
-                  setState(() {});
-                },
-              ),
-            ),
             Expanded(
               child: ListView.builder(
                 itemCount: _selectedContacts.length,
@@ -94,12 +165,7 @@ class _ContactListState extends State<ContactList> {
                   return GestureDetector(
                     onTap: () {
                       indexSelect = index;
-                      //TODO:OPEN MARKET
-                      if (!isPremium) {
-                        isPremium = true;
-                      } else {
-                        isPremium = false;
-                      }
+
                       setState(() {});
                     },
                     child: Dismissible(
@@ -116,6 +182,7 @@ class _ContactListState extends State<ContactList> {
                       ),
                       onDismissed: ((direction) => {
                             setState(() {
+                              isDeleteContact = true;
                               _selectedContacts.removeAt(index);
                             })
                           }),
@@ -171,10 +238,11 @@ class _ContactListState extends State<ContactList> {
                                   color: Colors.transparent,
                                   child: SelectTimerCallSendSMS(
                                     onChanged: (TimerCallSendSmsModel value) {
-                                      print(value);
                                       timeSMS = value.sendSMS;
                                       timeCall = value.call;
                                     },
+                                    sendSm: '5 min',
+                                    timeCall: '10 min',
                                   ),
                                 ),
                                 ElevateButtonCustomBorder(
@@ -192,6 +260,10 @@ class _ContactListState extends State<ContactList> {
                   );
                 },
               ),
+            ),
+            getHorizontalSlide(),
+            const SizedBox(
+              height: 20,
             ),
             ElevateButtonCustomBorder(
               onChanged: (value) async {
@@ -211,7 +283,10 @@ class _ContactListState extends State<ContactList> {
                   }
                 }
               },
-              mensaje: widget.isMenu == false ? "Guardar" : "Continuar",
+              mensaje: widget.isMenu == true ? "Guardar" : "Continuar",
+            ),
+            const SizedBox(
+              height: 20,
             ),
           ],
         ),

@@ -1,19 +1,15 @@
-import 'dart:typed_data';
-
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:ifeelefine/Common/colorsPalette.dart';
+import 'package:ifeelefine/Common/utils.dart';
 import 'package:ifeelefine/Model/contact.dart';
+import 'package:ifeelefine/Page/Contact/EditContact/PageView/editContact.dart';
+import 'package:ifeelefine/Page/Contact/ListContact/PageView/list_contact_page.dart';
 import 'package:ifeelefine/Page/Contact/Notice/Controller/contactNoticeController.dart';
 import 'package:ifeelefine/Page/Contact/Widget/cellContactStatus.dart';
-
-import 'package:ifeelefine/Provider/prefencesUser.dart';
 import 'package:ifeelefine/Utils/Widgets/elevatedButtonFilling.dart';
-import 'package:ifeelefine/Utils/Widgets/widgedContact.dart';
-import 'package:ifeelefine/Views/contact_page.dart';
+
 import 'package:notification_center/notification_center.dart';
 
 class ContactNoticePage extends StatefulWidget {
@@ -25,7 +21,7 @@ class ContactNoticePage extends StatefulWidget {
 
 class _ContactNoticePageState extends State<ContactNoticePage> {
   final ContactNoticeController controller = Get.put(ContactNoticeController());
-  final _prefs = PreferenceUser();
+
   late List<ContactBD> listContact = [];
   @override
   void initState() {
@@ -52,15 +48,7 @@ class _ContactNoticePageState extends State<ContactNoticePage> {
         title: const Text("Configuración"),
       ),
       body: Container(
-        decoration: const BoxDecoration(
-          gradient: RadialGradient(
-            radius: 1,
-            colors: [
-              ColorPalette.secondView,
-              ColorPalette.principalView,
-            ],
-          ),
-        ),
+        decoration: decorationCustom(),
         child: Stack(
           children: [
             Center(
@@ -135,16 +123,46 @@ class _ContactNoticePageState extends State<ContactNoticePage> {
                   Center(
                     child: ElevateButtonFilling(
                         onChanged: ((value) async {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const ContactList(
-                                isMenu: true,
+                          await showDialog(
+                            context: context,
+                            builder: (BuildContext context) => AlertDialog(
+                              contentPadding: const EdgeInsets.all(0),
+                              content: ListContact(
+                                onSelectContact: (Contact value) {
+                                  var contactBD = ContactBD(
+                                      value.displayName,
+                                      null,
+                                      value.displayName,
+                                      "5 min",
+                                      "10 min",
+                                      "5 min",
+                                      value.phones.first.toString(),
+                                      "Pendiente");
+                                  Navigator.pushReplacement(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => EditContact(
+                                        contact: contactBD,
+                                      ),
+                                    ),
+                                  );
+                                },
                               ),
                             ),
                           );
+                          // Navigator.push(
+                          //   context,
+                          //   MaterialPageRoute(
+                          //     builder: (context) => const ContactList(
+                          //       isMenu: true,
+                          //     ),
+                          //   ),
+                          // );
                         }),
                         mensaje: 'Añadir contacto'),
+                  ),
+                  const SizedBox(
+                    height: 32,
                   ),
                 ],
               ),

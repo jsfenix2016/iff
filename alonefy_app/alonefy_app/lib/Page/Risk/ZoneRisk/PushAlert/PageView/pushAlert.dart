@@ -15,6 +15,7 @@ import 'package:ifeelefine/Page/FallDetected/Controller/fall_detectedController.
 
 import 'package:ifeelefine/Page/HomePage/Pageview/home_page.dart';
 import 'package:ifeelefine/Page/Risk/ZoneRisk/CancelAlert/PageView/cancelAlert.dart';
+import 'package:ifeelefine/Page/Risk/ZoneRisk/PushAlert/Controller/push_alert_controller.dart';
 import 'package:ifeelefine/Utils/Widgets/elevatedButtonFilling.dart';
 import 'package:camera/camera.dart';
 
@@ -29,7 +30,7 @@ class PushAlertPage extends StatefulWidget {
 }
 
 class _PushAlertPageState extends State<PushAlertPage> {
-  final FallDetectedController fallVC = Get.put(FallDetectedController());
+  final PushAlertController pushVC = Get.put(PushAlertController());
   bool _isRecording = false;
   late CameraController _cameraController;
   late bool isActive = false;
@@ -66,23 +67,12 @@ class _PushAlertPageState extends State<PushAlertPage> {
     if (_isRecording) {
       stopRecording();
     } else {
-      await _cameraController.prepareForVideoRecording();
+      // await _cameraController.prepareForVideoRecording();
 
       await _cameraController.startVideoRecording();
-      _elapsedTime = 0;
-      startRecording();
+
       setState(() => _isRecording = true);
     }
-  }
-
-  int _elapsedTime = 0;
-  late Timer _timer;
-  void startRecording() {
-    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      setState(() {
-        _elapsedTime++;
-      });
-    });
   }
 
   void stopRecording() async {
@@ -90,9 +80,8 @@ class _PushAlertPageState extends State<PushAlertPage> {
     setState(() => _isRecording = false);
 
     // Detener la grabación de video y detener el timer
-    _timer.cancel();
+    pushVC.updateVideo(widget.contactZone, file.path);
 
-    var video = await GallerySaver.saveVideo(file.path);
     Route route = MaterialPageRoute(
       builder: (context) => CancelAlertPage(
         contactRisk: widget.contactZone,
@@ -127,6 +116,24 @@ class _PushAlertPageState extends State<PushAlertPage> {
           height: size.height,
           child: Stack(
             children: [
+              _isLoading
+                  ? Container(
+                      color: Colors.white,
+                      child: const Center(
+                        child: CircularProgressIndicator(),
+                      ),
+                    )
+                  : Positioned(
+                      top: 50,
+                      child: ClipRRect(
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(50)),
+                        child: SizedBox(
+                            height: 100,
+                            width: 100,
+                            child: CameraPreview(_cameraController)),
+                      ),
+                    ),
               Positioned(
                 top: 100,
                 child: Column(
