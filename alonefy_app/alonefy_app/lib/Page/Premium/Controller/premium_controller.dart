@@ -1,4 +1,3 @@
-
 import 'dart:async';
 
 import 'package:get/get.dart';
@@ -12,7 +11,6 @@ import 'package:ifeelefine/Provider/prefencesUser.dart';
 import '../../../Controllers/mainController.dart';
 
 class PremiumController extends GetxController {
-
   StreamSubscription? _purchaseUpdatedSubscription;
   StreamSubscription? _purchaseErrorSubscription;
   StreamSubscription? _conectionSubscription;
@@ -63,33 +61,33 @@ class PremiumController extends GetxController {
 
     _conectionSubscription =
         FlutterInappPurchase.connectionUpdated.listen((connected) async {
-          if (await isSubscribed()) {
-            _prefs.setUserPremium = true;
-          } else {
-            _prefs.setUserPremium = false;
-          }
+      if (await isSubscribed()) {
+        _prefs.setUserPremium = true;
+      } else {
+        _prefs.setUserPremium = false;
+      }
 
-          _updatePremiumAPI();
+      _updatePremiumAPI();
 
-          _getProducts();
-          print('connected: $connected');
-        });
+      _getProducts();
+      print('connected: $connected');
+    });
 
     _purchaseUpdatedSubscription =
         FlutterInappPurchase.purchaseUpdated.listen((productItem) {
-          if (_response != null) {
-            _response!(true);
-            _prefs.setUserPremium = true;
-            _updatePremiumAPI();
-            print('purchase-updated: $productItem');
-          }
-        });
+      if (_response != null) {
+        _response!(true);
+        _prefs.setUserPremium = true;
+        _updatePremiumAPI();
+        print('purchase-updated: $productItem');
+      }
+    });
 
     _purchaseErrorSubscription =
         FlutterInappPurchase.purchaseError.listen((purchaseError) {
-          if (_response != null) _response!(false);
-          print('purchase-error: $purchaseError');
-        });
+      if (_response != null) _response!(false);
+      print('purchase-error: $purchaseError');
+    });
   }
 
   void requestPurchase(IAPItem item) {
@@ -102,12 +100,14 @@ class PremiumController extends GetxController {
   }
 
   Future _getProducts() async {
-    List<IAPItem> items = await FlutterInappPurchase.instance.getProducts(_productLists);
+    List<IAPItem> items =
+        await FlutterInappPurchase.instance.getProducts(_productLists);
     for (var item in items) {
       print('${item.toString()}');
       this._items.add(item);
 
-      if (item.productId == subscriptionId || item.productId == subscriptionFreeTrialId) {
+      if (item.productId == subscriptionId ||
+          item.productId == subscriptionFreeTrialId) {
         _prefs.setPremiumPrice = '${item.localizedPrice!}/mes';
       }
     }
@@ -118,7 +118,8 @@ class PremiumController extends GetxController {
 
     if (purchases != null && _purchases.isNotEmpty) {
       for (var item in purchases) {
-        if (item.productId == subscriptionId || item.productId == subscriptionFreeTrialId) {
+        if (item.productId == subscriptionId ||
+            item.productId == subscriptionFreeTrialId) {
           return true;
         }
       }
@@ -128,7 +129,8 @@ class PremiumController extends GetxController {
   }
 
   Future<List<PurchasedItem>?> _getPurchases() async {
-    List<PurchasedItem>? items = await FlutterInappPurchase.instance.getAvailablePurchases();
+    List<PurchasedItem>? items =
+        await FlutterInappPurchase.instance.getAvailablePurchases();
     for (var item in items!) {
       print("Available purchases: " + item.productId!);
     }
@@ -151,5 +153,4 @@ class PremiumController extends GetxController {
     premiumApi.premium = _prefs.getUserPremium;
     PremiumService().saveData(premiumApi);
   }
-
 }

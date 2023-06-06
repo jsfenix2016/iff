@@ -1,4 +1,5 @@
 import 'package:ifeelefine/Common/colorsPalette.dart';
+import 'package:ifeelefine/Common/utils.dart';
 
 import 'package:ifeelefine/Model/contactZoneRiskBD.dart';
 
@@ -57,7 +58,8 @@ class _ZoneRiskPageState extends State<ZoneRiskPage> {
         isActived: false,
         sendWhatsappContact: false,
         callme: false,
-        save: false);
+        save: false,
+        createDate: DateTime.now());
   }
 
   Widget _mostrarFoto(ContactZoneRiskBD contact) {
@@ -102,9 +104,13 @@ class _ZoneRiskPageState extends State<ZoneRiskPage> {
         if (snapshot.hasData) {
           final listContact = snapshot.data!;
           return Expanded(
-            child: ListView.builder(
+            child: ListView.separated(
+              separatorBuilder: (context, index) {
+                return const SizedBox(
+                  height: 10,
+                );
+              },
               scrollDirection: Axis.vertical,
-              itemExtent: 79.0,
               padding: const EdgeInsets.only(top: 0.0, bottom: 50),
               shrinkWrap: true,
               itemCount: listContact.length,
@@ -276,15 +282,7 @@ class _ZoneRiskPageState extends State<ZoneRiskPage> {
         title: const Text("Zona de riesgo"),
       ),
       body: Container(
-        decoration: const BoxDecoration(
-          gradient: RadialGradient(
-            radius: 1,
-            colors: [
-              ColorPalette.secondView,
-              ColorPalette.principalView,
-            ],
-          ),
-        ),
+        decoration: decorationCustom(),
         child: Stack(
           children: [
             SafeArea(
@@ -330,8 +328,8 @@ class _ZoneRiskPageState extends State<ZoneRiskPage> {
               child: ElevateButtonFilling(
                 onChanged: (value) {
                   initContact();
-                  final _prefs = PreferenceUser();
-                  if (!_prefs.isConfig) {
+                  final prefs = PreferenceUser();
+                  if (!prefs.isConfig) {
                     Route route = MaterialPageRoute(
                       builder: (context) => const UserConfigPage(),
                     );

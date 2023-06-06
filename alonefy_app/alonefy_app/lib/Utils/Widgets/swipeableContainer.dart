@@ -92,7 +92,7 @@ class _SwipeableContainerState extends State<SwipeableContainer> {
                                   ),
                                 ),
                                 title: Text(
-                                  widget.temp[index].typeAction.toString(),
+                                  widget.temp[index].type.toString(),
                                   textAlign: TextAlign.left,
                                   style: GoogleFonts.barlow(
                                     fontSize: 16.0,

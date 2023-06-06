@@ -18,6 +18,7 @@ import 'package:ifeelefine/Model/userbd.dart';
 import 'package:ifeelefine/Page/Contact/ListContact/PageView/list_contact_page.dart';
 import 'package:ifeelefine/Page/Contact/Notice/PageView/contactNotice_page.dart';
 import 'package:ifeelefine/Page/Contact/PageView/addContact_page.dart';
+import 'package:ifeelefine/Page/Historial/PageView/historial_page.dart';
 import 'package:ifeelefine/Page/HomePage/Pageview/home_page.dart';
 
 import 'package:ifeelefine/Page/Premium/Controller/premium_controller.dart';
@@ -44,6 +45,7 @@ import 'package:flutter_background_service_android/flutter_background_service_an
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
 import 'package:notification_center/notification_center.dart';
+import 'package:onboarding/onboarding.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -373,7 +375,7 @@ Future accelerometer() async {
         }
 
         RedirectViewNotifier.showNotifications();
-        mainController.saveUserLog("Movimiento brusco a ", now);
+        mainController.saveUserLog("Movimiento rudo a ", now);
       } else {
         isMovRude = false;
         if (accelerationMagnitude < 19 && accelerationMagnitude > 10) {
@@ -494,7 +496,7 @@ Future activatedTimerInactivity() async {
       timerActive = false;
 
       RedirectViewNotifier.showNotifications();
-      mainController.saveUserLog("Alerta de inactividad ", now);
+      mainController.saveUserLog("Inactividad ", now);
       mainController.saveActivityLog(DateTime.now(), "Inactividad");
     });
   }

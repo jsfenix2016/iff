@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:ffi';
 import 'dart:io';
-
+import 'package:intl/intl.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_contacts/flutter_contacts.dart';
@@ -25,6 +25,7 @@ import 'package:ifeelefine/Utils/Widgets/elevateButtonCustomBorder.dart';
 import 'package:ifeelefine/Utils/Widgets/elevatedButtonFilling.dart';
 import 'package:ifeelefine/Utils/Widgets/imageAccordingWidget.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 final _prefs = PreferenceUser();
 
@@ -70,6 +71,7 @@ class _EditRiskPageState extends State<EditRiskPage> {
   @override
   void initState() {
     getContact();
+    requestGalleryPermission();
     List<String> parts = [];
     if (widget.contactRisk.code != "") {
       parts = widget.contactRisk.code.split(',');
@@ -97,12 +99,16 @@ class _EditRiskPageState extends State<EditRiskPage> {
         contactSelect = contactlist[index];
       }
     }
-
-    // contactSelect = contactlist.firstWhere(widget.contactRisk.name);
     setState(() {});
   }
 
+  // Función para solicitar permiso de acceso a la galería
+  Future<void> requestGalleryPermission() async {
+    var result = await cameraPermissions(_prefs.getAcceptedCamera, context);
+  }
+
   void saveDate(BuildContext context) async {
+    var list = await convertImageData();
     var contactRisk = ContactRiskBD(
         id: widget.contactRisk.id,
         photo: contactSelect.photo,
@@ -119,13 +125,23 @@ class _EditRiskPageState extends State<EditRiskPage> {
         code: widget.contactRisk.code,
         isActived: isActived,
         isprogrammed: isprogrammed,
-        photoDate: await convertImageData(),
-        saveContact: widget.contactRisk.saveContact);
+        photoDate: list,
+        saveContact: widget.contactRisk.saveContact,
+        createDate: DateTime.now());
 
+    getchangeContact(context, contactRisk);
+  }
+
+  void getchangeContact(BuildContext context, ContactRiskBD contactRisk) async {
     if (widget.contactRisk.id == -1) {
       contactRisk.id = widget.index;
       await editVC.saveContactRisk(context, contactRisk);
-      Navigator.of(context).pop();
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const RiskPage(),
+        ),
+      );
     } else {
       await editVC.updateContactRisk(context, contactRisk);
     }
@@ -133,9 +149,21 @@ class _EditRiskPageState extends State<EditRiskPage> {
 
   Future<List<Uint8List>> convertImageData() async {
     List<Uint8List> temp = [];
+
+    Uint8List? bytes;
+    String img64 = "";
+
     for (var i = 0; i < imagePaths.length; i++) {
-      Uint8List bytesImages = const Base64Decoder().convert(imagePaths[i].path);
-      temp.insert(i, bytesImages);
+      var path = File(imagePaths[i].path);
+
+      Uint8List? bytes;
+      String img64 = "";
+
+      if (path.path != "") {
+        bytes = path.readAsBytesSync();
+        img64 = base64Encode(bytes);
+        temp.insert(i, bytes);
+      }
     }
 
     return temp;
@@ -741,6 +769,8 @@ class _EditRiskPageState extends State<EditRiskPage> {
                                     imagePaths = value;
                                     setState(() {});
                                   },
+                                  listImg: widget.contactRisk.photoDate,
+                                  isEdit: false,
                                 ),
                                 Visibility(
                                   visible: imagePaths.isEmpty ? false : true,

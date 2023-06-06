@@ -6,6 +6,8 @@ import 'package:ifeelefine/Data/hiveRisk_data.dart';
 import 'package:ifeelefine/Data/hive_data.dart';
 import 'package:ifeelefine/Model/contact.dart';
 import 'package:ifeelefine/Model/contactRiskBD.dart';
+import 'package:ifeelefine/Model/logActivityBd.dart';
+import 'package:ifeelefine/Model/logAlertsBD.dart';
 import 'package:notification_center/notification_center.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -29,11 +31,20 @@ class EditRiskController extends GetxController {
     }
   }
 
+  Future<void> saveActivityLog(ContactRiskBD contact) async {
+    LogAlertsBD mov = LogAlertsBD(
+        type: "Cita de riesgo",
+        time: DateTime.now(),
+        photoDate: contact.photoDate);
+    await const HiveData().saveUserPositionBD(mov);
+  }
+
   Future<bool> saveContactRisk(
       BuildContext context, ContactRiskBD contact) async {
     try {
       final save = await const HiveDataRisk().saveContactRisk(contact);
       if (save == 0) {
+        saveActivityLog(contact);
         NotificationCenter().notify('getContactRisk');
         showAlert(context, "Contacto guardado correctamente".tr);
         return true;

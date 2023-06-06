@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'logAlertsBD.dart';
+part of '../logAlertsBD.dart';
 
 // **************************************************************************
 // TypeAdapterGenerator
@@ -17,19 +17,25 @@ class LogAlertsBDAdapter extends TypeAdapter<LogAlertsBD> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return LogAlertsBD(
-      typeAction: fields[0] as String,
+      type: fields[0] as String,
       time: fields[1] as DateTime,
+      photoDate: (fields[2] as List?)?.cast<Uint8List>(),
+      video: fields[3] as Uint8List?,
     );
   }
 
   @override
   void write(BinaryWriter writer, LogAlertsBD obj) {
     writer
-      ..writeByte(2)
+      ..writeByte(4)
       ..writeByte(0)
-      ..write(obj.typeAction)
+      ..write(obj.type)
       ..writeByte(1)
-      ..write(obj.time);
+      ..write(obj.time)
+      ..writeByte(2)
+      ..write(obj.photoDate)
+      ..writeByte(3)
+      ..write(obj.video);
   }
 
   @override

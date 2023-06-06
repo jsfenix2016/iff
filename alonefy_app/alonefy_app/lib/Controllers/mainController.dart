@@ -23,14 +23,14 @@ class MainController extends GetxController {
 
   Future<void> saveUserLog(String messaje, DateTime time) async {
     await inicializeHiveBD();
-    LogAlertsBD mov = LogAlertsBD(typeAction: messaje, time: time);
+    LogAlertsBD mov = LogAlertsBD(type: messaje, time: time);
     const HiveData().saveUserPositionBD(mov);
   }
 
   Future<void> saveActivityLog(DateTime dateTime, String movementType) async {
     await inicializeHiveBD();
     LogActivityBD activityBD =
-        LogActivityBD(dateTime: dateTime, movementType: movementType);
+        LogActivityBD(time: dateTime, movementType: movementType);
     await logActivityController.saveLogActivity(activityBD);
   }
 }

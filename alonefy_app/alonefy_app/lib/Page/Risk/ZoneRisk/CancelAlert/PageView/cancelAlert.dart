@@ -76,7 +76,10 @@ class _CancelAlertState extends State<CancelAlertPage> {
       NotificationCenter().notify('getContactZoneRisk');
       stopTimer();
       timerSendSMS.cancel();
-      Navigator.of(context).pop();
+      Route route = MaterialPageRoute(
+        builder: (context) => const ZoneRiskPage(),
+      );
+      Navigator.pushReplacement(context, route);
     } else {
       showAlert(context, 'El codigo no coincide');
     }

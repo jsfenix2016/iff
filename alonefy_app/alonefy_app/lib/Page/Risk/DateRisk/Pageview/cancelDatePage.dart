@@ -86,8 +86,6 @@ class _CancelDatePageState extends State<CancelDatePage> {
         timerSendSMS.cancel();
         Navigator.of(context).pop();
       }
-    } else {
-      print("no es igual");
     }
   }
 

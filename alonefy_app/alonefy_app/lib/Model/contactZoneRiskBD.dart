@@ -17,7 +17,9 @@ class ContactZoneRiskBD {
       required this.isActived,
       required this.sendWhatsappContact,
       required this.callme,
-      required this.save});
+      required this.save,
+      required this.createDate,
+      this.video});
 
   @HiveField(0)
   int id;
@@ -51,4 +53,10 @@ class ContactZoneRiskBD {
 
   @HiveField(10)
   bool save;
+
+  @HiveField(11)
+  DateTime createDate;
+
+  @HiveField(12)
+  Uint8List? video;
 }

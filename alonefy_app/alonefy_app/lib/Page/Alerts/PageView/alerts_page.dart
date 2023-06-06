@@ -170,7 +170,7 @@ class _AlertsPageState extends State<AlertsPage> {
                                                       onPressed: () {},
                                                       icon: searchImageForIcon(
                                                           listAlerts[index]
-                                                              .typeAction),
+                                                              .type),
                                                     ),
                                                     Container(
                                                       color: Colors.transparent,
@@ -181,7 +181,7 @@ class _AlertsPageState extends State<AlertsPage> {
                                                           top: 10,
                                                           child: Text(
                                                             listAlerts[index]
-                                                                .typeAction,
+                                                                .type,
                                                             textAlign:
                                                                 TextAlign.left,
                                                             style: GoogleFonts

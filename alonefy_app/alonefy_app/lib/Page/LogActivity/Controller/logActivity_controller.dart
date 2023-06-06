@@ -7,7 +7,6 @@ import '../../../Controllers/mainController.dart';
 import '../../../Data/hive_data.dart';
 
 class LogActivityController extends GetxController {
-
   Future<List<LogActivity>> getActivities() async {
     try {
       var activitiesBD = await const HiveData().listLogActivitybd;
@@ -25,11 +24,10 @@ class LogActivityController extends GetxController {
   }
 
   Future<LogActivity> convertLogActivityToBD(LogActivityBD activityBD) async {
-
     LogActivity logActivity = LogActivity();
 
     if (activityBD != null) {
-      logActivity.dateTime = activityBD.dateTime;
+      logActivity.dateTime = activityBD.time;
       logActivity.movementType = activityBD.movementType;
     }
 
