@@ -22,15 +22,7 @@ late AndroidNotificationChannel channel;
 bool isFlutterLocalNotificationsInitialized = false;
 
 void showFlutterNotification(RemoteMessage message) {
-  RedirectViewNotifier.showNotificationsFromFirebase(message);
-}
-
-Future<void> showNotification() async {
-  RedirectViewNotifier.showNotifications();
-}
-
-Future<void> showRiskNotification() async {
-  RedirectViewNotifier.showDateNotifications();
+  RedirectViewNotifier.manageNotifications(message);
 }
 
 /// Initialize the [FlutterLocalNotificationsPlugin] package.

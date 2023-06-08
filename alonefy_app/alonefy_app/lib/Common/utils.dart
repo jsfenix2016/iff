@@ -744,3 +744,20 @@ bool validateEmail(String email) {
       RegExp(r'^[\w-]+(\.[\w-]+)*@([a-z0-9]+(\.[a-z0-9]+)*\.)+[a-z]{2,}$');
   return regex.hasMatch(email);
 }
+
+Future<bool> getEnableIFF() async {
+  await Jiffy.locale('es');
+  var strDatetime = _prefs.getStartDateTimeDisambleIFF;
+  if (strDatetime != "") {
+    String deactivatedTime = _prefs.getDisambleIFF;
+    var minutes = deactivateTimeToMinutes(deactivatedTime);
+    var datetime = Jiffy(strDatetime).dateTime;
+    datetime.add(Duration(minutes: minutes));
+
+    if (DateTime.now().isAfter(datetime)) {
+      _prefs.setEnableIFF = true;
+    }
+  }
+
+  return _prefs.getEnableIFF;
+}

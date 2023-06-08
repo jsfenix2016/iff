@@ -1,5 +1,5 @@
 class Constant {
-  static const baseApi = '';
+  static const baseApi = 'https://dev.alertfriends.app';
   static const baseApiMessageBird = 'https://rest.messagebird.com/';
   static const personalInformation = 'Datos personales';
   static const selectGender = 'Selecciona el genero';

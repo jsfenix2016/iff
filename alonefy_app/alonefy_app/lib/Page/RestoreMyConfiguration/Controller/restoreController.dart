@@ -227,6 +227,7 @@ class RestoreController extends GetxController {
   void _deleteDesactivateAlertFriend() async {
     _prefs.setDisambleIFF = "";
     _prefs.setEnableIFF = true;
+    _prefs.setStartDateTimeDisambleIFF = "";
   }
 
   void _deleteNotificationAudio() async {
