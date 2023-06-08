@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ifeelefine/Common/Constant.dart';
+import 'package:ifeelefine/Common/initialize_models_bd.dart';
 import 'package:ifeelefine/Common/utils.dart';
 import 'package:ifeelefine/Data/hive_data.dart';
 import 'package:ifeelefine/Model/useMobilbd.dart';

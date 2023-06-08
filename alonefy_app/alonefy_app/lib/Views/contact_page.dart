@@ -18,6 +18,7 @@ import 'package:ifeelefine/Utils/Widgets/selectTimerCallSendSMS.dart';
 import 'package:ifeelefine/Utils/Widgets/widgedContact.dart';
 import 'package:notification_center/notification_center.dart';
 import 'package:slidable_button/slidable_button.dart';
+import 'package:ifeelefine/Common/decoration_custom.dart';
 
 class ContactList extends StatefulWidget {
   const ContactList({super.key, required this.isMenu});

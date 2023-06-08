@@ -7,6 +7,7 @@ import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ifeelefine/Common/Constant.dart';
 import 'package:ifeelefine/Common/colorsPalette.dart';
+import 'package:ifeelefine/Common/initialize_models_bd.dart';
 import 'package:ifeelefine/Common/utils.dart';
 import 'package:ifeelefine/Model/user.dart';
 import 'package:ifeelefine/Model/userbd.dart';
@@ -25,7 +26,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:country_state_city_picker/model/select_status_model.dart'
     as StatusModel;
 import 'package:uuid/uuid.dart';
-// import 'package:in_app_purchase/in_app_purchase.dart';
+import 'package:ifeelefine/Common/decoration_custom.dart';
 
 // ignore: use_key_in_widget_constructors
 class UserConfigPage2 extends StatefulWidget {
@@ -52,17 +53,12 @@ class _UserConfigPageState2 extends State<UserConfigPage2> {
 
   Map<String, String> ages = {};
 
-  late String _title;
-  late TimeOfDay _timeOfDay;
-  // late Function _updateTimeFunction;
-
   var premiumController = Get.put(PremiumController());
 
   @override
   void initState() {
     user = initUser();
     userbd = widget.userbd;
-    _timeOfDay = const TimeOfDay(hour: 00, minute: 00);
     super.initState();
 
     _getAge();
@@ -291,39 +287,6 @@ class _UserConfigPageState2 extends State<UserConfigPage2> {
           ],
         ),
       ),
-    );
-  }
-
-  _createBottom(BuildContext context) {
-    return FloatingActionButton(
-      child: const Icon(Icons.remove_red_eye_outlined),
-      backgroundColor: ColorPalette.principal,
-      onPressed: () {
-        //createPlantFoodNotification();
-        Navigator.pushNamed(context, "preview", arguments: null);
-      },
-    );
-  }
-
-  Widget _createButtonFree() {
-    return ElevatedButton.icon(
-      style: ButtonStyle(
-          backgroundColor:
-              MaterialStateProperty.all<Color>(ColorPalette.principal)),
-      label: Text(
-        "Gratuito 30 dias",
-        style: GoogleFonts.barlow(
-          fontSize: 18.0,
-          wordSpacing: 1,
-          letterSpacing: 1.2,
-          fontWeight: FontWeight.normal,
-          color: Colors.white,
-        ),
-      ),
-      icon: const Icon(
-        Icons.security,
-      ),
-      onPressed: _submit,
     );
   }
 

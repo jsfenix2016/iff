@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ifeelefine/Common/Constant.dart';
 import 'package:ifeelefine/Common/colorsPalette.dart';
+import 'package:ifeelefine/Common/manager_alerts.dart';
 
 import 'package:ifeelefine/Common/utils.dart';
 import 'package:ifeelefine/Model/restday.dart';
@@ -20,6 +21,7 @@ import 'package:ifeelefine/Provider/prefencesUser.dart';
 import 'package:ifeelefine/Utils/Widgets/elevatedButtonFilling.dart';
 import 'package:ifeelefine/Utils/Widgets/listDayweekCustom.dart';
 import 'package:ifeelefine/Utils/Widgets/widgetLogo.dart';
+import 'package:ifeelefine/Common/decoration_custom.dart';
 
 class UserRestPage extends StatefulWidget {
   const UserRestPage({super.key});
@@ -211,10 +213,9 @@ class _UserRestPageState extends State<UserRestPage> {
       noSelectDay++;
       await processSelectedInfo();
 
-      // SaveAndContinueScreen();
-      showAlert(context, "Faltan dias por seleccionar.");
+      showSaveAlert(context, Constant.info, "Faltan dias por seleccionar.");
     } else {
-      showAlert(context, "Puede continuar.");
+      showSaveAlert(context, Constant.info, "Puede continuar.");
       isVisibleBtn = true;
     }
     setState(() {});
@@ -233,9 +234,8 @@ class _UserRestPageState extends State<UserRestPage> {
     if (val == false) {
       await processSelectedInfo();
 
-      showAlert(context,
+      showSaveAlert(context, Constant.info,
           "Todos los dias ya fueron asignados puedes continuar con la configuración");
-
       setState(() {});
       return;
     }
@@ -247,8 +247,9 @@ class _UserRestPageState extends State<UserRestPage> {
         return;
       }
       // ignore: use_build_context_synchronously
-      showAlert(
-          context, "debes seleccionar los dias restantes antes de continuar");
+      showSaveAlert(context, Constant.info,
+          "debes seleccionar los dias restantes antes de continuar");
+
       setState(() {});
     }
   }

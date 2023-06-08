@@ -15,6 +15,7 @@ import 'package:ifeelefine/Provider/prefencesUser.dart';
 
 import 'package:ifeelefine/Utils/Widgets/elevatedButtonFilling.dart';
 import 'package:notification_center/notification_center.dart';
+import 'package:ifeelefine/Common/decoration_custom.dart';
 
 class ZoneRiskPage extends StatefulWidget {
   const ZoneRiskPage({super.key});

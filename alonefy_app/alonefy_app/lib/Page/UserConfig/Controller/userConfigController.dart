@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:ifeelefine/Common/Constant.dart';
+import 'package:ifeelefine/Common/initialize_models_bd.dart';
+import 'package:ifeelefine/Common/manager_alerts.dart';
 
 import 'package:ifeelefine/Common/utils.dart';
 
@@ -28,12 +31,13 @@ class UserConfigCOntroller extends GetxController {
 
       // Utiliza la variable local dentro del espacio asyncronizado
       Future.delayed(const Duration(milliseconds: 10), () {
-        showAlert(localContext, "Revise su correo electronico");
+        showSaveAlert(context, Constant.info, "Revise su correo electronico");
       });
     } else {
       // Utiliza la variable local dentro del espacio asyncronizado
       Future.delayed(const Duration(milliseconds: 10), () {
-        showAlert(localContext, "Algo salio mal, revise su conexión");
+        showSaveAlert(
+            context, Constant.info, "Algo salio mal, revise su conexión");
       });
     }
   }
@@ -47,30 +51,29 @@ class UserConfigCOntroller extends GetxController {
 
       // Utiliza la variable local dentro del espacio asyncronizado
       Future.delayed(const Duration(milliseconds: 10), () {
-        showAlert(localContext, "Codigo valido");
+        showSaveAlert(context, Constant.info, "Codigo valido");
       });
       return true;
     } else {
       Future.delayed(const Duration(milliseconds: 10), () {
-        showAlert(localContext, "Codigo invalido");
+        showSaveAlert(context, Constant.info, "Codigo invalido");
       });
       return false;
     }
   }
 
   Future<bool> validateCodeEmail(BuildContext context, String code) async {
-    final localContext = context;
     var res = await userVC.validateCodeEmail(prefs.geIdTokenEmail, code);
 
     if (res["ok"]) {
       // Utiliza la variable local dentro del espacio asyncronizado
       Future.delayed(const Duration(milliseconds: 10), () {
-        showAlert(localContext, "Codigo valido");
+        showSaveAlert(context, Constant.info, "Codigo valido");
       });
       return true;
     } else {
       Future.delayed(const Duration(milliseconds: 10), () {
-        showAlert(localContext, "Codigo invalido");
+        showSaveAlert(context, Constant.info, "Codigo invalido");
       });
       return false;
     }

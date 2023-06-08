@@ -4,13 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:get/get.dart';
 import 'package:ifeelefine/Common/Constant.dart';
+import 'package:ifeelefine/Common/manager_alerts.dart';
 import 'package:ifeelefine/Common/utils.dart';
 import 'package:ifeelefine/Data/hive_data.dart';
 import 'package:ifeelefine/Model/ApiRest/ContactApi.dart';
 import 'package:ifeelefine/Model/contact.dart';
 import 'package:ifeelefine/Page/Contact/Service/contactService.dart';
-import 'package:permission_handler/permission_handler.dart';
-
 import 'mainController.dart';
 
 class ContactUserController extends GetxController {
@@ -49,9 +48,11 @@ class ContactUserController extends GetxController {
         if (save == 0) {
           final MainController mainController = Get.put(MainController());
           var user = await mainController.getUserData();
-          await contactServ.saveContact(convertToApi(contactBD, user.telephone));
+          await contactServ
+              .saveContact(convertToApi(contactBD, user.telephone));
           if (contactBD.photo != null) {
-            contactServ.updateImage(user.telephone, contactBD.phones, contactBD.photo!);
+            contactServ.updateImage(
+                user.telephone, contactBD.phones, contactBD.photo!);
           }
         }
       }
@@ -68,7 +69,7 @@ class ContactUserController extends GetxController {
   }
 
   void showAlertTemp(String text) {
-    showAlert(contextTemp, text);
+    showSaveAlert(contextTemp, Constant.info, text);
   }
 
   Future<void> updateContacts(
@@ -124,8 +125,7 @@ class ContactUserController extends GetxController {
             minutesToString(contactApi.timeCall),
             minutesToString(contactApi.timeWhatsapp),
             contactApi.phoneNumber,
-            contactApi.status
-        );
+            contactApi.status);
         const HiveData().saveUserContact(contact);
       }
     }

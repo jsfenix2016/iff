@@ -15,22 +15,12 @@ import 'package:ifeelefine/Model/activitydaybd.dart';
 import 'package:ifeelefine/Model/contactRiskBD.dart';
 
 import 'package:ifeelefine/Model/userbd.dart';
-import 'package:ifeelefine/Page/Contact/ListContact/PageView/list_contact_page.dart';
-import 'package:ifeelefine/Page/Contact/Notice/PageView/contactNotice_page.dart';
-import 'package:ifeelefine/Page/Contact/PageView/addContact_page.dart';
-import 'package:ifeelefine/Page/Historial/PageView/historial_page.dart';
-import 'package:ifeelefine/Page/HomePage/Pageview/home_page.dart';
-import 'package:ifeelefine/Page/Onboarding/PageView/onboarding_page.dart';
 
 import 'package:ifeelefine/Page/Premium/Controller/premium_controller.dart';
 import 'package:ifeelefine/Page/RestoreMyConfiguration/Controller/restoreController.dart';
 
 import 'package:ifeelefine/Page/Risk/DateRisk/ListDateRisk/PageView/riskDatePage.dart';
-import 'package:ifeelefine/Page/UserConfig/PageView/userconfig_page.dart';
-import 'package:ifeelefine/Page/UserConfig2/Page/configuration2_page.dart';
-import 'package:ifeelefine/Page/UserEdit/Controller/getUserController.dart';
 import 'package:ifeelefine/Services/mainService.dart';
-import 'package:ifeelefine/Views/contact_page.dart';
 
 import 'package:intl/intl.dart';
 import 'package:ifeelefine/Common/idleLogic.dart';
@@ -49,7 +39,6 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:notification_center/notification_center.dart';
-import 'package:onboarding/onboarding.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -104,7 +93,7 @@ Future<void> main() async {
   user = await mainController.getUserData();
 
   if (user != null) {
-    var userApi = null;//await GetUserController().getUser(user!.telephone);
+    var userApi = null; //await GetUserController().getUser(user!.telephone);
 
     if (userApi != null && userApi.idUser != user!.idUser) {
       await RestoreController().deleteAllData();
@@ -125,6 +114,7 @@ Future<void> main() async {
     var androidInfo = await deviceInfo.androidInfo;
     device = androidInfo.model;
   }
+
   runApp(
     GetMaterialApp(
       home: MyApp(
@@ -244,15 +234,19 @@ Future activateService() async {
           }
           break;
         case NotificationResponseType.selectedNotificationAction:
-          if (notificationResponse.actionId != null && notificationResponse.actionId!.contains("helpID")) {
-            String taskIds = notificationResponse.actionId!.replaceAll("helpID_", "");
+          if (notificationResponse.actionId != null &&
+              notificationResponse.actionId!.contains("helpID")) {
+            String taskIds =
+                notificationResponse.actionId!.replaceAll("helpID_", "");
             var taskIdList = taskIds.split(";");
             //IdleLogic().notifyContact();
             //mainController.saveUserLog("Envio de SMS", now);
             MainService().sendAlertToContactImmediately(taskIdList);
           }
-          if (notificationResponse.actionId != null && notificationResponse.actionId!.contains("imgoodId")) {
-            String taskIds = notificationResponse.actionId!.replaceAll("imgoodId_", "");
+          if (notificationResponse.actionId != null &&
+              notificationResponse.actionId!.contains("imgoodId")) {
+            String taskIds =
+                notificationResponse.actionId!.replaceAll("imgoodId_", "");
             var taskIdList = taskIds.split(";");
             ismove = false;
             timerActive = true;

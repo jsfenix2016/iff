@@ -7,6 +7,7 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ifeelefine/Common/Constant.dart';
 import 'package:ifeelefine/Common/colorsPalette.dart';
+import 'package:ifeelefine/Common/manager_alerts.dart';
 import 'package:ifeelefine/Common/utils.dart';
 
 import 'package:ifeelefine/Model/restday.dart';
@@ -21,6 +22,7 @@ import 'package:ifeelefine/Utils/Widgets/elevateButtonCustomBorder.dart';
 import 'package:ifeelefine/Utils/Widgets/listDayweekCustom.dart';
 import 'package:collection/collection.dart';
 import 'package:ifeelefine/Utils/Widgets/widgetLogo.dart';
+import 'package:ifeelefine/Common/decoration_custom.dart';
 
 class PreviewRestTimePage extends StatefulWidget {
   const PreviewRestTimePage({super.key, required this.isMenu});
@@ -108,8 +110,7 @@ class _PreviewRestTimePageState extends State<PreviewRestTimePage> {
 
     if (id != -1) {
       if (widget.isMenu) {
-        showAlert(context, "Se a guardado correctamente");
-
+        showSaveAlert(context, Constant.info, Constant.saveCorrectly);
         return;
       }
       Navigator.pushReplacement(
@@ -259,9 +260,8 @@ class _PreviewRestTimePageState extends State<PreviewRestTimePage> {
                                 context, tempSave);
 
                             if (id == -1) {
-                              showAlert(
-                                  context, "Algo salio mal, intente de nuevo");
-
+                              showSaveAlert(context, Constant.info,
+                                  Constant.errorGeneric);
                               return;
                             }
                             setState(() {});
@@ -284,9 +284,8 @@ class _PreviewRestTimePageState extends State<PreviewRestTimePage> {
                         child: ElevateButtonCustomBorder(
                           onChanged: (value) async {
                             if (await validateAllDaySelect()) {
-                              showAlert(context,
+                              showSaveAlert(context, Constant.info,
                                   "Debes seleccionar los dias restantes antes de continuar");
-
                               return;
                             } else {
                               await processSelectedInfo();

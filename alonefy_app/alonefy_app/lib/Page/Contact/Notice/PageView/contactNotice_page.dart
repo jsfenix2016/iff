@@ -11,6 +11,7 @@ import 'package:ifeelefine/Page/Contact/Widget/cellContactStatus.dart';
 import 'package:ifeelefine/Utils/Widgets/elevatedButtonFilling.dart';
 
 import 'package:notification_center/notification_center.dart';
+import 'package:ifeelefine/Common/decoration_custom.dart';
 
 class ContactNoticePage extends StatefulWidget {
   const ContactNoticePage({super.key});

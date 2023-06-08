@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:get/get.dart';
+import 'package:ifeelefine/Common/Constant.dart';
 import 'package:ifeelefine/Common/utils.dart';
 import 'package:ifeelefine/Data/hiveRisk_data.dart';
 import 'package:ifeelefine/Data/hive_data.dart';
@@ -14,6 +15,7 @@ import 'package:permission_handler/permission_handler.dart';
 
 import '../../../../../Controllers/mainController.dart';
 import '../../../../../Model/ApiRest/ZoneRiskApi.dart';
+import 'package:ifeelefine/Common/manager_alerts.dart';
 
 class EditZoneController extends GetxController {
   Future<List<Contact>> getContacts(BuildContext context) async {
@@ -38,7 +40,10 @@ class EditZoneController extends GetxController {
 
   Future<void> saveActivityLog(ContactZoneRiskBD contact) async {
     LogAlertsBD mov = LogAlertsBD(
-        id: 0, type: "Zona de riesgo", time: DateTime.now(), video: contact.photo);
+        id: 0,
+        type: "Zona de riesgo",
+        time: DateTime.now(),
+        video: contact.photo);
     await const HiveData().saveUserPositionBD(mov);
   }
 
@@ -47,15 +52,18 @@ class EditZoneController extends GetxController {
     try {
       final MainController mainController = Get.put(MainController());
       var user = await mainController.getUserData();
-      var contactZoneRiskApi = await ZoneRiskService().createContactZoneRisk(ZoneRiskApi.fromZoneRisk(contact, user.telephone));
+      var contactZoneRiskApi = await ZoneRiskService().createContactZoneRisk(
+          ZoneRiskApi.fromZoneRisk(contact, user.telephone));
       if (contact.photo != null) {
-        await ZoneRiskService().updateImage(user.telephone, contact.id, contact.photo!);
+        await ZoneRiskService()
+            .updateImage(user.telephone, contact.id, contact.photo!);
       }
       if (contactZoneRiskApi != null) {
         contact.id = contactZoneRiskApi.id;
         var save = await const HiveDataRisk().saveContactZoneRisk(contact);
         NotificationCenter().notify('getContactZoneRisk');
-        showAlert(context, "Contacto guardado correctamente".tr);
+
+        showSaveAlert(context, Constant.info, Constant.saveCorrectly);
         return true;
       } else {
         return false;
@@ -71,10 +79,12 @@ class EditZoneController extends GetxController {
     try {
       final MainController mainController = Get.put(MainController());
       var user = await mainController.getUserData();
-      ZoneRiskService().updateZoneRisk(ZoneRiskApi.fromZoneRisk(contact, user.telephone), contact.id);
+      ZoneRiskService().updateZoneRisk(
+          ZoneRiskApi.fromZoneRisk(contact, user.telephone), contact.id);
       var save = const HiveDataRisk().updateContactZoneRisk(contact);
       NotificationCenter().notify('getContactZoneRisk');
-      showAlert(context, "Contacto actualizado correctamente".tr);
+
+      showSaveAlert(context, Constant.info, Constant.changeGeneric);
       return true;
     } catch (error) {
       print(error);
@@ -84,8 +94,10 @@ class EditZoneController extends GetxController {
 
   Future<void> saveFromApi(List<ZoneRiskApi> contactsZoneRiskApi) async {
     for (var contactZoneRiskApi in contactsZoneRiskApi) {
-      if (contactZoneRiskApi.photo != null && contactZoneRiskApi.photo.isNotEmpty) {
-        var bytes = await ZoneRiskService().getZoneRiskImage(contactZoneRiskApi.photo);
+      if (contactZoneRiskApi.photo != null &&
+          contactZoneRiskApi.photo.isNotEmpty) {
+        var bytes =
+            await ZoneRiskService().getZoneRiskImage(contactZoneRiskApi.photo);
         var contact = ContactZoneRiskBD(
             id: contactZoneRiskApi.id,
             photo: bytes,
@@ -98,8 +110,7 @@ class EditZoneController extends GetxController {
             sendWhatsappContact: contactZoneRiskApi.sendwhatsappcontact,
             callme: contactZoneRiskApi.callme,
             save: contactZoneRiskApi.save,
-            createDate: DateTime.now()
-        );
+            createDate: DateTime.now());
         const HiveDataRisk().saveContactZoneRisk(contact);
       }
     }

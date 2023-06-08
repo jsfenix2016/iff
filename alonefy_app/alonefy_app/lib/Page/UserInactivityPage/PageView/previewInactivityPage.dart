@@ -11,6 +11,7 @@ import 'package:ifeelefine/Page/UserInactivityPage/Controller/inactivityViewCont
 import 'package:ifeelefine/Utils/Widgets/containerTextEditAndTime.dart';
 import 'package:collection/collection.dart';
 import 'package:ifeelefine/Utils/Widgets/elevatedButtonFilling.dart';
+import 'package:ifeelefine/Common/decoration_custom.dart';
 
 class PreviewInactivityPage extends StatefulWidget {
   const PreviewInactivityPage({super.key});

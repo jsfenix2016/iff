@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:ifeelefine/Common/Constant.dart';
+import 'package:ifeelefine/Common/manager_alerts.dart';
 import 'package:ifeelefine/Common/utils.dart';
 import 'package:ifeelefine/Page/FallDetected/Service/fallService.dart';
 import 'package:ifeelefine/Page/TermsAndConditions/PageView/conditionGeneral_page.dart';
@@ -14,8 +16,7 @@ class FallDetectedController extends GetxController {
   Future<void> saveDetectedFall(BuildContext context, bool detectedfall) async {
     _prefs.setDetectedFall = detectedfall;
 
-    showAlert(context, "Se guardo correctamente");
-
+    showSaveAlert(context, Constant.info, Constant.saveCorrectly);
     Navigator.push(
       context,
       MaterialPageRoute(

@@ -16,6 +16,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:ifeelefine/Utils/Widgets/elevateButtonCustomBorder.dart';
 import 'package:ifeelefine/Utils/Widgets/elevatedButtonFilling.dart';
 import 'package:notification_center/notification_center.dart';
+import 'package:ifeelefine/Common/decoration_custom.dart';
 
 class RiskPage extends StatefulWidget {
   const RiskPage({super.key});

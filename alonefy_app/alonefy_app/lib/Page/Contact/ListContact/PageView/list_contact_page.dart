@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ifeelefine/Common/Constant.dart';
 import 'package:ifeelefine/Common/colorsPalette.dart';
+import 'package:ifeelefine/Common/manager_alerts.dart';
 import 'package:ifeelefine/Common/utils.dart';
 import 'package:ifeelefine/Page/Contact/ListContact/Controller/list_contact_controller.dart';
 import 'package:ifeelefine/Provider/prefencesUser.dart';

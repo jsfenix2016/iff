@@ -14,6 +14,7 @@ import 'package:ifeelefine/Utils/Widgets/elevatedButtonFilling.dart';
 import 'package:ifeelefine/Utils/Widgets/widgetLogo.dart';
 
 import '../../../Views/contact_page.dart';
+import 'package:ifeelefine/Common/decoration_custom.dart';
 
 class FallActivationPage extends StatefulWidget {
   /// Creates a new GeolocatorWidget.

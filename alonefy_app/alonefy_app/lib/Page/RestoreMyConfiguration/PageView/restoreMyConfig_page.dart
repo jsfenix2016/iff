@@ -11,6 +11,7 @@ import 'package:ifeelefine/Page/RestoreMyConfiguration/Controller/restoreControl
 
 import '../../../Common/colorsPalette.dart';
 import '../../../Provider/prefencesUser.dart';
+import 'package:ifeelefine/Common/decoration_custom.dart';
 
 class RestoreMyConfigPage extends StatefulWidget {
   /// Creates a new GeolocatorWidget.
@@ -50,7 +51,7 @@ class _RestoreMyConfigPageState extends State<RestoreMyConfigPage> {
         height: size.height,
         child: Stack(
           children: [
-            if (_isRestoreInProgress) ... [
+            if (_isRestoreInProgress) ...[
               const Align(
                 alignment: Alignment.center,
                 child: CircularProgressIndicator(
@@ -99,7 +100,7 @@ class _RestoreMyConfigPageState extends State<RestoreMyConfigPage> {
                       ),
                       enabledBorder: OutlineInputBorder(
                         borderSide:
-                        BorderSide(width: 1, color: ColorPalette.principal),
+                            BorderSide(width: 1, color: ColorPalette.principal),
                       ),
                     ),
                     keyboardType: TextInputType.number,
@@ -147,7 +148,7 @@ class _RestoreMyConfigPageState extends State<RestoreMyConfigPage> {
                       ),
                       enabledBorder: OutlineInputBorder(
                         borderSide:
-                        BorderSide(width: 1, color: ColorPalette.principal),
+                            BorderSide(width: 1, color: ColorPalette.principal),
                       ),
                     ),
                     onChanged: (valor) {
@@ -238,8 +239,8 @@ class _RestoreMyConfigPageState extends State<RestoreMyConfigPage> {
                 child: Container(
                   decoration: BoxDecoration(
                     color: Colors.transparent,
-                    border:
-                        Border.all(color: const Color.fromRGBO(219, 177, 42, 1)),
+                    border: Border.all(
+                        color: const Color.fromRGBO(219, 177, 42, 1)),
                     borderRadius: const BorderRadius.all(Radius.circular(8)),
                   ),
                   width: 138,

@@ -1,30 +1,21 @@
-import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
-import 'package:ifeelefine/Model/userbd.dart';
-import 'package:ifeelefine/Page/Geolocator/Controller/configGeolocatorController.dart';
-import 'package:intl/intl.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:ifeelefine/Common/colorsPalette.dart';
-import 'package:ifeelefine/Model/user.dart';
-
+import 'package:get/get.dart';
+import 'package:ifeelefine/Common/Constant.dart';
+import 'package:ifeelefine/Common/manager_alerts.dart';
+import 'package:ifeelefine/Page/Geolocator/Controller/configGeolocatorController.dart';
 import 'package:ifeelefine/Provider/prefencesUser.dart';
-
 import 'package:image_picker/image_picker.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:path_provider/path_provider.dart';
-
 import 'package:permission_handler/permission_handler.dart';
+import 'package:intl/intl.dart';
 
-import 'Constant.dart';
-
-// import 'package:flutter_pay/flutter_pay.dart';
 final _prefs = PreferenceUser();
 final _locationController = Get.put(ConfigGeolocatorController());
 
@@ -127,7 +118,7 @@ String calculateAge(DateTime birthDate) {
   if (birthDate == null) {
     return "";
   }
-  var edad;
+  var edad = '';
   DateTime currentDate = DateTime.now();
   int age = currentDate.year - birthDate.year;
   int month1 = currentDate.month;
@@ -161,7 +152,7 @@ Image getImage(String urlImage) {
 Future<File> procesarImagen(ImageSource origen) async {
   final XFile? image = await ImagePicker().pickImage(source: origen);
 
-  var file;
+  File file = File("");
   if (image == null) {
     return file;
   }
@@ -175,7 +166,7 @@ Future<File> convertUint8ToFile(Uint8List bytes) async {
 
 Future<String> saveImageFromUrl(Uint8List bytes, String imageName) async {
   var documentDirectory = await getApplicationDocumentsDirectory();
-  var firstPath = documentDirectory.path + "/images";
+  var firstPath = "${documentDirectory.path}/images";
   var filePathAndName = '${documentDirectory.path}/images/$imageName';
   await Directory(firstPath).create(recursive: true);
   File file = File(filePathAndName);
@@ -222,9 +213,6 @@ Duration getDuration(List<String> parts) {
 }
 
 DateTime parseDurationRow(String s) {
-  int hours = 0;
-  int minutes = 0;
-  int micros;
   List<String> parts = [];
   List<String> parts2 = [];
   Duration temp = Duration.zero;
@@ -238,9 +226,8 @@ DateTime parseDurationRow(String s) {
     temp = getDuration(parts2);
   }
 
-  DateTime now = DateTime.now();
   var format = DateFormat("HH:mm");
-  Duration durationAgo = Duration(days: 5, hours: 2, minutes: 30);
+
   String sDuration = "${temp.inHours}:${temp.inMinutes.remainder(60)}";
   DateTime pastDateTime = format.parse(sDuration);
   return pastDateTime;
@@ -266,9 +253,6 @@ String parseTimeString(String s) {
 }
 
 DateTime parseDuration(String s) {
-  int hours = 0;
-  int minutes = 0;
-  int micros;
   List<String> parts = [];
   List<String> parts2 = [];
   Duration temp = Duration.zero;
@@ -322,38 +306,6 @@ Future getResponse() async {
   return jsonDecode(res);
 }
 
-User initUser() {
-  return User(
-      idUser: "-1",
-      name: "",
-      lastname: "",
-      email: "",
-      telephone: "",
-      gender: "",
-      maritalStatus: "",
-      styleLife: "",
-      pathImage: "",
-      age: '',
-      country: '',
-      city: '');
-}
-
-UserBD initUserBD() {
-  return UserBD(
-      idUser: "-1",
-      name: "",
-      lastname: "",
-      email: "",
-      telephone: "",
-      gender: "",
-      maritalStatus: "",
-      styleLife: "",
-      pathImage: "",
-      age: '',
-      country: '',
-      city: '');
-}
-
 Container searchImageForIcon(String typeAction) {
   AssetImage name = const AssetImage('assets/images/Email.png');
   if (typeAction.contains("SMS")) {
@@ -378,47 +330,6 @@ Container searchImageForIcon(String typeAction) {
   );
 }
 
-BoxDecoration decorationCustom() {
-  return const BoxDecoration(
-    gradient: LinearGradient(
-      begin: Alignment.topCenter,
-      end: Alignment(0, 2),
-      colors: <Color>[
-        ColorPalette.principalView,
-        ColorPalette.secondView,
-      ],
-      tileMode: TileMode.mirror,
-    ),
-  );
-}
-
-BoxDecoration decorationCustom2() {
-  return const BoxDecoration(
-    gradient: LinearGradient(
-      begin: Alignment.centerLeft,
-      end: Alignment(1, 0),
-      colors: <Color>[
-        ColorPalette.principalView,
-        ColorPalette.secondView,
-        ColorPalette.principalView,
-      ],
-      tileMode: TileMode.mirror,
-    ),
-  );
-}
-
-LinearGradient linerGradientButtonFilling() {
-  return const LinearGradient(
-    begin: Alignment.centerLeft,
-    end: Alignment(1, 0),
-    colors: <Color>[
-      ColorPalette.linerGradientText,
-      ColorPalette.principal,
-    ],
-    tileMode: TileMode.mirror,
-  );
-}
-
 /// Determine the current position of the device.
 ///
 /// When the location services are not enabled or permissions
@@ -426,7 +337,8 @@ LinearGradient linerGradientButtonFilling() {
 Future<Position> determinePosition() async {
   bool serviceEnabled;
   LocationPermission permission;
-  if (_prefs.getAcceptedSendLocation == PreferencePermission.allow && _prefs.getUserPremium) {
+  if (_prefs.getAcceptedSendLocation == PreferencePermission.allow &&
+      _prefs.getUserPremium) {
     Geolocator.openAppSettings();
   }
   // Test if location services are enabled.
@@ -440,7 +352,8 @@ Future<Position> determinePosition() async {
     return Future.error('Location services are disabled.');
   }
 
-  if (_prefs.getAcceptedSendLocation != PreferencePermission.allow && !_prefs.getUserPremium) {
+  if (_prefs.getAcceptedSendLocation != PreferencePermission.allow &&
+      !_prefs.getUserPremium) {
     return Future.error('');
   }
   permission = await Geolocator.checkPermission();
@@ -498,73 +411,6 @@ Future<bool> cameraPermissions(
   } else {
     return _prefs.getAcceptedCamera == PreferencePermission.allow;
   }
-}
-
-void showPermissionDialog(BuildContext context, String message) {
-  showDialog(
-    context: context,
-    builder: (context) {
-      return AlertDialog(
-        title: const Text("Abrir permisos"),
-        content: Text(message),
-        actions: <Widget>[
-          TextButton(
-            child: const Text("Cerrar"),
-            onPressed: () => Navigator.of(context).pop(),
-          ),
-          TextButton(
-            child: const Text("Abrir"),
-            onPressed: () => openAppSettings(),
-          )
-        ],
-      );
-    },
-  );
-}
-
-void showLocalPermissionDialog(
-    BuildContext context, String message, Function(bool) response) {
-  showDialog(
-    context: context,
-    builder: (context) {
-      return AlertDialog(
-        title: const Text("Permitir permiso"),
-        content: Text(message),
-        actions: <Widget>[
-          TextButton(
-              child: const Text("No"),
-              onPressed: () {
-                response(false);
-                Navigator.of(context).pop();
-              }),
-          TextButton(
-            child: const Text("Sí"),
-            onPressed: () {
-              response(true);
-              Navigator.of(context).pop();
-            },
-          )
-        ],
-      );
-    },
-  );
-}
-
-void showSaveAlert(BuildContext context, String title, String message) {
-  showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: Text(title),
-          content: Text(message),
-          actions: <Widget>[
-            TextButton(
-              child: const Text("Ok"),
-              onPressed: () => Navigator.of(context).pop(),
-            )
-          ],
-        );
-      });
 }
 
 String getDefaultPattern() {
@@ -693,7 +539,6 @@ int deactivateTimeToMinutes(String strTime) {
 
 String minutesToString(int minutes) {
   var hours = minutes / 60;
-  var min = minutes % 60;
 
   if (hours > 0 && minutes > 0) {
     return '$minutes min';
@@ -728,7 +573,7 @@ String convertMinutesToHourAndMinutes(int minutes) {
 
 extension StringExtension on String {
   String capitalize() {
-    return "${this[0].toUpperCase()}${this.substring(1).toLowerCase()}";
+    return "${this[0].toUpperCase()}${substring(1).toLowerCase()}";
   }
 }
 

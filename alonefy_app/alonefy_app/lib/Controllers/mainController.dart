@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:ifeelefine/Common/initialize_models_bd.dart';
 import 'package:ifeelefine/Common/utils.dart';
 import 'package:ifeelefine/Data/hive_constant_adapterInit.dart';
 import 'package:ifeelefine/Data/hive_data.dart';

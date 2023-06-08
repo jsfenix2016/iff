@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ifeelefine/Common/Constant.dart';
+import 'package:ifeelefine/Common/manager_alerts.dart';
 import 'package:ifeelefine/Common/utils.dart';
 import 'package:ifeelefine/Controllers/mainController.dart';
 import 'package:ifeelefine/Data/hive_data.dart';
@@ -33,8 +34,7 @@ class EditContactController extends GetxController {
         var user = await mainController.getUserData();
         contactServ.saveContact(convertToApi(contact, user.telephone));
 
-        showAlertController(
-            "Contacto guardado correctamente, se ha realizado la solicitud de autorización correctamente");
+        showAlertController(Constant.contactSaveCorrectly);
         return true;
       } else {
         showAlertController(Constant.conexionFail);
@@ -48,7 +48,7 @@ class EditContactController extends GetxController {
   }
 
   void showAlertController(String text) {
-    showAlert(contextTemp, text.tr);
+    showSaveAlert(contextTemp, Constant.info, text.tr);
   }
 
   Future<void> updateContacts(

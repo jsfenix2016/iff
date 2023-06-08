@@ -1,4 +1,5 @@
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:ifeelefine/Common/initialize_models_bd.dart';
 import 'package:ifeelefine/Common/utils.dart';
 import 'package:ifeelefine/Model/activitydaybd.dart';
 import 'package:ifeelefine/Model/contact.dart';
@@ -204,7 +205,8 @@ class HiveData {
   }
 
   Future<void> deleteAllActivities() async {
-    Box<ActivityDayBD> box = await Hive.openBox<ActivityDayBD>('listActivityDayBD');
+    Box<ActivityDayBD> box =
+        await Hive.openBox<ActivityDayBD>('listActivityDayBD');
 
     for (var element in box.values) {
       box.delete(element);

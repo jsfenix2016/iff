@@ -4,23 +4,17 @@ import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ifeelefine/Common/Constant.dart';
-
-import 'package:ifeelefine/Common/utils.dart';
+import 'package:ifeelefine/Common/manager_alerts.dart';
 import 'package:ifeelefine/Page/Geolocator/Controller/configGeolocatorController.dart';
-
 import 'package:ifeelefine/Page/TermsAndConditions/PageView/conditionGeneral_page.dart';
 import 'package:ifeelefine/Utils/Widgets/ImageGradient.dart';
 import 'package:ifeelefine/Utils/Widgets/elevatedButtonFilling.dart';
-
 import '../../../Common/colorsPalette.dart';
 import '../../../Provider/prefencesUser.dart';
-import '../../Premium/PageView/premium_page.dart';
+import 'package:ifeelefine/Common/decoration_custom.dart';
 
 class InitGeolocator extends StatefulWidget {
-  /// Creates a new GeolocatorWidget.
   const InitGeolocator({Key? key}) : super(key: key);
-
-  /// Utility method to create a page with the Baseflow templating.
 
   @override
   State<InitGeolocator> createState() => _InitGeolocatorState();
@@ -39,7 +33,7 @@ class _InitGeolocatorState extends State<InitGeolocator> {
   ///
   /// When the location services are not enabled or permissions
   /// are denied the `Future` will return an error.
-  Future<Position> _determinePosition() async {
+  Future<Position> determinePosition() async {
     bool serviceEnabled;
     LocationPermission permission;
     if (isActive) {
@@ -126,23 +120,27 @@ class _InitGeolocatorState extends State<InitGeolocator> {
             //_prefs.setAcceptedSendLocation = PreferencePermission.denied;
             break;
           case PreferencePermission.denied:
-            _locationController.activateLocation(PreferencePermission.deniedForever);
+            _locationController
+                .activateLocation(PreferencePermission.deniedForever);
             //_prefs.setAcceptedSendLocation = PreferencePermission.deniedForever;
             break;
           case PreferencePermission.deniedForever:
             //_prefs.setAcceptedSendLocation = PreferencePermission.deniedForever;
-            _locationController.activateLocation(PreferencePermission.deniedForever);
+            _locationController
+                .activateLocation(PreferencePermission.deniedForever);
             if (permission == LocationPermission.deniedForever) {
               showPermissionDialog(context, Constant.enablePermission);
             }
             break;
           case PreferencePermission.allow:
             //_prefs.setAcceptedSendLocation = PreferencePermission.deniedForever;
-            _locationController.activateLocation(PreferencePermission.deniedForever);
+            _locationController
+                .activateLocation(PreferencePermission.deniedForever);
             break;
           case PreferencePermission.noAccepted:
             //_prefs.setAcceptedSendLocation = PreferencePermission.deniedForever;
-            _locationController.activateLocation(PreferencePermission.deniedForever);
+            _locationController
+                .activateLocation(PreferencePermission.deniedForever);
             break;
         }
       } else {
@@ -257,7 +255,8 @@ class _InitGeolocatorState extends State<InitGeolocator> {
                                 getCurrentPosition();
                               } else {
                                 //_prefs.setAcceptedSendLocation = PreferencePermission.noAccepted;
-                                _locationController.activateLocation(PreferencePermission.noAccepted);
+                                _locationController.activateLocation(
+                                    PreferencePermission.noAccepted);
                               }
                               // geoVC.saveSendLocation(context, value);
                             }),

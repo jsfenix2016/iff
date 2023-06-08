@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:ifeelefine/Common/manager_alerts.dart';
 import 'package:ifeelefine/Common/utils.dart';
 import 'package:ifeelefine/Controllers/contactUserController.dart';
 import 'package:ifeelefine/Model/ApiRest/ContactApi.dart';
@@ -14,6 +15,7 @@ import '../../../Controllers/mainController.dart';
 import '../../../Data/hive_data.dart';
 import '../../../Provider/prefencesUser.dart';
 import '../../Premium/PageView/premium_page.dart';
+import 'package:ifeelefine/Common/decoration_custom.dart';
 
 class ChangeNotificationTimePage extends StatefulWidget {
   /// Creates a new GeolocatorWidget.
@@ -323,6 +325,7 @@ class _ChangeNotificationTimePageState
     var listContact = await const HiveData().listUserContactbd;
 
     var contactController = Get.put(ContactUserController());
-    contactController.updateContacts(listContact, emailTime, phoneTime, smsTime);
+    contactController.updateContacts(
+        listContact, emailTime, phoneTime, smsTime);
   }
 }

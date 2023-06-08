@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:get/get.dart';
+import 'package:ifeelefine/Common/Constant.dart';
+import 'package:ifeelefine/Common/manager_alerts.dart';
 import 'package:ifeelefine/Common/utils.dart';
 import 'package:ifeelefine/Data/hiveRisk_data.dart';
 import 'package:ifeelefine/Data/hive_data.dart';
@@ -28,7 +30,8 @@ class ListContactZoneController extends GetxController {
       // Map info
       var delete = await const HiveDataRisk().deleteContactZone(contact);
       await ZoneRiskService().deleteZoneRisk(contact.id);
-      showAlert(context, "Contacto eliminado correctamente".tr);
+
+      showSaveAlert(context, Constant.info, Constant.deletectGeneric);
       NotificationCenter().notify('getContactZoneRisk');
       return true;
     } catch (error) {

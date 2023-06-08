@@ -22,6 +22,7 @@ import 'package:ifeelefine/Utils/Widgets/elevateButtonCustomBorder.dart';
 import 'package:ifeelefine/Utils/Widgets/elevatedButtonFilling.dart';
 import 'package:ifeelefine/main.dart';
 import 'package:notification_center/notification_center.dart';
+import 'package:ifeelefine/Common/decoration_custom.dart';
 
 class CancelDatePage extends StatefulWidget {
   const CancelDatePage({super.key, required this.contactRisk});

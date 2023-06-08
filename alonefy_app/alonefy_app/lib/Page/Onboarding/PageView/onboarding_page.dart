@@ -7,6 +7,7 @@ import 'package:ifeelefine/Page/Alternative/Pageview/alternative_page.dart';
 import 'package:flutter/material.dart';
 import 'package:ifeelefine/Page/Onboarding/Widget/widgetColumnOnboarding.dart';
 import 'package:ifeelefine/Utils/Widgets/elevatedButtonFilling.dart';
+import 'package:ifeelefine/Common/decoration_custom.dart';
 
 class OnboardingPage extends StatelessWidget {
   final _controller = PageController(

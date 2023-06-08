@@ -1,34 +1,31 @@
-import 'dart:convert';
-import 'dart:io';
 import 'dart:async';
 
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ifeelefine/Common/Constant.dart';
 import 'package:ifeelefine/Common/colorsPalette.dart';
+import 'package:ifeelefine/Common/initialize_models_bd.dart';
 import 'package:ifeelefine/Common/utils.dart';
+
 import 'package:ifeelefine/Model/user.dart';
 import 'package:ifeelefine/Model/userbd.dart';
 import 'package:ifeelefine/Page/Premium/PageView/premium_page.dart';
 import 'package:ifeelefine/Page/UseMobil/PageView/configurationUseMobile_page.dart';
-import 'package:ifeelefine/Page/UserConfig/Controller/userConfigController.dart';
+
 import 'package:ifeelefine/Page/UserConfig2/Controller/userConfig2Controller.dart';
 import 'package:ifeelefine/Provider/prefencesUser.dart';
 import 'package:ifeelefine/Utils/Widgets/CustomDropdownMaritalState.dart';
 import 'package:ifeelefine/Utils/Widgets/CustomDropdownStylelive.dart';
-import 'package:ifeelefine/Utils/Widgets/customDropDown.dart';
-import 'package:ifeelefine/Utils/Widgets/datepickerwidget.dart';
+
 import 'package:ifeelefine/Utils/Widgets/elevateButtonCustomBorder.dart';
 import 'package:ifeelefine/Utils/Widgets/widgetLogo.dart';
-import 'package:ifeelefine/Views/protectuser_page.dart';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:image_picker/image_picker.dart';
+
 import 'package:country_state_city_picker/model/select_status_model.dart'
     as StatusModel;
-import 'package:uuid/uuid.dart';
-// import 'package:in_app_purchase/in_app_purchase.dart';
+
+import 'package:ifeelefine/Common/decoration_custom.dart';
 
 // ignore: use_key_in_widget_constructors
 class UserConfigPage2 extends StatefulWidget {
@@ -357,17 +354,18 @@ class _UserConfigPageState2 extends State<UserConfigPage2> {
     if (isupdate) {
       await Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => PremiumPage(
-            isFreeTrial: isFreeTrial,
-            img: 'pantalla3.png',
-            title: Constant.premiumFallTitle,
-            subtitle: '')
-        ),
+        MaterialPageRoute(
+            builder: (context) => PremiumPage(
+                isFreeTrial: isFreeTrial,
+                img: 'pantalla3.png',
+                title: Constant.premiumFallTitle,
+                subtitle: '')),
       ).then((value) {
         if (value != null && value) {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => UseMobilePage(userbd: userbd!)),
+            MaterialPageRoute(
+                builder: (context) => UseMobilePage(userbd: userbd!)),
           );
         }
       });

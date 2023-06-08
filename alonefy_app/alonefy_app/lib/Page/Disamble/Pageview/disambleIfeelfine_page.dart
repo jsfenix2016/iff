@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:ifeelefine/Common/manager_alerts.dart';
 import 'package:ifeelefine/Common/utils.dart';
 import 'package:ifeelefine/Model/restday.dart';
 import 'package:ifeelefine/Page/Disamble/Controller/disambleController.dart';
@@ -10,6 +11,7 @@ import 'package:flutter/material.dart';
 
 import '../../../Common/colorsPalette.dart';
 import '../../../Provider/prefencesUser.dart';
+import 'package:ifeelefine/Common/decoration_custom.dart';
 
 final _prefs = PreferenceUser();
 
