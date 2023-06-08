@@ -1,7 +1,9 @@
 import 'package:google_fonts/google_fonts.dart';
+import 'package:ifeelefine/Common/Constant.dart';
 import 'package:ifeelefine/Common/colorsPalette.dart';
 
 import 'package:flutter/material.dart';
+import 'package:ifeelefine/Common/text_style_font.dart';
 
 class TextFieldFormCustomBorder extends StatefulWidget {
   const TextFieldFormCustomBorder({
@@ -47,8 +49,8 @@ class TextFieldFormCustomBorderState extends State<TextFieldFormCustomBorder> {
         initialValue: widget.mesaje,
         textCapitalization: TextCapitalization.sentences,
         decoration: InputDecoration(
-          suffixIcon: (widget.labelText == 'Correo electronico' ||
-                  widget.labelText == 'Telefono')
+          suffixIcon: (widget.labelText == Constant.email ||
+                  widget.labelText == Constant.telephone)
               ? const Text(
                   '*',
                   style: TextStyle(color: Colors.red, fontSize: 40),
@@ -65,13 +67,7 @@ class TextFieldFormCustomBorderState extends State<TextFieldFormCustomBorder> {
                 width: 1, color: ColorPalette.principal), //<-- SEE HERE
             borderRadius: BorderRadius.circular(100.0),
           ),
-          hintStyle: GoogleFonts.barlow(
-            fontSize: 16.0,
-            wordSpacing: 1,
-            letterSpacing: 0.001,
-            fontWeight: FontWeight.normal,
-            color: Colors.white,
-          ),
+          hintStyle: textNormal16White(),
           filled: true,
           labelStyle: GoogleFonts.barlow(
             fontSize: 16.0,
@@ -81,13 +77,7 @@ class TextFieldFormCustomBorderState extends State<TextFieldFormCustomBorder> {
             color: Colors.white,
           ),
         ),
-        style: GoogleFonts.barlow(
-          fontSize: 16.0,
-          wordSpacing: 1,
-          letterSpacing: 0.001,
-          fontWeight: FontWeight.normal,
-          color: Colors.white,
-        ),
+        style: textNormal16White(),
         onSaved: (value) => {widget.onChanged(value!)},
         validator: (value) {
           return widget.placeholder;

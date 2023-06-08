@@ -13,6 +13,7 @@ import 'package:ifeelefine/Utils/Widgets/elevateButtonCustomBorder.dart';
 import 'package:ifeelefine/Utils/Widgets/selectTimerCallSendSMS.dart';
 import 'package:ifeelefine/Utils/Widgets/widgedContact.dart';
 import 'package:notification_center/notification_center.dart';
+import 'package:ifeelefine/Common/decoration_custom.dart';
 
 class EditContact extends StatefulWidget {
   const EditContact({super.key, required this.contact});

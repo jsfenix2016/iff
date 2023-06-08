@@ -14,9 +14,7 @@ import 'package:ifeelefine/Utils/Widgets/elevateButtonCustomBorder.dart';
 import 'package:ifeelefine/Utils/Widgets/elevatedButtonFilling.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:slidable_button/slidable_button.dart';
-//import 'package:pay/pay.dart';
-
-// import 'package:flutter_pay/flutter_pay.dart';
+import 'package:ifeelefine/Common/decoration_custom.dart';
 
 class UseMobilePage extends StatefulWidget {
   const UseMobilePage({super.key, required this.userbd});

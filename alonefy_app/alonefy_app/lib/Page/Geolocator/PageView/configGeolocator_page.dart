@@ -15,6 +15,8 @@ import 'package:slidable_button/slidable_button.dart';
 import '../../../Common/colorsPalette.dart';
 import '../../../Provider/prefencesUser.dart';
 import '../../Premium/PageView/premium_page.dart';
+import 'package:ifeelefine/Common/decoration_custom.dart';
+import 'package:ifeelefine/Common/manager_alerts.dart';
 
 class ConfigGeolocator extends StatefulWidget {
   /// Creates a new GeolocatorWidget.
@@ -85,22 +87,26 @@ class _ConfigGeolocatorState extends State<ConfigGeolocator> {
             //_prefs.setAcceptedSendLocation = PreferencePermission.denied;
             break;
           case PreferencePermission.denied:
-            _locationController.activateLocation(PreferencePermission.deniedForever);
+            _locationController
+                .activateLocation(PreferencePermission.deniedForever);
             //_prefs.setAcceptedSendLocation = PreferencePermission.deniedForever;
             break;
           case PreferencePermission.deniedForever:
-            _locationController.activateLocation(PreferencePermission.deniedForever);
+            _locationController
+                .activateLocation(PreferencePermission.deniedForever);
             //_prefs.setAcceptedSendLocation = PreferencePermission.deniedForever;
             if (permission == LocationPermission.deniedForever) {
               showPermissionDialog(context, Constant.enablePermission);
             }
             break;
           case PreferencePermission.allow:
-            _locationController.activateLocation(PreferencePermission.deniedForever);
+            _locationController
+                .activateLocation(PreferencePermission.deniedForever);
             //_prefs.setAcceptedSendLocation = PreferencePermission.deniedForever;
             break;
           case PreferencePermission.noAccepted:
-            _locationController.activateLocation(PreferencePermission.deniedForever);
+            _locationController
+                .activateLocation(PreferencePermission.deniedForever);
             //_prefs.setAcceptedSendLocation = PreferencePermission.deniedForever;
             break;
         }

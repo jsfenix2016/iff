@@ -8,6 +8,7 @@ import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:get/get_connect/http/src/utils/utils.dart';
 import 'package:ifeelefine/Common/Constant.dart';
 import 'package:ifeelefine/Common/colorsPalette.dart';
+import 'package:ifeelefine/Common/manager_alerts.dart';
 import 'package:ifeelefine/Common/utils.dart';
 import 'package:ifeelefine/Model/contactRiskBD.dart';
 import 'package:ifeelefine/Model/contactZoneRiskBD.dart';
@@ -24,6 +25,7 @@ import 'package:ifeelefine/Utils/Widgets/elevateButtonCustomBorder.dart';
 import 'package:ifeelefine/Utils/Widgets/elevatedButtonFilling.dart';
 import 'package:ifeelefine/main.dart';
 import 'package:notification_center/notification_center.dart';
+import 'package:ifeelefine/Common/decoration_custom.dart';
 
 class CancelAlertPage extends StatefulWidget {
   const CancelAlertPage({super.key, required this.contactRisk});
@@ -81,7 +83,7 @@ class _CancelAlertState extends State<CancelAlertPage> {
       );
       Navigator.pushReplacement(context, route);
     } else {
-      showAlert(context, 'El codigo no coincide');
+      showSaveAlert(context, Constant.info, Constant.codeError);
     }
   }
 

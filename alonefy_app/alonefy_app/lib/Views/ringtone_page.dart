@@ -1,20 +1,17 @@
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter_ringtone_player/flutter_ringtone_player.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:ifeelefine/Common/Constant.dart';
 import 'package:ifeelefine/Common/colorsPalette.dart';
-import 'package:ifeelefine/Common/utils.dart';
 import 'package:ifeelefine/Page/UserConfig/Controller/userConfigController.dart';
 import 'package:ifeelefine/Model/user.dart';
-import 'package:ifeelefine/Model/userbd.dart';
 
-import 'package:ifeelefine/Page/UserRest/PageView/configurationUserRest_page.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:flutter_system_ringtones/flutter_system_ringtones.dart';
 
 import '../Provider/prefencesUser.dart';
+import 'package:ifeelefine/Common/decoration_custom.dart';
+import 'package:ifeelefine/Common/manager_alerts.dart';
 
 final _prefs = PreferenceUser();
 
@@ -29,8 +26,6 @@ class _RingTonePageState extends State<RingTonePage>
     with WidgetsBindingObserver {
   final UserConfigCOntroller userVC = Get.put(UserConfigCOntroller());
   bool isCheck = false;
-
-  bool _guardado = false;
 
   late User user;
   late bool istrayed;

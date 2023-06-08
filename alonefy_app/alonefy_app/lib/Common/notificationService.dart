@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -84,7 +83,8 @@ class RedirectViewNotifier with ChangeNotifier {
     sendMessageContact();
   }
 
-  static Future<void> showNotificationsFromFirebase(RemoteMessage message) async {
+  static Future<void> showNotificationsFromFirebase(
+      RemoteMessage message) async {
     RemoteNotification? notification = message.notification;
 
     String tokenIds = "dasdasdwecasfa;adafefver";
@@ -97,7 +97,6 @@ class RedirectViewNotifier with ChangeNotifier {
         tokenIds = tokenIds.substring(0, tokenIds.length - 1);
       }
     }
-
 
     await flutterLocalNotificationsPlugin.show(
       0,

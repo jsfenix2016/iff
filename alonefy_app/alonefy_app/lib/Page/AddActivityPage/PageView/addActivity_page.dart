@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ifeelefine/Common/Constant.dart';
+import 'package:ifeelefine/Common/manager_alerts.dart';
 import 'package:ifeelefine/Common/utils.dart';
 import 'package:ifeelefine/Model/activityDay.dart';
 import 'package:ifeelefine/Model/activitydaybd.dart';
@@ -12,6 +13,7 @@ import 'package:ifeelefine/Provider/prefencesUser.dart';
 import 'package:jiffy/jiffy.dart';
 
 import '../../../Common/colorsPalette.dart';
+import 'package:ifeelefine/Common/decoration_custom.dart';
 
 class AddActivityPage extends StatefulWidget {
   /// Creates a new GeolocatorWidget.
@@ -325,8 +327,8 @@ class _AddActivityPageState extends State<AddActivityPage>
                   if (isRepeatTypeSelected()) {
                     var activities = await controller.getActivities();
                     if (activities.length >= 3 && !_prefs.getUserPremium) {
-                      showSaveAlert(context, "",
-                          "Se ha alcanzado el máximo de tiempos de inactividad. Para poder programar más, hazte Premium.");
+                      showSaveAlert(context, Constant.info,
+                          Constant.timeMaxReachedInactivity);
                     } else {
                       var activity = createActivity();
                       var activityApiResponse =

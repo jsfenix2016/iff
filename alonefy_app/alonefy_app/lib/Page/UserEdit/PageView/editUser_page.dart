@@ -1,23 +1,14 @@
-import 'dart:convert';
 import 'dart:io';
 
-import 'package:country_state_city_picker/model/select_status_model.dart'
-    as StatusModel;
-
-import 'package:flutter/foundation.dart';
-import 'package:flutter/services.dart';
 import 'package:ifeelefine/Common/Constant.dart';
 import 'package:ifeelefine/Common/colorsPalette.dart';
-import 'package:ifeelefine/Common/utils.dart';
-import 'package:ifeelefine/Page/UserConfig/Controller/userConfigController.dart';
+import 'package:ifeelefine/Common/initialize_models_bd.dart';
 import 'package:ifeelefine/Model/user.dart';
-import 'package:ifeelefine/Model/userbd.dart';
 import 'package:ifeelefine/Page/UserEdit/Controller/editController.dart';
-
-import 'package:ifeelefine/Page/UserRest/PageView/configurationUserRest_page.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:ifeelefine/Utils/Widgets/dropdownNotBorder.dart';
+import 'package:ifeelefine/Common/decoration_custom.dart';
+import 'package:ifeelefine/Common/manager_alerts.dart';
 
 class UserEditPage extends StatefulWidget {
   const UserEditPage({super.key});
@@ -31,7 +22,6 @@ class _UserEditPageState extends State<UserEditPage> {
 
   bool isCheck = false;
   late bool selectImage = false;
-  final bool _guardado = false;
   User? user;
   List<String> _states = ["Seleccionar estado"];
   List<String> _country = ["Seleccionar pais"];
@@ -53,8 +43,6 @@ class _UserEditPageState extends State<UserEditPage> {
   late int indexCountry = 0;
   late String selectState = "";
   late String selectCountry = "";
-
-  final String _selectedCountry = "Choose Country";
   List<dynamic> countryres = [];
   List<dynamic> stateTemp = [];
 

@@ -15,6 +15,7 @@ import '../../../Data/hive_data.dart';
 import '../../../Provider/prefencesUser.dart';
 import '../../../Utils/Widgets/elevatedButtonFilling.dart';
 import '../../Premium/PageView/premium_page.dart';
+import 'package:ifeelefine/Common/decoration_custom.dart';
 
 final _prefs = PreferenceUser();
 

@@ -1,5 +1,5 @@
 class Constant {
-  static const baseApi = '';
+  static const baseApi = 'https://dev.alertfriends.app';
   static const baseApiMessageBird = 'https://rest.messagebird.com/';
   static const personalInformation = 'Datos personales';
   static const selectGender = 'Selecciona el genero';
@@ -20,6 +20,7 @@ class Constant {
   static const continueTxt = 'Continuar';
   static const saveBtn = 'Guardar';
   static const nextTxt = 'Siguiente';
+  static const configurationbtn = 'Configurar';
   static const age = 'Edad';
   static const onBoardingWelcome = 'Te damos la Bienvenida/o a I’m fine';
   static const onBoardingWelcomeMessage =
@@ -262,4 +263,37 @@ class Constant {
 
   static const String conexionFail =
       "Se produjo algún error, compruebe sú conexión";
+
+  static const String validateCodeEmail =
+      'Introduce el código enviado a tu correo';
+  static const String validateCodeSms =
+      'Introduce el código enviado a tu teléfono';
+
+  static const String alertMessageValidateUser =
+      'Debe tener el telefono e email validado para continuar.';
+
+  static const String tokenRequestTxt = 'Solicitar códigos de verificación';
+
+  static const String disambleProtected = "Se a deshabilitado la protección";
+
+  static const String cancelChange = "Se ha cancelado los cambios";
+  static const String saveCorrectly = "Se guardo correctamente";
+  static const String contactSaveCorrectly =
+      "Contacto guardado correctamente, se ha realizado la solicitud de autorización correctamente";
+  static const String timeMaxReachedInactivity =
+      "Se ha alcanzado el máximo de tiempos de inactividad. Para poder programar más, hazte Premium.";
+
+  static const String saveImageAvatar = "Se guardo la imagen correctamente";
+
+  static const String errorGeneric = "Hubo un error, intente mas tarde";
+  static const String restoredCorrectly = "Se restauro correctamente";
+
+  static const String errorGenericConextion =
+      "Se produjo un error, verifique su conexion a internet e intente de nuevo.";
+
+  static const String changeGeneric = "Cambios guardados correctamente";
+
+  static const String codeError = 'El codigo no coincide';
+  static const String deletectGeneric = "Eliminado correctamente";
+  // static const String
 }

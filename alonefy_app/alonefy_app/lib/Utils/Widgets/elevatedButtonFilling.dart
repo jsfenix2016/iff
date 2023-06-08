@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ifeelefine/Common/colorsPalette.dart';
+import 'package:ifeelefine/Common/text_style_font.dart';
 import 'package:ifeelefine/Common/utils.dart';
+import 'package:ifeelefine/Common/decoration_custom.dart';
 
 class ElevateButtonFilling extends StatefulWidget {
   const ElevateButtonFilling(
@@ -48,13 +50,7 @@ class _ElevateButtonFillingState extends State<ElevateButtonFilling> {
         child: Center(
           child: Text(
             widget.mensaje,
-            style: GoogleFonts.barlow(
-              fontSize: 16.0,
-              wordSpacing: 1,
-              letterSpacing: 1,
-              fontWeight: FontWeight.bold,
-              color: Colors.black,
-            ),
+            style: textNormal16White(),
           ),
         ),
       ),

@@ -8,6 +8,7 @@ import 'package:ifeelefine/Page/UserConfig/PageView/userconfig_page.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ifeelefine/Utils/Widgets/elevateButtonCustomBorder.dart';
 import 'package:ifeelefine/Utils/Widgets/elevatedButtonFilling.dart';
+import 'package:ifeelefine/Common/decoration_custom.dart';
 
 class AlternativePage extends StatefulWidget {
   const AlternativePage({super.key});

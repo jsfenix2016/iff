@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ifeelefine/Common/colorsPalette.dart';
-import 'package:ifeelefine/Common/utils.dart';
+
 import 'package:jiffy/jiffy.dart';
+import 'package:ifeelefine/Common/decoration_custom.dart';
 
 class RangeDateTime {
   DateTime? from;
@@ -30,7 +31,7 @@ RangeDateTime _getRangeDate() {
   return rangeDateTime;
 }
 
-String getFrom () {
+String getFrom() {
   return Jiffy(_from!).format('MMMM yyyy');
 }
 
@@ -43,7 +44,6 @@ class CalendarPopup extends StatefulWidget {
 }
 
 class CalendarPopupState extends State<CalendarPopup> {
-
   final List<String> _days = List.filled(42, "");
   final List<bool> _paintedDays = List.filled(42, false);
   var _currentDate = DateTime.now();
@@ -54,12 +54,13 @@ class CalendarPopupState extends State<CalendarPopup> {
 
   final Future<String> _calculation = Future<String>.delayed(
     const Duration(milliseconds: 400),
-        () => 'Data Loaded',
+    () => 'Data Loaded',
   );
 
   void updateMonthWithYear() async {
     await Jiffy.locale("es");
-    var monthWithYear = Jiffy(_currentDate).format('MMMM yyyy').capitalizeFirst!;
+    var monthWithYear =
+        Jiffy(_currentDate).format('MMMM yyyy').capitalizeFirst!;
     setState(() {
       _monthWithYear = monthWithYear;
     });
@@ -77,8 +78,8 @@ class CalendarPopupState extends State<CalendarPopup> {
     var dayNumber = 1;
     var calendarIndex = 0;
 
-    for (var index=0;index<_days.length;index++) {
-      if (weekDay == (index+1) && index < 7) {
+    for (var index = 0; index < _days.length; index++) {
+      if (weekDay == (index + 1) && index < 7) {
         _days[index] = dayNumber.toString();
         dayNumber++;
         calendarIndex = index + 1;
@@ -88,12 +89,12 @@ class CalendarPopupState extends State<CalendarPopup> {
       }
     }
 
-    for (var index=2;index<=getDaysOfMonth();index++) {
+    for (var index = 2; index <= getDaysOfMonth(); index++) {
       _days[calendarIndex] = index.toString();
       calendarIndex++;
     }
 
-    for (var index=calendarIndex;index<_days.length;index++) {
+    for (var index = calendarIndex; index < _days.length; index++) {
       _days[index] = "";
     }
 
@@ -110,7 +111,8 @@ class CalendarPopupState extends State<CalendarPopup> {
 
   void selectDay(int index) {
     var selectedDay = int.parse(_days[index]);
-    var selectedDate = DateTime(_currentDate.year, _currentDate.month, selectedDay);
+    var selectedDate =
+        DateTime(_currentDate.year, _currentDate.month, selectedDay);
 
     if (_from == null) {
       _from = selectedDate;
@@ -118,7 +120,8 @@ class CalendarPopupState extends State<CalendarPopup> {
       _to = null;
       _from = selectedDate;
     } else {
-      if (_from!.isAtSameMomentAs(selectedDate) || _from!.isBefore(selectedDate)) {
+      if (_from!.isAtSameMomentAs(selectedDate) ||
+          _from!.isBefore(selectedDate)) {
         _to = selectedDate;
       } else {
         _to = DateTime(_from!.year, _from!.month, _from!.day);
@@ -132,9 +135,9 @@ class CalendarPopupState extends State<CalendarPopup> {
 
   void paintSelectedDays() {
     if (_from != null && _to != null) {
-
       var minCurrentDate = DateTime(_currentDate.year, _currentDate.month, 1);
-      var maxCurrentDate = DateTime(_currentDate.year, _currentDate.month + 1, 1);
+      var maxCurrentDate =
+          DateTime(_currentDate.year, _currentDate.month + 1, 1);
 
       DateTime? tempFrom;
       DateTime? tempTo;
@@ -146,29 +149,33 @@ class CalendarPopupState extends State<CalendarPopup> {
           tempFrom = DateTime(_from!.year, _from!.month, _from!.day);
         }
 
-        if (_to!.isAtSameMomentAs(maxCurrentDate) || _to!.isAfter(maxCurrentDate)) {
+        if (_to!.isAtSameMomentAs(maxCurrentDate) ||
+            _to!.isAfter(maxCurrentDate)) {
           tempTo = DateTime(_currentDate.year, _currentDate.month + 1, 0);
         } else {
           tempTo = DateTime(_to!.year, _to!.month, _to!.day);
         }
       }
 
-      for (var index=0;index<_days.length;index++) {
+      for (var index = 0; index < _days.length; index++) {
         _paintedDays[index] = false;
 
         if (_days[index] != "") {
-          if (!_to!.isBefore(minCurrentDate) && _from!.isBefore(maxCurrentDate)) {
-            if (int.parse(_days[index]) >= tempFrom!.day && int.parse(_days[index]) <= tempTo!.day) {
+          if (!_to!.isBefore(minCurrentDate) &&
+              _from!.isBefore(maxCurrentDate)) {
+            if (int.parse(_days[index]) >= tempFrom!.day &&
+                int.parse(_days[index]) <= tempTo!.day) {
               _paintedDays[index] = true;
             }
           }
         }
       }
     } else if (_from != null) {
-      if (_currentDate.year == _from!.year && _currentDate.month == _from!.month) {
-        for (var index=0;index<_days.length;index++) {
+      if (_currentDate.year == _from!.year &&
+          _currentDate.month == _from!.month) {
+        for (var index = 0; index < _days.length; index++) {
           if (_days[index] != "" && int.parse(_days[index]) == _from!.day) {
-            for (var i=0;i<_paintedDays.length;i++) {
+            for (var i = 0; i < _paintedDays.length; i++) {
               _paintedDays[i] = false;
             }
             _paintedDays[index] = true;
@@ -176,7 +183,7 @@ class CalendarPopupState extends State<CalendarPopup> {
           }
         }
       } else {
-        for (var i=0;i<_paintedDays.length;i++) {
+        for (var i = 0; i < _paintedDays.length; i++) {
           _paintedDays[i] = false;
         }
       }
@@ -210,8 +217,7 @@ class CalendarPopupState extends State<CalendarPopup> {
                         padding: const EdgeInsets.fromLTRB(0, 4, 0, 4),
                         decoration: BoxDecoration(
                             color: ColorPalette.backgroundDarkGrey,
-                            borderRadius: BorderRadius.circular(8)
-                        ),
+                            borderRadius: BorderRadius.circular(8)),
                         child: Row(
                           children: [
                             Expanded(
@@ -226,9 +232,7 @@ class CalendarPopupState extends State<CalendarPopup> {
                                   updateMonthWithYear();
                                   fillCalendarWithMonthDays();
                                   paintSelectedDays();
-                                  setState(() {
-
-                                  });
+                                  setState(() {});
                                 },
                               ),
                             ),
@@ -258,82 +262,77 @@ class CalendarPopupState extends State<CalendarPopup> {
                                   updateMonthWithYear();
                                   fillCalendarWithMonthDays();
                                   paintSelectedDays();
-                                  setState(() {
-
-                                  });
+                                  setState(() {});
                                 },
                               ),
                             ),
                           ],
-                        )
-                    )
-                ),
+                        ))),
                 Padding(
                     padding: const EdgeInsets.fromLTRB(36, 24, 36, 0),
                     child: Row(
                       children: [
-                        for (var index=0;index<daysOfWeek.length;index++) ...[
-                          getDayOfWeek(index)
-                        ]
+                        for (var index = 0;
+                            index < daysOfWeek.length;
+                            index++) ...[getDayOfWeek(index)]
                       ],
-                    )
-                ),
+                    )),
                 Padding(
                     padding: const EdgeInsets.fromLTRB(36, 8, 36, 0),
                     child: Container(
                       height: 2,
                       decoration: const BoxDecoration(
-                          color: ColorPalette.calendarNumber
-                      ),
-                    )
-                ),
+                          color: ColorPalette.calendarNumber),
+                    )),
                 Padding(
-                  padding: const EdgeInsets.fromLTRB(36, 0, 36, 8),
-                  child: FutureBuilder<String>(
-                      future: _calculation,
-                      builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
-                        if (snapshot.hasData) {
-                          return GridView.builder(
-                              padding: const EdgeInsets.all(0),
-                              shrinkWrap: true,
-                              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                                  crossAxisCount: 7),
-                              itemCount: _days.length,
-                              itemBuilder: (BuildContext ctx, index) {
-                                return Container(
-                                    alignment: Alignment.center,
-                                    child: TextButton(
-                                      child: Text(
-                                        _days[index],
-                                        style: GoogleFonts.barlow(
-                                          fontSize: 16.0,
-                                          wordSpacing: 1,
-                                          letterSpacing: 1.2,
-                                          fontWeight: FontWeight.bold,
-                                          color: _paintedDays[index]
-                                              ? ColorPalette.calendarNumber
-                                              : ColorPalette.calendarNumberGrey,
+                    padding: const EdgeInsets.fromLTRB(36, 0, 36, 8),
+                    child: FutureBuilder<String>(
+                        future: _calculation,
+                        builder: (BuildContext context,
+                            AsyncSnapshot<String> snapshot) {
+                          if (snapshot.hasData) {
+                            return GridView.builder(
+                                padding: const EdgeInsets.all(0),
+                                shrinkWrap: true,
+                                gridDelegate:
+                                    const SliverGridDelegateWithFixedCrossAxisCount(
+                                        crossAxisCount: 7),
+                                itemCount: _days.length,
+                                itemBuilder: (BuildContext ctx, index) {
+                                  return Container(
+                                      alignment: Alignment.center,
+                                      child: TextButton(
+                                        child: Text(
+                                          _days[index],
+                                          style: GoogleFonts.barlow(
+                                            fontSize: 16.0,
+                                            wordSpacing: 1,
+                                            letterSpacing: 1.2,
+                                            fontWeight: FontWeight.bold,
+                                            color: _paintedDays[index]
+                                                ? ColorPalette.calendarNumber
+                                                : ColorPalette
+                                                    .calendarNumberGrey,
+                                          ),
                                         ),
-                                      ),
-                                      onPressed: () {
-                                        selectDay(index);
-                                        paintSelectedDays();
-                                        setState(() {});
-                                      },
-                                    )
-                                );
-                              }
-                          );
-                        } else {
-                          return GridView.builder(
-                              padding: const EdgeInsets.all(0),
-                              shrinkWrap: true,
-                              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                                  crossAxisCount: 7),
-                              itemCount: _days.length,
-                              itemBuilder: (BuildContext ctx, index) {
-                                return Container(
-                                  alignment: Alignment.center,
+                                        onPressed: () {
+                                          selectDay(index);
+                                          paintSelectedDays();
+                                          setState(() {});
+                                        },
+                                      ));
+                                });
+                          } else {
+                            return GridView.builder(
+                                padding: const EdgeInsets.all(0),
+                                shrinkWrap: true,
+                                gridDelegate:
+                                    const SliverGridDelegateWithFixedCrossAxisCount(
+                                        crossAxisCount: 7),
+                                itemCount: _days.length,
+                                itemBuilder: (BuildContext ctx, index) {
+                                  return Container(
+                                    alignment: Alignment.center,
                                     child: Text(
                                       _days[index],
                                       style: GoogleFonts.barlow(
@@ -344,27 +343,22 @@ class CalendarPopupState extends State<CalendarPopup> {
                                         color: ColorPalette.calendarNumberGrey,
                                       ),
                                     ),
-                                );
-                              }
-                          );
-                        }
-                      }
-                  )
-                ),
+                                  );
+                                });
+                          }
+                        })),
                 Padding(
                   padding: const EdgeInsets.fromLTRB(36, 24, 36, 0),
                   child: Container(
                     decoration: const BoxDecoration(
                       color: Color.fromRGBO(219, 177, 42, 1),
-                      borderRadius:
-                      BorderRadius.all(Radius.circular(28)),
+                      borderRadius: BorderRadius.all(Radius.circular(28)),
                     ),
                     height: 42,
                     child: Center(
                       child: TextButton(
                         style: TextButton.styleFrom(
-                            minimumSize: const Size.fromWidth(300)
-                        ),
+                            minimumSize: const Size.fromWidth(300)),
                         child: Text('Aceptar',
                             textAlign: TextAlign.center,
                             style: GoogleFonts.barlow(
@@ -382,25 +376,21 @@ class CalendarPopupState extends State<CalendarPopup> {
                   ),
                 )
               ],
-            )
-        )
-    );
+            )));
   }
 
   Widget getDayOfWeek(int index) {
     return Expanded(
         child: Text(
-          daysOfWeek[index],
-          style: GoogleFonts.barlow(
-            fontSize: 14.0,
-            wordSpacing: 1,
-            letterSpacing: 1.2,
-            fontWeight: FontWeight.w400,
-            color: Colors.white,
-          ),
-          textAlign: TextAlign.center,
-        )
-    );
+      daysOfWeek[index],
+      style: GoogleFonts.barlow(
+        fontSize: 14.0,
+        wordSpacing: 1,
+        letterSpacing: 1.2,
+        fontWeight: FontWeight.w400,
+        color: Colors.white,
+      ),
+      textAlign: TextAlign.center,
+    ));
   }
 }
-

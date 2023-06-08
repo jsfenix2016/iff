@@ -22,14 +22,8 @@ class UserConfig2Service {
     };
 
     try {
-      final resp = await http.post(
-          Uri.parse(
-              "${Constant.baseApi}/v1/user"),
+      final resp = await http.post(Uri.parse("${Constant.baseApi}/v1/user"),
           body: authData);
-
-          //Uri.parse(
-          //    "${Constant.baseApi}/v1/user/${user.telephone}/personalData"),
-          //body: authData);
 
       Map<String, dynamic> decodeResp = json.decode(resp.body);
 

@@ -5,7 +5,9 @@ import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:ifeelefine/Common/Constant.dart';
 import 'package:ifeelefine/Common/colorsPalette.dart';
+import 'package:ifeelefine/Common/manager_alerts.dart';
 import 'package:ifeelefine/Common/notificationService.dart';
 import 'package:ifeelefine/Common/utils.dart';
 import 'package:ifeelefine/Page/HomePage/Controller/homeController.dart';
@@ -28,6 +30,7 @@ import 'dart:io' show Directory, File, Platform;
 import 'package:avatar_glow/avatar_glow.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:notification_center/notification_center.dart';
+import 'package:ifeelefine/Common/decoration_custom.dart';
 
 final _prefs = PreferenceUser();
 
@@ -138,16 +141,16 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
 
     if (foto != null) {
       await homeVC.changeImage(context, foto, user!);
-      showAlert(context, "Se guardo la imagen correctamente".tr);
+
+      showSaveAlert(context, Constant.info, Constant.saveImageAvatar.tr);
     } else {
-      showAlert(context, "Hubo un error, intente mas tarde".tr);
+      showSaveAlert(context, Constant.info, Constant.errorGeneric.tr);
     }
   }
 
   Widget _mostrarFoto() {
     return GestureDetector(
       onTap: (() async {
-        //RedirectViewNotifier.showNotifications();
         getImageGallery(ImageSource.gallery);
       }),
       child: Container(

@@ -14,10 +14,12 @@ import 'package:jiffy/jiffy.dart';
 import '../../../Model/activityDay.dart';
 import '../../AddActivityPage/Controller/addActivityController.dart';
 import '../../AddActivityPage/PageView/addActivity_page.dart';
+import 'package:ifeelefine/Common/decoration_custom.dart';
 
 class PreviewActivitiesByDate extends StatefulWidget {
   /// Creates a new GeolocatorWidget.
-  const PreviewActivitiesByDate({Key? key, required this.isMenu}) : super(key: key);
+  const PreviewActivitiesByDate({Key? key, required this.isMenu})
+      : super(key: key);
 
   final bool isMenu;
 
@@ -367,9 +369,9 @@ class _PreviewActivitiesByDateState extends State<PreviewActivitiesByDate>
     return Scaffold(
       appBar: widget.isMenu
           ? AppBar(
-            backgroundColor: ColorPalette.backgroundAppBar,
-            title: Text("Configuración"),
-      )
+              backgroundColor: ColorPalette.backgroundAppBar,
+              title: Text("Configuración"),
+            )
           : null,
       body: Container(
           decoration: decorationCustom(),
@@ -500,7 +502,8 @@ class _PreviewActivitiesByDateState extends State<PreviewActivitiesByDate>
                   ),
                   Expanded(
                     child: Padding(
-                        padding: EdgeInsets.fromLTRB(16, 24, 16, widget.isMenu ? 100 : 150),
+                        padding: EdgeInsets.fromLTRB(
+                            16, 24, 16, widget.isMenu ? 100 : 150),
                         child: ListView.builder(
                             shrinkWrap: true,
                             itemCount: _days.length,
@@ -628,8 +631,14 @@ class _PreviewActivitiesByDateState extends State<PreviewActivitiesByDate>
                                                                     index]![
                                                                 indexActivity],
                                                             _days[index]);
-                                                        controller.updateActivity(_activitiesByDay[index]![indexActivity]);
-                                                        controller.updateActivityApi(_activitiesByDay[index]![indexActivity]);
+                                                        controller.updateActivity(
+                                                            _activitiesByDay[
+                                                                    index]![
+                                                                indexActivity]);
+                                                        controller.updateActivityApi(
+                                                            _activitiesByDay[
+                                                                    index]![
+                                                                indexActivity]);
                                                         _activitiesByDay[index]!
                                                             .removeAt(
                                                                 indexActivity);
@@ -686,7 +695,9 @@ class _PreviewActivitiesByDateState extends State<PreviewActivitiesByDate>
                                                                     controller.updateActivity(
                                                                         _activitiesByDay[index]![
                                                                             indexActivity]);
-                                                                    controller.updateActivityApi(_activitiesByDay[index]![indexActivity]);
+                                                                    controller.updateActivityApi(
+                                                                        _activitiesByDay[index]![
+                                                                            indexActivity]);
                                                                     setState(
                                                                         () {});
                                                                   },

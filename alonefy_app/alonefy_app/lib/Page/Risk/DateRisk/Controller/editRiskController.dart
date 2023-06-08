@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:get/get.dart';
+import 'package:ifeelefine/Common/Constant.dart';
 import 'package:ifeelefine/Common/utils.dart';
 import 'package:ifeelefine/Data/hiveRisk_data.dart';
 import 'package:ifeelefine/Data/hive_data.dart';
@@ -14,6 +15,7 @@ import 'package:permission_handler/permission_handler.dart';
 
 import '../../../../Controllers/mainController.dart';
 import '../../../../Model/ApiRest/ContactRiskApi.dart';
+import 'package:ifeelefine/Common/manager_alerts.dart';
 
 class EditRiskController extends GetxController {
   Future<List<Contact>> getContacts(BuildContext context) async {
@@ -49,10 +51,11 @@ class EditRiskController extends GetxController {
     try {
       final MainController mainController = Get.put(MainController());
       var user = await mainController.getUserData();
-      var contactRiskApi = await ContactRiskService()
-          .createContactRisk(ContactRiskApi.fromContact(contact, user.telephone));
+      var contactRiskApi = await ContactRiskService().createContactRisk(
+          ContactRiskApi.fromContact(contact, user.telephone));
       if (contact.photo != null) {
-        await ContactRiskService().updateImage(user.telephone, contact.id, contact.photo!);
+        await ContactRiskService()
+            .updateImage(user.telephone, contact.id, contact.photo!);
       }
       if (contactRiskApi != null) {
         contact.id = contactRiskApi.id;
@@ -60,7 +63,8 @@ class EditRiskController extends GetxController {
         if (save == 0) {
           saveActivityLog(contact);
           NotificationCenter().notify('getContactRisk');
-          showAlert(context, "Contacto guardado correctamente".tr);
+
+          showSaveAlert(context, Constant.info, Constant.saveCorrectly.tr);
           return true;
         } else {
           return false;
@@ -78,11 +82,13 @@ class EditRiskController extends GetxController {
     try {
       final MainController mainController = Get.put(MainController());
       var user = await mainController.getUserData();
-      ContactRiskService().updateContactRisk(ContactRiskApi.fromContact(contact, user.telephone), contact.id);
+      ContactRiskService().updateContactRisk(
+          ContactRiskApi.fromContact(contact, user.telephone), contact.id);
       var update = await const HiveDataRisk().updateContactRisk(contact);
       if (update) {
         NotificationCenter().notify('getContactRisk');
-        showAlert(context, "Contacto actualizado correctamente".tr);
+
+        showSaveAlert(context, Constant.info, Constant.changeGeneric.tr);
         return true;
       }
       return false;
@@ -94,7 +100,8 @@ class EditRiskController extends GetxController {
   Future<void> saveFromApi(List<ContactRiskApi> contactsRiskApi) async {
     for (var contactRiskApi in contactsRiskApi) {
       if (contactRiskApi.photo != null && contactRiskApi.photo.isNotEmpty) {
-        var bytes = await ContactRiskService().getContactImage(contactRiskApi.photo);
+        var bytes =
+            await ContactRiskService().getContactImage(contactRiskApi.photo);
         var contact = ContactRiskBD(
             id: contactRiskApi.id,
             photo: bytes,
@@ -113,8 +120,7 @@ class EditRiskController extends GetxController {
             isprogrammed: contactRiskApi.isprogrammed,
             photoDate: [],
             saveContact: contactRiskApi.savecontact,
-            createDate: DateTime.now()
-        );
+            createDate: DateTime.now());
         const HiveDataRisk().saveContactRisk(contact);
       }
     }

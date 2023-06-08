@@ -15,10 +15,11 @@ import 'package:ifeelefine/Provider/prefencesUser.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import '../../Geolocator/Controller/configGeolocatorController.dart';
+import 'package:ifeelefine/Common/decoration_custom.dart';
+import 'package:ifeelefine/Common/manager_alerts.dart';
 
 final _prefs = PreferenceUser();
 final _locationController = Get.put(ConfigGeolocatorController());
-
 
 class PermitionUserPage extends StatefulWidget {
   const PermitionUserPage({super.key});
@@ -64,8 +65,8 @@ class _PermitionUserPageState extends State<PermitionUserPage> {
 
     if (permission.isPermanentlyDenied) {
       showPermissionDialog(context, Constant.enablePermission);
-    } else if (permission.isDenied) { }
-    else {
+    } else if (permission.isDenied) {
+    } else {
       setState(() {
         permissionStatus[index] = true;
       });
@@ -93,7 +94,7 @@ class _PermitionUserPageState extends State<PermitionUserPage> {
   }
 
   void savePermission() {
-    for (var i=0;i<permissionStatus.length;i++) {
+    for (var i = 0; i < permissionStatus.length; i++) {
       if (permissionStatus[i]) {
         PreferencePermission preferencePermission;
         preferencePermission = PreferencePermission.allow;
@@ -138,13 +139,16 @@ class _PermitionUserPageState extends State<PermitionUserPage> {
             break;
           case 3:
             if (_prefs.getAcceptedSendLocation == PreferencePermission.allow) {
-              _locationController.activateLocation(PreferencePermission.noAccepted);
+              _locationController
+                  .activateLocation(PreferencePermission.noAccepted);
               //_prefs.setAcceptedSendLocation = PreferencePermission.noAccepted;
             }
             break;
           case 4:
-            if (_prefs.getAcceptedScheduleExactAlarm == PreferencePermission.allow) {
-              _prefs.setAcceptedScheduleExactAlarm = PreferencePermission.noAccepted;
+            if (_prefs.getAcceptedScheduleExactAlarm ==
+                PreferencePermission.allow) {
+              _prefs.setAcceptedScheduleExactAlarm =
+                  PreferencePermission.noAccepted;
             }
             break;
           case 5:
@@ -154,49 +158,48 @@ class _PermitionUserPageState extends State<PermitionUserPage> {
       }
     }
 
-    showSaveAlert(
-        context,
-        "Permisos guardados",
-        "Los permisos se han guardado correctamente."
-    );
+    showSaveAlert(context, "Permisos guardados",
+        "Los permisos se han guardado correctamente.");
   }
 
   void savePermissions() async {
-    var response = await PermissionController().savePermissions(permissionStatus);
+    var response =
+        await PermissionController().savePermissions(permissionStatus);
 
     if (response) {
-      showSaveAlert(
-          context,
-          "Permisos guardados",
-          "Los permisos se han guardado correctamente."
-      );
+      showSaveAlert(context, "Permisos guardados",
+          "Los permisos se han guardado correctamente.");
     }
   }
 
   void getPermissions() async {
-    for (var i=0;i<permissions.length;i++) {
+    for (var i = 0; i < permissions.length; i++) {
       PermissionStatus status = await permissions[i].status;
       switch (i) {
         case 0:
-          permissionStatus[i] = status.isGranted && _prefs.getAcceptedNotification == PreferencePermission.allow;
+          permissionStatus[i] = status.isGranted &&
+              _prefs.getAcceptedNotification == PreferencePermission.allow;
           break;
         case 1:
-          permissionStatus[i] = status.isGranted && _prefs.getAcceptedCamera == PreferencePermission.allow;
+          permissionStatus[i] = status.isGranted &&
+              _prefs.getAcceptedCamera == PreferencePermission.allow;
           break;
         case 2:
-          permissionStatus[i] = status.isGranted && _prefs.getAcceptedContacts == PreferencePermission.allow;
+          permissionStatus[i] = status.isGranted &&
+              _prefs.getAcceptedContacts == PreferencePermission.allow;
           break;
         case 3:
-          permissionStatus[i] = status.isGranted && _prefs.getAcceptedSendLocation == PreferencePermission.allow;
+          permissionStatus[i] = status.isGranted &&
+              _prefs.getAcceptedSendLocation == PreferencePermission.allow;
           break;
         case 4:
-          permissionStatus[i] = _prefs.getAcceptedScheduleExactAlarm == PreferencePermission.allow;
+          permissionStatus[i] = _prefs.getAcceptedScheduleExactAlarm ==
+              PreferencePermission.allow;
           break;
         case 5:
           permissionStatus[i] = _prefs.getAceptedSendSMS;
           break;
       }
-
     }
     setState(() {});
   }
@@ -239,53 +242,50 @@ class _PermitionUserPageState extends State<PermitionUserPage> {
               ),
             ),
             Expanded(
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(0, 90, 0, 0),
-                child: ListView.builder(
-                  itemCount: permissionsName.length,
-                  itemBuilder: (context, index) {
-                    String permission = permissionsName[index];
-                    return ListTile(
-                      contentPadding: const EdgeInsets.fromLTRB(32.0, 0, 32.0, 0),
-                      trailing: Transform.scale(
-                        scale: 0.8,
-                        child: CupertinoSwitch(
-                          value: permissionStatus[index],
-                          activeColor: ColorPalette.activeSwitch,
-                          trackColor: CupertinoColors.inactiveGray,
-                          onChanged: (bool value) {
-                            if (value) {
-                              requestPermission(index);
-                            } else {
-                              setState(() {
-                                permissionStatus[index] = value;
-                              });
-                              //savePermission(index, value);
-                            }
-                          },
+                child: Padding(
+              padding: const EdgeInsets.fromLTRB(0, 90, 0, 0),
+              child: ListView.builder(
+                itemCount: permissionsName.length,
+                itemBuilder: (context, index) {
+                  String permission = permissionsName[index];
+                  return ListTile(
+                    contentPadding: const EdgeInsets.fromLTRB(32.0, 0, 32.0, 0),
+                    trailing: Transform.scale(
+                      scale: 0.8,
+                      child: CupertinoSwitch(
+                        value: permissionStatus[index],
+                        activeColor: ColorPalette.activeSwitch,
+                        trackColor: CupertinoColors.inactiveGray,
+                        onChanged: (bool value) {
+                          if (value) {
+                            requestPermission(index);
+                          } else {
+                            setState(() {
+                              permissionStatus[index] = value;
+                            });
+                            //savePermission(index, value);
+                          }
+                        },
+                      ),
+                    ),
+                    title: Text(
+                        style: GoogleFonts.barlow(
+                          fontSize: 18.0,
+                          fontWeight: FontWeight.w500,
+                          color: CupertinoColors.white,
                         ),
-                      ),
-                      title: Text(
-                          style: GoogleFonts.barlow(
-                            fontSize: 18.0,
-                            fontWeight: FontWeight.w500,
-                            color: CupertinoColors.white,
-                          ),
-                          permissionsName[index]
-                      ),
-                    );
-                  },
-                ),
-              )
-            ),
+                        permissionsName[index]),
+                  );
+                },
+              ),
+            )),
             Positioned(
               bottom: 20,
               right: 32,
               child: Container(
                 decoration: const BoxDecoration(
                   color: ColorPalette.principal,
-                  borderRadius:
-                  BorderRadius.all(Radius.circular(8)),
+                  borderRadius: BorderRadius.all(Radius.circular(8)),
                 ),
                 width: 138,
                 height: 42,
@@ -313,11 +313,8 @@ class _PermitionUserPageState extends State<PermitionUserPage> {
               child: Container(
                 decoration: BoxDecoration(
                   color: Colors.transparent,
-                  border: Border.all(
-                      color: ColorPalette.principal
-                  ),
-                  borderRadius:
-                  BorderRadius.all(Radius.circular(8)),
+                  border: Border.all(color: ColorPalette.principal),
+                  borderRadius: BorderRadius.all(Radius.circular(8)),
                 ),
                 width: 138,
                 height: 42,

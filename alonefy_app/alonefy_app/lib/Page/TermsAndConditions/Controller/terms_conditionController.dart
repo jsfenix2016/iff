@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:ifeelefine/Common/Constant.dart';
+import 'package:ifeelefine/Common/manager_alerts.dart';
 import 'package:ifeelefine/Common/utils.dart';
 import 'package:ifeelefine/Model/ApiRest/TermsAndConditionsApi.dart';
 import 'package:ifeelefine/Page/TermsAndConditions/Service/termsAndConditionsService.dart';
@@ -23,17 +25,15 @@ class TermsAndConditionsController extends GetxController {
     final MainController mainController = Get.put(MainController());
     var user = await mainController.getUserData();
     var termsAndConditionsApi = TermsAndConditionsApi(
-      phoneNumber: user.telephone,
-      smsCallAccepted: true
-    );
+        phoneNumber: user.telephone, smsCallAccepted: true);
 
     var resp =
         await TermsAndConditionsService().saveData(termsAndConditionsApi);
     if (resp) {
-      showAlertTemp("Se guardo correctamente");
+      showAlertTemp(context, Constant.saveCorrectly);
       goTO();
     } else {
-      showAlertTemp("Seprodujo un error");
+      showAlertTemp(context, Constant.errorGeneric);
     }
   }
 
@@ -44,7 +44,7 @@ class TermsAndConditionsController extends GetxController {
     );
   }
 
-  void showAlertTemp(String text) {
-    showAlert(contextTemp, text);
+  void showAlertTemp(BuildContext context, String text) {
+    showSaveAlert(context, Constant.info, Constant.deletectGeneric);
   }
 }

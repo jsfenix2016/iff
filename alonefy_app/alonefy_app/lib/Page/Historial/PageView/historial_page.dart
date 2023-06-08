@@ -11,6 +11,7 @@ import 'package:ifeelefine/Page/Historial/Widgets/cell_log_alert.dart';
 import 'package:ifeelefine/Page/Historial/Widgets/cell_zone_risk.dart';
 
 import 'package:notification_center/notification_center.dart';
+import 'package:ifeelefine/Common/decoration_custom.dart';
 
 class HistorialPage extends StatefulWidget {
   const HistorialPage({super.key});

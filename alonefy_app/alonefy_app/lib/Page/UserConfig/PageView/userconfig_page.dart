@@ -1,6 +1,10 @@
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ifeelefine/Common/Constant.dart';
 import 'package:ifeelefine/Common/colorsPalette.dart';
+import 'package:ifeelefine/Common/decoration_custom.dart';
+import 'package:ifeelefine/Common/initialize_models_bd.dart';
+import 'package:ifeelefine/Common/manager_alerts.dart';
+import 'package:ifeelefine/Common/text_style_font.dart';
 import 'package:ifeelefine/Common/utils.dart';
 
 import 'package:ifeelefine/Page/UserConfig/Controller/userConfigController.dart';
@@ -9,6 +13,8 @@ import 'package:ifeelefine/Model/userbd.dart';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:ifeelefine/Page/UserConfig/Widget/txt_validated_token.dart';
+import 'package:ifeelefine/Provider/prefencesUser.dart';
 
 import 'package:ifeelefine/Utils/Widgets/textFieldFormCustomBorder.dart';
 import 'package:ifeelefine/Utils/Widgets/widgetLogo.dart';
@@ -29,15 +35,15 @@ class _UserConfigPageState extends State<UserConfigPage> {
   User? user;
   UserBD? userbd;
   final formKey = GlobalKey<FormState>();
-
   final scaffoldKey = GlobalKey<ScaffoldState>();
+  final _prefs = PreferenceUser();
   var isValidEmail = false;
   var isValidSms = false;
 
   @override
   void initState() {
     user = initUser();
-
+    _prefs.saveLastScreenRoute("userConfig");
     super.initState();
   }
 
@@ -121,15 +127,12 @@ class _UserConfigPageState extends State<UserConfigPage> {
                               height: 42,
                               width: 227,
                               child: Center(
-                                child: Text(
-                                  'Solicitar códigos de verificación',
-                                  textAlign: TextAlign.center,
-                                  style: GoogleFonts.barlow(
-                                    fontSize: 16.0,
-                                    wordSpacing: 1,
-                                    letterSpacing: 0.001,
-                                    fontWeight: FontWeight.normal,
-                                    color: Colors.black,
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Text(
+                                    Constant.tokenRequestTxt,
+                                    textAlign: TextAlign.center,
+                                    style: textNormal16Black(),
                                   ),
                                 ),
                               ),
@@ -141,11 +144,38 @@ class _UserConfigPageState extends State<UserConfigPage> {
                         ),
                       ),
                       const SizedBox(height: 20),
-                      _crearTxtCodigoMail("email", "",
-                          'Introduce el código enviado a tu correo'),
+                      TextValidateToken(
+                        type: "email",
+                        code: "",
+                        message: Constant.validateCodeEmail,
+                        onChanged: (String value) async {
+                          if (!validateEmail(user!.email)) {
+                            // El correo electrónico no es válido
+
+                            showSaveAlert(
+                                context, Constant.info, Constant.validateEmail);
+                            return;
+                          }
+
+                          isValidEmail =
+                              await userVC.validateCodeEmail(context, value);
+                        },
+                      ),
                       const SizedBox(height: 20),
-                      _crearTxtCodigoMail("Sms", "",
-                          'Introduce el código enviado a tu teléfono'),
+                      TextValidateToken(
+                          type: "Sms",
+                          code: "",
+                          message: Constant.validateCodeSms,
+                          onChanged: (String value) async {
+                            if (!validatePhoneNumber(user!.telephone)) {
+                              showSaveAlert(context, Constant.info,
+                                  Constant.validatePhoneNumber);
+                              return;
+                            }
+
+                            isValidSms =
+                                await userVC.validateCodeSMS(context, value);
+                          }),
                       const SizedBox(height: 20),
                       SizedBox(
                         width: double.infinity,
@@ -162,8 +192,8 @@ class _UserConfigPageState extends State<UserConfigPage> {
                             onPressed: (isValidSms && isValidEmail)
                                 ? _submit
                                 : () {
-                                    showAlert(context,
-                                        "Debe tener el telefono e email validado para continuar.");
+                                    showSaveAlert(context, Constant.info,
+                                        Constant.alertMessageValidateUser);
                                   },
                             child: Container(
                               decoration: BoxDecoration(
@@ -178,14 +208,8 @@ class _UserConfigPageState extends State<UserConfigPage> {
                               width: 200,
                               child: Center(
                                 child: Text(
-                                  'Configurar',
-                                  style: GoogleFonts.barlow(
-                                    fontSize: 18.0,
-                                    wordSpacing: 1,
-                                    letterSpacing: 1.2,
-                                    fontWeight: FontWeight.normal,
-                                    color: Colors.white,
-                                  ),
+                                  Constant.configurationbtn,
+                                  style: textNomral18White(),
                                 ),
                               ),
                             ),
@@ -204,109 +228,18 @@ class _UserConfigPageState extends State<UserConfigPage> {
     );
   }
 
-  Widget _crearTxtCodigoMail(String type, String code, String message) {
-    return Padding(
-      padding: const EdgeInsets.only(left: 5.0, right: 5.0),
-      child: Container(
-        color: Colors.transparent,
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            SizedBox(
-              width: 120,
-              height: 50,
-              child: Text(
-                message,
-                textAlign: TextAlign.right,
-                style: GoogleFonts.barlow(
-                  fontSize: 14.0,
-                  wordSpacing: 1,
-                  letterSpacing: 1,
-                  fontWeight: FontWeight.normal,
-                  color: Colors.white,
-                ),
-              ),
-            ),
-            const SizedBox(
-              width: 10,
-            ),
-            SizedBox(
-              width: 200,
-              child: TextFormField(
-                keyboardType: TextInputType.number,
-                initialValue: code,
-                textCapitalization: TextCapitalization.sentences,
-                decoration: InputDecoration(
-                  suffixIcon: const Text(
-                    '*',
-                    style: TextStyle(color: Colors.red, fontSize: 40),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: const BorderSide(color: ColorPalette.principal),
-                    borderRadius: BorderRadius.circular(100.0),
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderSide: const BorderSide(
-                        width: 1, color: ColorPalette.principal), //<-- SEE HERE
-                    borderRadius: BorderRadius.circular(100.0),
-                  ),
-                  hintStyle: const TextStyle(color: Colors.white, fontSize: 18),
-                  hintText: code,
-                  labelText: "",
-                  labelStyle:
-                      const TextStyle(color: Colors.white, fontSize: 18),
-                ),
-                onSaved: (value) => value,
-                validator: (value) {
-                  return Constant.codeEmailPlaceholder;
-                },
-                style: GoogleFonts.barlow(
-                    fontSize: 14.0,
-                    wordSpacing: 1,
-                    letterSpacing: 1,
-                    fontWeight: FontWeight.normal,
-                    color: Colors.white),
-                onChanged: (value) async {
-                  if (value.length < 6) {
-                    return;
-                  }
-                  if (type == 'sms' && !validatePhoneNumber(user!.telephone)) {
-                    showAlert(context, Constant.validatePhoneNumber);
-                    return;
-                  }
-
-                  if (type == 'email' && !validateEmail(user!.email)) {
-                    // El correo electrónico no es válido
-                    showAlert(context, Constant.validateEmail);
-                    return;
-                  }
-
-                  if (type == 'Sms') {
-                    isValidSms = await userVC.validateCodeSMS(context, value);
-                  }
-                  if (type == 'email') {
-                    isValidEmail =
-                        await userVC.validateCodeEmail(context, value);
-                  }
-                },
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
   void _submit() async {
     if (!validatePhoneNumber(user!.telephone)) {
       // El número de teléfono no es inválido
-      showAlert(context, Constant.validatePhoneNumber);
+
+      showSaveAlert(context, Constant.info, Constant.validatePhoneNumber);
       return;
     }
 
     if (!validateEmail(user!.email)) {
       // El correo electrónico no es válido
-      showAlert(context, Constant.validateEmail);
+
+      showSaveAlert(context, Constant.info, Constant.validateEmail);
       return;
     }
 
@@ -326,7 +259,6 @@ class _UserConfigPageState extends State<UserConfigPage> {
                     TextButton(
                       child: const Text("Ok"),
                       onPressed: () {
-                        print(resp);
                         Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
@@ -342,22 +274,5 @@ class _UserConfigPageState extends State<UserConfigPage> {
         });
       }
     }
-  }
-
-  void showAlert(BuildContext context, String mensaje) {
-    showDialog(
-        context: context,
-        builder: (context) {
-          return AlertDialog(
-            title: const Text("Informacion "),
-            content: Text(mensaje),
-            actions: <Widget>[
-              TextButton(
-                child: const Text("Ok"),
-                onPressed: () => Navigator.of(context).pop(),
-              )
-            ],
-          );
-        });
   }
 }

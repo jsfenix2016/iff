@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:ifeelefine/Common/Constant.dart';
+import 'package:ifeelefine/Common/manager_alerts.dart';
 import 'package:ifeelefine/Common/utils.dart';
 import 'package:ifeelefine/Controllers/contactUserController.dart';
 import 'package:ifeelefine/Data/hiveRisk_data.dart';
@@ -28,7 +30,7 @@ class RestoreController extends GetxController {
   final RestoreService restServ = Get.put(RestoreService());
 
   Future<void> sendData(
-    BuildContext context, String number, String email) async {
+      BuildContext context, String number, String email) async {
     final restoreApi = await restServ.restoreData(number, email);
 
     if (restoreApi != null) {
@@ -42,10 +44,10 @@ class RestoreController extends GetxController {
       await _saveLocation(restoreApi.userApi);
       await _saveTermsAndConditions(restoreApi.userApi);
       await _saveFall(restoreApi.userApi);
-      showAlert(context, "Se restauro correctamente");
+
+      showSaveAlert(context, Constant.info, Constant.restoredCorrectly.tr);
     } else {
-      showAlert(context,
-          "Se produjo un error, verifique su conexion a internet e intente de nuevo.");
+      showSaveAlert(context, Constant.info, Constant.errorGenericConextion.tr);
     }
   }
 
@@ -80,7 +82,8 @@ class RestoreController extends GetxController {
     UserRestController().saveFromApi(userRestApiList);
   }
 
-  Future<void> _saveActivities(List<ActivityDayApiResponse> activitiesApi) async {
+  Future<void> _saveActivities(
+      List<ActivityDayApiResponse> activitiesApi) async {
     AddActivityController().saveFromApi(activitiesApi);
   }
 
@@ -114,7 +117,8 @@ class RestoreController extends GetxController {
     EditRiskController().saveFromApi(contactsRiskApi);
   }
 
-  Future<void> _saveContactZoneRisk(List<ZoneRiskApi> contactsZoneRiskApi) async {
+  Future<void> _saveContactZoneRisk(
+      List<ZoneRiskApi> contactsZoneRiskApi) async {
     EditZoneController().saveFromApi(contactsZoneRiskApi);
   }
 

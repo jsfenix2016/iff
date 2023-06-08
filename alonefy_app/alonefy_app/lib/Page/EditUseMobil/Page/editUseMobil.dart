@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ifeelefine/Common/Constant.dart';
 import 'package:ifeelefine/Common/colorsPalette.dart';
+import 'package:ifeelefine/Common/manager_alerts.dart';
 import 'package:ifeelefine/Common/utils.dart';
 import 'package:ifeelefine/Data/hive_data.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -20,6 +21,7 @@ import 'package:collection/collection.dart';
 
 import '../../../Provider/prefencesUser.dart';
 import '../../Premium/PageView/premium_page.dart';
+import 'package:ifeelefine/Common/decoration_custom.dart';
 
 class EditUseMobilPage extends StatefulWidget {
   const EditUseMobilPage({super.key});
@@ -164,7 +166,8 @@ class _EditUseMobilPageState extends State<EditUseMobilPage> {
 
   void btnCancel() async {
     await editUseMobilVC.saveTimeUseMobil(context, selecDicActivityCancel);
-    showAlert(context, "Se ha cancelado los cambios");
+    // showAlert(context, "Se ha cancelado los cambios");
+    showSaveAlert(context, Constant.info, Constant.cancelChange);
   }
 
   void btnAdd() async {
@@ -264,34 +267,38 @@ class _EditUseMobilPageState extends State<EditUseMobilPage> {
                             height: 200,
                             color: Colors.transparent,
                             child: SizedBox(
-                              width: 200,
-                              height: 90,
-                              child: Stack (
-                                children: [
-                                  if (!_prefs.getUserPremium) ... [
-                                    _getCupertinoPicker(indexList, indexGroup, scrollController),
-                                  ] else ...[
-                                    GestureDetector(
-                                      child: AbsorbPointer(
-                                        absorbing: !_prefs.getUserPremium,
-                                        child: _getCupertinoPicker(indexList, indexGroup, scrollController)
-                                      ),
-                                      onVerticalDragEnd: (drag) {
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(builder: (context) => const PremiumPage(
-                                              isFreeTrial: false,
-                                              img: 'pantalla3.png',
-                                              title: Constant.premiumUseTimeTitle,
-                                              subtitle: '')
-                                          ),
-                                        );
-                                      },
-                                    )
-                                  ]
-                                ],
-                              )
-                            ),
+                                width: 200,
+                                height: 90,
+                                child: Stack(
+                                  children: [
+                                    if (!_prefs.getUserPremium) ...[
+                                      _getCupertinoPicker(indexList, indexGroup,
+                                          scrollController),
+                                    ] else ...[
+                                      GestureDetector(
+                                        child: AbsorbPointer(
+                                            absorbing: !_prefs.getUserPremium,
+                                            child: _getCupertinoPicker(
+                                                indexList,
+                                                indexGroup,
+                                                scrollController)),
+                                        onVerticalDragEnd: (drag) {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    const PremiumPage(
+                                                        isFreeTrial: false,
+                                                        img: 'pantalla3.png',
+                                                        title: Constant
+                                                            .premiumUseTimeTitle,
+                                                        subtitle: '')),
+                                          );
+                                        },
+                                      )
+                                    ]
+                                  ],
+                                )),
                           ),
                         ],
                       );
@@ -347,50 +354,48 @@ class _EditUseMobilPageState extends State<EditUseMobilPage> {
     );
   }
 
-  Widget _getCupertinoPicker(int indexList, int indexGroup, FixedExtentScrollController scrollController) {
+  Widget _getCupertinoPicker(int indexList, int indexGroup,
+      FixedExtentScrollController scrollController) {
     return CupertinoPicker(
       key: Key(indexList.toString()),
       scrollController: scrollController,
       backgroundColor: Colors.transparent,
       onSelectedItemChanged: (int value) {
         indexSelect = indexGroup;
-        timeLblPM = timeDic[value.toString()]
-            .toString();
+        timeLblPM = timeDic[value.toString()].toString();
         processSelectedInfo();
       },
       itemExtent: 56.0,
-      children: List.generate(timeDic.length,
-              (index) {
-            return Container(
-              key: Key(indexList.toString()),
-              height: 64,
-              width: 125,
-              color: Colors.transparent,
-              child: Column(
+      children: List.generate(timeDic.length, (index) {
+        return Container(
+          key: Key(indexList.toString()),
+          height: 64,
+          width: 125,
+          color: Colors.transparent,
+          child: Column(
+            key: Key(indexList.toString()),
+            children: [
+              Text(
                 key: Key(indexList.toString()),
-                children: [
-                  Text(
-                    key: Key(indexList.toString()),
-                    timeDic.values
-                        .toList()[index],
-                    textAlign: TextAlign.center,
-                    style: GoogleFonts.barlow(
-                      fontSize: 36.0,
-                      wordSpacing: 1,
-                      letterSpacing: 0.001,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
-                  ),
-                  Container(
-                    height: 2,
-                    width: 100,
-                    color: Colors.white,
-                  ),
-                ],
+                timeDic.values.toList()[index],
+                textAlign: TextAlign.center,
+                style: GoogleFonts.barlow(
+                  fontSize: 36.0,
+                  wordSpacing: 1,
+                  letterSpacing: 0.001,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
               ),
-            );
-          }),
+              Container(
+                height: 2,
+                width: 100,
+                color: Colors.white,
+              ),
+            ],
+          ),
+        );
+      }),
     );
   }
 }

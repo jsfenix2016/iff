@@ -14,6 +14,7 @@ import '../../../Common/colorsPalette.dart';
 import '../../../Common/utils.dart';
 import '../../../Model/UserComment.dart';
 import '../../Onboarding/Widget/widgetColumnOnboarding.dart';
+import 'package:ifeelefine/Common/decoration_custom.dart';
 
 class PremiumPage extends StatefulWidget {
   const PremiumPage(
@@ -54,17 +55,16 @@ class _PremiumPageState extends State<PremiumPage> {
               height: size.height,
               width: size.width,
               decoration: BoxDecoration(
-               gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: const Alignment(0, 1),
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: const Alignment(0, 1),
                   colors: <Color>[
-                   Colors.black,
-                   Colors.black.withAlpha(450),
-                   Colors.transparent,
-
+                    Colors.black,
+                    Colors.black.withAlpha(450),
+                    Colors.transparent,
                   ],
-                 tileMode: TileMode.mirror,
-               ),
+                  tileMode: TileMode.mirror,
+                ),
               ),
             ),
             Positioned(

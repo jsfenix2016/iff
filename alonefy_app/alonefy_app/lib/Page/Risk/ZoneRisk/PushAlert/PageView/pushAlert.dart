@@ -18,6 +18,7 @@ import 'package:ifeelefine/Page/Risk/ZoneRisk/CancelAlert/PageView/cancelAlert.d
 import 'package:ifeelefine/Page/Risk/ZoneRisk/PushAlert/Controller/push_alert_controller.dart';
 import 'package:ifeelefine/Utils/Widgets/elevatedButtonFilling.dart';
 import 'package:camera/camera.dart';
+import 'package:ifeelefine/Common/decoration_custom.dart';
 
 class PushAlertPage extends StatefulWidget {
   /// Creates a new GeolocatorWidget.

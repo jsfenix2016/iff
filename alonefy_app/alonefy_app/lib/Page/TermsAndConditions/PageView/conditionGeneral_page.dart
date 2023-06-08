@@ -1,13 +1,14 @@
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:ifeelefine/Common/Constant.dart';
-import 'package:ifeelefine/Common/utils.dart';
+import 'package:ifeelefine/Common/manager_alerts.dart';
+import 'package:ifeelefine/Common/text_style_font.dart';
 import 'package:ifeelefine/Page/TermsAndConditions/Controller/terms_conditionController.dart';
 import 'package:flutter/material.dart';
 import 'package:ifeelefine/Utils/Widgets/widgetLogo.dart';
 
 import '../../../Common/colorsPalette.dart';
+import 'package:ifeelefine/Common/decoration_custom.dart';
 
 class ConditionGeneralPage extends StatefulWidget {
   const ConditionGeneralPage({super.key});
@@ -58,13 +59,7 @@ class _ConditionGeneralPageState extends State<ConditionGeneralPage> {
                                       child: Text(
                                         'Acepto las condiciones generales *',
                                         textAlign: TextAlign.right,
-                                        style: GoogleFonts.barlow(
-                                          fontSize: 18.0,
-                                          wordSpacing: 1,
-                                          letterSpacing: 1,
-                                          fontWeight: FontWeight.w500,
-                                          color: Colors.white,
-                                        ),
+                                        style: textNomral18White(),
                                       )),
                                 ),
                                 Expanded(
@@ -72,7 +67,8 @@ class _ConditionGeneralPageState extends State<ConditionGeneralPage> {
                                     child: Align(
                                         alignment: Alignment.centerLeft,
                                         child: Padding(
-                                            padding: EdgeInsets.only(left: 16),
+                                            padding:
+                                                const EdgeInsets.only(left: 16),
                                             child: Transform.scale(
                                               scale: 0.8,
                                               child: CupertinoSwitch(
@@ -101,13 +97,7 @@ class _ConditionGeneralPageState extends State<ConditionGeneralPage> {
                                       child: Text(
                                         'Acepto envío de SMS y llamadas en caso de interpretar I’m Fine que pueda estar en riesgo ',
                                         textAlign: TextAlign.right,
-                                        style: GoogleFonts.barlow(
-                                          fontSize: 18.0,
-                                          wordSpacing: 1,
-                                          letterSpacing: 1,
-                                          fontWeight: FontWeight.w500,
-                                          color: Colors.white,
-                                        ),
+                                        style: textNomral18White(),
                                       )),
                                 ),
                                 Expanded(
@@ -146,16 +136,13 @@ class _ConditionGeneralPageState extends State<ConditionGeneralPage> {
                                     borderRadius: BorderRadius.circular(20)),
                                 child: Column(
                                   children: [
-                                    const Expanded(
+                                    Expanded(
                                       child: SingleChildScrollView(
                                         scrollDirection:
                                             Axis.vertical, //.horizontal
                                         child: Text(
                                           'I’m Fine, como responsable del tratamiento, realizará el tratamiento de sus datos para la gestión.',
-                                          style: TextStyle(
-                                            fontSize: 16.0,
-                                            color: Colors.white,
-                                          ),
+                                          style: textNormal16White(),
                                         ),
                                       ),
                                     ),
@@ -184,13 +171,10 @@ class _ConditionGeneralPageState extends State<ConditionGeneralPage> {
                                           ),
                                           height: 42,
                                           width: 200,
-                                          child: const Center(
+                                          child: Center(
                                             child: Text(
                                               Constant.continueTxt,
-                                              style: TextStyle(
-                                                  color: Colors.white,
-                                                  fontWeight: FontWeight.w700,
-                                                  fontSize: 16),
+                                              style: textNormal16White(),
                                             ),
                                           ),
                                         ),
@@ -202,7 +186,9 @@ class _ConditionGeneralPageState extends State<ConditionGeneralPage> {
                                                 aceptedConditions,
                                                 aceptedSendMessage);
                                           } else {
-                                            showAlert(context,
+                                            showSaveAlert(
+                                                context,
+                                                Constant.info,
                                                 'Para continuar debe aceptar las condiciones y el permiso de envio de mesnajes y llamadas.');
                                           }
                                         },

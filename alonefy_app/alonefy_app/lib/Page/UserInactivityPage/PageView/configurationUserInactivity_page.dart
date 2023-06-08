@@ -18,6 +18,7 @@ import 'package:ifeelefine/Utils/Widgets/customDropDown.dart';
 import 'package:flutter/material.dart';
 import 'package:collection/collection.dart';
 import 'package:ifeelefine/Utils/Widgets/elevatedButtonFilling.dart';
+import 'package:ifeelefine/Common/decoration_custom.dart';
 
 class UserInactivityPage extends StatefulWidget {
   const UserInactivityPage({super.key});

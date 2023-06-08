@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'dart:ffi';
 import 'dart:io';
+import 'package:ifeelefine/Common/manager_alerts.dart';
+import 'package:ifeelefine/Common/text_style_font.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
@@ -26,6 +28,7 @@ import 'package:ifeelefine/Utils/Widgets/elevatedButtonFilling.dart';
 import 'package:ifeelefine/Utils/Widgets/imageAccordingWidget.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:ifeelefine/Common/decoration_custom.dart';
 
 final _prefs = PreferenceUser();
 
@@ -169,32 +172,13 @@ class _EditRiskPageState extends State<EditRiskPage> {
     return temp;
   }
 
-  //capturar imagen de la galeria de fotos
-  Future getImageGallery(ImageSource origen) async {
-    final XFile? image = await _picker.pickImage(source: origen);
-    File file;
-
-    if (image != null) {
-      file = File(image.path);
-      setState(() {
-        foto = file;
-      });
-    }
-
-    if (foto != null) {
-      showAlert(context, "Se guardo la imagen correctamente".tr);
-    } else {
-      showAlert(context, "Hubo un error, intente mas tarde".tr);
-    }
-  }
-
   Widget _mostrarFoto() {
     // Uint8List? bytes;
 
     return GestureDetector(
       onTap: (() async {
         var result = await cameraPermissions(_prefs.getAcceptedCamera, context);
-        if (result) getImageGallery(ImageSource.gallery);
+        if (result) foto = procesarImagen(ImageSource.gallery);
       }),
       child: Container(
         width: 50,
@@ -320,13 +304,7 @@ class _EditRiskPageState extends State<EditRiskPage> {
                                         child: Text(
                                           "Hora inicio:",
                                           textAlign: TextAlign.left,
-                                          style: GoogleFonts.barlow(
-                                            fontSize: 20.0,
-                                            wordSpacing: 1,
-                                            letterSpacing: 0.001,
-                                            fontWeight: FontWeight.normal,
-                                            color: Colors.white,
-                                          ),
+                                          style: textNormal20White(),
                                         ),
                                       ),
                                     ),
@@ -384,13 +362,7 @@ class _EditRiskPageState extends State<EditRiskPage> {
                                         child: Text(
                                           "Hora fin:",
                                           textAlign: TextAlign.left,
-                                          style: GoogleFonts.barlow(
-                                            fontSize: 20.0,
-                                            wordSpacing: 1,
-                                            letterSpacing: 0.001,
-                                            fontWeight: FontWeight.normal,
-                                            color: Colors.white,
-                                          ),
+                                          style: textNormal20White(),
                                         ),
                                       ),
                                     ),
@@ -447,13 +419,7 @@ class _EditRiskPageState extends State<EditRiskPage> {
                         child: Text(
                           "Establece tu clave de cancelación",
                           textAlign: TextAlign.center,
-                          style: GoogleFonts.barlow(
-                            fontSize: 18.0,
-                            wordSpacing: 1,
-                            letterSpacing: 1,
-                            fontWeight: FontWeight.normal,
-                            color: Colors.white,
-                          ),
+                          style: textNomral18White(),
                         ),
                       ),
                       ContentCode(
@@ -479,13 +445,7 @@ class _EditRiskPageState extends State<EditRiskPage> {
                           child: Text(
                             "Después de la hora de fin llamar a:",
                             textAlign: TextAlign.center,
-                            style: GoogleFonts.barlow(
-                              fontSize: 18.0,
-                              wordSpacing: 1,
-                              letterSpacing: 1,
-                              fontWeight: FontWeight.normal,
-                              color: Colors.white,
-                            ),
+                            style: textNomral18White(),
                           ),
                         ),
                       ),
@@ -558,13 +518,7 @@ class _EditRiskPageState extends State<EditRiskPage> {
                               child: Text(
                                 "Enviar Whatsapp a mí contacto predefinido:",
                                 textAlign: TextAlign.left,
-                                style: GoogleFonts.barlow(
-                                  fontSize: 14.0,
-                                  wordSpacing: 1,
-                                  letterSpacing: 1,
-                                  fontWeight: FontWeight.normal,
-                                  color: Colors.white,
-                                ),
+                                style: textNormal14White(),
                               ),
                             ),
                             Container(
@@ -598,13 +552,7 @@ class _EditRiskPageState extends State<EditRiskPage> {
                               child: Text(
                                 "Enviar mi última ubicación registrada:",
                                 textAlign: TextAlign.left,
-                                style: GoogleFonts.barlow(
-                                  fontSize: 14.0,
-                                  wordSpacing: 1,
-                                  letterSpacing: 1,
-                                  fontWeight: FontWeight.normal,
-                                  color: Colors.white,
-                                ),
+                                style: textNormal14White(),
                               ),
                             ),
                             Container(
@@ -662,13 +610,7 @@ class _EditRiskPageState extends State<EditRiskPage> {
                               filled: true,
                               labelStyle: TextStyle(color: Colors.white),
                             ),
-                            style: GoogleFonts.barlow(
-                              fontSize: 14.0,
-                              wordSpacing: 1,
-                              letterSpacing: 1,
-                              fontWeight: FontWeight.normal,
-                              color: Colors.white,
-                            ),
+                            style: textNormal14White(),
                             onSaved: (value) => {},
                           ),
                         ),
@@ -695,13 +637,7 @@ class _EditRiskPageState extends State<EditRiskPage> {
                               filled: true,
                               labelStyle: const TextStyle(color: Colors.white),
                             ),
-                            style: GoogleFonts.barlow(
-                              fontSize: 14.0,
-                              wordSpacing: 1,
-                              letterSpacing: 1,
-                              fontWeight: FontWeight.normal,
-                              color: Colors.white,
-                            ),
+                            style: textNormal14White(),
                             keyboardType: TextInputType.multiline,
                             maxLines: null,
                             onChanged: (value) {
@@ -728,7 +664,8 @@ class _EditRiskPageState extends State<EditRiskPage> {
                                     child: IconButton(
                                       iconSize: 25,
                                       onPressed: () {
-                                        getImageGallery(ImageSource.gallery);
+                                        foto =
+                                            procesarImagen(ImageSource.gallery);
                                       },
                                       icon: Column(
                                         children: [
@@ -755,13 +692,7 @@ class _EditRiskPageState extends State<EditRiskPage> {
                                   child: Text(
                                     "Añadir imagen",
                                     textAlign: TextAlign.left,
-                                    style: GoogleFonts.barlow(
-                                      fontSize: 14.0,
-                                      wordSpacing: 1,
-                                      letterSpacing: 0.01,
-                                      fontWeight: FontWeight.normal,
-                                      color: Colors.white,
-                                    ),
+                                    style: textNormal14White(),
                                   ),
                                 ),
                                 ImageFanWidget(
@@ -864,13 +795,7 @@ class _EditRiskPageState extends State<EditRiskPage> {
                                 child: Text(
                                   "Guardar esta configuración",
                                   textAlign: TextAlign.right,
-                                  style: GoogleFonts.barlow(
-                                    fontSize: 14.0,
-                                    wordSpacing: 1,
-                                    letterSpacing: 1,
-                                    fontWeight: FontWeight.normal,
-                                    color: Colors.white,
-                                  ),
+                                  style: textNormal14White(),
                                 ),
                               ),
                               SizedBox(
