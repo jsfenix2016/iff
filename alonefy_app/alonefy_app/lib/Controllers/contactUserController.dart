@@ -89,6 +89,15 @@ class ContactUserController extends GetxController {
     }
   }
 
+  Future<void> updateContactStatus(String phones, String status) async {
+    var contact = await const HiveData().getContactBD(phones);
+
+    if (contact != null) {
+      contact.requestStatus = status;
+      await const HiveData().updateContact(contact);
+    }
+  }
+
   //Future<void> updateContacts(BuildContext context, List<Contact> contacts, String timeSendSMS,
   //    String timeCall, String timeWhatsapp) async {
   //  var contactBD = ContactBD("", null, "", "", "", "", "", "pendiente");
@@ -157,15 +166,15 @@ class ContactUserController extends GetxController {
     return response;
   }
 
-  Future<bool> updateContactStatus(ContactBD contact) async {
-    final MainController mainController = Get.put(MainController());
-    var user = await mainController.getUserData();
-
-    var response =
-        await contactServ.updateContactStatus(user.telephone, contact.phones);
-
-    return response;
-  }
+  //Future<bool> updateContactStatus(ContactBD contact) async {
+  //  final MainController mainController = Get.put(MainController());
+  //  var user = await mainController.getUserData();
+//
+  //  var response =
+  //      await contactServ.updateContactStatus(user.telephone, contact.phones);
+//
+  //  return response;
+  //}
 
   Future<List<ContactBD>> getContacts() async {
     final MainController mainController = Get.put(MainController());

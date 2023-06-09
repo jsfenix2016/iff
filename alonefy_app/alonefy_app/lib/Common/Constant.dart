@@ -65,6 +65,9 @@ class Constant {
   static const String monthly = "Mensual";
   static const String yearly = "Anual";
 
+  static const String inactive = "INACTIVE";
+  static const String drop = "DROP";
+
   static const Map<String, String> gender = {
     '0': 'Hombre',
     '1': 'Mujer',

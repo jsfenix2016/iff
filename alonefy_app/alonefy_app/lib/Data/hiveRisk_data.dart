@@ -54,6 +54,23 @@ class HiveDataRisk {
     }
   }
 
+  Future<ContactRiskBD?> getContactRiskBD(String phones) async {
+    try {
+      final box = await Hive.openBox<ContactRiskBD>('contactriskbd');
+
+      for (ContactRiskBD item in box.values.toList()) {
+        if (item.phones == phones) {
+          return item;
+        }
+      }
+
+      return null;
+    } catch (error) {
+      print(error);
+      return null;
+    }
+  }
+
   Future<void> deleteAllContactRisk() async {
     Box<ContactRiskBD> box = await Hive.openBox<ContactRiskBD>('contactriskbd');
 

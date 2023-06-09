@@ -51,23 +51,6 @@ class EditContactController extends GetxController {
     showSaveAlert(contextTemp, Constant.info, text.tr);
   }
 
-  Future<void> updateContacts(
-      List<ContactBD> contacts, emailTime, phoneTime, smsTime) async {
-    for (var contact in contacts) {
-      contact.timeSendSMS = emailTime;
-      contact.timeCall = phoneTime;
-      contact.timeWhatsapp = smsTime;
-
-      const HiveData().updateContact(contact);
-
-      final MainController mainController = Get.put(MainController());
-      var user = await mainController.getUserData();
-      ContactApi contactApi = convertToApi(contact, user.telephone);
-
-      contactServ.updateContact(contactApi);
-    }
-  }
-
   ContactApi convertToApi(ContactBD contactBD, String phoneNumber) {
     //var contactAPI = ContactApi(
     //    userPhoneNumber: phoneNumber,

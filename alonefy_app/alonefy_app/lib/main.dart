@@ -319,7 +319,7 @@ void onStart(ServiceInstance service) async {
     }
 
     _logActivityTimer += 5;
-    getDateRisk();
+    //getDateRisk();
 
     service.invoke(
       'update',
@@ -435,7 +435,7 @@ Future getDateRisk() async {
             element.isFinishTime = true;
             await const HiveDataRisk().updateContactRisk(element);
             RedirectViewNotifier.sendMessageContactDate(element);
-            RedirectViewNotifier.showDateFinishNotifications();
+            //RedirectViewNotifier.showDateFinishNotifications();
           }
         }
       }

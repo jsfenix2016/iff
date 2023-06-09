@@ -72,6 +72,23 @@ class HiveData {
     return listContact;
   }
 
+  Future<ContactBD?> getContactBD(String phones) async {
+    try {
+      final box = await Hive.openBox<ContactBD>('contactBD');
+
+      for (ContactBD item in box.values.toList()) {
+        if (item.phones == phones) {
+          return item;
+        }
+      }
+
+      return null;
+    } catch (error) {
+      print(error);
+      return null;
+    }
+  }
+
   Future updateContact(ContactBD contact) async {
     final Box<ContactBD> box = await Hive.openBox<ContactBD>('contactBD');
 
