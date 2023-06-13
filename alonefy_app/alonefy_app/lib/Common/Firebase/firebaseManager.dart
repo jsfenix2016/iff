@@ -48,7 +48,7 @@ Future<void> initializeFirebase() async {
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
   //if (!kIsWeb) {
-    //await setupFlutterNotifications();
+  //await setupFlutterNotifications();
   //}
 }
 
@@ -107,10 +107,11 @@ Future<void> onActionSelected(String value) async {
           var user = await mainController.getUserData();
 
           if (user.telephone != "" && token != null) {
-            var firebaseTokenApi = FirebaseTokenApi(phoneNumber: user.telephone, fcmToken: token);
+            var firebaseTokenApi =
+                FirebaseTokenApi(phoneNumber: user.telephone, fcmToken: token);
             FirebaseService().saveData(firebaseTokenApi);
           }
-          
+
           print(
             'FlutterFire Messaging Example: Getting an APNs token is only supported on iOS and macOS platforms.',
           );

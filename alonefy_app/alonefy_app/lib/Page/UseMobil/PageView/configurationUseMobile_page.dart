@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ifeelefine/Common/Constant.dart';
 import 'package:ifeelefine/Common/colorsPalette.dart';
+import 'package:ifeelefine/Common/text_style_font.dart';
 import 'package:ifeelefine/Common/utils.dart';
 import 'package:ifeelefine/Model/userbd.dart';
 import 'package:ifeelefine/Page/UseMobil/Controller/useMobileController.dart';
@@ -10,7 +11,6 @@ import 'package:ifeelefine/Page/UseMobil/Controller/useMobileController.dart';
 import 'package:ifeelefine/Page/UserRest/PageView/configurationUserRest_page.dart';
 import 'package:flutter/material.dart';
 import 'package:ifeelefine/Provider/prefencesUser.dart';
-import 'package:ifeelefine/Utils/Widgets/elevateButtonCustomBorder.dart';
 import 'package:ifeelefine/Utils/Widgets/elevatedButtonFilling.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:slidable_button/slidable_button.dart';
@@ -28,13 +28,8 @@ class _UseMobilePageState extends State<UseMobilePage> {
   var indexSelect = 0;
   UserBD? userbd;
   PreferenceUser prefs = PreferenceUser();
-  // FlutterPay flutterPay = FlutterPay();
 
   final _prefs = PreferenceUser();
-
-  void onGooglePayResult(paymentResult) {
-    // Send the resulting Google Pay token to your server / PSP
-  }
 
   @override
   void initState() {
@@ -81,14 +76,7 @@ class _UseMobilePageState extends State<UseMobilePage> {
               Text(
                 '¿cada cuánto tiempo usas o coges el móvil?',
                 textAlign: TextAlign.center,
-                style: GoogleFonts.barlow(
-                  fontSize: 24.0,
-                  wordSpacing: 1,
-                  letterSpacing: 1.2,
-                  height: 1.39,
-                  fontWeight: FontWeight.bold,
-                  color: ColorPalette.principal,
-                ),
+                style: textBold24PrincipalColor(),
               ),
               const SizedBox(
                 height: 40,
@@ -99,13 +87,7 @@ class _UseMobilePageState extends State<UseMobilePage> {
               Text(
                 "Selección manual",
                 textAlign: TextAlign.center,
-                style: GoogleFonts.barlow(
-                  fontSize: 20.0,
-                  wordSpacing: 1,
-                  letterSpacing: 1,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                ),
+                style: textBold20White(),
               ),
               const SizedBox(
                 height: 10,
@@ -130,13 +112,7 @@ class _UseMobilePageState extends State<UseMobilePage> {
                             Text(
                               Constant.timeDic[i.toString()].toString(),
                               textAlign: TextAlign.center,
-                              style: GoogleFonts.barlow(
-                                fontSize: 36.0,
-                                wordSpacing: 1,
-                                letterSpacing: 0.001,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white,
-                              ),
+                              style: textBold36White(),
                             ),
                             Container(
                               height: 2,
@@ -181,13 +157,7 @@ class _UseMobilePageState extends State<UseMobilePage> {
                             child: Text(
                               'Aprender de mis hábitos',
                               textAlign: TextAlign.center,
-                              style: GoogleFonts.barlow(
-                                fontSize: 16.0,
-                                wordSpacing: 1,
-                                letterSpacing: 1,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black,
-                              ),
+                              style: textBold16Black(),
                             ),
                           ),
                         ),

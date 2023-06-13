@@ -7,23 +7,31 @@ import 'package:flutter/foundation.dart';
 import 'package:ifeelefine/Model/userbd.dart';
 
 class UserService {
-  Future<Map<String, dynamic>> validateCodeSMS(String id, String code) async {
-    // final authData = {"recipient": "$num", "originator": (code)};
-    final headersData = {
-      "Authorization": "AccessKey ScW7OrkmUB6YPlsrPTGNx4Zwt"
+  Future<Map<String, dynamic>> saveData(UserBD user) async {
+    final authData = {
+      "phoneNumber": (user.telephone),
+      "idUser": (user.idUser),
+      "name": (user.name),
+      "lastname": (user.lastname),
+      "email": (user.email),
+      "gender": (user.gender),
+      "maritalStatus": (user.maritalStatus),
+      "stylelife": (user.styleLife),
+      "pathImage": "",
+      "age": (user.age),
+      "country": (user.country),
+      "city": (user.city)
     };
+    final headersData = {"content-type": "application/json"};
 
     try {
-      final resp = await http.get(
-        Uri.parse("${Constant.baseApiMessageBird}verify/'$id'?token='$code'"),
-        headers: headersData,
-      );
+      final resp = await http.post(Uri.parse("${Constant.baseApi}/v1/user"),
+          body: authData, headers: headersData);
 
       Map<String, dynamic> decodeResp = json.decode(resp.body);
 
-      // print(decodeResp);
-      if (decodeResp['errors'] != null) {
-        return {"ok": false, "mesaje": "error"};
+      if (decodeResp['errors'] == null) {
+        return {"ok": false, "mesaje": decodeResp['description']};
       }
 
       if (decodeResp['id'] != null) {
@@ -36,15 +44,43 @@ class UserService {
     }
   }
 
-  Future<Map<String, dynamic>> validateCodeEmail(String id, String code) async {
+  Future<Map<String, dynamic>> validateCodeSMS(String id, String code) async {
+    // final authData = {"recipient": "$num", "originator": (code)};
     final headersData = {
       "Authorization": "AccessKey ScW7OrkmUB6YPlsrPTGNx4Zwt"
     };
 
     try {
       final resp = await http.get(
-          Uri.parse("${Constant.baseApiMessageBird}verify/'$id'?token='$code'"),
-          headers: headersData);
+        Uri.parse("$id?token=$code"),
+        headers: headersData,
+      );
+
+      Map<String, dynamic> decodeResp = json.decode(resp.body);
+
+      // print(decodeResp);
+      if (decodeResp['errors'] != null) {
+        return {"ok": false, "mesaje": "error"};
+      }
+
+      if (decodeResp['id'] != null) {
+        return {"ok": true, "href": decodeResp['href']};
+      } else {
+        return {"ok": false, "href": decodeResp['href']};
+      }
+    } catch (error) {
+      return {"ko": false, "mesaje": error.toString()};
+    }
+  }
+
+  Future<Map<String, dynamic>> validateCodeEmail(String id, String code) async {
+    final headersData = {
+      "Authorization": "AccessKey ScW7OrkmUB6YPlsrPTGNx4Zwt"
+    };
+
+    try {
+      final resp =
+          await http.get(Uri.parse("$id?token=$code"), headers: headersData);
 
       Map<String, dynamic> decodeResp = json.decode(resp.body);
 
@@ -66,7 +102,10 @@ class UserService {
   Future<Map<String, dynamic>> verificateSMS(int num) async {
     final authData = {"recipient": "$num", "originator": "$num"};
     final headersData = {
-      "Authorization": "AccessKey ScW7OrkmUB6YPlsrPTGNx4Zwt"
+      "Authorization": "AccessKey ScW7OrkmUB6YPlsrPTGNx4Zwt",
+      "timeout": "240",
+      "language": "es-es",
+      "country": "ES"
     };
 
     try {
@@ -82,9 +121,9 @@ class UserService {
       }
 
       if (decodeResp["id"] != null) {
-        return {"ok": true, "id": decodeResp["id"]};
+        return {"ok": true, "href": decodeResp["href"]};
       } else {
-        return {"ok": false, "id": decodeResp["id"]};
+        return {"ok": false, "href": decodeResp["href"]};
       }
     } catch (error) {
       return {"ko": false, "mesaje": error.toString()};
@@ -97,6 +136,9 @@ class UserService {
       "recipient": email,
       "originator": ("hello@alertfriends.app"),
       "type": "email",
+      "timeout": "180",
+      "language": "es-es",
+      "country": "ES"
     };
     final headersData = {
       "Authorization": "AccessKey ScW7OrkmUB6YPlsrPTGNx4Zwt"

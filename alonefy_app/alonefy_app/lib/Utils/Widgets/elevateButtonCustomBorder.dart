@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:ifeelefine/Common/button_style_custom.dart';
 import 'package:ifeelefine/Common/colorsPalette.dart';
 
 class ElevateButtonCustomBorder extends StatefulWidget {
@@ -28,14 +29,7 @@ class _ElevateButtonCustomBorderState extends State<ElevateButtonCustomBorder> {
   @override
   Widget build(BuildContext context) {
     return ElevatedButton(
-      style: ButtonStyle(
-        shadowColor: MaterialStateProperty.all<Color>(
-          Colors.transparent,
-        ),
-        backgroundColor: MaterialStateProperty.all<Color>(
-          Colors.transparent,
-        ),
-      ),
+      style: styleColorClear(),
       onPressed: (() {
         _selectOption(true);
       }),

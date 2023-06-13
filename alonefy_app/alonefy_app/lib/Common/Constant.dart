@@ -295,5 +295,9 @@ class Constant {
 
   static const String codeError = 'El codigo no coincide';
   static const String deletectGeneric = "Eliminado correctamente";
+  static const String codeValid = "Codigo valido";
+  static const String codeInvalid = "Codigo invalido";
+  static const String saveData = "Datos guardados";
+  static const String ok = "Ok";
   // static const String
 }

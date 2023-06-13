@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:ifeelefine/Common/Constant.dart';
+import 'package:ifeelefine/Common/button_style_custom.dart';
 import 'package:ifeelefine/Common/colorsPalette.dart';
 import 'package:ifeelefine/Utils/Widgets/customDropDown.dart';
 import 'package:ifeelefine/Utils/Widgets/datepickerwidget.dart';
@@ -212,9 +213,7 @@ class _UserConfigPageState3 extends State<UserConfigPage3> {
 
   Widget _createButtonFree() {
     return ElevatedButton.icon(
-      style: ButtonStyle(
-          backgroundColor:
-              MaterialStateProperty.all<Color>(ColorPalette.principal)),
+      style: styleColorPrincipal(),
       label: const Text("Gratuito 30 dias"),
       icon: const Icon(
         Icons.security,
@@ -225,9 +224,7 @@ class _UserConfigPageState3 extends State<UserConfigPage3> {
 
   Widget _createButtonPremium() {
     return ElevatedButton.icon(
-      style: ButtonStyle(
-          backgroundColor:
-              MaterialStateProperty.all<Color>(ColorPalette.principal)),
+      style: styleColorPrincipal(),
       label: const Text("Protección 360"),
       icon: const Icon(
         Icons.security,
@@ -238,9 +235,7 @@ class _UserConfigPageState3 extends State<UserConfigPage3> {
 
   Widget _crearBotonVerificate() {
     return ElevatedButton.icon(
-      style: ButtonStyle(
-          backgroundColor:
-              MaterialStateProperty.all<Color>(ColorPalette.principal)),
+      style: styleColorPrincipal(),
       label: const Text("Verificar"),
       icon: const Icon(
         Icons.save,

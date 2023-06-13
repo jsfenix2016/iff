@@ -43,3 +43,13 @@ LinearGradient linerGradientButtonFilling() {
     tileMode: TileMode.mirror,
   );
 }
+
+BoxDecoration buttonPrincipalColorRadius8() {
+  return BoxDecoration(
+    color: const Color.fromRGBO(219, 177, 42, 1),
+    border: Border.all(
+      color: const Color.fromRGBO(219, 177, 42, 1),
+    ),
+    borderRadius: const BorderRadius.all(Radius.circular(8)),
+  );
+}

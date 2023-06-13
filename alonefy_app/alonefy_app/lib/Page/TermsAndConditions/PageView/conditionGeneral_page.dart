@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:ifeelefine/Common/Constant.dart';
+import 'package:ifeelefine/Common/button_style_custom.dart';
 import 'package:ifeelefine/Common/manager_alerts.dart';
 import 'package:ifeelefine/Common/text_style_font.dart';
 import 'package:ifeelefine/Page/TermsAndConditions/Controller/terms_conditionController.dart';
@@ -149,16 +150,7 @@ class _ConditionGeneralPageState extends State<ConditionGeneralPage> {
                                     Padding(
                                       padding: const EdgeInsets.only(top: 12),
                                       child: ElevatedButton(
-                                        style: ButtonStyle(
-                                          shadowColor:
-                                              MaterialStateProperty.all<Color>(
-                                            Colors.transparent,
-                                          ),
-                                          backgroundColor:
-                                              MaterialStateProperty.all<Color>(
-                                            Colors.transparent,
-                                          ),
-                                        ),
+                                        style: styleColorClear(),
                                         child: Container(
                                           decoration: BoxDecoration(
                                             color: Colors.transparent,

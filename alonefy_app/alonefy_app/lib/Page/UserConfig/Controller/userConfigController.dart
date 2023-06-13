@@ -23,40 +23,40 @@ class UserConfigCOntroller extends GetxController {
   PreferenceUser prefs = PreferenceUser();
 
   Future<void> requestCode(BuildContext context, User user) async {
-    final localContext = context;
-
-    var resq = await userVC.validateEmailWithMessageBird(user.email);
+    if (user.telephone.isEmpty) {
+      return;
+    }
+    var resq = await userVC.verificateSMS(int.parse(user.telephone));
+    // var resq = await userVC.validateEmailWithMessageBird(user.email);
     if (resq["ok"]) {
-      prefs.setIdTokenEmail = (resq["id"]);
+      prefs.setHrefSMS = (resq["href"]);
 
       // Utiliza la variable local dentro del espacio asyncronizado
-      Future.delayed(const Duration(milliseconds: 10), () {
-        showSaveAlert(context, Constant.info, "Revise su correo electronico");
+      await Future.delayed(const Duration(milliseconds: 10), () {
+        showSaveAlert(context, Constant.info, "Se a enviado el codigo");
       });
     } else {
       // Utiliza la variable local dentro del espacio asyncronizado
-      Future.delayed(const Duration(milliseconds: 10), () {
-        showSaveAlert(
-            context, Constant.info, "Algo salio mal, revise su conexión");
+      await Future.delayed(const Duration(milliseconds: 10), () {
+        showSaveAlert(context, Constant.info, Constant.errorGenericConextion);
       });
     }
   }
 
   Future<bool> validateCodeSMS(BuildContext context, String code) async {
-    final localContext = context;
-    var res = await userVC.validateCodeSMS(prefs.getIdTokenSMS, code);
+    var res = await userVC.validateCodeSMS(prefs.getHrefSMS, code);
 
     if (res["ok"]) {
-      prefs.setIdTokenSMS = (res["id"]);
+      prefs.setHrefSMS = (res["href"]);
 
       // Utiliza la variable local dentro del espacio asyncronizado
-      Future.delayed(const Duration(milliseconds: 10), () {
-        showSaveAlert(context, Constant.info, "Codigo valido");
+      await Future.delayed(const Duration(milliseconds: 10), () {
+        showSaveAlert(context, Constant.info, Constant.codeValid);
       });
       return true;
     } else {
-      Future.delayed(const Duration(milliseconds: 10), () {
-        showSaveAlert(context, Constant.info, "Codigo invalido");
+      await Future.delayed(const Duration(milliseconds: 10), () {
+        showSaveAlert(context, Constant.info, Constant.codeInvalid);
       });
       return false;
     }
@@ -67,12 +67,12 @@ class UserConfigCOntroller extends GetxController {
 
     if (res["ok"]) {
       // Utiliza la variable local dentro del espacio asyncronizado
-      Future.delayed(const Duration(milliseconds: 10), () {
+      await Future.delayed(const Duration(milliseconds: 10), () {
         showSaveAlert(context, Constant.info, "Codigo valido");
       });
       return true;
     } else {
-      Future.delayed(const Duration(milliseconds: 10), () {
+      await Future.delayed(const Duration(milliseconds: 10), () {
         showSaveAlert(context, Constant.info, "Codigo invalido");
       });
       return false;
@@ -85,8 +85,10 @@ class UserConfigCOntroller extends GetxController {
       user.idUser = (uuid);
       UserBD usertemp = await const HiveData().saveUser(user);
 
-      await UserConfig2Service().saveData(usertemp);
-
+      var resp = await UserService().saveData(usertemp);
+      if (resp['id'] != null) {
+        return usertemp;
+      }
       return usertemp;
     } catch (error) {
       UserBD person = initUserBD();

@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ifeelefine/Common/Constant.dart';
+import 'package:ifeelefine/Common/button_style_custom.dart';
 import 'package:ifeelefine/Common/colorsPalette.dart';
 import 'package:ifeelefine/Common/initialize_models_bd.dart';
 import 'package:ifeelefine/Common/utils.dart';
@@ -309,14 +310,7 @@ class _UserConfigPageState2 extends State<UserConfigPage2> {
 
   Widget _createButtonPremium() {
     return ElevatedButton(
-      style: ButtonStyle(
-        shadowColor: MaterialStateProperty.all<Color>(
-          Colors.transparent,
-        ),
-        backgroundColor: MaterialStateProperty.all<Color>(
-          Colors.transparent,
-        ),
-      ),
+      style: styleColorClear(),
       onPressed: () {
         _submit(false);
       },

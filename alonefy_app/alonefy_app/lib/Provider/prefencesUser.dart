@@ -248,12 +248,12 @@ class PreferenceUser {
     return _prefs.getString('IdTokenEmail') ?? '';
   }
 
-  set setIdTokenSMS(String id) {
-    _prefs.setString('IdTokenSMS', id);
+  set setHrefSMS(String id) {
+    _prefs.setString('HrefSMS', id);
   }
 
-  get getIdTokenSMS {
-    return _prefs.getString('IdTokenSMS') ?? '';
+  get getHrefSMS {
+    return _prefs.getString('HrefSMS') ?? '';
   }
 }
 

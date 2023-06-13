@@ -51,7 +51,6 @@ dependencies:
 
   firebase_messaging: ^14.5.0
 
-  #in_app_purchase: ^3.1.5
   flutter_inapp_purchase: ^5.0.0
   
   uuid: ^3.0.5

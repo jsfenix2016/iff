@@ -6,6 +6,7 @@ import 'package:flutter/widgets.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:ifeelefine/Common/colorsPalette.dart';
+import 'package:ifeelefine/Common/text_style_font.dart';
 import 'package:ifeelefine/Model/logAlertsBD.dart';
 
 class SwipeableContainer extends StatefulWidget {
@@ -94,24 +95,12 @@ class _SwipeableContainerState extends State<SwipeableContainer> {
                                 title: Text(
                                   widget.temp[index].type.toString(),
                                   textAlign: TextAlign.left,
-                                  style: GoogleFonts.barlow(
-                                    fontSize: 16.0,
-                                    wordSpacing: 1,
-                                    letterSpacing: 1,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.white,
-                                  ),
+                                  style: textNormal16White(),
                                 ),
                                 subtitle: Text(
                                   widget.temp[index].time.toString(),
                                   textAlign: TextAlign.left,
-                                  style: GoogleFonts.barlow(
-                                    fontSize: 16.0,
-                                    wordSpacing: 1,
-                                    letterSpacing: 1,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.white,
-                                  ),
+                                  style: textNormal16White(),
                                 ),
                                 trailing: IconButton(
                                   iconSize: 21,

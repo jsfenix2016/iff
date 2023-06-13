@@ -80,8 +80,8 @@ Future<void> showSaveAlertWithAction(BuildContext context, String title,
           content: Text(message),
           actions: <Widget>[
             TextButton(
-              child: const Text("Ok"),
               onPressed: onChanged,
+              child: const Text("Ok"),
             )
           ],
         );
