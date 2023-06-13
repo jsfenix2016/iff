@@ -5,39 +5,21 @@ import 'dart:convert';
 
 import 'package:ifeelefine/Model/userbd.dart';
 
-class UserRestService {
-  Future<Map<String, dynamic>> saveData(
-      UserBD user, List<RestDayBD> listRest) async {
-    Map<String, dynamic> authData = {};
+import '../../../Model/ApiRest/UserRestApi.dart';
 
-    for (var element in listRest) {
-      authData.addAll({
-        "phoneNumber": (user.telephone),
-        "dayOfWeek": element.day,
-        "wakeUpHour": element.timeWakeup,
-        "retireHour": element.timeSleep,
-        "index": element.selection,
-        "select": element.isSelect,
-      });
-    }
+class UserRestService {
+  Future<bool> saveData(List<UserRestApi> listRestApi) async {
 
     try {
+      var json = jsonEncode(listRestApi);
       final resp = await http
-          .post(Uri.parse("${Constant.baseApi}/v1/sleepHour"), body: authData);
+          .post(Uri.parse("${Constant.baseApi}/v1/sleepHour"),
+          headers: Constant.headers,
+          body: json);
 
-      Map<String, dynamic> decodeResp = json.decode(resp.body);
-
-      if (decodeResp['errors'] == null) {
-        return {"ok": false, "mesaje": decodeResp['description']};
-      }
-
-      if (decodeResp['id'] != null) {
-        return {"ok": true, "token": decodeResp['id']};
-      } else {
-        return {"ok": false, "mesaje": decodeResp['id']};
-      }
+      return resp.statusCode == 200;
     } catch (error) {
-      return {"ko": false, "mesaje": error.toString()};
+      return false;
     }
   }
 }

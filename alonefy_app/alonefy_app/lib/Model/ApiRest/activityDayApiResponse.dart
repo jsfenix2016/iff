@@ -1,4 +1,5 @@
 import 'package:http/http.dart' as http;
+import 'package:ifeelefine/Common/utils.dart';
 
 class ActivityDayApiResponse {
   late int id;
@@ -34,17 +35,17 @@ class ActivityDayApiResponse {
     return ActivityDayApiResponse(
         id: json['id'],
         phoneNumber: json['phoneNumber'],
-        startDate: json['startDate'],
-        endDate: json['endDate'],
-        startTime: json['startTime'],
+        startDate: jsonToDatetime(json['startDate'], getDefaultPattern()),
+        endDate: jsonToDatetime(json['endDate'], getDefaultPattern()),
+        startTime: jsonToDatetime(json['startTime'], getTimePattern()),
         name: json['name'],
         allDay: json['allDay'],
-        endTime: json['endTime'],
-        days: json['days'],
+        endTime: jsonToDatetime(json['endTime'], getTimePattern()),
+        days: dynamicToStringList(json['days']),
         repeatType: json['repeatType'],
         enabled: json['enabled'],
-        disabledDates: json['disabledDates'],
-        removedDates: json['removedDates']
+        disabledDates: dynamicToDateTimeList(json['disabledDates']),
+        removedDates: dynamicToDateTimeList(json['removedDates'])
     );
   }
 

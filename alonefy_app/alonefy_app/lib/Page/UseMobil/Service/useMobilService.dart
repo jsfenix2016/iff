@@ -8,14 +8,19 @@ import 'package:ifeelefine/Model/userbd.dart';
 
 class UseMobilService {
 
-  void saveUseMobil(List<UseMobilApi> listuse) async {
+  Future<bool> saveUseMobil(List<UseMobilApi> listuse) async {
 
-    var json = jsonEncode(listuse);
+    try {
+      var json = jsonEncode(listuse);
 
-    await http.post(
-        Uri.parse("${Constant.baseApi}/v1/inactivityTime"),
-        body: json);
+      var response = await http.post(
+              Uri.parse("${Constant.baseApi}/v1/inactivityTime"),
+              headers: Constant.headers,
+              body: json);
 
-    //Map<String, dynamic> decodeResp = json.decode(resp.body);
+      return response.statusCode == 200;
+    } catch (e) {
+      return false;
+    }
   }
 }

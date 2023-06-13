@@ -3,8 +3,10 @@ import 'package:get/get.dart';
 import 'package:ifeelefine/Common/Constant.dart';
 import 'package:ifeelefine/Common/manager_alerts.dart';
 import 'package:ifeelefine/Common/text_style_font.dart';
+import 'package:ifeelefine/Page/PermissionUser/Controller/permission_controller.dart';
 import 'package:ifeelefine/Page/TermsAndConditions/Controller/terms_conditionController.dart';
 import 'package:flutter/material.dart';
+import 'package:ifeelefine/Provider/prefencesUser.dart';
 import 'package:ifeelefine/Utils/Widgets/widgetLogo.dart';
 
 import '../../../Common/colorsPalette.dart';
@@ -181,6 +183,7 @@ class _ConditionGeneralPageState extends State<ConditionGeneralPage> {
                                         onPressed: () {
                                           if (aceptedConditions &&
                                               aceptedSendMessage) {
+                                            PermissionController().saveNotification();
                                             termsVC.saveConditions(
                                                 context,
                                                 aceptedConditions,

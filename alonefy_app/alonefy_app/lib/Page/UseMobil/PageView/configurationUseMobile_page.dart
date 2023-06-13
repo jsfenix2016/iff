@@ -232,15 +232,18 @@ class _UseMobilePageState extends State<UseMobilePage> {
                 child: Center(
                   child: ElevateButtonFilling(
                     onChanged: (value) async {
-                      await useMobilVC.saveTimeUseMobil(
+                      var result = await useMobilVC.saveTimeUseMobil(
                           context,
                           Constant.timeDic[indexSelect.toString()].toString(),
-                          widget.userbd);
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const UserRestPage()),
-                      );
+                          userbd!);
+
+                      if (result) {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const UserRestPage()),
+                        );
+                      }
                     },
                     mensaje: 'Continuar',
                   ),

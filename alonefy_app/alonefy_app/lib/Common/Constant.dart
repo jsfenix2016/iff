@@ -68,6 +68,10 @@ class Constant {
   static const String inactive = "INACTIVE";
   static const String drop = "DROP";
 
+  static const Map<String,String> headers = {
+    'Content-Type':'application/json; charset=UTF-8'
+  };
+
   static const Map<String, String> gender = {
     '0': 'Hombre',
     '1': 'Mujer',
@@ -181,6 +185,42 @@ class Constant {
     "Sabado",
     "Domingo",
   ];
+
+  static const Map<String, String> tempMapDayApi = {
+    "L":"MONDAY",
+    "M":"TUESDAY",
+    "X":"WEDNESDAY",
+    "J":"THURSDAY",
+    "V":"FRIDAY",
+    "S":"SATURDAY",
+    "D":"SUNDAY"
+  };
+
+  static const Map<String, String> tempMapDayReverseApi = {
+    "MONDAY":"L",
+    "TUESDAY":"M",
+    "WEDNESDAY":"X",
+    "THURSDAY":"J",
+    "FRIDAY":"V",
+    "SATURDAY":"S",
+    "SUNDAY":"D"
+  };
+
+  static const Map<String, String> daysToApi = {
+    onceTime: "ONCE",
+    diary: "DAILY",
+    weekly: "WEEKLY",
+    monthly: "MONTHLY",
+    yearly: "ANNUALLY"
+  };
+
+  static const Map<String, String> daysFromApi = {
+    "ONCE": onceTime,
+    "DAILY": diary,
+    "WEEKLY": weekly,
+    "MONTHLY": monthly,
+    "ANNUALLY": yearly
+  };
 
   static const List<String> tempListShortDay = <String>[
     "L",

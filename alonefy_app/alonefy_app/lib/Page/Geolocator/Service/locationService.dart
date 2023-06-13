@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:http/http.dart' as http;
 
 import '../../../Common/Constant.dart';
@@ -10,7 +12,8 @@ class LocationService {
 
     await http.put(
         Uri.parse("${Constant.baseApi}/v1/user/activateLocation"),
-        body: json);
+        headers: Constant.headers,
+        body: jsonEncode(json));
   }
 
   Future<void> sendLocation(String phoneNumber, String latitude, String longitude) async {
@@ -19,6 +22,7 @@ class LocationService {
 
     await http.put(
         Uri.parse("${Constant.baseApi}/v1/location"),
-        body: json);
+        headers: Constant.headers,
+        body: jsonEncode(json));
   }
 }

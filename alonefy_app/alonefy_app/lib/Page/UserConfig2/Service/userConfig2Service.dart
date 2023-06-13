@@ -5,9 +5,9 @@ import 'dart:convert';
 import 'package:ifeelefine/Model/userbd.dart';
 
 class UserConfig2Service {
-  Future<Map<String, dynamic>> saveData(UserBD user) async {
+  Future<bool> saveData(UserBD user) async {
     final authData = {
-      "phoneNumber": (user.telephone),
+      "phoneNumber": (user.telephone.replaceAll("+34", "")),
       "idUser": (user.idUser),
       "name": (user.name),
       "lastname": (user.lastname),
@@ -15,29 +15,25 @@ class UserConfig2Service {
       "gender": (user.gender),
       "maritalStatus": (user.maritalStatus),
       "stylelife": (user.styleLife),
-      "pathImage": null,
+      "pathImage": user.pathImage,
       "age": (user.age),
       "country": (user.country),
       "city": (user.city)
     };
 
     try {
+      Map<String,String> headers = {
+        'Content-Type':'application/json; charset=UTF-8'
+      };
+
+      var json = jsonEncode(authData);
       final resp = await http.post(Uri.parse("${Constant.baseApi}/v1/user"),
-          body: authData);
+          headers: headers,
+          body: json);
 
-      Map<String, dynamic> decodeResp = json.decode(resp.body);
-
-      if (decodeResp['errors'] == null) {
-        return {"ok": false, "mesaje": decodeResp['description']};
-      }
-
-      if (decodeResp['id'] != null) {
-        return {"ok": true, "token": decodeResp['id']};
-      } else {
-        return {"ok": false, "mesaje": decodeResp['id']};
-      }
+      return resp.statusCode == 200;
     } catch (error) {
-      return {"ko": false, "mesaje": error.toString()};
+      return false;
     }
   }
 }

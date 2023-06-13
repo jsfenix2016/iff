@@ -11,12 +11,10 @@ class TermsAndConditionsService {
       var json = jsonEncode(termsAndConditionsApi);
 
       final resp = await http.post(Uri.parse("${Constant.baseApi}/v1/contact"),
+          headers: Constant.headers,
           body: json);
 
-      Map<String, dynamic> decodeResp = jsonDecode(resp.body);
-
-      if (decodeResp['errors'] != null) {}
-      return true;
+      return resp.statusCode == 200;
     } catch (error) {
       return false;
     }
