@@ -22,8 +22,8 @@ class ContactApi {
   //}
 
   ContactApi.fromContact(ContactBD contact, String userPhoneNumber) {
-    this.userPhoneNumber = userPhoneNumber;
-    this.phoneNumber = contact.phones;
+    this.userPhoneNumber = userPhoneNumber.replaceAll("+34", "");
+    this.phoneNumber = contact.phones.replaceAll("+34", "");
     this.name = contact.name;
     this.displayName = contact.displayName;
     this.timeSendSms = stringTimeToInt(contact.timeSendSMS);

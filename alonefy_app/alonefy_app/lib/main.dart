@@ -37,12 +37,16 @@ import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:flutter_background_service_android/flutter_background_service_android.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
+import 'package:jiffy/jiffy.dart';
 import 'package:notification_center/notification_center.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'Common/Constant.dart';
 import 'Common/Firebase/firebaseManager.dart';
 
+import 'Common/manager_alerts.dart';
 import 'Page/Geolocator/Controller/configGeolocatorController.dart';
 import 'Page/LogActivity/Controller/logActivity_controller.dart';
 
@@ -63,7 +67,6 @@ PreferenceUser _prefs = PreferenceUser();
 FlutterBackgroundService _service = FlutterBackgroundService();
 bool ismove = true;
 bool timerActive = true;
-Timer _timer = Timer(const Duration(seconds: 20), () {});
 
 bool isMovRude = false;
 Timer timerSendSMS = Timer(const Duration(seconds: 20), () {});
@@ -228,7 +231,6 @@ Future activateService() async {
           if (notificationResponse.actionId == "Inactived") {
             ismove = false;
             timerActive = true;
-            _timer.cancel();
           }
           if (notificationResponse.actionId == "dateRisk") {
             RedirectViewNotifier.onTapNotification(notificationResponse);
@@ -241,7 +243,7 @@ Future activateService() async {
                 notificationResponse.actionId!.replaceAll("helpID_", "");
             var taskIdList = taskIds.split(";");
             //IdleLogic().notifyContact();
-            mainController.saveUserLog("Envio de SMS", now);
+            //mainController.saveUserLog("Envio de SMS", now);
             MainService().sendAlertToContactImmediately(taskIdList);
           }
           if (notificationResponse.actionId != null &&
@@ -252,7 +254,6 @@ Future activateService() async {
             ismove = false;
             timerActive = true;
             MainService().cancelAllNotifications(taskIdList);
-            _timer.cancel();
           }
           if (notificationResponse.actionId == "date") {
             RedirectViewNotifier.onTapNotification(notificationResponse);
@@ -280,23 +281,6 @@ Future<void> onSelectNotification(String payload) async {
 ///getEnableIFF: se utiliza para activar y desactivar el servicio de segundo plano por indicacion del usuario
 ///getDisambleIFF: se utilizada para asignar el tiempo de duracion de la desactivacion del servicio de proteccion.
 Future<void> initializeService() async {
-  // _prefs.setEnableIFF = false;
-  if (_prefs.getEnableIFF == false) {
-    var isRunning = await _service.isRunning();
-    if (isRunning) {
-      _service.invoke("stopService");
-      for (StreamSubscription<dynamic> subscription in _streamSubscriptions) {
-        subscription.cancel();
-      }
-    }
-
-    Timer(await IdleLogic().convertStringToDuration(_prefs.getDisambleIFF), () {
-      _prefs.setEnableIFF = true;
-      _service.startService();
-    });
-
-    return;
-  }
   activateService();
 }
 
@@ -338,7 +322,7 @@ void onStart(ServiceInstance service) async {
     }
 
     _logActivityTimer += 5;
-    getDateRisk();
+    //getDateRisk();
 
     service.invoke(
       'update',
@@ -347,6 +331,14 @@ void onStart(ServiceInstance service) async {
         "device": device,
       },
     );
+  });
+
+  Timer.periodic(const Duration(minutes: 2), (timer) async {
+    //sendLocation();
+  });
+
+  Timer.periodic(const Duration(hours: 6), (timer) async {
+    updateFirebaseToken();
   });
 }
 
@@ -383,7 +375,9 @@ Future accelerometer() async {
   //Initialization Settings for Android
   await _prefs.initPrefs();
 
-  if (_prefs.getDetectedFall == false && _prefs.getUserPremium == false) return;
+  var enableIFF = await getEnableIFF();
+
+  if (!enableIFF && !_prefs.getDetectedFall && !_prefs.getUserPremium) return;
 
   _streamSubscriptions.add(
     accelerometerEvents!.listen((AccelerometerEvent event) {
@@ -396,8 +390,8 @@ Future accelerometer() async {
           MainService().saveDrop(user!);
         }
 
-        RedirectViewNotifier.showNotifications();
-        mainController.saveUserLog("Movimiento rudo a ", now);
+        //RedirectViewNotifier.showNotifications();
+        //mainController.saveUserLog("Movimiento rudo a ", now);
       } else {
         isMovRude = false;
         if (accelerationMagnitude < 19 && accelerationMagnitude > 10) {
@@ -409,9 +403,6 @@ Future accelerometer() async {
           }
           ismove = false;
           timerActive = true;
-          _timer.cancel();
-        } else {
-          activatedTimerInactivity();
         }
       }
     }),
@@ -442,7 +433,7 @@ Future getDateRisk() async {
         element.isActived = true;
         element.isprogrammed = false;
         await const HiveDataRisk().updateContactRisk(element);
-        RedirectViewNotifier.showDateNotifications();
+        //RedirectViewNotifier.showDateNotifications();
       } else {
         print(
             "ahora: ${now.hour}:${now.minute}, hora fin: ${end.hour}:${end.minute},isActived: ${element.isActived}");
@@ -455,72 +446,12 @@ Future getDateRisk() async {
             element.isFinishTime = true;
             await const HiveDataRisk().updateContactRisk(element);
             RedirectViewNotifier.sendMessageContactDate(element);
-            RedirectViewNotifier.showDateFinishNotifications();
+            //RedirectViewNotifier.showDateFinishNotifications();
           }
         }
       }
       NotificationCenter().notify('getContactRisk');
     }
-  }
-}
-
-///Esta funcion se encarga de verificar los tiempo de inactividad y descanso que ha proporsionado el usuario en la configuracion
-///Variables:
-///timerActive: Se utiliza para verificar si el usuario
-Future activatedTimerInactivity() async {
-  ///Funcion utilizada para inicializar la base de datos esto se vuelve a
-  ///inicializar debido a que si la app esta en segundo plano la primera inicializacion se borra
-  ///asi evitamos que la app se rompa al momento de consultar la base de datos.
-  await inicializeHiveBD();
-  var format = DateFormat("HH:mm");
-
-  //Revisamos si tenemos alguna cita y procesamos la información para notificar a los contactos
-
-  ///Consultamos en la base de datos las actividades o inactividad del usuario
-  List<ActivityDayBD> listActividad =
-      await const HiveData().listUserActivitiesbd;
-
-  ///Consultamos en la base de datos las horas de descanso del usuario
-  List<RestDayBD> listRest = await const HiveData().listUserRestDaybd;
-
-  ///Utilizamos el IdleLogic().whatDayIs() para verificar con el DateTime.now el dia actual y
-  ///lo convertimos de numero a dia de la semana (Lunes, Martes, etc..).
-  var day = IdleLogic().whatDayIs();
-
-  for (var element in listActividad) {
-    DateTime start = format.parse(element.timeStart);
-    DateTime end = format.parse(element.timeFinish);
-    if (day == element.day &&
-        now.hour.compareTo(start.hour) == 0 &&
-        now.hour.compareTo(end.hour) <= 1) {
-      return;
-    }
-  }
-
-  for (var element in listRest) {
-    DateTime start = parseDuration(element.timeSleep);
-    DateTime end = parseDuration(element.timeWakeup);
-
-    if (day == element.day &&
-        now.hour.compareTo(start.hour) == 0 &&
-        now.hour.compareTo(end.hour) <= 1) {
-      return;
-    } else if (day == element.day &&
-        now.hour.compareTo(start.hour) == 0 &&
-        now.hour.compareTo(end.hour) == 1 &&
-        now.hour.compareTo(end.minute) <= 1) {}
-  }
-
-  if (timerActive) {
-    timerActive = false;
-    Duration useMobil = await IdleLogic().convertStringToDuration("5 min");
-    _timer = Timer(useMobil, () {
-      timerActive = false;
-
-      RedirectViewNotifier.showNotifications();
-      mainController.saveUserLog("Inactividad ", now);
-      mainController.saveActivityLog(DateTime.now(), "Inactividad");
-    });
   }
 }
 
@@ -560,48 +491,31 @@ class _MyAppState extends State<MyApp> {
   }
 }
 
+void sendLocation() async {
+  PermissionStatus permission = await Permission.location.request();
+
+  if (permission.isPermanentlyDenied) {
+    _locationController.activateLocation(PreferencePermission.deniedForever);
+    showPermissionDialog(RedirectViewNotifier.context!, Constant.enablePermission);
+  } else if (permission.isDenied) {
+    _locationController.activateLocation(PreferencePermission.denied);
+  } else {
+    if (_prefs.getAcceptedSendLocation != PreferencePermission.allow) {
+      _locationController.activateLocation(PreferencePermission.allow);
+    }
+    var position = await determinePosition();
+    _locationController.sendLocation(position.latitude.toString(), position.longitude.toString());
+  }
+}
+
 Future<Position> determinePosition() async {
   bool serviceEnabled;
-  LocationPermission permission;
-  if (_prefs.getAcceptedSendLocation == PreferencePermission.allow) {
-    Geolocator.openAppSettings();
-  }
+
   // Test if location services are enabled.
   serviceEnabled = await Geolocator.isLocationServiceEnabled();
   if (!serviceEnabled) {
-    // Location services are not enabled don't continue
-    // accessing the position and request users of the
-    // App to enable the location services.
-    _locationController.activateLocation(PreferencePermission.noAccepted);
-    //_prefs.setAcceptedSendLocation = PreferencePermission.noAccepted;
     return Future.error('Location services are disabled.');
   }
-
-  permission = await Geolocator.checkPermission();
-  if (permission == LocationPermission.denied) {
-    permission = await Geolocator.requestPermission();
-    if (permission == LocationPermission.denied) {
-      // Permissions are denied, next time you could try
-      // requesting permissions again (this is also where
-      // Android's shouldShowRequestPermissionRationale
-      // returned true. According to Android guidelines
-      // your App should show an explanatory UI now.
-      //_prefs.setAcceptedSendLocation = PreferencePermission.noAccepted;
-      _locationController.activateLocation(PreferencePermission.noAccepted);
-      return Future.error('Location permissions are denied');
-    }
-  }
-
-  if (permission == LocationPermission.deniedForever) {
-    // Permissions are denied forever, handle appropriately.
-    //_prefs.setAcceptedSendLocation = PreferencePermission.noAccepted;
-    _locationController.activateLocation(PreferencePermission.noAccepted);
-    return Future.error(
-        'Location permissions are permanently denied, we cannot request permissions.');
-  }
-
-  // When we reach here, permissions are granted and we can
-  // continue accessing the position of the device.
 
   return await Geolocator.getCurrentPosition();
 }

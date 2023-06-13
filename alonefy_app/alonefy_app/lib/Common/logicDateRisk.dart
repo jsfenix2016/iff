@@ -35,7 +35,7 @@ class LogicDateRisk {
           element.isActived = true;
           element.isprogrammed = false;
           await const HiveDataRisk().updateContactRisk(element);
-          RedirectViewNotifier.showDateNotifications();
+          //RedirectViewNotifier.showDateNotifications();
         }
 
         return;

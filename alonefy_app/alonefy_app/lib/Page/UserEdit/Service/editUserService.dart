@@ -8,13 +8,13 @@ import 'dart:convert';
 import 'package:ifeelefine/Model/userbd.dart';
 
 class EditUserService {
-  Future<Map<String, dynamic>> updateUser(UserBD user) async {
+  Future<bool> updateUser(UserBD user) async {
     final authData = {
-      "phoneNumber": (user.telephone),
+      "phoneNumber": (user.telephone.replaceAll("+34", "")),
       "idUser": (user.idUser),
       "name": (user.name),
       "lastname": (user.lastname),
-      "email": (user.email),
+      "email": "bb@gmail.es",
       "gender": (user.gender),
       "maritalStatus": (user.maritalStatus),
       "stylelife": (user.styleLife),
@@ -25,24 +25,19 @@ class EditUserService {
     };
 
     try {
+      Map<String,String> headers = {
+        'Content-Type':'application/json; charset=UTF-8'
+      };
+
+      var json = jsonEncode(authData);
       final resp = await http.put(
-          Uri.parse(
-              "${Constant.baseApi}/v1/user/personalData"),
-          body: authData);
+          Uri.parse("${Constant.baseApi}/v1/user/personalData"),
+          headers: headers,
+          body: json);
 
-      Map<String, dynamic> decodeResp = json.decode(resp.body);
-
-      if (decodeResp['errors'] == null) {
-        return {"ok": false, "mesaje": decodeResp['description']};
-      }
-
-      if (decodeResp['id'] != null) {
-        return {"ok": true, "token": decodeResp['id']};
-      } else {
-        return {"ok": false, "mesaje": decodeResp['id']};
-      }
+      return resp.statusCode == 200;
     } catch (error) {
-      return {"ko": false, "mesaje": error.toString()};
+      return false;
     }
   }
 

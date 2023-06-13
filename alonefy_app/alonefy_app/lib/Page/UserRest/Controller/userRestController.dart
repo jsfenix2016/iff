@@ -5,8 +5,11 @@ import 'package:ifeelefine/Common/utils.dart';
 import 'package:ifeelefine/Data/hive_data.dart';
 import 'package:ifeelefine/Model/restday.dart';
 import 'package:ifeelefine/Model/restdaybd.dart';
+import 'package:ifeelefine/Model/userbd.dart';
 import 'package:ifeelefine/Page/UserRest/Service/userRestService.dart';
+import 'package:jiffy/jiffy.dart';
 
+import '../../../Common/Constant.dart';
 import '../../../Model/ApiRest/UserRestApi.dart';
 
 class UserRestController extends GetxController {
@@ -28,8 +31,9 @@ class UserRestController extends GetxController {
       BuildContext context, List<RestDayBD> listRest) async {
     try {
       var user = await const HiveData().getuserbd;
-      var resp = await userRestServ.saveData(user, listRest);
-      if (resp['ok'] == null) {
+      var listApi = await _convertRestBDToRestDayApi(listRest, user);
+      var resp = await userRestServ.saveData(listApi);
+      if (resp) {
         return const HiveData().saveListTimeRest(listRest);
       } else {
         return -1;
@@ -37,6 +41,28 @@ class UserRestController extends GetxController {
     } catch (error) {
       return -1;
     }
+  }
+
+  Future<List<UserRestApi>> _convertRestBDToRestDayApi(List<RestDayBD> listRest, UserBD user) async {
+    Jiffy.locale('es');
+
+    List<UserRestApi> listRestApi = [];
+
+    for (var restDayBD in listRest) {
+      var wakeUpHour = parseDurationRow(restDayBD.timeWakeup);
+      var retireHour = parseDurationRow(restDayBD.timeSleep);
+
+      listRestApi.add(UserRestApi(
+          phoneNumber: user.telephone.replaceAll("+34", ""),
+          dayOfWeek: Constant.tempMapDayApi[restDayBD.day]!,
+          wakeUpHour: wakeUpHour,
+          retireHour: retireHour,
+          index: restDayBD.selection,
+          isSelect: restDayBD.isSelect)
+      );
+    }
+
+    return listRestApi;
   }
 
   Future<int> deleteUserRestDay(BuildContext context, RestDayBD restDay) async {
@@ -75,18 +101,18 @@ class UserRestController extends GetxController {
   }
 
   Future<void> saveFromApi(List<UserRestApi> userRestApiList) async {
-    var list = _convertFromApi(userRestApiList);
+    var list = await _convertFromApi(userRestApiList);
     await const HiveData().saveListTimeRest(list);
   }
 
-  List<RestDayBD> _convertFromApi(List<UserRestApi> userRestApiList) {
+  Future<List<RestDayBD>> _convertFromApi(List<UserRestApi> userRestApiList) async {
     List<RestDayBD> list = [];
 
     for (var userRestApi in userRestApiList) {
       var restDay = RestDayBD(
           day: userRestApi.dayOfWeek,
-          timeWakeup: minutesToString(userRestApi.wakeUpHour),
-          timeSleep: minutesToString(userRestApi.retireHour),
+          timeWakeup: await _convertDateTimeToStringTime(userRestApi.wakeUpHour),
+          timeSleep: await _convertDateTimeToStringTime(userRestApi.retireHour),
           selection: userRestApi.index,
           isSelect: userRestApi.isSelect
       );
@@ -95,6 +121,14 @@ class UserRestController extends GetxController {
     }
 
     return list;
+  }
+
+  Future<String> _convertDateTimeToStringTime(DateTime dateTime) async {
+    if (dateTime.hour == 0 && dateTime.minute == 0) {
+      return await convertDateTimeToStringTime(dateTime);
+    } else {
+      return dateTime.toIso8601String();
+    }
   }
 
   Future<List<RestDayBD>> getUserRest() async {

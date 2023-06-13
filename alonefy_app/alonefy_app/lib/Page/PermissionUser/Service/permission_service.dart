@@ -7,13 +7,20 @@ import '../../../Common/Constant.dart';
 
 class PermissionService {
 
-  Future<void> activatePermissions(String phoneNumber, PermissionApi permissionApi) async {
+  Future<bool> activatePermissions(String phoneNumber, PermissionApi permissionApi) async {
 
-    final json = jsonEncode(permissionApi);
+    try {
+      final json = jsonEncode(permissionApi);
 
-    await http.put(
-        Uri.parse("${Constant.baseApi}/v1/user/activate"),
-        body: json);
+      var response = await http.put(
+              Uri.parse("${Constant.baseApi}/v1/user/activate"),
+              headers: Constant.headers,
+              body: json);
+
+      return response.statusCode == 200;
+    } catch (e) {
+      return false;
+    }
   }
 
 }

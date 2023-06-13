@@ -282,6 +282,22 @@ DateTime parseTime(String str, DateTime dateTime) {
   return time;
 }
 
+Future<String> convertDateTimeToStringTime(DateTime dateTime) async {
+  await Jiffy.locale('es');
+
+  var hour = dateTime.hour;
+  var minutes = dateTime.minute;
+
+  var strHour = '$hour';
+  var strMinutes = '$minutes';
+
+  if (hour < 10) strHour = '0$hour';
+  if (minutes < 10) strMinutes = '0$minutes';
+
+  //var dateTime = Jiffy(time).format(getTimePattern());
+  return '$strHour:$strMinutes';
+}
+
 void showAlert(BuildContext context, String mensaje) {
   showDialog(
       context: context,
@@ -571,6 +587,33 @@ String convertMinutesToHourAndMinutes(int minutes) {
   return '${hours.toInt()} hora y $min min';
 }
 
+DateTime jsonToDatetime(String json, String format) {
+  Jiffy.locale('es');
+
+  var date = DateTime.parse(json);
+  return date;
+}
+
+List<String> dynamicToStringList(List<dynamic> dynamicList) {
+  List<String> stringList = [];
+
+  for (var d in dynamicList) {
+    stringList.add(d);
+  }
+
+  return stringList;
+}
+
+List<DateTime> dynamicToDateTimeList(List<dynamic> dynamicList) {
+  List<DateTime> datetimeList = [];
+
+  for (var d in dynamicList) {
+    datetimeList.add(jsonToDatetime(d, getDefaultPattern()));
+  }
+
+  return datetimeList;
+}
+
 extension StringExtension on String {
   String capitalize() {
     return "${this[0].toUpperCase()}${substring(1).toLowerCase()}";
@@ -588,4 +631,21 @@ bool validateEmail(String email) {
   final RegExp regex =
       RegExp(r'^[\w-]+(\.[\w-]+)*@([a-z0-9]+(\.[a-z0-9]+)*\.)+[a-z]{2,}$');
   return regex.hasMatch(email);
+}
+
+Future<bool> getEnableIFF() async {
+  await Jiffy.locale('es');
+  var strDatetime = _prefs.getStartDateTimeDisambleIFF;
+  if (strDatetime != "") {
+    String deactivatedTime = _prefs.getDisambleIFF;
+    var minutes = deactivateTimeToMinutes(deactivatedTime);
+    var datetime = Jiffy(strDatetime).dateTime;
+    datetime.add(Duration(minutes: minutes));
+
+    if (DateTime.now().isAfter(datetime)) {
+      _prefs.setEnableIFF = true;
+    }
+  }
+
+  return _prefs.getEnableIFF;
 }

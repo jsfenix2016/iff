@@ -38,7 +38,7 @@ class ContactUserController extends GetxController {
 
       for (var element in listContact) {
         contactBD.displayName = element.displayName;
-        contactBD.phones = element.phones.first.number;
+        contactBD.phones = element.phones.first.number.replaceAll("+34", "");
         contactBD.photo = element.photo;
         contactBD.timeSendSMS = timeSendSMS;
         contactBD.timeCall = timeCall;
@@ -52,7 +52,7 @@ class ContactUserController extends GetxController {
               .saveContact(convertToApi(contactBD, user.telephone));
           if (contactBD.photo != null) {
             contactServ.updateImage(
-                user.telephone, contactBD.phones, contactBD.photo!);
+                user.telephone.replaceAll("+34", ""), contactBD.phones.replaceAll("+34", ""), contactBD.photo!);
           }
         }
       }
@@ -86,6 +86,15 @@ class ContactUserController extends GetxController {
       ContactApi contactApi = convertToApi(contact, user.telephone);
 
       contactServ.updateContact(contactApi);
+    }
+  }
+
+  Future<void> updateContactStatus(String phones, String status) async {
+    var contact = await const HiveData().getContactBD(phones);
+
+    if (contact != null) {
+      contact.requestStatus = status;
+      await const HiveData().updateContact(contact);
     }
   }
 
@@ -132,16 +141,6 @@ class ContactUserController extends GetxController {
   }
 
   ContactApi convertToApi(ContactBD contactBD, String phoneNumber) {
-    //var contactAPI = ContactApi(
-    //    userPhoneNumber: phoneNumber,
-    //    phoneNumber: contactBD.phones,
-    //    name: contactBD.name,
-    //    displayName: contactBD.displayName,
-    //    timeSendSms: stringTimeToInt(contactBD.timeSendSMS),
-    //    timeCall: stringTimeToInt(contactBD.timeCall),
-    //    timeWhatsapp: stringTimeToInt(contactBD.timeWhatsapp)
-    //);
-
     var contactApi = ContactApi.fromContact(contactBD, phoneNumber);
 
     return contactApi;
@@ -157,15 +156,15 @@ class ContactUserController extends GetxController {
     return response;
   }
 
-  Future<bool> updateContactStatus(ContactBD contact) async {
-    final MainController mainController = Get.put(MainController());
-    var user = await mainController.getUserData();
-
-    var response =
-        await contactServ.updateContactStatus(user.telephone, contact.phones);
-
-    return response;
-  }
+  //Future<bool> updateContactStatus(ContactBD contact) async {
+  //  final MainController mainController = Get.put(MainController());
+  //  var user = await mainController.getUserData();
+//
+  //  var response =
+  //      await contactServ.updateContactStatus(user.telephone, contact.phones);
+//
+  //  return response;
+  //}
 
   Future<List<ContactBD>> getContacts() async {
     final MainController mainController = Get.put(MainController());

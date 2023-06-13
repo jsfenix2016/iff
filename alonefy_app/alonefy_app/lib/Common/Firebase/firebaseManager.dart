@@ -22,19 +22,8 @@ late AndroidNotificationChannel channel;
 bool isFlutterLocalNotificationsInitialized = false;
 
 void showFlutterNotification(RemoteMessage message) {
-  RedirectViewNotifier.showNotificationsFromFirebase(message);
+  RedirectViewNotifier.manageNotifications(message);
 }
-
-Future<void> showNotification() async {
-  RedirectViewNotifier.showNotifications();
-}
-
-Future<void> showRiskNotification() async {
-  RedirectViewNotifier.showDateNotifications();
-}
-
-/// Initialize the [FlutterLocalNotificationsPlugin] package.
-late FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
 
 Future<void> initializeFirebase() async {
   //await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
@@ -46,27 +35,10 @@ Future<void> initializeFirebase() async {
   FirebaseMessaging.onMessage.listen(showFlutterNotification);
   // Set the background messaging handler early on, as a named top-level function
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
-
-  //if (!kIsWeb) {
-  //await setupFlutterNotifications();
-  //}
 }
 
-int _messageCount = 0;
-
-String constructFCMPayload(String? token) {
-  _messageCount++;
-  return jsonEncode({
-    'token': token,
-    'data': {
-      'via': 'FlutterFire Cloud Messaging!!!',
-      'count': _messageCount.toString(),
-    },
-    'notification': {
-      'title': 'Hello FlutterFire!',
-      'body': 'This notification (#$_messageCount) was created via FCM!',
-    },
-  });
+Future<void> updateFirebaseToken() async {
+  onActionSelected("get_apns_token");
 }
 
 Future<void> onActionSelected(String value) async {
@@ -121,24 +93,4 @@ Future<void> onActionSelected(String value) async {
     default:
       break;
   }
-}
-
-Future<void> sendPushMessage(String token) async {
-  if (token == null) {
-    print('Unable to send FCM message, no token exists.');
-    return;
-  }
-
-  //try {
-  //  await http.post(
-  //    Uri.parse('https://api.rnfirebase.io/messaging/send'),
-  //    headers: <String, String>{
-  //      'Content-Type': 'application/json; charset=UTF-8',
-  //    },
-  //    body: constructFCMPayload(token),
-  //  );
-  //  print('FCM request for device sent!');
-  //} catch (e) {
-  //  print(e);
-  //}
 }

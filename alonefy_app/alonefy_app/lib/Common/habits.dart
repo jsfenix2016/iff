@@ -166,8 +166,24 @@ class Habits {
   bool isOutOfRestTime(LogActivity logActivity) {
     RestDay restDay = getRestDay(logActivity.dateTime.weekday);
 
-    DateTime wakeUp = parseTime(restDay.timeWakeup, logActivity.dateTime);
-    DateTime sleep = parseTime(restDay.timeSleep, logActivity.dateTime);
+    DateTime wakeUp = DateTime.now();
+    DateTime sleep = DateTime.now();
+
+    if (restDay.timeWakeup.length == 5) {
+      wakeUp = parseTime(restDay.timeWakeup, logActivity.dateTime);
+    } else {
+      wakeUp = parseDurationRow(restDay.timeWakeup);
+      wakeUp = DateTime(logActivity.dateTime.year, logActivity.dateTime.month,
+          logActivity.dateTime.day, wakeUp.hour, wakeUp.minute);
+    }
+
+    if (restDay.timeSleep.length == 5) {
+      sleep = parseTime(restDay.timeSleep, logActivity.dateTime);
+    } else {
+      sleep = parseDurationRow(restDay.timeSleep);
+      sleep = DateTime(logActivity.dateTime.year, logActivity.dateTime.month,
+          logActivity.dateTime.day, sleep.hour, sleep.minute);
+    }
 
     if (sleep.hour == 0 && sleep.minute == 0) {
       sleep = DateTime(sleep.year, sleep.month, sleep.day + 1);
