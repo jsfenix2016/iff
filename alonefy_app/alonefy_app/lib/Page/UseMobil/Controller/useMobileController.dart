@@ -27,18 +27,8 @@ class UseMobilController extends GetxController {
     }
   }
 
-  Future<void> saveTimeUseMobil(
+  Future<bool> saveTimeUseMobil(
       BuildContext context, String time, UserBD userbd) async {
-    //_prefs.setHabitsTime = time;
-    final List<String> tempNoSelectListDay = <String>[
-      "L",
-      "M",
-      "X",
-      "J",
-      "V",
-      "S",
-      "D",
-    ];
 
     final List<UseMobilBD> selectedDays = [];
     for (var element in Constant.tempListShortDay) {
@@ -51,16 +41,15 @@ class UseMobilController extends GetxController {
 
     List<UseMobilApi> listMobilApi = _convertToApi(selectedDays, userbd);
 
-    useMobilServ.saveUseMobil(listMobilApi);
+    return await useMobilServ.saveUseMobil(listMobilApi);
   }
 
   List<UseMobilApi> _convertToApi(List<UseMobilBD> listMobilBD, UserBD userBD) {
     List<UseMobilApi> listMobilApi = [];
-
     for (var useMobil in listMobilBD) {
       var useMobilApi = UseMobilApi(
-          phoneNumber: userBD.telephone,
-          dayOfWeek: useMobil.day,
+          phoneNumber: userBD.telephone.replaceAll("+34", ""),
+          dayOfWeek: Constant.tempMapDayApi[useMobil.day]!,
           time: _convertTimeToInt(useMobil.time),
           index: useMobil.selection,
           isSelect: useMobil.isSelect);

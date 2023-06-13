@@ -14,6 +14,7 @@ class ActivityService {
 
      final resp = await http.post(
          Uri.parse("${Constant.baseApi}/v1/activity"),
+         headers: Constant.headers,
          body: json
      );
 
@@ -28,8 +29,9 @@ class ActivityService {
 
     var json = jsonEncode(activityDayApi);
 
-    await http.put(
+    var response = await http.put(
         Uri.parse("${Constant.baseApi}/v1/activity/$id"),
+        headers: Constant.headers,
         body: json
     );
 

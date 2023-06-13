@@ -19,11 +19,10 @@ class ContactService {
 
     try {
       final resp = await http.post(Uri.parse("${Constant.baseApi}/v1/contact"),
+          headers: Constant.headers,
           body: json);
 
-      Map<String, dynamic> decodeResp = jsonDecode(resp.body);
-
-      if (decodeResp['errors'] != null) {}
+      var a = "";
     } catch (error) {
       print(error);
     }
@@ -35,6 +34,7 @@ class ContactService {
 
     try {
       final resp = await http.put(Uri.parse("${Constant.baseApi}/v1/contact"),
+          headers: Constant.headers,
           body: json);
 
       Map<String, dynamic> decodeResp = jsonDecode(resp.body);
@@ -50,7 +50,8 @@ class ContactService {
 
     try {
       var response = await http.delete(Uri.parse(
-          "${Constant.baseApi}/v1/contact/user/$userPhoneNumber/contact/$phoneNumber"));
+          "${Constant.baseApi}/v1/contact/user/$userPhoneNumber/contact/$phoneNumber"),
+        headers: Constant.headers);
 
       Map<String, dynamic> decodeResp = jsonDecode(response.body);
 
@@ -66,7 +67,8 @@ class ContactService {
     // return response.statusCode == 200;
     try {
       var response = await http.get(Uri.parse(
-          "${Constant.baseApi}/v1/contact/user/$userPhoneNumber/contact/$phoneNumber/ACCEPTED"));
+          "${Constant.baseApi}/v1/contact/user/$userPhoneNumber/contact/$phoneNumber/ACCEPTED"),
+        headers: Constant.headers);
 
       Map<String, dynamic> decodeResp = jsonDecode(response.body);
 
@@ -81,7 +83,8 @@ class ContactService {
   Future<List<ContactApi>?> getContact(String userPhoneNumber) async {
     try {
       var response = await http.get(
-          Uri.parse("${Constant.baseApi}/v1/contact/user/$userPhoneNumber"));
+          Uri.parse("${Constant.baseApi}/v1/contact/user/$userPhoneNumber"),
+        headers: Constant.headers);
 
       Iterable responseBody = jsonDecode(response.body);
 

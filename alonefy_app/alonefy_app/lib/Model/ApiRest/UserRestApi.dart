@@ -1,8 +1,8 @@
 class UserRestApi {
   late String phoneNumber;
   late String dayOfWeek;
-  late int wakeUpHour;
-  late int retireHour;
+  late DateTime wakeUpHour;
+  late DateTime retireHour;
   late int index;
   late bool isSelect;
 
@@ -18,10 +18,10 @@ class UserRestApi {
   Map<String, dynamic> toJson() => {
     'phoneNumber': phoneNumber,
     'dayOfWeek': dayOfWeek,
-    'wakeUpHour': wakeUpHour,
-    'retireHour': retireHour,
+    'wakeUpHour': wakeUpHour.toIso8601String(),
+    'retireHour': retireHour.toIso8601String(),
     'index': index,
-    'isSelect': isSelect
+    'selected': isSelect
   };
 
   factory UserRestApi.fromJson(Map<String, dynamic> json) {
@@ -31,7 +31,7 @@ class UserRestApi {
       wakeUpHour: json['wakeUpHour'],
       retireHour: json['retireHour'],
       index: json['index'],
-      isSelect: json['isSelect'],
+      isSelect: json['selected'],
     );
   }
 }

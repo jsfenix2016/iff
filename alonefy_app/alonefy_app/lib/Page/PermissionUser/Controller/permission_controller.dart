@@ -95,4 +95,20 @@ class PermissionController extends GetxController {
 
     return true;
   }
+
+  Future<void> saveNotification() async {
+    final MainController mainController = Get.put(MainController());
+    var user = await mainController.getUserData();
+
+    _prefs.setAcceptedNotification = PreferencePermission.allow;
+
+    var permissionApi = PermissionApi(
+        phoneNumber: user.telephone.replaceAll("+34", ""),
+        activateNotifications: _prefs.getAcceptedNotification == PreferencePermission.allow,
+        activateCamera: _prefs.getAcceptedCamera == PreferencePermission.allow,
+        activateContacts: _prefs.getAcceptedContacts == PreferencePermission.allow,
+        activateAlarm: _prefs.getAcceptedScheduleExactAlarm == PreferencePermission.allow
+    );
+    await PermissionService().activatePermissions(user.telephone, permissionApi);
+  }
 }

@@ -5,6 +5,7 @@ import 'package:get/get_state_manager/src/simple/get_controllers.dart';
 import 'package:ifeelefine/Model/ApiRest/activityDayApi.dart';
 import 'package:ifeelefine/Page/AddActivityPage/Service/activityService.dart';
 import 'package:jiffy/jiffy.dart';
+import '../../../Common/Constant.dart';
 import '../../../Common/utils.dart';
 import '../../../Controllers/mainController.dart';
 import '../../../Data/hive_data.dart';
@@ -30,8 +31,6 @@ class AddActivityController extends GetxController {
   }
 
   Future<int> saveActivity(BuildContext context, ActivityDay activity) async {
-    var activitiesDB = await getActivities();
-    activity.id = activitiesDB.length;
     ActivityDayBD activitybd = await convertActivityDayToBD(activity);
 
     return await const HiveData().saveActivity(activitybd);
@@ -94,7 +93,16 @@ class AddActivityController extends GetxController {
     final MainController mainController = Get.put(MainController());
     var user = await mainController.getUserData();
     var activityApi = await _convertToApi(activity, user.telephone);
-    return ActivityService().saveData(activityApi);
+
+    var activityApiResponse = await ActivityService().saveData(activityApi);
+    if (activityApiResponse != null) {
+      if (activityApiResponse.days != null && activityApiResponse.days!.isNotEmpty) {
+        activityApiResponse.days = _convertRepeatTypeDaysApi(activityApiResponse.days!);
+      }
+      activityApiResponse.repeatType = Constant.daysFromApi[activityApiResponse.repeatType]!;
+    }
+
+    return activityApiResponse;
   }
 
   Future<void> updateActivityApi(ActivityDay activity) async {
@@ -113,16 +121,19 @@ class AddActivityController extends GetxController {
     var disabledDates = await _convertSpecificDaysToList(activity.specificDaysDeactivated);
     var removedDates = await _convertSpecificDaysToList(activity.specificDaysRemoved);
 
+    var days = _convertDaysToList(activity.days!);
+    days = _convertRepeatTypeDays(days);
+
     ActivityDayApi activityDayApi = ActivityDayApi(
-      phoneNumber,
+      phoneNumber.replaceAll("+34", ""),
       startDate,
       endDate,
       startTime,
       activity.activity,
       activity.allDay,
       endTime,
-      _convertDaysToList(activity.days!),
-      activity.repeatType,
+      days,
+      Constant.daysToApi[activity.repeatType]!,
       activity.isDeactivate,
       disabledDates,
       removedDates
@@ -143,6 +154,22 @@ class AddActivityController extends GetxController {
 
     var dateTime = Jiffy(time.toLowerCase(), getTimePattern()).dateTime;
     return dateTime;
+  }
+
+  List<String> _convertRepeatTypeDays(List<String> days) {
+    List<String> repeatDays = [];
+    for (var day in days) {
+      repeatDays.add(Constant.tempMapDayApi[day]!);
+    }
+    return repeatDays;
+  }
+
+  List<String> _convertRepeatTypeDaysApi(List<String> days) {
+    List<String> repeatDays = [];
+    for (var day in days) {
+      repeatDays.add(Constant.tempMapDayReverseApi[day]!);
+    }
+    return repeatDays;
   }
 
   List<String> _convertDaysToList(String? days) {
@@ -191,7 +218,7 @@ class AddActivityController extends GetxController {
       activityDay.allDay = activityApi.allDay;
       activityDay.dayFinish = await _convertDayToApk(activityApi.endDate);
       activityDay.days = _convertListToDays(activityApi.days);
-      activityDay.repeatType = activityApi.repeatType;
+      activityDay.repeatType = Constant.daysFromApi[activityApi.repeatType]!;
       activityDay.isDeactivate = activityApi.enabled;
       activityDay.specificDaysDeactivated =
           await _convertListToSpecificDays(activityApi.disabledDates);
@@ -231,7 +258,8 @@ class AddActivityController extends GetxController {
     if (days != null && days.isNotEmpty) {
       String strDays = "";
       for (var day in days) {
-        strDays += '${day};';
+        var convertedDay = Constant.tempMapDayReverseApi[day];
+        strDays += '${convertedDay};';
       }
 
       if (strDays.isNotEmpty)

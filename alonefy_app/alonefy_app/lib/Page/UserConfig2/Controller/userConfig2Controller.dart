@@ -23,10 +23,8 @@ class UserConfig2COntroller extends GetxController {
 
       await const HiveData().updateUser(user);
       var resp = await EditUserService().updateUser(user);
-      if (resp['errors'] != null) {
-        // return false;
-      }
-      return true;
+
+      return resp;
     } catch (error) {
       return false;
     }
