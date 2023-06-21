@@ -44,13 +44,13 @@ class ContactApi {
   factory ContactApi.fromJson(Map<String, dynamic> json) {
     return ContactApi(
       userPhoneNumber: "",
-      phoneNumber: json['phoneNumber'],
+      phoneNumber: "",
       name: json['name'],
       displayName: json['displayName'],
       timeSendSms: json['timeSendSms'],
       timeCall: json['timeCall'],
       timeWhatsapp: json['timeWhatsapp'],
-      photo: json["photo"],
+      photo: json["photo"] ?? "",
       status: json["status"]
     );
   }

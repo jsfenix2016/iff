@@ -45,6 +45,6 @@ class TermsAndConditionsController extends GetxController {
   }
 
   void showAlertTemp(BuildContext context, String text) {
-    showSaveAlert(context, Constant.info, Constant.deletectGeneric);
+    showSaveAlert(context, Constant.info, text);
   }
 }

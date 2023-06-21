@@ -93,7 +93,7 @@ class _EditZoneRiskPageState extends State<EditZoneRiskPage> {
         id: widget.index,
         photo: contactSelect.photo,
         name: widget.contactRisk.name,
-        phones: widget.contactRisk.phones.toString(),
+        phones: contactSelect.phones.first.normalizedNumber.replaceAll("+34", ""),
         sendLocation: widget.contactRisk.sendLocation,
         sendWhatsapp: widget.contactRisk.sendWhatsapp,
         code: widget.contactRisk.code,

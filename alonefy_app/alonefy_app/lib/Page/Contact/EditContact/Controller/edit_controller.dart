@@ -28,17 +28,27 @@ class EditContactController extends GetxController {
       String timeSendSMS, String timeCall, String timeWhatsapp) async {
     contextTemp = context;
     try {
-      var save = await const HiveData().saveUserContact(contact);
-      if (save == 1) {
-        final MainController mainController = Get.put(MainController());
-        var user = await mainController.getUserData();
-        contactServ.saveContact(convertToApi(contact, user.telephone));
+      final MainController mainController = Get.put(MainController());
+      var user = await mainController.getUserData();
+      var response = await contactServ.saveContact(convertToApi(contact, user.telephone));
 
-        showAlertController(Constant.contactSaveCorrectly);
+      if (response) {
+        var contactBD = await const HiveData().getContactBD(contact.phones);
+        if (contactBD == null) {
+          var url = await contactServ.getUrlPhoto(user.telephone.replaceAll("+34", ""), contact.phones.replaceAll("+34", ""));
+          if (contact.photo != null && url != null) {
+            contactServ.updateImage(url, contact.photo!);
+          }
+          await const HiveData().saveUserContact(contact);
+          showAlertController(Constant.contactSaveCorrectly);
+        } else {
+          await const HiveData().updateContact(contact);
+          showAlertController(Constant.contactEditCorrectly);
+        }
         return true;
+
       } else {
         showAlertController(Constant.conexionFail);
-
         return false;
       }
     } catch (error) {

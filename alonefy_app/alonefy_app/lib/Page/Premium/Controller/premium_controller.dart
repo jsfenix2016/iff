@@ -149,7 +149,7 @@ class PremiumController extends GetxController {
     final MainController mainController = Get.put(MainController());
     var user = await mainController.getUserData();
     PremiumApi premiumApi = PremiumApi(
-        phoneNumber: user.telephone,
+        phoneNumber: user.telephone.replaceAll("+34", ""),
         premium: _prefs.getUserPremium
     );
     PremiumService().saveData(premiumApi);

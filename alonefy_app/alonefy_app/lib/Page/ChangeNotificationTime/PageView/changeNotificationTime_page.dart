@@ -45,7 +45,7 @@ class _ChangeNotificationTimePageState
     super.initState();
 
     setState(() {
-      Constant.timeDicExtended.forEach((key, value) {
+      Constant.timeDic.forEach((key, value) {
         if (_prefs.getEmailTime == value) {
           emailPosition = int.parse(key);
           emailTime = value;
@@ -239,69 +239,85 @@ class _ChangeNotificationTimePageState
               theme: const CupertinoThemeData(
                 brightness: Brightness.light,
               ),
-              home: CupertinoPicker(
-                backgroundColor: Colors.transparent,
-                onSelectedItemChanged: (int value) {
-                  if (_prefs.getUserPremium) {
-                    switch (pickerId) {
-                      case 0:
-                        emailTime = Constant.timeDicExtended[value.toString()]!;
-                        break;
-                      case 1:
-                        smsTime = Constant.timeDicExtended[value.toString()]!;
-                        break;
-                      case 2:
-                        phoneTime = Constant.timeDicExtended[value.toString()]!;
-                        break;
-                    }
-                  } else {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const PremiumPage(
-                              isFreeTrial: false,
-                              img: 'Pantalla5.jpg',
-                              title: Constant.premiumChangeTimeTitle,
-                              subtitle: '')),
-                    );
-                  }
-//useMobilVC.saveTimeUseMobil(
-// context, Constant.timeDicExtended[value.toString()].toString());
-                },
-                scrollController:
-                    FixedExtentScrollController(initialItem: initialPosition),
-                itemExtent: 60.0,
+              home: Stack(
                 children: [
-                  for (var i = 0; i < Constant.timeDicExtended.length; i++)
-                    Container(
-                      height: 24,
-                      width: 120,
-                      color: Colors.transparent,
-                      child: Column(
-                        children: [
-                          const SizedBox(height: 12),
-                          Text(
-                            Constant.timeDicExtended[i.toString()].toString(),
-                            textAlign: TextAlign.center,
-                            style: GoogleFonts.barlow(
-                              fontSize: 24.0,
-                              wordSpacing: 1,
-                              letterSpacing: 0.001,
-                              fontWeight: FontWeight.w700,
-                              color: Colors.white,
-                            ),
-                          ),
-                          Container(
-                            height: 2,
-                            width: 100,
-                            color: Colors.white,
-                          ),
-                        ],
-                      ),
-                    ),
+                  if (_prefs.getUserPremium) ...[
+                    _getCupertinoPicker(initialPosition, pickerId)
+                  ] else ...[
+                    GestureDetector(
+                      child: AbsorbPointer(
+                          absorbing: !_prefs.getUserPremium,
+                          child: _getCupertinoPicker(initialPosition, pickerId)),
+                      onVerticalDragEnd: (drag) {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const PremiumPage(
+                                  isFreeTrial: false,
+                                  img: 'Pantalla5.jpg',
+                                  title: Constant.premiumChangeTimeTitle,
+                                  subtitle: '')),
+                        );
+                      },
+                    )
+                  ]
                 ],
-              ),
+              )
             )));
+  }
+
+  Widget _getCupertinoPicker(int initialPosition, int pickerId) {
+    return CupertinoPicker(
+      backgroundColor: Colors.transparent,
+      onSelectedItemChanged: (int value) {
+        switch (pickerId) {
+          case 0:
+            emailTime = Constant.timeDic[value.toString()]!;
+            break;
+          case 1:
+            smsTime = Constant.timeDic[value.toString()]!;
+            break;
+          case 2:
+            phoneTime = Constant.timeDic[value.toString()]!;
+            break;
+        }
+
+//useMobilVC.saveTimeUseMobil(
+// context, Constant.timeDic[value.toString()].toString());
+      },
+      scrollController:
+      FixedExtentScrollController(initialItem: initialPosition),
+      itemExtent: 60.0,
+      children: [
+        for (var i = 0; i < Constant.timeDic.length; i++)
+          Container(
+            height: 24,
+            width: 120,
+            color: Colors.transparent,
+            child: Column(
+              children: [
+                const SizedBox(height: 12),
+                Text(
+                  Constant.timeDic[i.toString()].toString(),
+                  textAlign: TextAlign.center,
+                  style: GoogleFonts.barlow(
+                    fontSize: 24.0,
+                    wordSpacing: 1,
+                    letterSpacing: 0.001,
+                    fontWeight: FontWeight.w700,
+                    color: Colors.white,
+                  ),
+                ),
+                Container(
+                  height: 2,
+                  width: 100,
+                  color: Colors.white,
+                ),
+              ],
+            ),
+          ),
+      ],
+    );
   }
 
   Widget getRowWithPicker(String linePath, int initialPosition, int pickerId) {

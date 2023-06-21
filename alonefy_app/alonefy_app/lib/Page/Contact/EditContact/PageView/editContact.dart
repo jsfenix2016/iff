@@ -30,8 +30,8 @@ class _EditContactState extends State<EditContact> {
   var indexSelect = -1;
 
   bool isPremium = true;
-  late String timeSMS = "00:00 AM";
-  late String timeCall = "00:00 AM";
+  late String timeSMS = "5 min";
+  late String timeCall = "10 min";
 
   @override
   void initState() {

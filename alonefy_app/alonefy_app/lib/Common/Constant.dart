@@ -67,6 +67,16 @@ class Constant {
 
   static const String inactive = "INACTIVE";
   static const String drop = "DROP";
+  static const String startRiskDate = "START_RISK_DATE";
+  static const String finishRiskDate = "FINISH_RISK_DATE";
+  static const String riskZone = "RISK_ZONE";
+  static const String riskDate = "RISK_DATE";
+  static const String normalMovement = "RISK_ZONE";
+  static const String suddenMovement = "SUDDEN_MOVEMENT";
+  static const String sms = "SMS";
+  static const String call = "CALL";
+  static const String whatsapp = "WHATSAPP";
+  static const String notification = "NOTIFICATION";
 
   static const Map<String,String> headers = {
     'Content-Type':'application/json; charset=UTF-8'
@@ -317,12 +327,15 @@ class Constant {
 
   static const String tokenRequestTxt = 'Solicitar códigos de verificación';
 
-  static const String disambleProtected = "Se a deshabilitado la protección";
+  static const String disambleProtected = "Se ha deshabilitado la protección";
+  static const String disambleProtectedError = "Ha habido un error al deshabilitar la protección";
 
   static const String cancelChange = "Se ha cancelado los cambios";
   static const String saveCorrectly = "Se guardo correctamente";
   static const String contactSaveCorrectly =
       "Contacto guardado correctamente, se ha realizado la solicitud de autorización correctamente";
+  static const String contactEditCorrectly =
+      "Contacto editado correctamente";
   static const String timeMaxReachedInactivity =
       "Se ha alcanzado el máximo de tiempos de inactividad. Para poder programar más, hazte Premium.";
 

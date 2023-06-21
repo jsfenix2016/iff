@@ -1,5 +1,7 @@
+import 'dart:convert';
 import 'dart:io';
 
+import 'package:flutter/services.dart';
 import 'package:ifeelefine/Common/Constant.dart';
 import 'package:ifeelefine/Common/colorsPalette.dart';
 import 'package:ifeelefine/Common/initialize_models_bd.dart';
@@ -9,6 +11,9 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ifeelefine/Common/decoration_custom.dart';
 import 'package:ifeelefine/Common/manager_alerts.dart';
+
+import 'package:country_state_city_picker/model/select_status_model.dart'
+as StatusModel;
 
 class UserEditPage extends StatefulWidget {
   const UserEditPage({super.key});
@@ -56,18 +61,10 @@ class _UserEditPageState extends State<UserEditPage> {
   }
 
   Future getUserData() async {
-    final futures = [
-      editVC.getUserDate(),
-      editVC.getAgeVC(),
-      editVC.getCounty(),
-      editVC.getState(),
-    ];
-    final results = await Future.wait(futures);
-
-    user = results[0] as User?;
-    ages = results[1] as Map<String, String>;
-    _country = results[2] as List<String>;
-    _states = results[3] as List<String>;
+    user = await editVC.getUserDate();
+    ages = await editVC.getAgeVC();
+    _country = await getCounty();
+    _states.addAll( await editVC.getState());
 
     indexCountry = _country.indexWhere((item) => item == user?.country);
     selectCountry = user!.country;
@@ -75,8 +72,66 @@ class _UserEditPageState extends State<UserEditPage> {
     selectDropState();
   }
 
+  Future getCounty() async {
+    countryres = await getResponse() as List;
+    for (var data in countryres) {
+      var model = StatusModel.StatusModel();
+      model.name = data['name'];
+      model.emoji = data['emoji'];
+      if (!mounted) continue;
+      if (user!.country.contains(
+          ("${model.emoji!}  ${model.name!}"))) {
+        stateTemp.add(data['state']);
+      }
+      setState(() {
+        _country.add("${model.emoji!}  ${model.name!}");
+      });
+    }
+    filterState();
+
+    setState(() {});
+    return _country;
+  }
+
+  Future filterState() async {
+    _states.clear();
+    _states.add('Seleccionar estado');
+    for (var f in stateTemp) {
+      if (!mounted) continue;
+      f.forEach((data) {
+        _states.add("${data['name']}");
+      });
+    }
+    return _states;
+  }
+
+  Future updateStates() async {
+    stateTemp.clear();
+    for (var data in countryres) {
+      var model = StatusModel.StatusModel();
+      model.name = data['name'];
+      model.emoji = data['emoji'];
+      if (!mounted) continue;
+      if (user!.country.contains(
+          ("${model.emoji!}  ${model.name!}"))) {
+        stateTemp.add(data['state']);
+      }
+    }
+    await filterState();
+    selectDropState();
+    setState(() {});
+  }
+
+  Future getResponse() async {
+    var res = await rootBundle
+        .loadString('packages/country_state_city_picker/lib/assets/country.json');
+
+    return jsonDecode(res);
+  }
+
   void selectDropState() {
     indexState = _states.indexWhere((item) => item == user?.city);
+    if (indexState < 0) indexState = 0;
 
     selectState = (indexState < 0) ? _states[0] : _states[indexState];
     setState(() {});
@@ -387,11 +442,12 @@ class _UserEditPageState extends State<UserEditPage> {
                               selectCountry = v!;
 
                               user!.country = v;
-                              await editVC.refreshContry();
+                              //await editVC.refreshContry();
                               final int index2 = _country.indexWhere(
                                   (country) => country.contains(v.toString()));
                               indexCountry = index2;
-                              _states = await editVC.filterState();
+                              //_states = await editVC.filterState();
+                              updateStates();
                               setState(() {});
                             },
                           ),
@@ -556,10 +612,10 @@ class _UserEditPageState extends State<UserEditPage> {
           user?.telephone = value;
         },
         key: Key(phone),
-        initialValue: '+34$phone',
+        initialValue: '$phone',
         textCapitalization: TextCapitalization.sentences,
         decoration: InputDecoration(
-          hintText: '+34$phone',
+          hintText: '+34',
           labelText: Constant.telephone,
           suffixIcon: const Icon(Icons.edit, color: ColorPalette.principal),
           focusedBorder: const UnderlineInputBorder(

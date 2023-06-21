@@ -10,7 +10,7 @@ class TermsAndConditionsService {
     try {
       var json = jsonEncode(termsAndConditionsApi);
 
-      final resp = await http.post(Uri.parse("${Constant.baseApi}/v1/contact"),
+      final resp = await http.put(Uri.parse("${Constant.baseApi}/v1/user/termsAndConditions"),
           headers: Constant.headers,
           body: json);
 

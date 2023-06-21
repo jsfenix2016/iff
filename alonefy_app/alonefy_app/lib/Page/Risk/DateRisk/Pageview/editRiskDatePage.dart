@@ -118,7 +118,7 @@ class _EditRiskPageState extends State<EditRiskPage> {
         name: contactSelect.displayName,
         timeinit: widget.contactRisk.timeinit,
         timefinish: widget.contactRisk.timefinish,
-        phones: contactSelect.phones.first.toString(),
+        phones: contactSelect.phones.first.normalizedNumber.replaceAll("+34", ""),
         titleMessage: titleMessage,
         messages: message,
         sendLocation: widget.contactRisk.sendLocation,

@@ -7,7 +7,7 @@ import '../../../Common/Constant.dart';
 
 class PermissionService {
 
-  Future<bool> activatePermissions(String phoneNumber, PermissionApi permissionApi) async {
+  Future<bool> activatePermissions(PermissionApi permissionApi) async {
 
     try {
       final json = jsonEncode(permissionApi);

@@ -12,13 +12,18 @@ class EditUseMobilService {
     return {};
   }
 
-  Future<void> saveUseMobil(List<UseMobilApi> listuse) async {
+  Future<bool> saveUseMobil(List<UseMobilApi> listuse) async {
+    try {
+      var json = jsonEncode(listuse);
 
-    var json = jsonEncode(listuse);
+      var response = await http.put(
+          Uri.parse("${Constant.baseApi}/v1/inactivityTime"),
+          headers: Constant.headers,
+          body: json);
 
-    await http.put(
-        Uri.parse("${Constant.baseApi}/v1/inactivityTime"),
-        body: json);
-
+      return response.statusCode == 200;
+    } catch (e) {
+      return false;
+    }
   }
 }

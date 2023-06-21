@@ -31,40 +31,44 @@ class MainService {
     }
   }
 
-  Future<void> cancelAllNotifications(List<String> taskIds) async {
+  Future<bool> cancelAllNotifications(List<String> taskIds) async {
 
-    final response = http.post(Uri.parse("${Constant.baseApi}/v1/notifications/cancel"),
-        body: taskIds);
+    try {
+      final response = await http.post(Uri.parse("${Constant.baseApi}/v1/notifications/cancel"),
+              headers: Constant.headers,
+              body: taskIds);
+
+      return response.statusCode == 200;
+    } catch (e) {
+      return false;
+    }
   }
 
-  Future<void> sendAlertToContactImmediately(List<String> taskIds) async {
+  Future<bool> sendAlertToContactImmediately(List<String> taskIds) async {
 
-    final response = http.post(Uri.parse("${Constant.baseApi}/v1/notifications/send"),
-        body: taskIds);
+    try {
+      final response = await http.post(Uri.parse("${Constant.baseApi}/v1/notifications/send"),
+              headers: Constant.headers,
+              body: taskIds);
+
+      return response.statusCode == 200;
+    } catch (e) {
+      return false;
+    }
   }
 
-  Future<Map<String, dynamic>> saveDrop(UserBD user) async {
+  Future<bool> saveDrop(UserBD user) async {
     Map<String, dynamic> authData = {};
 
     try {
       final resp = await http.post(
           Uri.parse(
               "${Constant.baseApi}/v1/notifications/create/user/${user.telephone}/type/DROP"),
-          body: authData);
+          headers: Constant.headers);
 
-      Map<String, dynamic> decodeResp = json.decode(resp.body);
-
-      if (decodeResp['errors'] == null) {
-        return {"ok": false, "mesaje": decodeResp['description']};
-      }
-
-      if (decodeResp['id'] != null) {
-        return {"ok": true};
-      } else {
-        return {"ok": false};
-      }
+      return resp.statusCode == 200;
     } catch (error) {
-      return {"ko": false};
+      return false;
     }
   }
 }

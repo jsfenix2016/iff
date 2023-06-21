@@ -12,6 +12,7 @@ class FirebaseService {
 
     await http.put(
         Uri.parse("${Constant.baseApi}/v1/user/fcm"),
+        headers: Constant.headers,
         body: json
     );
   }

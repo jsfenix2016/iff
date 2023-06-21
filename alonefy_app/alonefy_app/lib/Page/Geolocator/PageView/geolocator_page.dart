@@ -175,6 +175,7 @@ class _InitGeolocatorState extends State<InitGeolocator> {
   @override
   void initState() {
     super.initState();
+    _prefs.saveLastScreenRoute("configGeo");
     preferencePermission = _prefs.getAcceptedSendLocation;
     _isActivePermission();
   }

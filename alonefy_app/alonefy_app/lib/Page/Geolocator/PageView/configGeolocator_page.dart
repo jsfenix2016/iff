@@ -30,9 +30,6 @@ class ConfigGeolocator extends StatefulWidget {
 }
 
 class _ConfigGeolocatorState extends State<ConfigGeolocator> {
-  final ConfigGeolocatorController geoVC =
-      Get.put(ConfigGeolocatorController());
-
   late bool isActive = false;
   final _prefs = PreferenceUser();
   final _locationController = Get.put(ConfigGeolocatorController());
@@ -155,7 +152,6 @@ class _ConfigGeolocatorState extends State<ConfigGeolocator> {
 
   @override
   void initState() {
-    _prefs.saveLastScreenRoute("configGeo");
     super.initState();
     preferencePermission = _prefs.getAcceptedSendLocation;
     _isActivePermission();

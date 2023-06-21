@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ifeelefine/Common/Constant.dart';
+import 'package:ifeelefine/Common/Firebase/firebaseManager.dart';
 import 'package:ifeelefine/Common/colorsPalette.dart';
 import 'package:ifeelefine/Common/initialize_models_bd.dart';
 import 'package:ifeelefine/Common/utils.dart';
@@ -352,6 +353,7 @@ class _UserConfigPageState2 extends State<UserConfigPage2> {
     userbd!.country = user!.country;
     bool isupdate = await userConfigVC.updateUserDate(context, userbd!);
     if (isupdate) {
+      updateFirebaseToken();
       await Navigator.push(
         context,
         MaterialPageRoute(

@@ -50,7 +50,7 @@ class _PreviewRestTimePageState extends State<PreviewRestTimePage> {
   @override
   void initState() {
     getInactivity();
-    _prefs.saveLastScreenRoute("previewRestDay");
+    if (!widget.isMenu) _prefs.saveLastScreenRoute("previewRestDay");
     super.initState();
   }
 

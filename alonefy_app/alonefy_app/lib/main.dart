@@ -291,6 +291,7 @@ Future<void> initializeService() async {
 void onStart(ServiceInstance service) async {
   // Only available for flutter 3.0.0 and later
   DartPluginRegistrant.ensureInitialized();
+  await inicializeHiveBD();
   await _prefs.initPrefs();
   // For flutter prior to version 3.0.0
   // We have to register the plugin manually
@@ -334,7 +335,7 @@ void onStart(ServiceInstance service) async {
   });
 
   Timer.periodic(const Duration(minutes: 2), (timer) async {
-    //sendLocation();
+    sendLocation();
   });
 
   Timer.periodic(const Duration(hours: 6), (timer) async {
@@ -492,17 +493,22 @@ class _MyAppState extends State<MyApp> {
 }
 
 void sendLocation() async {
-  PermissionStatus permission = await Permission.location.request();
+  //PermissionStatus permission = await Permission.location.request();
 
-  if (permission.isPermanentlyDenied) {
-    _locationController.activateLocation(PreferencePermission.deniedForever);
-    showPermissionDialog(RedirectViewNotifier.context!, Constant.enablePermission);
-  } else if (permission.isDenied) {
-    _locationController.activateLocation(PreferencePermission.denied);
-  } else {
-    if (_prefs.getAcceptedSendLocation != PreferencePermission.allow) {
-      _locationController.activateLocation(PreferencePermission.allow);
-    }
+  //if (permission.isPermanentlyDenied) {
+  //  _locationController.activateLocation(PreferencePermission.deniedForever);
+  //  showPermissionDialog(RedirectViewNotifier.context!, Constant.enablePermission);
+  //} else if (permission.isDenied) {
+  //  _locationController.activateLocation(PreferencePermission.denied);
+  //} else {
+  //  if (_prefs.getAcceptedSendLocation != PreferencePermission.allow) {
+  //    _locationController.activateLocation(PreferencePermission.allow);
+  //  }
+  //  var position = await determinePosition();
+  //  _locationController.sendLocation(position.latitude.toString(), position.longitude.toString());
+  //}
+
+  if (_prefs.getAcceptedSendLocation == PreferencePermission.allow) {
     var position = await determinePosition();
     _locationController.sendLocation(position.latitude.toString(), position.longitude.toString());
   }
@@ -519,3 +525,49 @@ Future<Position> determinePosition() async {
 
   return await Geolocator.getCurrentPosition();
 }
+
+//Future<Position> determinePosition() async {
+//  bool serviceEnabled;
+//  LocationPermission permission;
+//  if (_prefs.getAcceptedSendLocation == PreferencePermission.allow) {
+//    Geolocator.openAppSettings();
+//  }
+//  // Test if location services are enabled.
+//  serviceEnabled = await Geolocator.isLocationServiceEnabled();
+//  if (!serviceEnabled) {
+//    // Location services are not enabled don't continue
+//    // accessing the position and request users of the
+//    // App to enable the location services.
+//    _locationController.activateLocation(PreferencePermission.noAccepted);
+//    //_prefs.setAcceptedSendLocation = PreferencePermission.noAccepted;
+//    return Future.error('Location services are disabled.');
+//  }
+//
+//  permission = await Geolocator.checkPermission();
+//  if (permission == LocationPermission.denied) {
+//    permission = await Geolocator.requestPermission();
+//    if (permission == LocationPermission.denied) {
+//      // Permissions are denied, next time you could try
+//      // requesting permissions again (this is also where
+//      // Android's shouldShowRequestPermissionRationale
+//      // returned true. According to Android guidelines
+//      // your App should show an explanatory UI now.
+//      //_prefs.setAcceptedSendLocation = PreferencePermission.noAccepted;
+//      _locationController.activateLocation(PreferencePermission.noAccepted);
+//      return Future.error('Location permissions are denied');
+//    }
+//  }
+//
+//  if (permission == LocationPermission.deniedForever) {
+//    // Permissions are denied forever, handle appropriately.
+//    //_prefs.setAcceptedSendLocation = PreferencePermission.noAccepted;
+//    _locationController.activateLocation(PreferencePermission.noAccepted);
+//    return Future.error(
+//        'Location permissions are permanently denied, we cannot request permissions.');
+//  }
+//
+//  // When we reach here, permissions are granted and we can
+//  // continue accessing the position of the device.
+//
+//  return await Geolocator.getCurrentPosition();
+//}

@@ -6,14 +6,16 @@ import '../../../Common/Constant.dart';
 
 class FallService {
 
-  Future<void> activateFall(String phoneNumber, bool activate) async {
+  Future<bool> activateFall(String phoneNumber, bool activate) async {
 
     final json = {"phoneNumber": phoneNumber.replaceAll("+34", ""), "activateFalls": activate};
 
-    await http.put(
+    var response = await http.put(
         Uri.parse("${Constant.baseApi}/v1/user/activateFalls"),
         headers: Constant.headers,
         body: jsonEncode(json));
+
+    return response.statusCode == 200;
   }
 
   Future<void> updateFallTime(String phoneNumber, int fallTime) async {

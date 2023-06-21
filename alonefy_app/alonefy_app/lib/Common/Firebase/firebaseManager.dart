@@ -80,7 +80,7 @@ Future<void> onActionSelected(String value) async {
           var user = await mainController.getUserData();
 
           if (user.telephone != "" && token != null) {
-            var firebaseTokenApi = FirebaseTokenApi(phoneNumber: user.telephone, fcmToken: token);
+            var firebaseTokenApi = FirebaseTokenApi(phoneNumber: user.telephone.replaceAll("+34", ""), fcmToken: token);
             FirebaseService().saveData(firebaseTokenApi);
           }
           

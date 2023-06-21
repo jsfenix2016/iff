@@ -3,18 +3,25 @@ import 'package:ifeelefine/Common/Constant.dart';
 
 class DeactivateService {
 
-  Future<void> saveData(String phoneNumber, int time) async {
+  Future<bool> saveData(String phoneNumber, int time) async {
 
-    final json = {
-      "phoneNumber": phoneNumber,
-      "time": time
-    };
+    try {
+      final json = {
+            "phoneNumber": phoneNumber,
+            "time": time
+          };
 
-    await http.post(
-        Uri.parse(
-            "${Constant.baseApi}/v1/user/temporaryDeactivation"),
-        body: json
-    );
+      var response = await http.post(
+              Uri.parse(
+                  "${Constant.baseApi}/v1/user/temporaryDeactivation"),
+              headers: Constant.headers,
+              body: json
+          );
+
+      return response.statusCode == 200;
+    } catch (e) {
+      return false;
+    }
 
   }
 }

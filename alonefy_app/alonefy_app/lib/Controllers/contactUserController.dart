@@ -44,26 +44,24 @@ class ContactUserController extends GetxController {
         contactBD.timeCall = timeCall;
         contactBD.timeWhatsapp = timeWhatsapp;
 
-        int save = await const HiveData().saveUserContact(contactBD);
-        if (save == 0) {
-          final MainController mainController = Get.put(MainController());
-          var user = await mainController.getUserData();
-          await contactServ
-              .saveContact(convertToApi(contactBD, user.telephone));
-          if (contactBD.photo != null) {
-            contactServ.updateImage(
-                user.telephone.replaceAll("+34", ""), contactBD.phones.replaceAll("+34", ""), contactBD.photo!);
-          }
+        final MainController mainController = Get.put(MainController());
+        var user = await mainController.getUserData();
+        var response = await contactServ.saveContact(convertToApi(contactBD, user.telephone));
+
+        var url = await contactServ.getUrlPhoto(user.telephone.replaceAll("+34", ""), contactBD.phones.replaceAll("+34", ""));
+        if (contactBD.photo != null && url != null) {
+          contactServ.updateImage(url, contactBD.photo!);
+        }
+
+        if (response) {
+          await const HiveData().saveUserContact(contactBD);
         }
       }
-      // Map info
-
       showAlertTemp(
           "Contacto guardado correctamente, se ha realizado la solicitud de autorización correctamente");
       return true;
     } catch (error) {
       showAlertTemp(Constant.conexionFail);
-
       return false;
     }
   }
@@ -79,13 +77,15 @@ class ContactUserController extends GetxController {
       contact.timeCall = phoneTime;
       contact.timeWhatsapp = smsTime;
 
-      await const HiveData().updateContact(contact);
-
       final MainController mainController = Get.put(MainController());
       var user = await mainController.getUserData();
       ContactApi contactApi = convertToApi(contact, user.telephone);
 
-      contactServ.updateContact(contactApi);
+      var response = await contactServ.updateContact(contactApi);
+
+      if (response) {
+        await const HiveData().updateContact(contact);
+      }
     }
   }
 
@@ -151,7 +151,7 @@ class ContactUserController extends GetxController {
     var user = await mainController.getUserData();
 
     var response =
-        await contactServ.deleteContact(user.telephone, contact.phones);
+        await contactServ.deleteContact(user.telephone.replaceAll("+34", ""), contact.phones.replaceAll("+34", ""));
 
     return response;
   }

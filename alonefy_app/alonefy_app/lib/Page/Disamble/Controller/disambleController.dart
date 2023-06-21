@@ -23,9 +23,13 @@ class DisambleController extends GetxController {
     final MainController mainController = Get.put(MainController());
     var user = await mainController.getUserData();
 
-    DeactivateService()
-        .saveData(user.telephone, deactivateTimeToMinutes(deactivateTime));
+    var response = await DeactivateService()
+        .saveData(user.telephone.replaceAll("+34", ""), deactivateTimeToMinutes(deactivateTime));
 
-    showSaveAlert(context, Constant.info, Constant.disambleProtected);
+    if (response) {
+      showSaveAlert(context, Constant.info, Constant.disambleProtected);
+    } else {
+      showSaveAlert(context, Constant.info, Constant.disambleProtectedError);
+    }
   }
 }

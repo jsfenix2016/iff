@@ -54,13 +54,13 @@ class EditZoneController extends GetxController {
       var user = await mainController.getUserData();
       var contactZoneRiskApi = await ZoneRiskService().createContactZoneRisk(
           ZoneRiskApi.fromZoneRisk(contact, user.telephone));
-      if (contact.photo != null) {
-        await ZoneRiskService()
-            .updateImage(user.telephone, contact.id, contact.photo!);
+      if (contact.photo != null && contactZoneRiskApi != null
+          && contactZoneRiskApi.awsUploadCustomContactPresignedUrl.isNotEmpty) {
+        await ZoneRiskService().updateImage(contactZoneRiskApi.awsUploadCustomContactPresignedUrl, contact.photo);
       }
       if (contactZoneRiskApi != null) {
         contact.id = contactZoneRiskApi.id;
-        var save = await const HiveDataRisk().saveContactZoneRisk(contact);
+        await const HiveDataRisk().saveContactZoneRisk(contact);
         NotificationCenter().notify('getContactZoneRisk');
 
         showSaveAlert(context, Constant.info, Constant.saveCorrectly);
@@ -79,8 +79,13 @@ class EditZoneController extends GetxController {
     try {
       final MainController mainController = Get.put(MainController());
       var user = await mainController.getUserData();
-      ZoneRiskService().updateZoneRisk(
-          ZoneRiskApi.fromZoneRisk(contact, user.telephone), contact.id);
+      var zoneRiskApiResponse = await ZoneRiskService().updateZoneRisk(ZoneRiskApi.fromZoneRisk(contact, user.telephone), contact.id);
+
+      if (contact.photo != null && zoneRiskApiResponse != null
+          && zoneRiskApiResponse.awsUploadCustomContactPresignedUrl.isNotEmpty) {
+        await ZoneRiskService().updateImage(zoneRiskApiResponse.awsUploadCustomContactPresignedUrl, contact.photo);
+      }
+
       var save = const HiveDataRisk().updateContactZoneRisk(contact);
       NotificationCenter().notify('getContactZoneRisk');
 
@@ -96,20 +101,19 @@ class EditZoneController extends GetxController {
     for (var contactZoneRiskApi in contactsZoneRiskApi) {
       if (contactZoneRiskApi.photo != null &&
           contactZoneRiskApi.photo.isNotEmpty) {
-        var bytes =
-            await ZoneRiskService().getZoneRiskImage(contactZoneRiskApi.photo);
+        var bytes = await ZoneRiskService().getZoneRiskImage(contactZoneRiskApi.photo);
         var contact = ContactZoneRiskBD(
             id: contactZoneRiskApi.id,
             photo: bytes,
             name: contactZoneRiskApi.name,
-            phones: contactZoneRiskApi.phones,
+            phones: contactZoneRiskApi.customContactPhoneNumber,
             sendLocation: contactZoneRiskApi.sendlocation,
-            sendWhatsapp: contactZoneRiskApi.sendwhatsapp,
-            code: contactZoneRiskApi.code,
-            isActived: contactZoneRiskApi.isactived,
-            sendWhatsappContact: contactZoneRiskApi.sendwhatsappcontact,
-            callme: contactZoneRiskApi.callme,
-            save: contactZoneRiskApi.save,
+            sendWhatsapp: contactZoneRiskApi.notifyPredefinedContacts,
+            code: "",
+            isActived: true,
+            sendWhatsappContact: contactZoneRiskApi.customContactWhatsappNotification,
+            callme: contactZoneRiskApi.customContactVoiceNotification,
+            save: false,
             createDate: DateTime.now());
         const HiveDataRisk().saveContactZoneRisk(contact);
       }

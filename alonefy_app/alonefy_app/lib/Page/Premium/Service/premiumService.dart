@@ -7,13 +7,20 @@ import '../../../Common/Constant.dart';
 
 class PremiumService {
 
-  Future<void> saveData(PremiumApi premiumApi) async {
+  Future<bool> saveData(PremiumApi premiumApi) async {
 
-    var json = jsonEncode(premiumApi);
+    try {
+      var json = jsonEncode(premiumApi);
 
-    await http.put(
-        Uri.parse("${Constant.baseApi}/v1/user/premium"),
-        body: json
-    );
+      var response = await http.put(
+              Uri.parse("${Constant.baseApi}/v1/user/premium"),
+              headers: Constant.headers,
+              body: json
+          );
+
+      return response.statusCode == 200;
+    } catch (e) {
+      return false;
+    }
   }
 }

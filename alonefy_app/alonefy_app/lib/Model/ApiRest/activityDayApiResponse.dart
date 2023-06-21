@@ -1,5 +1,6 @@
 import 'package:http/http.dart' as http;
 import 'package:ifeelefine/Common/utils.dart';
+import 'package:ifeelefine/Model/ApiRest/activityDayApi.dart';
 
 class ActivityDayApiResponse {
   late int id;
@@ -31,6 +32,38 @@ class ActivityDayApiResponse {
       this.disabledDates,
       this.removedDates});
 
+  ActivityDayApiResponse.fromActivityDayApi(ActivityDayApi activityDayApi, int id) {
+      this.id= id;
+      phoneNumber= activityDayApi.phoneNumber;
+      startDate= activityDayApi.startDate;
+      endDate= activityDayApi.endDate;
+      startTime= activityDayApi.startTime;
+      name= activityDayApi.name;
+      allDay= activityDayApi.allDay;
+      endTime= activityDayApi.endTime;
+      days= activityDayApi.days;
+      repeatType= activityDayApi.repeatType;
+      enabled= activityDayApi.enabled;
+      disabledDates= activityDayApi.disabledDates;
+      removedDates= activityDayApi.removedDates;
+  }
+
+  Map<String, dynamic> toJson() => {
+    'id': id,
+    'phoneNumber': phoneNumber,
+    'startDate': startDate.toIso8601String(),
+    'endDate': endDate.toIso8601String(),
+    'startTime': startTime.toIso8601String(),
+    'name': name,
+    'allDay': allDay,
+    'endTime': endTime.toIso8601String(),
+    'days': days,
+    'repeatType': repeatType,
+    'enabled': enabled,
+    'disabledDates': encodeDateTimeOfList(disabledDates!),
+    'removedDates': encodeDateTimeOfList(removedDates!)
+  };
+
   factory ActivityDayApiResponse.fromJson(Map<String, dynamic> json) {
     return ActivityDayApiResponse(
         id: json['id'],
@@ -47,6 +80,15 @@ class ActivityDayApiResponse {
         disabledDates: dynamicToDateTimeList(json['disabledDates']),
         removedDates: dynamicToDateTimeList(json['removedDates'])
     );
+  }
+
+  dynamic encodeDateTimeOfList(List<DateTime> list) {
+    List<String> datetimeList = [];
+
+    for (var item in list) {
+      datetimeList.add(item.toIso8601String());
+    }
+    return datetimeList;
   }
 
 

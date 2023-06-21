@@ -28,7 +28,10 @@ class MainController extends GetxController {
     await inicializeHiveBD();
     LogAlertsBD mov = LogAlertsBD(id: -1, type: messaje, time: time);
 
-    var alertApi = await AlertsService().saveAlert(AlertApi.fromAlert(mov));
+    final MainController mainController = Get.put(MainController());
+    var user = await mainController.getUserData();
+
+    var alertApi = await AlertsService().saveAlert(AlertApi.fromAlert(mov, user.telephone));
 
     if (alertApi != null) {
       mov.id = alertApi.id;
