@@ -33,7 +33,8 @@ class FallDetectedController extends GetxController {
     final MainController mainController = Get.put(MainController());
     var user = await mainController.getUserData();
 
-    FallService().activateFall(user.telephone, detectedfall);
+    var isActive = FallService().activateFall(user.telephone, detectedfall);
+    print(isActive);
   }
 
   Future<void> setFallTime(String strFallTime) async {

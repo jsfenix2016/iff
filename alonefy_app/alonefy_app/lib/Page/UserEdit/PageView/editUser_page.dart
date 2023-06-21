@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:flutter/services.dart';
 import 'package:ifeelefine/Common/Constant.dart';
+import 'package:ifeelefine/Common/button_style_custom.dart';
 import 'package:ifeelefine/Common/colorsPalette.dart';
 import 'package:ifeelefine/Common/initialize_models_bd.dart';
 import 'package:ifeelefine/Model/user.dart';
@@ -521,24 +522,10 @@ class _UserEditPageState extends State<UserEditPage> {
                       width: 138,
                       child: Center(
                         child: ElevatedButton(
-                          style: ButtonStyle(
-                            shadowColor: MaterialStateProperty.all<Color>(
-                              Colors.transparent,
-                            ),
-                            backgroundColor: MaterialStateProperty.all<Color>(
-                              Colors.transparent,
-                            ),
-                          ),
+                          style: styleColorClear(),
                           onPressed: _submit,
                           child: Container(
-                            decoration: BoxDecoration(
-                              color: const Color.fromRGBO(219, 177, 42, 1),
-                              border: Border.all(
-                                color: const Color.fromRGBO(219, 177, 42, 1),
-                              ),
-                              borderRadius:
-                                  const BorderRadius.all(Radius.circular(8)),
-                            ),
+                            decoration: buttonPrincipalColorRadius8(),
                             height: 42,
                             width: 138,
                             child: const Center(

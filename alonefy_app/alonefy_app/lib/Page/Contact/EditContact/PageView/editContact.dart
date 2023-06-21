@@ -3,6 +3,7 @@ import 'package:flutter_contacts/flutter_contacts.dart';
 
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:ifeelefine/Common/Constant.dart';
 import 'package:ifeelefine/Common/colorsPalette.dart';
 
 import 'package:ifeelefine/Common/utils.dart';
@@ -120,23 +121,22 @@ class _EditContactState extends State<EditContact> {
             ElevateButtonCustomBorder(
               onChanged: (value) async {
                 if (value) {
-                  // ignore: use_build_context_synchronously
-                  var contactBD =
+                  ContactBD contactBD =
                       ContactBD("", null, "", "", "", "", "", "Pendiente");
 
                   contactBD.displayName = widget.contact.displayName;
+                  contactBD.name = widget.contact.displayName;
                   contactBD.phones = widget.contact.phones;
                   contactBD.photo = widget.contact.photo;
                   contactBD.timeSendSMS = timeSMS;
                   contactBD.timeCall = timeCall;
                   contactBD.timeWhatsapp = widget.contact.timeWhatsapp;
-                  await contactVC.saveContact(context, contactBD, timeSMS,
-                      timeCall, widget.contact.timeWhatsapp);
+                  await contactVC.saveContact(context, contactBD);
 
                   NotificationCenter().notify('getContact');
                 }
               },
-              mensaje: "Guardar",
+              mensaje: Constant.saveBtn,
             ),
           ],
         ),

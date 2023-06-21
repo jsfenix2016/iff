@@ -57,7 +57,7 @@ class _SelectTimerCallSendSMSState extends State<SelectTimerCallSendSMS> {
       children: [
         Row(
           children: [
-            Container(
+            SizedBox(
               width: 130,
               child: Text(
                 'Enviar whatsapp transcurridos:',

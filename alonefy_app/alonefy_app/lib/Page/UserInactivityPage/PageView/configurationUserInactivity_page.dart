@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:grouped_list/grouped_list.dart';
 
 import 'package:ifeelefine/Common/Constant.dart';
+import 'package:ifeelefine/Common/button_style_custom.dart';
 import 'package:ifeelefine/Common/colorsPalette.dart';
 import 'package:ifeelefine/Common/utils.dart';
 import 'package:ifeelefine/Model/activityDay.dart';
@@ -144,9 +145,7 @@ class _UserInactivityPageState extends State<UserInactivityPage> {
 
   Widget _createButtonAddActivity() {
     return ElevatedButton.icon(
-      style: ButtonStyle(
-          backgroundColor:
-              MaterialStateProperty.all<Color>(ColorPalette.principal)),
+      style: styleColorPrincipal(),
       label: const Text("Agregar actividad"),
       icon: const Icon(
         Icons.add,

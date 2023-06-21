@@ -90,7 +90,7 @@ class _EditZoneRiskPageState extends State<EditZoneRiskPage> {
       return;
     }
     var contactRisk = ContactZoneRiskBD(
-        id: widget.index,
+        id: widget.contactRisk.id,
         photo: contactSelect.photo,
         name: widget.contactRisk.name,
         phones: contactSelect.phones.first.normalizedNumber.replaceAll("+34", ""),
@@ -105,7 +105,7 @@ class _EditZoneRiskPageState extends State<EditZoneRiskPage> {
     if (widget.contactRisk.id == -1) {
       await editZoneVC.saveContactZoneRisk(context, contactRisk);
     } else {
-      contactRisk.id = widget.index;
+      // contactRisk.id = widget.index;
       await editZoneVC.updateContactZoneRisk(context, contactRisk);
     }
 

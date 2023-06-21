@@ -15,6 +15,7 @@ import 'package:ifeelefine/Page/UserConfig/PageView/userconfig_page.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ifeelefine/Utils/Widgets/elevateButtonCustomBorder.dart';
 import 'package:ifeelefine/Utils/Widgets/elevatedButtonFilling.dart';
+import 'package:ifeelefine/Views/space_heidht_custom.dart';
 import 'package:notification_center/notification_center.dart';
 import 'package:ifeelefine/Common/decoration_custom.dart';
 
@@ -185,19 +186,15 @@ class _RiskPageState extends State<RiskPage> {
         decoration: decorationCustom(),
         child: Stack(
           children: [
-            SafeArea(
-              child: Container(
-                height: 20.0,
-              ),
+            const SafeArea(
+              child: SpaceHeightCustom(heightTemp: 20),
             ),
             SizedBox(
               height: size.height,
               child: Column(
                 mainAxisSize: MainAxisSize.max,
                 children: [
-                  const SizedBox(
-                    height: 20,
-                  ),
+                  const SpaceHeightCustom(heightTemp: 20),
                   Text(
                     "Utilizar una configuración guardada o crear una nueva.",
                     textAlign: TextAlign.center,
@@ -209,12 +206,8 @@ class _RiskPageState extends State<RiskPage> {
                       color: Colors.white,
                     ),
                   ),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  const SizedBox(
-                    height: 20,
-                  ),
+                  const SpaceHeightCustom(heightTemp: 20),
+                  const SpaceHeightCustom(heightTemp: 20),
                   listviewContactRisk()
                 ],
               ),

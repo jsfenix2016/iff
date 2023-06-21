@@ -101,17 +101,17 @@ class HiveDataRisk {
     }
   }
 
-  Future<int> saveContactZoneRisk(ContactZoneRiskBD contact) async {
+  Future<bool> saveContactZoneRisk(ContactZoneRiskBD contact) async {
     try {
       final Box<ContactZoneRiskBD> box =
           await Hive.openBox<ContactZoneRiskBD>('ContactZoneRiskBD');
 
       var temp = await box.add(contact);
 
-      return temp;
+      return true;
     } catch (error) {
       print(error);
-      return -1;
+      return false;
     }
   }
 
@@ -141,7 +141,7 @@ class HiveDataRisk {
     try {
       final Box<ContactZoneRiskBD> box =
           await Hive.openBox<ContactZoneRiskBD>('ContactZoneRiskBD');
-      await box.delete(contact);
+      await box.delete(contact.id);
 
       return true;
     } catch (error) {
@@ -151,7 +151,8 @@ class HiveDataRisk {
   }
 
   Future<void> deleteAllContactZoneRisk() async {
-    Box<ContactZoneRiskBD> box = await Hive.openBox<ContactZoneRiskBD>('ContactZoneRiskBD');
+    Box<ContactZoneRiskBD> box =
+        await Hive.openBox<ContactZoneRiskBD>('ContactZoneRiskBD');
 
     for (var element in box.values) {
       box.delete(element);

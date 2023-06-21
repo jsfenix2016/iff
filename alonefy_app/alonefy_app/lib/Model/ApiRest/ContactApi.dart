@@ -13,9 +13,16 @@ class ContactApi {
   late String photo;
   late String status;
 
-  ContactApi({required this.userPhoneNumber, required this.phoneNumber, required this.name,
-    required this.displayName, required this.timeSendSms, required this.timeCall,
-    required this.timeWhatsapp, required this.photo, required this.status});
+  ContactApi(
+      {required this.userPhoneNumber,
+      required this.phoneNumber,
+      required this.name,
+      required this.displayName,
+      required this.timeSendSms,
+      required this.timeCall,
+      required this.timeWhatsapp,
+      required this.photo,
+      required this.status});
 
   //ContactApi(String userPhoneNumber, String phoneNumber) {
   //  this.userPhoneNumber = userPhoneNumber;
