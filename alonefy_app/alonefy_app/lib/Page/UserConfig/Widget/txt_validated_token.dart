@@ -9,10 +9,12 @@ class TextValidateToken extends StatefulWidget {
       required this.type,
       required this.code,
       required this.message,
-      required this.onChanged});
+      required this.onChanged,
+      required this.isValid});
   final String type;
   final String code;
   final String message;
+  final bool isValid;
   final ValueChanged<String> onChanged;
   @override
   State<TextValidateToken> createState() => _TextValidateTokenState();
@@ -47,9 +49,13 @@ class _TextValidateTokenState extends State<TextValidateToken> {
                 initialValue: widget.code,
                 textCapitalization: TextCapitalization.sentences,
                 decoration: InputDecoration(
-                  suffixIcon: const Text(
+                  suffixIcon: Text(
                     '*',
-                    style: TextStyle(color: Colors.red, fontSize: 40),
+                    style: TextStyle(
+                        color: (widget.isValid == false)
+                            ? Colors.red
+                            : Colors.green,
+                        fontSize: 40),
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderSide: const BorderSide(color: ColorPalette.principal),

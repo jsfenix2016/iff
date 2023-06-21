@@ -20,6 +20,8 @@ import 'package:ifeelefine/Page/Premium/Controller/premium_controller.dart';
 import 'package:ifeelefine/Page/RestoreMyConfiguration/Controller/restoreController.dart';
 
 import 'package:ifeelefine/Page/Risk/DateRisk/ListDateRisk/PageView/riskDatePage.dart';
+import 'package:ifeelefine/Page/TermsAndConditions/PageView/conditionGeneral_page.dart';
+import 'package:ifeelefine/Page/TermsAndConditions/PageView/webview_terms_conditions.dart';
 import 'package:ifeelefine/Services/mainService.dart';
 
 import 'package:intl/intl.dart';
@@ -496,7 +498,8 @@ void sendLocation() async {
 
   if (permission.isPermanentlyDenied) {
     _locationController.activateLocation(PreferencePermission.deniedForever);
-    showPermissionDialog(RedirectViewNotifier.context!, Constant.enablePermission);
+    showPermissionDialog(
+        RedirectViewNotifier.context!, Constant.enablePermission);
   } else if (permission.isDenied) {
     _locationController.activateLocation(PreferencePermission.denied);
   } else {
@@ -504,7 +507,8 @@ void sendLocation() async {
       _locationController.activateLocation(PreferencePermission.allow);
     }
     var position = await determinePosition();
-    _locationController.sendLocation(position.latitude.toString(), position.longitude.toString());
+    _locationController.sendLocation(
+        position.latitude.toString(), position.longitude.toString());
   }
 }
 

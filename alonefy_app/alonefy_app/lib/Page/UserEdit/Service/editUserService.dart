@@ -25,14 +25,10 @@ class EditUserService {
     };
 
     try {
-      Map<String,String> headers = {
-        'Content-Type':'application/json; charset=UTF-8'
-      };
-
       var json = jsonEncode(authData);
       final resp = await http.put(
           Uri.parse("${Constant.baseApi}/v1/user/personalData"),
-          headers: headers,
+          headers: Constant.headers,
           body: json);
 
       return resp.statusCode == 200;
@@ -48,10 +44,13 @@ class EditUserService {
     var bytes = await File(imagePath).readAsBytes();
 
     var imageType = "";
-    if (imagePath.contains('png')) imageType = 'png';
-    else imageType = 'jpg';
+    if (imagePath.contains('png'))
+      imageType = 'png';
+    else
+      imageType = 'jpg';
 
-    request.files.add(new http.MultipartFile.fromBytes('file', bytes, contentType: MediaType('image', imageType)));
+    request.files.add(new http.MultipartFile.fromBytes('file', bytes,
+        contentType: MediaType('image', imageType)));
 
     request.send().then((response) {
       if (response.statusCode == 200) print("Uploaded!");

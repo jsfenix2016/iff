@@ -13,9 +13,16 @@ class ContactApi {
   late String photo;
   late String status;
 
-  ContactApi({required this.userPhoneNumber, required this.phoneNumber, required this.name,
-    required this.displayName, required this.timeSendSms, required this.timeCall,
-    required this.timeWhatsapp, required this.photo, required this.status});
+  ContactApi(
+      {required this.userPhoneNumber,
+      required this.phoneNumber,
+      required this.name,
+      required this.displayName,
+      required this.timeSendSms,
+      required this.timeCall,
+      required this.timeWhatsapp,
+      required this.photo,
+      required this.status});
 
   //ContactApi(String userPhoneNumber, String phoneNumber) {
   //  this.userPhoneNumber = userPhoneNumber;
@@ -32,26 +39,25 @@ class ContactApi {
   }
 
   Map<String, dynamic> toJson() => {
-    'userPhoneNumber': userPhoneNumber,
-    'phoneNumber': phoneNumber,
-    'name': name,
-    'displayName': displayName,
-    'timeSendSms': timeSendSms,
-    'timeCall': timeCall,
-    'timeWhatsapp': timeWhatsapp,
-  };
+        'userPhoneNumber': userPhoneNumber,
+        'phoneNumber': phoneNumber,
+        'name': name,
+        'displayName': displayName,
+        'timeSendSms': timeSendSms,
+        'timeCall': timeCall,
+        'timeWhatsapp': timeWhatsapp,
+      };
 
   factory ContactApi.fromJson(Map<String, dynamic> json) {
     return ContactApi(
-      userPhoneNumber: "",
-      phoneNumber: json['phoneNumber'],
-      name: json['name'],
-      displayName: json['displayName'],
-      timeSendSms: json['timeSendSms'],
-      timeCall: json['timeCall'],
-      timeWhatsapp: json['timeWhatsapp'],
-      photo: json["photo"],
-      status: json["status"]
-    );
+        userPhoneNumber: "",
+        phoneNumber: json['phoneNumber'],
+        name: json['name'],
+        displayName: json['displayName'],
+        timeSendSms: json['timeSendSms'],
+        timeCall: json['timeCall'],
+        timeWhatsapp: json['timeWhatsapp'],
+        photo: json["photo"],
+        status: json["status"]);
   }
 }

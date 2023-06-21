@@ -1,6 +1,7 @@
 class Constant {
   static const baseApi = 'https://dev.alertfriends.app';
   static const baseApiMessageBird = 'https://rest.messagebird.com/';
+  static const urlTerms = 'https://alertfriends.app/politica_privacidad/';
   static const personalInformation = 'Datos personales';
   static const selectGender = 'Selecciona el genero';
   static const selectCity = 'Selecciona la ciudad';
@@ -68,8 +69,8 @@ class Constant {
   static const String inactive = "INACTIVE";
   static const String drop = "DROP";
 
-  static const Map<String,String> headers = {
-    'Content-Type':'application/json; charset=UTF-8'
+  static const Map<String, String> headers = {
+    'Content-Type': 'application/json; charset=UTF-8'
   };
 
   static const Map<String, String> gender = {
@@ -187,23 +188,23 @@ class Constant {
   ];
 
   static const Map<String, String> tempMapDayApi = {
-    "L":"MONDAY",
-    "M":"TUESDAY",
-    "X":"WEDNESDAY",
-    "J":"THURSDAY",
-    "V":"FRIDAY",
-    "S":"SATURDAY",
-    "D":"SUNDAY"
+    "L": "MONDAY",
+    "M": "TUESDAY",
+    "X": "WEDNESDAY",
+    "J": "THURSDAY",
+    "V": "FRIDAY",
+    "S": "SATURDAY",
+    "D": "SUNDAY"
   };
 
   static const Map<String, String> tempMapDayReverseApi = {
-    "MONDAY":"L",
-    "TUESDAY":"M",
-    "WEDNESDAY":"X",
-    "THURSDAY":"J",
-    "FRIDAY":"V",
-    "SATURDAY":"S",
-    "SUNDAY":"D"
+    "MONDAY": "L",
+    "TUESDAY": "M",
+    "WEDNESDAY": "X",
+    "THURSDAY": "J",
+    "FRIDAY": "V",
+    "SATURDAY": "S",
+    "SUNDAY": "D"
   };
 
   static const Map<String, String> daysToApi = {

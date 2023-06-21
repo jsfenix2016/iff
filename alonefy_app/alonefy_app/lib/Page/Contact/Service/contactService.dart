@@ -7,35 +7,28 @@ import 'package:ifeelefine/Common/Constant.dart';
 import 'package:ifeelefine/Model/ApiRest/ContactApi.dart';
 import 'dart:convert';
 
-import 'package:ifeelefine/Model/contact.dart';
-
 import '../../../Utils/MimeType/mime_type.dart';
 
 class ContactService {
-
-  Future<void> saveContact(ContactApi contact) async {
-
+  Future<bool> saveContact(ContactApi contact) async {
     var json = jsonEncode(contact);
 
     try {
       final resp = await http.post(Uri.parse("${Constant.baseApi}/v1/contact"),
-          headers: Constant.headers,
-          body: json);
+          headers: Constant.headers, body: json);
 
-      var a = "";
+      return resp.statusCode == 200;
     } catch (error) {
-      print(error);
+      return false;
     }
   }
 
   Future<void> updateContact(ContactApi contact) async {
-
     var json = jsonEncode(contact);
 
     try {
       final resp = await http.put(Uri.parse("${Constant.baseApi}/v1/contact"),
-          headers: Constant.headers,
-          body: json);
+          headers: Constant.headers, body: json);
 
       Map<String, dynamic> decodeResp = jsonDecode(resp.body);
 
@@ -49,9 +42,10 @@ class ContactService {
     // return response.statusCode == 200;
 
     try {
-      var response = await http.delete(Uri.parse(
-          "${Constant.baseApi}/v1/contact/user/$userPhoneNumber/contact/$phoneNumber"),
-        headers: Constant.headers);
+      var response = await http.delete(
+          Uri.parse(
+              "${Constant.baseApi}/v1/contact/user/$userPhoneNumber/contact/$phoneNumber"),
+          headers: Constant.headers);
 
       Map<String, dynamic> decodeResp = jsonDecode(response.body);
 
@@ -66,9 +60,10 @@ class ContactService {
       String userPhoneNumber, String phoneNumber) async {
     // return response.statusCode == 200;
     try {
-      var response = await http.get(Uri.parse(
-          "${Constant.baseApi}/v1/contact/user/$userPhoneNumber/contact/$phoneNumber/ACCEPTED"),
-        headers: Constant.headers);
+      var response = await http.get(
+          Uri.parse(
+              "${Constant.baseApi}/v1/contact/user/$userPhoneNumber/contact/$phoneNumber/ACCEPTED"),
+          headers: Constant.headers);
 
       Map<String, dynamic> decodeResp = jsonDecode(response.body);
 
@@ -84,7 +79,7 @@ class ContactService {
     try {
       var response = await http.get(
           Uri.parse("${Constant.baseApi}/v1/contact/user/$userPhoneNumber"),
-        headers: Constant.headers);
+          headers: Constant.headers);
 
       Iterable responseBody = jsonDecode(response.body);
 
@@ -102,7 +97,8 @@ class ContactService {
     }
   }
 
-  Future<void> updateImage(String phoneNumber, String contactPhoneNumber, Uint8List bytes) async {
+  Future<void> updateImage(
+      String phoneNumber, String contactPhoneNumber, Uint8List bytes) async {
     var postUri = Uri.parse("${Constant.baseApi}/v1/contact/setPhoto");
     var request = new http.MultipartRequest("PUT", postUri);
     request.fields['phoneNumber'] = phoneNumber;
@@ -114,7 +110,8 @@ class ContactService {
       extension = extensionFromMime(mime);
     }
 
-    request.files.add(http.MultipartFile.fromBytes('file', bytes, contentType: MediaType(mime ?? "", extension)));
+    request.files.add(http.MultipartFile.fromBytes('file', bytes,
+        contentType: MediaType(mime ?? "", extension)));
 
     request.send().then((response) {
       if (response.statusCode == 200) print("Uploaded!");
@@ -122,7 +119,6 @@ class ContactService {
   }
 
   Future<Uint8List?> getContactImage(String url) async {
-
     final resp = await http.get(Uri.parse(url));
 
     if (resp.statusCode == 200) {

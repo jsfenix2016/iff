@@ -1,14 +1,14 @@
 import 'dart:convert';
-import 'dart:ffi';
 import 'dart:io';
+import 'package:ifeelefine/Common/Constant.dart';
 import 'package:ifeelefine/Common/manager_alerts.dart';
 import 'package:ifeelefine/Common/text_style_font.dart';
-import 'package:intl/intl.dart';
+import 'package:ifeelefine/Page/Calendar/calendarPopup.dart';
+import 'package:ifeelefine/Views/space_heidht_custom.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:get/get.dart';
-import 'package:ifeelefine/Common/Constant.dart';
 import 'package:ifeelefine/Common/colorsPalette.dart';
 import 'package:ifeelefine/Common/utils.dart';
 import 'package:ifeelefine/Model/contactRiskBD.dart';
@@ -19,15 +19,13 @@ import 'package:ifeelefine/Page/Risk/DateRisk/Widgets/contentCode.dart';
 
 import 'package:flutter/material.dart';
 
-import 'package:google_fonts/google_fonts.dart';
-import 'package:ifeelefine/Page/Risk/DateRisk/Widgets/imagesPreview.dart';
 import 'package:ifeelefine/Page/Risk/DateRisk/Widgets/popUpContact.dart';
 import 'package:ifeelefine/Provider/prefencesUser.dart';
 import 'package:ifeelefine/Utils/Widgets/elevateButtonCustomBorder.dart';
 import 'package:ifeelefine/Utils/Widgets/elevatedButtonFilling.dart';
 import 'package:ifeelefine/Utils/Widgets/imageAccordingWidget.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:permission_handler/permission_handler.dart';
+import 'package:jiffy/jiffy.dart';
 import 'package:ifeelefine/Common/decoration_custom.dart';
 
 final _prefs = PreferenceUser();
@@ -38,7 +36,6 @@ class EditRiskPage extends StatefulWidget {
 
   final ContactRiskBD contactRisk;
   final int index;
-  // final String timefinish;
   @override
   State<EditRiskPage> createState() => _EditRiskPageState();
 }
@@ -64,17 +61,21 @@ class _EditRiskPageState extends State<EditRiskPage> {
   String name = 'Selecciona un contacto';
 
   late Image imgNew;
-  var foto;
-  final _picker = ImagePicker();
+  File foto = File("");
+
   int _currentIndex = 0;
 
   List<File> imagePaths = [];
   List<Uint8List> imageData = [];
+  String from = "";
+  String to = "";
 
+  late DateTime dateTimeTemp = DateTime.now();
   @override
   void initState() {
     getContact();
     requestGalleryPermission();
+    initDates();
     List<String> parts = [];
     if (widget.contactRisk.code != "") {
       parts = widget.contactRisk.code.split(',');
@@ -91,6 +92,16 @@ class _EditRiskPageState extends State<EditRiskPage> {
     }
 
     super.initState();
+  }
+
+  void initDates() async {
+    await Jiffy.locale("es");
+    var date = Jiffy().format('EEEE, d [de] MMMM [del] yyyy');
+
+    setState(() {
+      from = date.capitalizeFirst!;
+      to = date.capitalizeFirst!;
+    });
   }
 
   Future getContact() async {
@@ -111,13 +122,23 @@ class _EditRiskPageState extends State<EditRiskPage> {
   }
 
   void saveDate(BuildContext context) async {
+    print(dateTimeTemp);
+
+    String temp =
+        '${dateTimeTemp.day}-${dateTimeTemp.month}-${dateTimeTemp.year} ';
+    var listTimeInit = widget.contactRisk.timeinit.split(' ');
+    var initTime = temp + listTimeInit[1];
+
+    var listTimeFinish = widget.contactRisk.timefinish.split(' ');
+    var finishTime = temp + listTimeFinish[1];
+
     var list = await convertImageData();
     var contactRisk = ContactRiskBD(
         id: widget.contactRisk.id,
         photo: contactSelect.photo,
         name: contactSelect.displayName,
-        timeinit: widget.contactRisk.timeinit,
-        timefinish: widget.contactRisk.timefinish,
+        timeinit: initTime,
+        timefinish: finishTime,
         phones: contactSelect.phones.first.toString(),
         titleMessage: titleMessage,
         messages: message,
@@ -138,13 +159,17 @@ class _EditRiskPageState extends State<EditRiskPage> {
   void getchangeContact(BuildContext context, ContactRiskBD contactRisk) async {
     if (widget.contactRisk.id == -1) {
       contactRisk.id = widget.index;
-      await editVC.saveContactRisk(context, contactRisk);
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (context) => const RiskPage(),
-        ),
-      );
+      bool save = await editVC.saveContactRisk(context, contactRisk);
+      if (save) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const RiskPage(),
+          ),
+        );
+      } else {
+        showSaveAlert(context, Constant.info, Constant.errorGeneric.tr);
+      }
     } else {
       await editVC.updateContactRisk(context, contactRisk);
     }
@@ -170,43 +195,6 @@ class _EditRiskPageState extends State<EditRiskPage> {
     }
 
     return temp;
-  }
-
-  Widget _mostrarFoto() {
-    // Uint8List? bytes;
-
-    return GestureDetector(
-      onTap: (() async {
-        var result = await cameraPermissions(_prefs.getAcceptedCamera, context);
-        if (result) foto = procesarImagen(ImageSource.gallery);
-      }),
-      child: Container(
-        width: 50,
-        height: 50,
-        decoration: BoxDecoration(
-          boxShadow: [
-            BoxShadow(
-              color: const Color.fromARGB(255, 153, 169, 255).withOpacity(0.4),
-              spreadRadius: 1,
-              blurRadius: 6,
-              offset: const Offset(0, 3), // changes position of shadow
-            ),
-          ],
-          borderRadius: const BorderRadius.all(
-              Radius.circular(0.0) //                 <--- border radius here
-              ),
-          border: Border.all(color: ColorPalette.principal),
-          image: DecorationImage(
-            image: (foto != null || widget.contactRisk.photo != null)
-                ? (foto != null
-                    ? FileImage(foto, scale: 0.5)
-                    : getImage(widget.contactRisk.photo!.toString()).image)
-                : const AssetImage("assets/images/icons8.png"),
-            fit: BoxFit.fill,
-          ),
-        ),
-      ),
-    );
   }
 
   Image getImage(String urlImage) {
@@ -250,6 +238,76 @@ class _EditRiskPageState extends State<EditRiskPage> {
           );
   }
 
+  Widget getDateSelected(String dateType) {
+    return Row(
+      children: [
+        SizedBox(
+          width: 100,
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(32, 0, 0, 0),
+            child: Text(dateType, style: textNomral18White()),
+          ),
+        ),
+        Expanded(
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(0, 0, 16, 0),
+            child: TextButton(
+              style: const ButtonStyle(alignment: Alignment.centerRight),
+              onPressed: () async {
+                var rangeDateTime = await showCalendar(context);
+
+                if (rangeDateTime != null) {
+                  if (rangeDateTime.from != null && rangeDateTime.to != null) {
+                    dateTimeTemp = rangeDateTime.from!;
+                    updateDate('De', rangeDateTime.from!);
+                  } else if (rangeDateTime.from != null) {
+                    dateTimeTemp = rangeDateTime.from!;
+                    updateDate(dateType, rangeDateTime.from!);
+                  }
+                }
+              },
+              child: Text(dateType == "De" ? from : to,
+                  textAlign: TextAlign.left, style: textNomral18White()),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  String getStringFromDate(String date) {
+    return date.substring(0, date.length - 5);
+  }
+
+  void updateDate(String dateType, DateTime date) async {
+    await Jiffy.locale("es");
+    var strDate = Jiffy(date).format('EEEE, d [de] MMMM [del] yyyy');
+
+    var tempFrom = from.toLowerCase().replaceAll("de ", "");
+    tempFrom = tempFrom.replaceAll("del ", "");
+    var fromDate = Jiffy(tempFrom, 'EEEE, d MMMM yyyy');
+
+    var tempTo = to.toLowerCase().replaceAll("de ", "");
+    tempTo = tempTo.toLowerCase().replaceAll("del ", "");
+    var toDate = Jiffy(tempTo, 'EEEE, d MMMM yyyy');
+
+    if (dateType == "De") {
+      from = strDate.capitalizeFirst!;
+      if (toDate.isBefore(date)) {
+        to = strDate.capitalizeFirst!;
+      }
+    } else {
+      if (fromDate.isSameOrBefore(date)) {
+        to = strDate.capitalizeFirst!;
+      } else {
+        to = strDate.capitalizeFirst!;
+        from = strDate.capitalizeFirst!;
+      }
+    }
+
+    (context as Element).markNeedsBuild();
+  }
+
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
@@ -265,11 +323,12 @@ class _EditRiskPageState extends State<EditRiskPage> {
           child: Center(
             child: Column(
               children: [
-                SafeArea(
-                  child: Container(
-                    height: 10.0,
+                const SafeArea(
+                  child: SpaceHeightCustom(
+                    heightTemp: 10,
                   ),
                 ),
+                getDateSelected("De"),
                 Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: Container(
@@ -335,7 +394,6 @@ class _EditRiskPageState extends State<EditRiskPage> {
                                             timeinit = value.toString();
                                             widget.contactRisk.timeinit =
                                                 value.toString();
-                                            setState(() {});
                                           },
                                         ),
                                       ),
@@ -394,7 +452,6 @@ class _EditRiskPageState extends State<EditRiskPage> {
                                             timefinish = value.toString();
                                             widget.contactRisk.timefinish =
                                                 timefinish;
-                                            setState(() {});
                                           },
                                         ),
                                       ),
@@ -409,9 +466,7 @@ class _EditRiskPageState extends State<EditRiskPage> {
                     ),
                   ),
                 ),
-                const SizedBox(
-                  height: 20,
-                ),
+                const SpaceHeightCustom(heightTemp: 20),
                 SizedBox(
                   child: Column(
                     children: [
@@ -433,9 +488,7 @@ class _EditRiskPageState extends State<EditRiskPage> {
                     ],
                   ),
                 ),
-                const SizedBox(
-                  height: 40,
-                ),
+                const SpaceHeightCustom(heightTemp: 40),
                 SizedBox(
                   child: Column(
                     children: [
@@ -449,9 +502,7 @@ class _EditRiskPageState extends State<EditRiskPage> {
                           ),
                         ),
                       ),
-                      const SizedBox(
-                        height: 12,
-                      ),
+                      const SpaceHeightCustom(heightTemp: 12),
                       CardContact(
                         visible: true,
                         photo: (indexSelect != -1 &&
@@ -496,21 +547,19 @@ class _EditRiskPageState extends State<EditRiskPage> {
                     ],
                   ),
                 ),
-                const SizedBox(
-                  height: 20,
-                ),
+                const SpaceHeightCustom(heightTemp: 20),
                 Column(
                   mainAxisSize: MainAxisSize.max,
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
                     Container(
-                      height: 60.0,
+                      height: 65.0,
                       color: Colors.transparent,
                       child: Padding(
                         padding: const EdgeInsets.all(12.0),
                         child: Row(
                           mainAxisSize: MainAxisSize.max,
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Container(
                               width: 270,
@@ -528,7 +577,7 @@ class _EditRiskPageState extends State<EditRiskPage> {
                                 onChanged: (value) {
                                   sendWhatsappSMS = value;
                                   widget.contactRisk.sendWhatsapp = value;
-                                  setState(() {});
+                                  (context as Element).markNeedsBuild();
                                 },
                                 value: widget.contactRisk.sendWhatsapp,
                               ),
@@ -540,7 +589,7 @@ class _EditRiskPageState extends State<EditRiskPage> {
                     Padding(
                       padding: const EdgeInsets.only(left: 12.0, right: 8),
                       child: Container(
-                        height: 50.0,
+                        height: 65.0,
                         color: Colors.transparent,
                         child: Row(
                           mainAxisSize: MainAxisSize.max,
@@ -562,7 +611,7 @@ class _EditRiskPageState extends State<EditRiskPage> {
                                 onChanged: (value) {
                                   sendLocation = value;
                                   widget.contactRisk.sendLocation = value;
-                                  setState(() {});
+                                  (context as Element).markNeedsBuild();
                                 },
                                 value: widget.contactRisk.sendLocation,
                               ),
@@ -573,10 +622,7 @@ class _EditRiskPageState extends State<EditRiskPage> {
                     ),
                   ],
                 ),
-                Container(
-                  height: 20,
-                  color: Colors.transparent,
-                ),
+                const SpaceHeightCustom(heightTemp: 5),
                 Expanded(
                   flex: 0,
                   child: Container(
@@ -614,9 +660,7 @@ class _EditRiskPageState extends State<EditRiskPage> {
                             onSaved: (value) => {},
                           ),
                         ),
-                        const SizedBox(
-                          height: 10,
-                        ),
+                        const SpaceHeightCustom(heightTemp: 10),
                         Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: TextField(
@@ -646,9 +690,7 @@ class _EditRiskPageState extends State<EditRiskPage> {
                             },
                           ),
                         ),
-                        const SizedBox(
-                          height: 20,
-                        ),
+                        const SpaceHeightCustom(heightTemp: 20),
                         Expanded(
                           flex: 0,
                           child: Container(
@@ -663,9 +705,9 @@ class _EditRiskPageState extends State<EditRiskPage> {
                                     color: Colors.transparent,
                                     child: IconButton(
                                       iconSize: 25,
-                                      onPressed: () {
-                                        foto =
-                                            procesarImagen(ImageSource.gallery);
+                                      onPressed: () async {
+                                        foto = await procesarImagen(
+                                            ImageSource.gallery);
                                       },
                                       icon: Column(
                                         children: [
@@ -698,7 +740,6 @@ class _EditRiskPageState extends State<EditRiskPage> {
                                 ImageFanWidget(
                                   onChanged: (List<File> value) {
                                     imagePaths = value;
-                                    setState(() {});
                                   },
                                   listImg: widget.contactRisk.photoDate,
                                   isEdit: false,
@@ -815,9 +856,7 @@ class _EditRiskPageState extends State<EditRiskPage> {
                     ),
                   ),
                 ),
-                const SizedBox(
-                  height: 20,
-                ),
+                const SpaceHeightCustom(heightTemp: 20),
                 ElevateButtonFilling(
                   onChanged: (value) {
                     isActived = true;
@@ -828,9 +867,7 @@ class _EditRiskPageState extends State<EditRiskPage> {
                   },
                   mensaje: 'Iniciar cita ahora',
                 ),
-                const SizedBox(
-                  height: 20,
-                ),
+                const SpaceHeightCustom(heightTemp: 20),
                 ElevateButtonCustomBorder(
                   onChanged: (value) {
                     isActived = false;

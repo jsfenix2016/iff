@@ -25,7 +25,8 @@ class TermsAndConditionsController extends GetxController {
     final MainController mainController = Get.put(MainController());
     var user = await mainController.getUserData();
     var termsAndConditionsApi = TermsAndConditionsApi(
-        phoneNumber: user.telephone.replaceAll("+34", ""), smsCallAccepted: true);
+        phoneNumber: user.telephone.replaceAll("+34", ""),
+        smsCallAccepted: true);
 
     var resp =
         await TermsAndConditionsService().saveData(termsAndConditionsApi);
@@ -45,6 +46,6 @@ class TermsAndConditionsController extends GetxController {
   }
 
   void showAlertTemp(BuildContext context, String text) {
-    showSaveAlert(context, Constant.info, Constant.deletectGeneric);
+    showSaveAlert(context, Constant.info, text);
   }
 }

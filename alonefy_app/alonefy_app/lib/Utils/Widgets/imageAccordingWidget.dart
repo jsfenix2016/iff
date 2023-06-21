@@ -7,14 +7,14 @@ import 'package:image_picker/image_picker.dart';
 import 'dart:io'; // Importa el paquete para trabajar con archivos
 
 class ImageFanWidget extends StatefulWidget {
-  ImageFanWidget(
+  const ImageFanWidget(
       {super.key,
       required this.onChanged,
       required this.listImg,
       required this.isEdit});
   final ValueChanged<List<File>> onChanged;
-  List<Uint8List> listImg;
-  bool isEdit;
+  final List<Uint8List> listImg;
+  final bool isEdit;
   @override
   State<ImageFanWidget> createState() => _ImageFanWidgetState();
 }
@@ -22,32 +22,12 @@ class ImageFanWidget extends StatefulWidget {
 class _ImageFanWidgetState extends State<ImageFanWidget> {
   List<File> imagePaths = [File(''), File(''), File('')];
 
-  // Future<List<Uint8List>> convertImageData() async {
-  //   List<Uint8List> temp = [];
-
-  //   Uint8List? bytes;
-  //   String img64 = "";
-
-  //   for (var i = 0; i < imagePaths.length; i++) {
-  //     var path = File(imagePaths[i].path);
-
-  //     Uint8List? bytes;
-  //     String img64 = "";
-
-  //     if (path.path != "") {
-  //       bytes = path.readAsBytesSync();
-  //       img64 = base64Encode(bytes);
-  //       temp.insert(i, bytes);
-  //     }
-  //   }
-
-  //   return temp;
-  // }
+  Offset imageOffset = const Offset(0, 0);
+  double imageRotation = -0.3;
+  File imagePath = File("");
+  bool isImageSelected = false;
 
   Future<void> _pickImage(int index) async {
-    // ImagePicker picker = ImagePicker();
-    // PickedFile? pickedImage =
-    //     await picker.getImage(source: ImageSource.gallery);
     final picker = ImagePicker();
     final XFile? image = await picker.pickImage(source: ImageSource.gallery);
     File file;
@@ -61,35 +41,18 @@ class _ImageFanWidgetState extends State<ImageFanWidget> {
     });
   }
 
-  // Función para convertir Uint8List en Image
-  // Image convertUint8ListToImage(Uint8List data) {
-  //   final image = Image.memory(data);
-  //   return image;
-  // }
-
   @override
   void initState() {
     super.initState();
   }
 
-  // void convertImg() {
-  //   for (var i = 0; i < widget.listImg.length; i++) {
-  //     var file = File(widget.listImg[i].toString());
-  //     imagePaths.removeAt(i);
-  //     imagePaths.insert(i, file);
-  //   }
-  //   setState(() {});
-  // }
-
-  Offset imageOffset = const Offset(0, 0);
-  double imageRotation = -0.3;
-  File imagePath = File("");
-  bool isImageSelected = false;
   @override
   Widget build(BuildContext context) {
     return Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: List.generate(imagePaths.length, (index) {
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: List.generate(
+        imagePaths.length,
+        (index) {
           if (widget.listImg.isEmpty) {
             imagePath = imagePaths[index];
             isImageSelected = imagePath.path != '';
@@ -157,6 +120,8 @@ class _ImageFanWidgetState extends State<ImageFanWidget> {
               ),
             ),
           );
-        }));
+        },
+      ),
+    );
   }
 }

@@ -44,15 +44,15 @@ class ContactUserController extends GetxController {
         contactBD.timeCall = timeCall;
         contactBD.timeWhatsapp = timeWhatsapp;
 
-        int save = await const HiveData().saveUserContact(contactBD);
-        if (save == 0) {
+        bool save = await const HiveData().saveUserContact(contactBD);
+        if (save) {
           final MainController mainController = Get.put(MainController());
           var user = await mainController.getUserData();
           await contactServ
               .saveContact(convertToApi(contactBD, user.telephone));
           if (contactBD.photo != null) {
-            contactServ.updateImage(
-                user.telephone.replaceAll("+34", ""), contactBD.phones.replaceAll("+34", ""), contactBD.photo!);
+            contactServ.updateImage(user.telephone.replaceAll("+34", ""),
+                contactBD.phones.replaceAll("+34", ""), contactBD.photo!);
           }
         }
       }

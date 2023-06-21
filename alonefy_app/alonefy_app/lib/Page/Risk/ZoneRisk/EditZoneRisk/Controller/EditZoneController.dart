@@ -52,22 +52,24 @@ class EditZoneController extends GetxController {
     try {
       final MainController mainController = Get.put(MainController());
       var user = await mainController.getUserData();
-      var contactZoneRiskApi = await ZoneRiskService().createContactZoneRisk(
-          ZoneRiskApi.fromZoneRisk(contact, user.telephone));
-      if (contact.photo != null) {
-        await ZoneRiskService()
-            .updateImage(user.telephone, contact.id, contact.photo!);
-      }
-      if (contactZoneRiskApi != null) {
-        contact.id = contactZoneRiskApi.id;
-        var save = await const HiveDataRisk().saveContactZoneRisk(contact);
-        NotificationCenter().notify('getContactZoneRisk');
-
+      // var contactZoneRiskApi = await ZoneRiskService().createContactZoneRisk(
+      //     ZoneRiskApi.fromZoneRisk(contact, user.telephone));
+      // if (contact.photo != null) {
+      //   await ZoneRiskService()
+      //       .updateImage(user.telephone, contact.id, contact.photo!);
+      // }
+      // if (contactZoneRiskApi != null) {
+      //   contact.id = contactZoneRiskApi.id;
+      var save = await const HiveDataRisk().saveContactZoneRisk(contact);
+      if (save) {
         showSaveAlert(context, Constant.info, Constant.saveCorrectly);
-        return true;
-      } else {
-        return false;
+        NotificationCenter().notify('getContactZoneRisk');
       }
+
+      return true;
+      // } else {
+      //   return false;
+      // }
     } catch (error) {
       print(error);
       return false;

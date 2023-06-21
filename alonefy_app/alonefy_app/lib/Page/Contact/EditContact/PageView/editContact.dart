@@ -125,13 +125,13 @@ class _EditContactState extends State<EditContact> {
                       ContactBD("", null, "", "", "", "", "", "Pendiente");
 
                   contactBD.displayName = widget.contact.displayName;
+                  contactBD.name = widget.contact.displayName;
                   contactBD.phones = widget.contact.phones;
                   contactBD.photo = widget.contact.photo;
                   contactBD.timeSendSMS = timeSMS;
                   contactBD.timeCall = timeCall;
                   contactBD.timeWhatsapp = widget.contact.timeWhatsapp;
-                  await contactVC.saveContact(context, contactBD, timeSMS,
-                      timeCall, widget.contact.timeWhatsapp);
+                  await contactVC.saveContact(context, contactBD);
 
                   NotificationCenter().notify('getContact');
                 }

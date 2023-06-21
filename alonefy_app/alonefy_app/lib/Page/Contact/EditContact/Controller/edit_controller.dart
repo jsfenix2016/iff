@@ -24,18 +24,22 @@ class EditContactController extends GetxController {
     }
   }
 
-  Future<bool> saveContact(BuildContext context, ContactBD contact,
-      String timeSendSMS, String timeCall, String timeWhatsapp) async {
+  Future<bool> saveContact(BuildContext context, ContactBD contact) async {
     contextTemp = context;
     try {
       var save = await const HiveData().saveUserContact(contact);
-      if (save == 1) {
+      if (save) {
         final MainController mainController = Get.put(MainController());
         var user = await mainController.getUserData();
-        contactServ.saveContact(convertToApi(contact, user.telephone));
 
-        showAlertController(Constant.contactSaveCorrectly);
-        return true;
+        bool ok = await contactServ
+            .saveContact(convertToApi(contact, user.telephone));
+        if (ok) {
+          showAlertController(Constant.contactSaveCorrectly);
+          return true;
+        } else {
+          return false;
+        }
       } else {
         showAlertController(Constant.conexionFail);
 
@@ -52,18 +56,6 @@ class EditContactController extends GetxController {
   }
 
   ContactApi convertToApi(ContactBD contactBD, String phoneNumber) {
-    //var contactAPI = ContactApi(
-    //    userPhoneNumber: phoneNumber,
-    //    phoneNumber: contactBD.phones,
-    //    name: contactBD.name,
-    //    displayName: contactBD.displayName,
-    //    timeSendSms: stringTimeToInt(contactBD.timeSendSMS),
-    //    timeCall: stringTimeToInt(contactBD.timeCall),
-    //    timeWhatsapp: stringTimeToInt(contactBD.timeWhatsapp)
-    //);
-
-    var contactApi = ContactApi.fromContact(contactBD, phoneNumber);
-
-    return contactApi;
+    return ContactApi.fromContact(contactBD, phoneNumber);
   }
 }

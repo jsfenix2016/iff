@@ -364,7 +364,5 @@ class _UserConfigPageState2 extends State<UserConfigPage2> {
         }
       });
     }
-    //if (!formKey.currentState.validate()) return;
-    //formKey.currentState.save();
   }
 }

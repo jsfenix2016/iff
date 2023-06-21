@@ -51,27 +51,27 @@ class EditRiskController extends GetxController {
     try {
       final MainController mainController = Get.put(MainController());
       var user = await mainController.getUserData();
-      var contactRiskApi = await ContactRiskService().createContactRisk(
-          ContactRiskApi.fromContact(contact, user.telephone));
-      if (contact.photo != null) {
-        await ContactRiskService()
-            .updateImage(user.telephone, contact.id, contact.photo!);
-      }
-      if (contactRiskApi != null) {
-        contact.id = contactRiskApi.id;
-        final save = await const HiveDataRisk().saveContactRisk(contact);
-        if (save == 0) {
-          saveActivityLog(contact);
-          NotificationCenter().notify('getContactRisk');
+      // var contactRiskApi = await ContactRiskService().createContactRisk(
+      //     ContactRiskApi.fromContact(contact, user.telephone));
+      // if (contact.photo != null) {
+      //   await ContactRiskService()
+      //       .updateImage(user.telephone, contact.id, contact.photo!);
+      // }
+      // if (contactRiskApi != null) {
+      // contact.id = contactRiskApi.id;
+      final save = await const HiveDataRisk().saveContactRisk(contact);
+      if (save == 0) {
+        saveActivityLog(contact);
+        NotificationCenter().notify('getContactRisk');
 
-          showSaveAlert(context, Constant.info, Constant.saveCorrectly.tr);
-          return true;
-        } else {
-          return false;
-        }
+        showSaveAlert(context, Constant.info, Constant.saveCorrectly.tr);
+        return true;
       } else {
         return false;
       }
+      // } else {
+      //   return false;
+      // }
     } catch (error) {
       return false;
     }
@@ -98,7 +98,7 @@ class EditRiskController extends GetxController {
   }
 
   Future<void> updateContactRiskWhenDateStarted(String phones) async {
-    var contactRisk = await HiveDataRisk().getContactRiskBD(phones);
+    var contactRisk = await const HiveDataRisk().getContactRiskBD(phones);
 
     if (contactRisk != null) {
       contactRisk.isActived = true;
@@ -108,7 +108,8 @@ class EditRiskController extends GetxController {
       final MainController mainController = Get.put(MainController());
       var user = await mainController.getUserData();
       ContactRiskService().updateContactRisk(
-          ContactRiskApi.fromContact(contactRisk, user.telephone), contactRisk.id);
+          ContactRiskApi.fromContact(contactRisk, user.telephone),
+          contactRisk.id);
 
       NotificationCenter().notify('getContactRisk');
     }
@@ -126,7 +127,8 @@ class EditRiskController extends GetxController {
       final MainController mainController = Get.put(MainController());
       var user = await mainController.getUserData();
       ContactRiskService().updateContactRisk(
-          ContactRiskApi.fromContact(contactRisk, user.telephone), contactRisk.id);
+          ContactRiskApi.fromContact(contactRisk, user.telephone),
+          contactRisk.id);
 
       NotificationCenter().notify('getContactRisk');
     }

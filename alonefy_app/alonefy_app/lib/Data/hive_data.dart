@@ -95,10 +95,14 @@ class HiveData {
     box.put(contact.phones, contact);
   }
 
-  Future<int> saveUserContact(ContactBD user) async {
+  Future<bool> saveUserContact(ContactBD user) async {
     final Box<ContactBD> box = await Hive.openBox<ContactBD>('contactBD');
-
-    return await box.add(user);
+    try {
+      await box.add(user);
+      return true;
+    } catch (error) {
+      return false;
+    }
   }
 
   Future<void> deleteUserContact(ContactBD contact) async {

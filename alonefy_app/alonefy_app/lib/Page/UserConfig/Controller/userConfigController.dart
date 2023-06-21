@@ -83,13 +83,27 @@ class UserConfigCOntroller extends GetxController {
       BuildContext context, User user, String uuid) async {
     try {
       user.idUser = (uuid);
-      UserBD usertemp = await const HiveData().saveUser(user);
-
-      var resp = await UserService().saveData(usertemp);
-      if (resp['id'] != null) {
+      var person = UserBD(
+          idUser: user.idUser,
+          name: user.name,
+          lastname: user.lastname,
+          email: user.email,
+          telephone: user.telephone,
+          gender: user.gender,
+          maritalStatus: user.maritalStatus,
+          styleLife: user.styleLife,
+          pathImage: "",
+          age: user.age,
+          country: user.country,
+          city: user.city);
+      var resp = await UserService().saveData(person);
+      if (resp) {
+        UserBD usertemp = await const HiveData().saveUser(user);
         return usertemp;
+      } else {
+        UserBD person = initUserBD();
+        return person;
       }
-      return usertemp;
     } catch (error) {
       UserBD person = initUserBD();
       return person;

@@ -8,6 +8,7 @@ import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:get/get_connect/http/src/utils/utils.dart';
 import 'package:ifeelefine/Common/Constant.dart';
 import 'package:ifeelefine/Common/colorsPalette.dart';
+import 'package:ifeelefine/Common/text_style_font.dart';
 import 'package:ifeelefine/Common/utils.dart';
 import 'package:ifeelefine/Model/contactRiskBD.dart';
 import 'package:ifeelefine/Page/Risk/DateRisk/Controller/editRiskController.dart';
@@ -173,13 +174,7 @@ class _CancelDatePageState extends State<CancelDatePage> {
                               child: Text(
                                 "Introduce tu clave de cancelación",
                                 textAlign: TextAlign.center,
-                                style: GoogleFonts.barlow(
-                                  fontSize: 18.0,
-                                  wordSpacing: 1,
-                                  letterSpacing: 1,
-                                  fontWeight: FontWeight.normal,
-                                  color: Colors.white,
-                                ),
+                                style: textNomral18White(),
                               ),
                             ),
                           ),
@@ -195,9 +190,6 @@ class _CancelDatePageState extends State<CancelDatePage> {
                         code = value;
                         codeTemp =
                             '${value.textCode1},${value.textCode2},${value.textCode3},${value.textCode4}';
-                        // if (widget.contactRisk.code == codeTemp) {
-                        //   print("alerta desactivada");
-                        // }
                       },
                     ),
                     const SizedBox(
@@ -222,13 +214,7 @@ class _CancelDatePageState extends State<CancelDatePage> {
                               child: Text(
                                 "Si no cancelas, el servidor de  I’m fine enviará una alerta con tu última ubicación en: ",
                                 textAlign: TextAlign.center,
-                                style: GoogleFonts.barlow(
-                                  fontSize: 18.0,
-                                  wordSpacing: 1,
-                                  letterSpacing: 1,
-                                  fontWeight: FontWeight.normal,
-                                  color: Colors.white,
-                                ),
+                                style: textNomral18White(),
                               ),
                             ),
                           ),
@@ -260,13 +246,7 @@ class _CancelDatePageState extends State<CancelDatePage> {
                         child: Text(
                           "Aunque se apague el smartphone, el servidor de I´m fine ha registrado tu última ubicación y emitirá una alerta a tu contacto",
                           textAlign: TextAlign.center,
-                          style: GoogleFonts.barlow(
-                            fontSize: 14.0,
-                            wordSpacing: 1,
-                            letterSpacing: 1,
-                            fontWeight: FontWeight.normal,
-                            color: Colors.white,
-                          ),
+                          style: textNormal14White(),
                         ),
                       ),
                     ),

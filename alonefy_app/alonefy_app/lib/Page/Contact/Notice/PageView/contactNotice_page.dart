@@ -132,7 +132,7 @@ class _ContactNoticePageState extends State<ContactNoticePage> {
                                 onSelectContact: (Contact value) {
                                   var contactBD = ContactBD(
                                       value.displayName,
-                                      null,
+                                      value.photo == null ? null : value.photo,
                                       value.displayName,
                                       "5 min",
                                       "10 min",

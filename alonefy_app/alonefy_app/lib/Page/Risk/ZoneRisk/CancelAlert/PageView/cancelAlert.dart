@@ -81,7 +81,7 @@ class _CancelAlertState extends State<CancelAlertPage> {
       Route route = MaterialPageRoute(
         builder: (context) => const ZoneRiskPage(),
       );
-      Navigator.pushReplacement(context, route);
+      Navigator.pop(context);
     } else {
       showSaveAlert(context, Constant.info, Constant.codeError);
     }

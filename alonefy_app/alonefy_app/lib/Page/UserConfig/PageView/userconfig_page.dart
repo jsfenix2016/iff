@@ -207,24 +207,31 @@ class _UserConfigPageState extends State<UserConfigPage> {
 
                             isValidEmail =
                                 await userVC.validateCodeEmail(context, value);
+                            (context as Element).markNeedsBuild();
                           },
+                          isValid: isValidEmail,
                         ),
                       ),
                       const SizedBox(height: 20),
                       TextValidateToken(
-                          type: "Sms",
-                          code: "",
-                          message: Constant.validateCodeSms,
-                          onChanged: (String value) async {
-                            if (!validatePhoneNumber(user!.telephone)) {
-                              showSaveAlert(context, Constant.info,
-                                  Constant.validatePhoneNumber);
-                              return;
-                            }
+                        type: "Sms",
+                        code: "",
+                        message: Constant.validateCodeSms,
+                        onChanged: (String value) async {
+                          if (!validatePhoneNumber(user!.telephone)) {
+                            showSaveAlert(context, Constant.info,
+                                Constant.validatePhoneNumber);
+                            isValidSms = false;
+                            (context as Element).markNeedsBuild();
+                            return;
+                          }
 
-                            isValidSms =
-                                await userVC.validateCodeSMS(context, value);
-                          }),
+                          isValidSms =
+                              await userVC.validateCodeSMS(context, value);
+                          (context as Element).markNeedsBuild();
+                        },
+                        isValid: isValidSms,
+                      ),
                       const SizedBox(height: 20),
                       SizedBox(
                         width: double.infinity,
@@ -284,7 +291,7 @@ class _UserConfigPageState extends State<UserConfigPage> {
       }
     }
 
-    if (isValidSms || isValidEmail) {
+    if (isValidSms) {
       UserBD resp =
           await userVC.saveUserData(context, user!, const Uuid().v1());
 
