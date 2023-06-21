@@ -18,7 +18,7 @@ class EditUserService {
       "idUser": (user.idUser),
       "name": (user.name),
       "lastname": (user.lastname),
-      "email": 'no@panel.es',
+      "email": user.email,
       "gender": (user.gender),
       "maritalStatus": (user.maritalStatus),
       "stylelife": (user.styleLife),

@@ -24,8 +24,7 @@ class EditContactController extends GetxController {
     }
   }
 
-  Future<bool> saveContact(BuildContext context, ContactBD contact,
-      String timeSendSMS, String timeCall, String timeWhatsapp) async {
+  Future<bool> saveContact(BuildContext context, ContactBD contact) async {
     contextTemp = context;
     try {
       final MainController mainController = Get.put(MainController());
