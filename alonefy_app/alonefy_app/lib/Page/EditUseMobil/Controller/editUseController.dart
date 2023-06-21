@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ifeelefine/Common/Constant.dart';
+import 'package:ifeelefine/Common/Firebase/firebaseManager.dart';
 import 'package:ifeelefine/Common/utils.dart';
 import 'package:ifeelefine/Data/hive_data.dart';
 import 'package:ifeelefine/Model/useMobilbd.dart';
 import 'package:ifeelefine/Page/EditUseMobil/Service/editUseMobilService.dart';
 import 'package:ifeelefine/Page/UserEdit/Service/editUserService.dart';
 
+import '../../../Common/Firebase/FirebaseService.dart';
 import '../../../Controllers/mainController.dart';
+import '../../../Model/ApiRest/FirebaseTokenApi.dart';
 import '../../../Model/ApiRest/UseMobilApi.dart';
 
 class EditUseMobilController extends GetxController {
@@ -50,8 +53,8 @@ class EditUseMobilController extends GetxController {
 
     for (var useMobil in listMobilBD) {
       var useMobilApi = UseMobilApi(
-          phoneNumber: phoneNumber,
-          dayOfWeek: useMobil.day,
+          phoneNumber: phoneNumber.replaceAll("+34", ""),
+          dayOfWeek: Constant.tempMapDayApi[useMobil.day]!,
           time: stringTimeToInt(useMobil.time),
           index: useMobil.selection,
           isSelect: useMobil.isSelect
@@ -73,7 +76,7 @@ class EditUseMobilController extends GetxController {
 
     for (var useMobilApi in useMobilApiList) {
       var useMobil = UseMobilBD(
-          day: useMobilApi.dayOfWeek,
+          day: Constant.tempMapDayReverseApi[useMobilApi.dayOfWeek]!,
           time: minutesToString(useMobilApi.time),
           selection: useMobilApi.index,
           isSelect: useMobilApi.isSelect

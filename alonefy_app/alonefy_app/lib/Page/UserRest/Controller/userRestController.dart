@@ -110,7 +110,7 @@ class UserRestController extends GetxController {
 
     for (var userRestApi in userRestApiList) {
       var restDay = RestDayBD(
-          day: userRestApi.dayOfWeek,
+          day: Constant.tempMapDayReverseApi[userRestApi.dayOfWeek]!,
           timeWakeup: await _convertDateTimeToStringTime(userRestApi.wakeUpHour),
           timeSleep: await _convertDateTimeToStringTime(userRestApi.retireHour),
           selection: userRestApi.index,

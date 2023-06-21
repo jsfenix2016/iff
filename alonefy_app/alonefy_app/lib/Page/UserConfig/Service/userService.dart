@@ -39,7 +39,7 @@ class UserService {
   Future<Map<String, dynamic>> validateCodeSMS(String id, String code) async {
     // final authData = {"recipient": "$num", "originator": (code)};
     final headersData = {
-      "Authorization": "AccessKey ScW7OrkmUB6YPlsrPTGNx4Zwt"
+      "Authorization": "AccessKey ${Constant.codeMessageBird}"
     };
 
     try {
@@ -67,7 +67,7 @@ class UserService {
 
   Future<Map<String, dynamic>> validateCodeEmail(String id, String code) async {
     final headersData = {
-      "Authorization": "AccessKey ScW7OrkmUB6YPlsrPTGNx4Zwt"
+      "Authorization": "AccessKey ${Constant.codeMessageBird}"
     };
 
     try {
@@ -94,7 +94,7 @@ class UserService {
   Future<Map<String, dynamic>> verificateSMS(int num) async {
     final authData = {"recipient": "$num", "originator": "$num"};
     final headersData = {
-      "Authorization": "AccessKey ScW7OrkmUB6YPlsrPTGNx4Zwt",
+      "Authorization": "AccessKey ${Constant.codeMessageBird}",
       "timeout": "240",
       "language": "es-es",
       "country": "ES"
@@ -133,7 +133,7 @@ class UserService {
       "country": "ES"
     };
     final headersData = {
-      "Authorization": "AccessKey ScW7OrkmUB6YPlsrPTGNx4Zwt"
+      "Authorization": "AccessKey ${Constant.codeMessageBird}"
     };
 
     try {

@@ -47,7 +47,6 @@ class PremiumController extends GetxController {
   //}
 
   Future<void> initPlatformState() async {
-    return;
     // prepare
     var result = await FlutterInappPurchase.instance.initialize();
     print('result: $result');
@@ -149,8 +148,10 @@ class PremiumController extends GetxController {
   void _updatePremiumAPI() async {
     final MainController mainController = Get.put(MainController());
     var user = await mainController.getUserData();
-    PremiumApi premiumApi =
-        PremiumApi(phoneNumber: user.telephone, premium: _prefs.getUserPremium);
+    PremiumApi premiumApi = PremiumApi(
+        phoneNumber: user.telephone.replaceAll("+34", ""),
+        premium: _prefs.getUserPremium
+    );
     PremiumService().saveData(premiumApi);
   }
 }

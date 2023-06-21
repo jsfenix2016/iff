@@ -27,22 +27,27 @@ class EditContactController extends GetxController {
   Future<bool> saveContact(BuildContext context, ContactBD contact) async {
     contextTemp = context;
     try {
-      var save = await const HiveData().saveUserContact(contact);
-      if (save) {
-        final MainController mainController = Get.put(MainController());
-        var user = await mainController.getUserData();
+      final MainController mainController = Get.put(MainController());
+      var user = await mainController.getUserData();
+      var response = await contactServ.saveContact(convertToApi(contact, user.telephone));
 
-        bool ok = await contactServ
-            .saveContact(convertToApi(contact, user.telephone));
-        if (ok) {
+      if (response) {
+        var contactBD = await const HiveData().getContactBD(contact.phones);
+        if (contactBD == null) {
+          var url = await contactServ.getUrlPhoto(user.telephone.replaceAll("+34", ""), contact.phones.replaceAll("+34", ""));
+          if (contact.photo != null && url != null) {
+            contactServ.updateImage(url, contact.photo!);
+          }
+          await const HiveData().saveUserContact(contact);
           showAlertController(Constant.contactSaveCorrectly);
-          return true;
         } else {
-          return false;
+          await const HiveData().updateContact(contact);
+          showAlertController(Constant.contactEditCorrectly);
         }
+        return true;
+
       } else {
         showAlertController(Constant.conexionFail);
-
         return false;
       }
     } catch (error) {
@@ -56,6 +61,18 @@ class EditContactController extends GetxController {
   }
 
   ContactApi convertToApi(ContactBD contactBD, String phoneNumber) {
-    return ContactApi.fromContact(contactBD, phoneNumber);
+    //var contactAPI = ContactApi(
+    //    userPhoneNumber: phoneNumber,
+    //    phoneNumber: contactBD.phones,
+    //    name: contactBD.name,
+    //    displayName: contactBD.displayName,
+    //    timeSendSms: stringTimeToInt(contactBD.timeSendSMS),
+    //    timeCall: stringTimeToInt(contactBD.timeCall),
+    //    timeWhatsapp: stringTimeToInt(contactBD.timeWhatsapp)
+    //);
+
+    var contactApi = ContactApi.fromContact(contactBD, phoneNumber);
+
+    return contactApi;
   }
 }

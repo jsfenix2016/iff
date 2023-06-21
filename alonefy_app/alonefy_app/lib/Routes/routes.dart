@@ -1,6 +1,7 @@
 import 'package:ifeelefine/Common/initialize_models_bd.dart';
 import 'package:ifeelefine/Page/FinishConfig/Pageview/finishConfig_page.dart';
 import 'package:ifeelefine/Page/Geolocator/PageView/configGeolocator_page.dart';
+import 'package:ifeelefine/Page/Geolocator/PageView/geolocator_page.dart';
 import 'package:ifeelefine/Page/HomePage/Pageview/home_page.dart';
 import 'package:ifeelefine/Page/Onboarding/PageView/onboarding_page.dart';
 import 'package:ifeelefine/Page/Risk/DateRisk/ListDateRisk/PageView/riskDatePage.dart';
@@ -35,9 +36,7 @@ final Map<String, Widget Function(BuildContext)> appRoute = {
         userbd: initUserBD(),
       ),
   "inactivityDay": (BuildContext context) => const UserInactivityPage(),
-  "configGeo": (BuildContext context) => const ConfigGeolocator(
-        isMenu: false,
-      ),
+  "configGeo": (BuildContext context) => const InitGeolocator(),
   "finishConfig": (BuildContext context) => const FinishConfigPage(),
   "userConfig": (BuildContext context) => const UserConfigPage(),
 };

@@ -27,10 +27,27 @@ class SelectTimerCallSendSMS extends StatefulWidget {
 class _SelectTimerCallSendSMSState extends State<SelectTimerCallSendSMS> {
   late TimerCallSendSmsModel timer = TimerCallSendSmsModel("", "");
 
+  var initialSMSValue = 0;
+  var initialCallValue = 0;
+
   @override
   void initState() {
     // TODO: implement initState
     timer = TimerCallSendSmsModel(widget.sendSm, widget.timeCall);
+
+    for (var i = 0; i <= Constant.timeDic.length; i++) {
+      if (Constant.timeDic[i.toString()] == widget.sendSm) {
+        initialSMSValue = i;
+      }
+      if (Constant.timeDic[i.toString()] == widget.timeCall) {
+        initialCallValue = i;
+      }
+    }
+
+    setState(() {
+
+    });
+
     super.initState();
   }
 
@@ -64,6 +81,7 @@ class _SelectTimerCallSendSMSState extends State<SelectTimerCallSendSMS> {
                   timer.sendSMS = sendSMS;
                   widget.onChanged(timer);
                 },
+                scrollController: FixedExtentScrollController(initialItem: initialSMSValue),
                 itemExtent: 56.0,
                 children: [
                   for (var i = 0; i <= Constant.timeDic.length; i++)
@@ -127,7 +145,7 @@ class _SelectTimerCallSendSMSState extends State<SelectTimerCallSendSMS> {
                   timer.call = call;
                   widget.onChanged(timer);
                 },
-                scrollController: FixedExtentScrollController(initialItem: 1),
+                scrollController: FixedExtentScrollController(initialItem: initialCallValue),
                 itemExtent: 56.0,
                 children: [
                   for (var i = 0; i <= Constant.timeDic.length; i++)

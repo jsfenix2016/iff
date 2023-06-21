@@ -45,6 +45,7 @@ class _RiskPageState extends State<RiskPage> {
   Future<List<ContactRiskBD>> refreshListDateContact() async {
     final tempList = await riskVC.getContactsRisk();
 
+    listContact = await riskVC.getContactsRisk();
     return tempList;
   }
 

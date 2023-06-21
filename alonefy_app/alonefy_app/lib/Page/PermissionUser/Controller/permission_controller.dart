@@ -1,10 +1,12 @@
 import 'package:get/get.dart';
 import 'package:ifeelefine/Model/ApiRest/PermissionApi.dart';
+import 'package:ifeelefine/Page/Geolocator/Service/locationService.dart';
 import 'package:ifeelefine/Page/PermissionUser/Service/permission_service.dart';
 
 import '../../../Controllers/mainController.dart';
 import '../../../Model/ApiRest/TermsAndConditionsApi.dart';
 import '../../../Provider/prefencesUser.dart';
+import '../../../main.dart';
 import '../../Geolocator/Controller/configGeolocatorController.dart';
 import '../../TermsAndConditions/Service/termsAndConditionsService.dart';
 
@@ -78,19 +80,19 @@ class PermissionController extends GetxController {
       }
 
       var termsAndConditionsApi = TermsAndConditionsApi(
-          phoneNumber: user.telephone,
+          phoneNumber: user.telephone.replaceAll("+34", ""),
           smsCallAccepted: _prefs.getAceptedSendSMS
       );
       await TermsAndConditionsService().saveData(termsAndConditionsApi);
 
       var permissionApi = PermissionApi(
-          phoneNumber: user.telephone,
+          phoneNumber: user.telephone.replaceAll("+34", ""),
           activateNotifications: _prefs.getAcceptedNotification == PreferencePermission.allow,
           activateCamera: _prefs.getAcceptedCamera == PreferencePermission.allow,
           activateContacts: _prefs.getAcceptedContacts == PreferencePermission.allow,
           activateAlarm: _prefs.getAcceptedScheduleExactAlarm == PreferencePermission.allow
       );
-      await PermissionService().activatePermissions(user.telephone, permissionApi);
+      await PermissionService().activatePermissions(permissionApi);
     }
 
     return true;
@@ -109,6 +111,6 @@ class PermissionController extends GetxController {
         activateContacts: _prefs.getAcceptedContacts == PreferencePermission.allow,
         activateAlarm: _prefs.getAcceptedScheduleExactAlarm == PreferencePermission.allow
     );
-    await PermissionService().activatePermissions(user.telephone, permissionApi);
+    await PermissionService().activatePermissions(permissionApi);
   }
 }

@@ -177,8 +177,11 @@ class EditConfigController extends GetxController {
     }
   }
 
-  Future<void> updateUserImage(UserBD user) async {
-    await EditUserService().updateImage(user.telephone, user.pathImage);
+  Future<void> updateUserImage(UserBD user, Uint8List? bytes) async {
+    var url = await EditUserService().getUrlPhoto(user.telephone.replaceAll("+34", ""));
+    if (url != null && url.isNotEmpty && bytes != null) {
+      await EditUserService().updateImage(url, bytes);
+    }
   }
 
   Future<User> getUserDate() async {

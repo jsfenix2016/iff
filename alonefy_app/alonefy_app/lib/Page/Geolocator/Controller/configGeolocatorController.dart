@@ -29,6 +29,9 @@ class ConfigGeolocatorController extends GetxController {
     final MainController mainController = Get.put(MainController());
     var user = await mainController.getUserData();
 
-    LocationService().sendLocation(user.telephone.replaceAll("+34", ""), latitude, longitude);
+    if (user.telephone != "") {
+      LocationService().sendLocation(
+          user.telephone.replaceAll("+34", ""), latitude, longitude);
+    }
   }
 }

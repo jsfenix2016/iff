@@ -109,7 +109,7 @@ class AddActivityController extends GetxController {
     final MainController mainController = Get.put(MainController());
     var user = await mainController.getUserData();
     var activityApi = await _convertToApi(activity, user.telephone);
-    ActivityService().updateData(activityApi, activity.id);
+    ActivityService().updateData(ActivityDayApiResponse.fromActivityDayApi(activityApi, activity.id));
   }
 
   Future<ActivityDayApi> _convertToApi(ActivityDay activity, String phoneNumber) async {

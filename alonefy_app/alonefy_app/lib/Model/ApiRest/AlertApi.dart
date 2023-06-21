@@ -1,3 +1,4 @@
+import '../../Common/utils.dart';
 import '../logAlertsBD.dart';
 
 class AlertApi {
@@ -17,7 +18,8 @@ class AlertApi {
     required this.typeaction,
     required this.startdate});
 
-  AlertApi.fromAlert(LogAlertsBD logAlertsBD) {
+  AlertApi.fromAlert(LogAlertsBD logAlertsBD, String phoneNumber) {
+    phonenumber = phoneNumber;
     typeaction = logAlertsBD.type;
     startdate = logAlertsBD.time;
   }
@@ -33,7 +35,7 @@ class AlertApi {
       id: json['id'],
       phonenumber: json['phonenumber'],
       typeaction: json['typeaction'],
-      startdate: json['startdate']
+      startdate: jsonToDatetime(json['startdate'], getDefaultPattern())
     );
   }
 }

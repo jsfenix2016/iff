@@ -46,7 +46,7 @@ class _FallActivationConfigPageState extends State<FallActivationConfigPage> {
     setState(() {
       isActive = _prefs.getDetectedFall;
 
-      Constant.timeDicExtended.forEach((key, value) {
+      Constant.timeDic.forEach((key, value) {
         if (value == _prefs.getFallTime) {
           fallPosition = int.parse(key);
           fallTime = value;
@@ -183,13 +183,13 @@ class _FallActivationConfigPageState extends State<FallActivationConfigPage> {
             background: Colors.transparent),
         backgroundColor: Colors.transparent,
         onSelectedItemChanged: (int value) {
-          fallTime = Constant.timeDicExtended[value.toString()]!;
+          fallTime = Constant.timeDic[value.toString()]!;
         },
         scrollController:
             FixedExtentScrollController(initialItem: initialPosition),
         itemExtent: 60.0,
         children: [
-          for (var i = 0; i < Constant.timeDicExtended.length; i++)
+          for (var i = 0; i < Constant.timeDic.length; i++)
             Container(
               height: 24,
               width: 120,
@@ -198,7 +198,7 @@ class _FallActivationConfigPageState extends State<FallActivationConfigPage> {
                 children: [
                   const SizedBox(height: 12),
                   Text(
-                    Constant.timeDicExtended[i.toString()]!,
+                    Constant.timeDic[i.toString()]!,
                     textAlign: TextAlign.center,
                     style: GoogleFonts.barlow(
                       fontSize: 24.0,

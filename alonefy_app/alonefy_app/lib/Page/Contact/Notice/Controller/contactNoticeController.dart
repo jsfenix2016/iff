@@ -16,13 +16,18 @@ class ContactNoticeController extends GetxController {
     }
   }
 
+  Future<ContactBD?> getContact(String phones) async {
+    final contact = await const HiveData().getContactBD(phones);
+    return contact;
+  }
+
   Future<void> deleteContact(ContactBD contact) async {
     await const HiveData().deleteUserContact(contact);
 
     final MainController mainController = Get.put(MainController());
     var user = await mainController.getUserData();
 
-    await ContactService().deleteContact(user.telephone, contact.phones);
+    await ContactService().deleteContact(user.telephone.replaceAll("+34", ""), contact.phones.replaceAll("+34", ""));
 
     NotificationCenter().notify('getContact');
   }

@@ -129,7 +129,7 @@ class _ContactNoticePageState extends State<ContactNoticePage> {
                             builder: (BuildContext context) => AlertDialog(
                               contentPadding: const EdgeInsets.all(0),
                               content: ListContact(
-                                onSelectContact: (Contact value) {
+                                onSelectContact: (Contact value) async {
                                   var contactBD = ContactBD(
                                       value.displayName,
                                       value.photo == null ? null : value.photo,
@@ -137,7 +137,7 @@ class _ContactNoticePageState extends State<ContactNoticePage> {
                                       "5 min",
                                       "10 min",
                                       "5 min",
-                                      value.phones.first.toString(),
+                                      value.phones.first.normalizedNumber.replaceAll("+34", ""),
                                       "Pendiente");
                                   Navigator.pushReplacement(
                                     context,

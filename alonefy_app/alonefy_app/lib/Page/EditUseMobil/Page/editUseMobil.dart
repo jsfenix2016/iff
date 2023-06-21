@@ -271,7 +271,7 @@ class _EditUseMobilPageState extends State<EditUseMobilPage> {
                                 height: 90,
                                 child: Stack(
                                   children: [
-                                    if (!_prefs.getUserPremium) ...[
+                                    if (_prefs.getUserPremium) ...[
                                       _getCupertinoPicker(indexList, indexGroup,
                                           scrollController),
                                     ] else ...[

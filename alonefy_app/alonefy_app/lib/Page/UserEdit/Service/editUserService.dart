@@ -1,4 +1,6 @@
 import 'dart:io';
+import 'dart:typed_data';
+import 'dart:ui';
 import 'package:http_parser/http_parser.dart';
 
 import 'package:http/http.dart' as http;
@@ -7,6 +9,8 @@ import 'dart:convert';
 
 import 'package:ifeelefine/Model/userbd.dart';
 
+import '../../../Utils/MimeType/mime_type.dart';
+
 class EditUserService {
   Future<bool> updateUser(UserBD user) async {
     final authData = {
@@ -14,11 +18,11 @@ class EditUserService {
       "idUser": (user.idUser),
       "name": (user.name),
       "lastname": (user.lastname),
-      "email": "bb@gmail.es",
+      "email": user.email,
       "gender": (user.gender),
       "maritalStatus": (user.maritalStatus),
       "stylelife": (user.styleLife),
-      "pathImage": (user.pathImage),
+      "pathImage": "",
       "age": (user.age),
       "country": (user.country),
       "city": (user.city)
@@ -37,23 +41,38 @@ class EditUserService {
     }
   }
 
-  Future<void> updateImage(String phoneNumber, String imagePath) async {
-    var postUri = Uri.parse("${Constant.baseApi}/v1/user/setPhoto");
-    var request = new http.MultipartRequest("PUT", postUri);
-    request.fields['phoneNumber'] = phoneNumber;
-    var bytes = await File(imagePath).readAsBytes();
+  Future<String?> getUrlPhoto(String phoneNumber) async {
+    try {
+      var json = { "phoneNumber": phoneNumber };
 
-    var imageType = "";
-    if (imagePath.contains('png'))
-      imageType = 'png';
-    else
-      imageType = 'jpg';
+      final resp = await http.put(
+              Uri.parse("${Constant.baseApi}/v1/user/photo"),
+              headers: Constant.headers,
+              body: jsonEncode(json));
 
-    request.files.add(new http.MultipartFile.fromBytes('file', bytes,
-        contentType: MediaType('image', imageType)));
+      return resp.body;
+    } catch (e) {
+      return null;
+    }
+  }
 
-    request.send().then((response) {
-      if (response.statusCode == 200) print("Uploaded!");
-    });
+  Future<void> updateImage(String url, Uint8List? bytes) async {
+    try {
+      var postUri = Uri.parse(url);
+
+      var mime = lookupMimeType('', headerBytes: bytes);
+      var extension = "";
+      if (mime != null) {
+        extension = extensionFromMime(mime);
+      }
+
+      final resp = await http.put(
+          postUri,
+          headers: {'Content-Type': mime ?? 'image/jpeg'},
+          body: bytes);
+
+    } catch (e) {
+      print(e);
+    }
   }
 }

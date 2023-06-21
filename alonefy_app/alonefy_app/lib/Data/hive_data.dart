@@ -92,7 +92,14 @@ class HiveData {
   Future updateContact(ContactBD contact) async {
     final Box<ContactBD> box = await Hive.openBox<ContactBD>('contactBD');
 
-    box.put(contact.phones, contact);
+    var index = 0;
+    for (var contactBD in box.values) {
+      if (contact.phones == contactBD.phones) {
+        box.putAt(index, contact);
+        break;
+      }
+      index++;
+    }
   }
 
   Future<bool> saveUserContact(ContactBD user) async {

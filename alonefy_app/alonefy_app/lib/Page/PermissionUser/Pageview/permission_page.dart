@@ -29,8 +29,6 @@ class PermitionUserPage extends StatefulWidget {
 }
 
 class _PermitionUserPageState extends State<PermitionUserPage> {
-  final GeolocatorPlatform _geolocatorPlatform = GeolocatorPlatform.instance;
-  late final Permission _permission;
   List<String> permissionsName = [
     //'Permitir trabajar la App en segundo plano',
     'Permitir notificaciones',

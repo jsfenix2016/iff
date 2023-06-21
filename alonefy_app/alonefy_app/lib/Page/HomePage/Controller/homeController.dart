@@ -68,7 +68,7 @@ class HomeController extends GetxController {
             country: user.country,
             city: user.city);
         await UserConfig2COntroller().updateUserDate(context, userbd);
-        await EditConfigController().updateUserImage(userbd);
+        await EditConfigController().updateUserImage(userbd, bytes);
       } else {
         await userVC.saveUserData(context, user, const Uuid().v1());
       }

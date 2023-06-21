@@ -25,15 +25,21 @@ class ActivityService {
      }
   }
 
-  Future<void> updateData(ActivityDayApi activityDayApi, int id) async {
+  Future<bool> updateData(ActivityDayApiResponse activityDayApi) async {
 
-    var json = jsonEncode(activityDayApi);
+    try {
+      var json = jsonEncode(activityDayApi);
 
-    var response = await http.put(
-        Uri.parse("${Constant.baseApi}/v1/activity/$id"),
-        headers: Constant.headers,
-        body: json
-    );
+      var response = await http.put(
+              Uri.parse("${Constant.baseApi}/v1/activity"),
+              headers: Constant.headers,
+              body: json
+          );
+
+      return response.statusCode == 200;
+    } catch (e) {
+      return false;
+    }
 
     //var decodedResponse = jsonDecode(utf8.decode(resp.bodyBytes)) as Map;
 //

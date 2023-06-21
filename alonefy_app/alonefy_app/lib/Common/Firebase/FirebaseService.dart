@@ -7,9 +7,13 @@ import '../Constant.dart';
 
 class FirebaseService {
   Future<void> saveData(FirebaseTokenApi firebaseTokenApi) async {
+
     var json = jsonEncode(firebaseTokenApi);
-    try {
-      await http.put(Uri.parse("${Constant.baseApi}/v1/user/fcm"), body: json);
-    } catch (e) {}
+
+    await http.put(
+        Uri.parse("${Constant.baseApi}/v1/user/fcm"),
+        headers: Constant.headers,
+        body: json
+    );
   }
 }

@@ -79,6 +79,8 @@ class _AddActivityPageState extends State<AddActivityPage>
 
   bool allDay = false;
 
+  static const int _maxActivitiesNoPremium = 3;
+
   Future<Widget> calculate(BuildContext context, Size size) {
     return Future<Widget>.delayed(
         const Duration(milliseconds: 100), () => getStack(context, size));
@@ -326,7 +328,7 @@ class _AddActivityPageState extends State<AddActivityPage>
                 onPressed: () async {
                   if (isRepeatTypeSelected()) {
                     var activities = await controller.getActivities();
-                    if (activities.length >= 3 && !_prefs.getUserPremium) {
+                    if (activities.length >= _maxActivitiesNoPremium && !_prefs.getUserPremium) {
                       showSaveAlert(context, Constant.info,
                           Constant.timeMaxReachedInactivity);
                     } else {

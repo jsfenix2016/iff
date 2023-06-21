@@ -5,17 +5,17 @@ import 'package:ifeelefine/Model/contactZoneRiskBD.dart';
 class HiveDataRisk {
   const HiveDataRisk();
 
-  Future<int> saveContactRisk(ContactRiskBD contact) async {
+  Future<bool> saveContactRisk(ContactRiskBD contact) async {
     try {
       final Box<ContactRiskBD> box =
           await Hive.openBox<ContactRiskBD>('contactriskbd');
 
-      var ind = box.values.length;
-      contact.id = ind;
+      //var ind = box.values.length;
+      //contact.id = ind;
       final person = await box.add(contact);
-      return person;
+      return true;
     } catch (error) {
-      return -1;
+      return false;
     }
   }
 
@@ -23,7 +23,15 @@ class HiveDataRisk {
     try {
       final box = await Hive.openBox<ContactRiskBD>('contactriskbd');
 
-      await box.put((contact.id), contact);
+      var index = 0;
+      for (var contactRiskBD in box.values.toList()) {
+        if (contactRiskBD.id == contact.id) {
+          await box.putAt(index, contact);
+          break;
+        }
+        index++;
+      }
+
       final listDate = box.values.toList();
       print(listDate);
       return true;
@@ -114,7 +122,14 @@ class HiveDataRisk {
 
       final listDate = box.values.toList();
 
-      await box.putAt(contact.id, contact);
+      var index = 0;
+      for (var contactZoneRiskBD in listDate) {
+        if (contactZoneRiskBD.id == contact.id) {
+          await box.putAt(index, contact);
+          break;
+        }
+        index++;
+      }
 
       print(listDate);
     } catch (error) {

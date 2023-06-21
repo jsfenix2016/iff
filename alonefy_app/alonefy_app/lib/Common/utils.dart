@@ -639,7 +639,7 @@ Future<bool> getEnableIFF() async {
   if (strDatetime != "") {
     String deactivatedTime = _prefs.getDisambleIFF;
     var minutes = deactivateTimeToMinutes(deactivatedTime);
-    var datetime = Jiffy(strDatetime).dateTime;
+    var datetime = Jiffy(strDatetime, getDefaultPattern()).dateTime;
     datetime.add(Duration(minutes: minutes));
 
     if (DateTime.now().isAfter(datetime)) {

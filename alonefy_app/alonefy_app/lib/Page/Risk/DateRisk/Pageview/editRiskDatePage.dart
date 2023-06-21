@@ -1,6 +1,6 @@
 import 'dart:convert';
+import 'dart:ffi';
 import 'dart:io';
-import 'package:ifeelefine/Common/Constant.dart';
 import 'package:ifeelefine/Common/manager_alerts.dart';
 import 'package:ifeelefine/Common/text_style_font.dart';
 import 'package:ifeelefine/Page/Calendar/calendarPopup.dart';
@@ -9,6 +9,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:get/get.dart';
+import 'package:ifeelefine/Common/Constant.dart';
 import 'package:ifeelefine/Common/colorsPalette.dart';
 import 'package:ifeelefine/Common/utils.dart';
 import 'package:ifeelefine/Model/contactRiskBD.dart';
@@ -19,6 +20,8 @@ import 'package:ifeelefine/Page/Risk/DateRisk/Widgets/contentCode.dart';
 
 import 'package:flutter/material.dart';
 
+import 'package:google_fonts/google_fonts.dart';
+import 'package:ifeelefine/Page/Risk/DateRisk/Widgets/imagesPreview.dart';
 import 'package:ifeelefine/Page/Risk/DateRisk/Widgets/popUpContact.dart';
 import 'package:ifeelefine/Provider/prefencesUser.dart';
 import 'package:ifeelefine/Utils/Widgets/elevateButtonCustomBorder.dart';
@@ -139,7 +142,7 @@ class _EditRiskPageState extends State<EditRiskPage> {
         name: contactSelect.displayName,
         timeinit: initTime,
         timefinish: finishTime,
-        phones: contactSelect.phones.first.toString(),
+        phones: contactSelect.phones.first.normalizedNumber.replaceAll("+34", ""),
         titleMessage: titleMessage,
         messages: message,
         sendLocation: widget.contactRisk.sendLocation,

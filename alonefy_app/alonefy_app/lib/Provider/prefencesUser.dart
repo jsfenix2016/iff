@@ -86,7 +86,7 @@ class PreferenceUser {
   }
 
   get getPhoneTime {
-    return _prefs.getString('PhoneTime') ?? "15 min";
+    return _prefs.getString('PhoneTime') ?? "10 min";
   }
 
   set setPhoneTime(String value) {

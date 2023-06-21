@@ -121,10 +121,10 @@ class _MenuConfigurationPageState extends State<MenuConfigurationPage> {
         break;
 
       case 2:
-        // if (!prefs.isConfig) {
-        //   redirectToConfigUser();
-        //   return;
-        // }
+        if (!prefs.isConfig) {
+          redirectToConfigUser();
+          return;
+        }
         Navigator.push(
           context,
           MaterialPageRoute(
@@ -241,6 +241,10 @@ class _MenuConfigurationPageState extends State<MenuConfigurationPage> {
         }
         break;
       case 11:
+        if (!prefs.isConfig) {
+          redirectToConfigUser();
+          return;
+        }
         Navigator.push(
           context,
           MaterialPageRoute(
@@ -249,9 +253,6 @@ class _MenuConfigurationPageState extends State<MenuConfigurationPage> {
             ),
           ),
         );
-        break;
-      case 13:
-        redirectToConfigUser();
         break;
       default:
     }
