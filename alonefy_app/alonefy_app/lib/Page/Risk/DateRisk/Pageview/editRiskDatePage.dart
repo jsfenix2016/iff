@@ -76,6 +76,7 @@ class _EditRiskPageState extends State<EditRiskPage> {
   String from = "";
   String to = "";
   bool isLoading = false;
+
   late DateTime dateTimeTemp = DateTime.now();
   @override
   void initState() {
@@ -133,21 +134,37 @@ class _EditRiskPageState extends State<EditRiskPage> {
     });
     String temp =
         '${dateTimeTemp.day}-${dateTimeTemp.month}-${dateTimeTemp.year} ';
-    var listTimeInit = widget.contactRisk.timeinit.split(' ');
-    var listTimeFinish = widget.contactRisk.timefinish.split(' ');
+    //var listTimeInit = widget.contactRisk.timeinit.split(' ');
+//
+    //var listTimeFinish = widget.contactRisk.timefinish.split(' ');
+//
     var initTime = "";
+//
     var finishTime = "";
-    if (widget.contactRisk.timeinit == timeinit) {
-      initTime = temp + listTimeInit[0];
-    }
+//
+    //if (widget.contactRisk.timeinit == timeinit) {
+//
+    //  initTime = temp + listTimeInit[0];
+//
+    //}
+//
+    //if (widget.contactRisk.timefinish == timefinish) {
+//
+    //  finishTime = temp + listTimeFinish[0];
+//
+    //}
+//
+    //if (widget.contactRisk.id != -1) {
+//
+    //  initTime = temp + listTimeInit[1];
+//
+    //  finishTime = temp + listTimeFinish[1];
+//
+    //}
 
-    if (widget.contactRisk.timefinish == timefinish) {
-      finishTime = temp + listTimeFinish[0];
-    }
-    if (widget.contactRisk.id != -1) {
-      initTime = temp + listTimeInit[1];
-      finishTime = temp + listTimeFinish[1];
-    }
+    initTime = temp + timeinit;
+
+    finishTime = temp + timefinish;
 
     var list = await convertImageData();
     var contactRisk = ContactRiskBD(
@@ -156,8 +173,7 @@ class _EditRiskPageState extends State<EditRiskPage> {
         name: contactSelect.displayName,
         timeinit: initTime,
         timefinish: finishTime,
-        phones:
-            contactSelect.phones.first.normalizedNumber.replaceAll("+34", ""),
+        phones: contactSelect.phones.first.normalizedNumber.replaceAll("+34", ""),
         titleMessage: titleMessage,
         messages: message,
         sendLocation: widget.contactRisk.sendLocation,
@@ -169,7 +185,8 @@ class _EditRiskPageState extends State<EditRiskPage> {
         isprogrammed: isprogrammed,
         photoDate: list,
         saveContact: widget.contactRisk.saveContact,
-        createDate: DateTime.now());
+        createDate: DateTime.now(),
+        taskIds: []);
 
     getchangeContact(context, contactRisk);
   }
@@ -422,8 +439,8 @@ class _EditRiskPageState extends State<EditRiskPage> {
                                                 widget.contactRisk.timeinit),
                                             mode: CupertinoDatePickerMode.time,
                                             use24hFormat: true,
-                                            onDateTimeChanged: (value) {
-                                              timeinit = value.toString();
+                                            onDateTimeChanged: (value) async {
+                                              timeinit = await convertDateTimeToStringTime(value);
                                               widget.contactRisk.timeinit =
                                                   value.toString();
                                             },
@@ -480,10 +497,10 @@ class _EditRiskPageState extends State<EditRiskPage> {
                                                 widget.contactRisk.timefinish),
                                             mode: CupertinoDatePickerMode.time,
                                             use24hFormat: true,
-                                            onDateTimeChanged: (value) {
-                                              timefinish = value.toString();
+                                            onDateTimeChanged: (value) async {
+                                              timefinish = await convertDateTimeToStringTime(value);
                                               widget.contactRisk.timefinish =
-                                                  timefinish;
+                                                  value.toString();
                                             },
                                           ),
                                         ),

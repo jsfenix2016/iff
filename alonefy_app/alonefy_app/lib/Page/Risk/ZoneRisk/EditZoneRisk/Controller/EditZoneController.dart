@@ -44,7 +44,8 @@ class EditZoneController extends GetxController {
         type: "Zona de riesgo",
         time: DateTime.now(),
         video: contact.photo);
-    await const HiveData().saveUserPositionBD(mov);
+    MainController().saveUserRiskLog(mov);
+    //await const HiveData().saveUserPositionBD(mov);
   }
 
   Future<bool> saveContactZoneRisk(

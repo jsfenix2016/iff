@@ -81,11 +81,11 @@ class _PushAlertPageState extends State<PushAlertPage> {
     setState(() => _isRecording = false);
 
     // Detener la grabación de video y detener el timer
-    await pushVC.updateVideo(widget.contactZone, file.path);
+    var taskIds = await pushVC.updateVideo(widget.contactZone, file.path);
 
     Route route = MaterialPageRoute(
       builder: (context) => CancelAlertPage(
-        contactRisk: widget.contactZone,
+        contactRisk: widget.contactZone, taskdIds: taskIds
       ),
     );
     Navigator.pushReplacement(context, route);

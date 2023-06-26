@@ -24,7 +24,8 @@ class ContactRiskBD {
       required this.isprogrammed,
       required this.photoDate,
       required this.saveContact,
-      required this.createDate});
+      required this.createDate,
+      required this.taskIds});
 
   @HiveField(0)
   int id;
@@ -78,4 +79,7 @@ class ContactRiskBD {
 
   @HiveField(17)
   DateTime createDate;
+
+  @HiveField(18)
+  List<String>? taskIds;
 }

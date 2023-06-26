@@ -65,12 +65,29 @@ class HiveDataRisk {
     }
   }
 
-  Future<ContactRiskBD?> getContactRiskBD(String phones) async {
+  Future<ContactRiskBD?> getContactRiskBD(int id) async {
     try {
       final box = await Hive.openBox<ContactRiskBD>('contactriskbd');
 
       for (ContactRiskBD item in box.values.toList()) {
-        if (item.phones == phones) {
+        if (item.id == id) {
+          return item;
+        }
+      }
+
+      return null;
+    } catch (error) {
+      print(error);
+      return null;
+    }
+  }
+
+  Future<ContactRiskBD?> getContactRiskBDByTaskIds(List<String> taskIds) async {
+    try {
+      final box = await Hive.openBox<ContactRiskBD>('contactriskbd');
+
+      for (ContactRiskBD item in box.values.toList()) {
+        if (item.taskIds == taskIds) {
           return item;
         }
       }

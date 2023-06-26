@@ -19,23 +19,23 @@ class AlertApi {
     required this.startdate});
 
   AlertApi.fromAlert(LogAlertsBD logAlertsBD, String phoneNumber) {
-    phonenumber = phoneNumber;
+    phonenumber = phoneNumber.replaceAll("+34", "");
     typeaction = logAlertsBD.type;
     startdate = logAlertsBD.time;
   }
 
   Map<String, dynamic> toJson() => {
-    'phonenumber': phonenumber,
-    'typeaction': typeaction,
-    'startdate': startdate.toIso8601String()
+    'phoneNumber': phonenumber,
+    'typeAction': typeaction,
+    'startDate': startdate.toIso8601String()
   };
 
   factory AlertApi.fromJson(Map<String, dynamic> json) {
     return AlertApi.fromApi(
       id: json['id'],
-      phonenumber: json['phonenumber'],
-      typeaction: json['typeaction'],
-      startdate: jsonToDatetime(json['startdate'], getDefaultPattern())
+      phonenumber: json['phoneNumber'],
+      typeaction: json['typeAction'],
+      startdate: jsonToDatetime(json['startDate'], getDefaultPattern())
     );
   }
 }
