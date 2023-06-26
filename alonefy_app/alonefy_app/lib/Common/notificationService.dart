@@ -8,8 +8,11 @@ import 'package:get/get_core/src/get_main.dart';
 import 'package:ifeelefine/Common/Constant.dart';
 import 'package:ifeelefine/Common/colorsPalette.dart';
 import 'package:ifeelefine/Common/idleLogic.dart';
+import 'package:ifeelefine/Common/utils.dart';
 import 'package:ifeelefine/Controllers/contactUserController.dart';
 import 'package:ifeelefine/Controllers/mainController.dart';
+import 'package:ifeelefine/Data/hiveRisk_data.dart';
+import 'package:ifeelefine/Data/hive_constant_adapterInit.dart';
 import 'package:ifeelefine/Model/contactRiskBD.dart';
 import 'package:ifeelefine/Page/Risk/DateRisk/Controller/editRiskController.dart';
 import 'package:ifeelefine/Page/Risk/DateRisk/Pageview/cancelDatePage.dart';
@@ -24,19 +27,23 @@ class RedirectViewNotifier with ChangeNotifier {
   static void setContext(BuildContext context) =>
       RedirectViewNotifier.context = context;
 
-  static void setContactRisk(ContactRiskBD contactRisk) =>
-      RedirectViewNotifier.contactRisk = contactRisk;
+  //static void setContactRisk(ContactRiskBD contactRisk) =>
+  //    RedirectViewNotifier.contactRisk = contactRisk;
 
   /// when app is in the foreground
-  static Future<void> onTapNotification(NotificationResponse? response) async {
+  static Future<void> onTapNotification(NotificationResponse? response, List<String> taskIds, int id) async {
     if (RedirectViewNotifier.context == null || response?.payload == null)
       return;
+
+    await inicializeHiveBD();
+
+    var contactRisk = await const HiveDataRisk().getContactRiskBD(id);
 
     Navigator.push(
       RedirectViewNotifier.context!,
       MaterialPageRoute(
         builder: (context) => CancelDatePage(
-          contactRisk: RedirectViewNotifier.contactRisk!,
+          contactRisk: contactRisk!, taskIds: taskIds,
         ),
       ),
     );
@@ -50,61 +57,33 @@ class RedirectViewNotifier with ChangeNotifier {
       if (data.containsValue(Constant.inactive)) {
         mainController.saveUserLog("Inactividad ", DateTime.now());
       } else {
-        mainController.saveUserLog("Movimiento rudo a ", DateTime.now());
-        mainController.saveActivityLog(DateTime.now(), "Movimiento brusco");
+        mainController.saveUserLog("Movimiento rudo", DateTime.now());
+        mainController.saveActivityLog(DateTime.now(), "Movimiento rudo");
       }
       showHelpNotification(message);
-    } else if (data.containsValue('SMS') || data.containsValue('Whatsapp') || data.containsValue('Call')) {
-      final mainController = Get.put(MainController());
-      if (data.containsValue('SMS')) {
-        mainController.saveUserLog("Envío de SMS a contacto", now);
-      } else if (data.containsValue('Whatsapp')) {
-        mainController.saveUserLog("Envío de Whatsapp a contacto", now);
-      } else {
-        mainController.saveUserLog("Envío de llamada a contacto", now);
-        //final call = Uri.parse('tel:+91 9830268966');
-        //launchUrl(call);
-      }
-      showSendToContactNotification(message);
-    } else if (data.containsValue('StartDateRisk') || data.containsValue('EndDateRisk')) {
+    } else if (data.containsValue(Constant.startRiskDate) || data.containsValue(Constant.finishRiskDate)) {
       final editRiskController = Get.put(EditRiskController());
-      String phones = data['phones'];
+      var id = int.parse(data['id']);
 
-      if (data.containsValue('StartDateRisk')) {
-        if (phones.isNotEmpty) {
-          editRiskController.updateContactRiskWhenDateStarted(phones);
-        }
+      if (data.containsValue(Constant.startRiskDate)) {
+        editRiskController.updateContactRiskWhenDateStarted(id);
         showDateNotifications(message);
       } else {
-        if (phones.isNotEmpty) {
-          editRiskController.updateContactRiskWhenDateFinished(phones);
-        }
-        showDateFinishNotifications(message);
+        editRiskController.updateContactRiskWhenDateFinished(id, data);
+        showDateFinishNotifications(message, id);
       }
-    } else if (data.containsValue('SMSRisk') || data.containsValue('WhatsappRisk')
-        || data.containsValue('CallRisk')) {
-      final mainController = Get.put(MainController());
-      if (data.containsValue('SMSRisk')) {
-        mainController.saveUserLog("Envío de SMS a contacto cita", now);
-      } else if (data.containsValue('WhatsappRisk')) {
-        mainController.saveUserLog("Envío de Whatsapp a contacto cita", now);
-      } else {
-        mainController.saveUserLog("Envío de llamada a contacto cita", now);
-        //final call = Uri.parse('tel:+91 9830268966');
-        //launchUrl(call);
-      }
-      showSendToContactNotification(message);
-    } else if (data.containsValue('ContactAccepted') || data.containsValue('ContactDenied')) {
+    } else if (data.containsValue(Constant.contactStatusChanged)) {
       final contactUserController = Get.put(ContactUserController());
-      String phones = data["phones"];
+      String phoneNumber = data["phone_number"];
+      String status = data['status'];
 
-      if (data.containsValue('ContactAccepted')) {
-        if (phones.isNotEmpty) {
-          contactUserController.updateContactStatus(phones, "Accepted");
+      if (status == Constant.contactAccepted) {
+        if (phoneNumber.isNotEmpty) {
+          contactUserController.updateContactStatus(phoneNumber, Constant.contactAcceptedLabel);
         }
-      } else {
-        if (phones.isNotEmpty) {
-          contactUserController.updateContactStatus(phones, "Denied");
+      } else if (status == Constant.contactDenied){
+        if (phoneNumber.isNotEmpty) {
+          contactUserController.updateContactStatus(phoneNumber, Constant.contactDeniedLabel);
         }
       }
       showContactResponseNotification(message);
@@ -114,16 +93,9 @@ class RedirectViewNotifier with ChangeNotifier {
   static Future<void> showHelpNotification(RemoteMessage message) async {
     RemoteNotification? notification = message.notification;
 
-    String tokenIds = "";
+    String? taskIds = message.data['task_ids'];//getTaskIds(message.data);
 
-    if (message.data.isNotEmpty && message.data.values.isNotEmpty) {
-      for (var tokenId in message.data.values) {
-        tokenIds += '$tokenId;';
-      }
-      if (tokenIds.isNotEmpty) {
-        tokenIds = tokenIds.substring(0, tokenIds.length - 1);
-      }
-    }
+    taskIds ??= "";
 
     await flutterLocalNotificationsPlugin.show(
       0,
@@ -148,14 +120,14 @@ class RedirectViewNotifier with ChangeNotifier {
           //     "content://media/internal/audio/media/26.wav"),
           actions: <AndroidNotificationAction>[
             AndroidNotificationAction(
-              "helpID_$tokenIds",
+              "helpID_$taskIds",
               "AYUDA",
               icon: DrawableResourceAndroidBitmap('@mipmap/logo_alertfriends'),
               showsUserInterface: true,
               cancelNotification: true,
             ),
             AndroidNotificationAction(
-              "imgoodId_$tokenIds",
+              "imgoodId_$taskIds",
               "ESTOY BIEN",
               icon: DrawableResourceAndroidBitmap('@mipmap/logo_alertfriends'),
               showsUserInterface: true,
@@ -164,7 +136,7 @@ class RedirectViewNotifier with ChangeNotifier {
           ],
         ),
       ),
-      payload: 'Inactived',
+      payload: 'Inactived_$taskIds',
     );
   }
 
@@ -217,7 +189,7 @@ class RedirectViewNotifier with ChangeNotifier {
       1,
       notification?.title,
       notification?.body,
-      const NotificationDetails(
+      NotificationDetails(
         android: AndroidNotificationDetails(
           '1',
           'MY FOREGROUND SERVICE',
@@ -235,29 +207,24 @@ class RedirectViewNotifier with ChangeNotifier {
           largeIcon: DrawableResourceAndroidBitmap('@mipmap/logo_alertfriends'),
           // sound: RawResourceAndroidNotificationSound(
           //     "content://media/internal/audio/media/26.wav"),
-          actions: <AndroidNotificationAction>[
-            AndroidNotificationAction(
-              "date",
-              "Cancelar cita",
-              icon: DrawableResourceAndroidBitmap('@mipmap/logo_alertfriends'),
-              showsUserInterface: true,
-              cancelNotification: true,
-            ),
-          ],
         ),
       ),
-      payload: 'DateRisk',
+      payload: 'DateRisk_',
     );
   }
 
-  static Future<void> showDateFinishNotifications(RemoteMessage message) async {
+  static Future<void> showDateFinishNotifications(RemoteMessage message, int id) async {
     RemoteNotification? notification = message.notification;
+
+    String? taskIds = message.data['task_ids'];
+
+    taskIds ??= "";
 
     await flutterLocalNotificationsPlugin.show(
       2,
       notification?.title,
       notification?.body,
-      const NotificationDetails(
+      NotificationDetails(
         android: AndroidNotificationDetails(
           '2',
           'MY FOREGROUND SERVICE',
@@ -277,8 +244,15 @@ class RedirectViewNotifier with ChangeNotifier {
           //     "content://media/internal/audio/media/26.wav"),
           actions: <AndroidNotificationAction>[
             AndroidNotificationAction(
-              "date",
-              "Cancelar cita",
+              "dateHelp_$taskIds",
+              "AYUDA",
+              icon: DrawableResourceAndroidBitmap('@mipmap/logo_alertfriends'),
+              showsUserInterface: true,
+              cancelNotification: true,
+            ),
+            AndroidNotificationAction(
+              "dateImgood_${taskIds}id=$id",
+              "CANCELAR CITA",
               icon: DrawableResourceAndroidBitmap('@mipmap/logo_alertfriends'),
               showsUserInterface: true,
               cancelNotification: true,
@@ -286,7 +260,7 @@ class RedirectViewNotifier with ChangeNotifier {
           ],
         ),
       ),
-      payload: 'DateRisk',
+      payload: 'DateRisk_${taskIds}id=$id',
     );
   }
 

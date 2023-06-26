@@ -10,6 +10,8 @@ class LogActivityService {
               headers: Constant.headers
           );
 
+      var status = response.statusCode;
+
     } catch (e) {
       print(e);
     }

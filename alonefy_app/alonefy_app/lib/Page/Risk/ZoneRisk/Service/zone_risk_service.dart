@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:http_parser/http_parser.dart';
 
 import 'package:http/http.dart' as http;
+import 'package:ifeelefine/Common/utils.dart';
 
 import 'package:ifeelefine/Model/ApiRest/ZoneRiskApi.dart';
 import 'package:ifeelefine/Model/contactZoneRiskBD.dart';
@@ -111,7 +112,7 @@ class ZoneRiskService {
           headers: Constant.headers,
           body: jsonEncode(json));
 
-      return jsonDecode(response.body);
+      return response.body;
     } catch (e) {
       return null;
     }
@@ -129,7 +130,7 @@ class ZoneRiskService {
 
       final resp = await http.put(
           postUri,
-          headers: {'Content-Type': mime ?? 'video'},
+          headers: {'Content-Type': mime ?? 'video/mp4'},
           body: bytes);
 
       var status = resp.statusCode;
@@ -139,7 +140,7 @@ class ZoneRiskService {
     }
   }
 
-  Future<String?> createZoneRiskAlert(ZoneRiskApi zoneRiskApi) async {
+  Future<List<String>> createZoneRiskAlert(ZoneRiskApi zoneRiskApi) async {
     try {
       var zoneRiskJson = zoneRiskApi.toJson();
       
@@ -153,9 +154,13 @@ class ZoneRiskService {
           headers: Constant.headers,
           body: json);
 
-      return jsonDecode(response.body);
+      var body = response.body;
+      var decode = jsonDecode(body);
+      List<String> list = dynamicToStringList(decode);
+
+      return list;
     } catch (e) {
-      return null;
+      return [];
     }
   }
 

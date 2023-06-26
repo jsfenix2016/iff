@@ -43,7 +43,8 @@ class EditRiskController extends GetxController {
         type: "Cita de riesgo",
         time: DateTime.now(),
         photoDate: contact.photoDate);
-    await const HiveData().saveUserPositionBD(mov);
+    MainController().saveUserRiskLog(mov);
+    //await const HiveData().saveUserPositionBD(mov);
   }
 
   Future<bool> saveContactRisk(
@@ -51,21 +52,21 @@ class EditRiskController extends GetxController {
     try {
       final MainController mainController = Get.put(MainController());
       var user = await mainController.getUserData();
-      var contactRiskApi = await ContactRiskService().createContactRisk(
-          ContactRiskApi.fromContact(contact, user.telephone.replaceAll("+34", ""), contact.photoDate.length));
-      if (contact.photo != null && contactRiskApi != null && contactRiskApi.awsUploadCustomContactPresignedUrl.isNotEmpty) {
-        await ContactRiskService().updateImage(contactRiskApi.awsUploadCustomContactPresignedUrl, contact.photo);
+      var contactRiskApi = ContactRiskApi.fromContact(contact, user.telephone.replaceAll("+34", ""), contact.photoDate.length);
+      var contactRiskApiResponse = await ContactRiskService().createContactRisk(contactRiskApi);
+      if (contact.photo != null && contactRiskApiResponse != null && contactRiskApiResponse.awsUploadCustomContactPresignedUrl.isNotEmpty) {
+        await ContactRiskService().updateImage(contactRiskApiResponse.awsUploadCustomContactPresignedUrl, contact.photo);
       }
-      if (contact.photoDate.isNotEmpty && contactRiskApi != null
-          && contactRiskApi.awsUploadPresignedUrls != null && contactRiskApi.awsUploadPresignedUrls!.isNotEmpty) {
+      if (contact.photoDate.isNotEmpty && contactRiskApiResponse != null
+          && contactRiskApiResponse.awsUploadPresignedUrls != null && contactRiskApiResponse.awsUploadPresignedUrls!.isNotEmpty) {
         var index = 0;
-        for (var url in contactRiskApi.awsUploadPresignedUrls!) {
+        for (var url in contactRiskApiResponse.awsUploadPresignedUrls!) {
           await ContactRiskService().updateImage(url, contact.photoDate[index]);
           index++;
         }
       }
-      if (contactRiskApi != null) {
-        contact.id = contactRiskApi.id;
+      if (contactRiskApiResponse != null) {
+        contact.id = contactRiskApiResponse.id;
         final save = await const HiveDataRisk().saveContactRisk(contact);
         if (save) {
           saveActivityLog(contact);
@@ -114,12 +115,13 @@ class EditRiskController extends GetxController {
     }
   }
 
-  Future<void> updateContactRiskWhenDateStarted(String phones) async {
-    var contactRisk = await HiveDataRisk().getContactRiskBD(phones);
+  Future<void> updateContactRiskWhenDateStarted(int id) async {
+    var contactRisk = await const HiveDataRisk().getContactRiskBD(id);
 
     if (contactRisk != null) {
       contactRisk.isActived = true;
       contactRisk.isprogrammed = false;
+      //contactRisk.taskIds = getTaskIdList(data['task_ids'].toString());
       await const HiveDataRisk().updateContactRisk(contactRisk);
 
       final MainController mainController = Get.put(MainController());
@@ -131,13 +133,14 @@ class EditRiskController extends GetxController {
     }
   }
 
-  Future<void> updateContactRiskWhenDateFinished(String phones) async {
-    var contactRisk = await const HiveDataRisk().getContactRiskBD(phones);
+  Future<void> updateContactRiskWhenDateFinished(int id, Map<String, dynamic> data) async {
+    var contactRisk = await const HiveDataRisk().getContactRiskBD(id);
 
     if (contactRisk != null) {
       contactRisk.isActived = true;
       contactRisk.isprogrammed = false;
       contactRisk.isFinishTime = true;
+      contactRisk.taskIds = getTaskIdList(data['task_ids'].toString());
       await const HiveDataRisk().updateContactRisk(contactRisk);
 
       final MainController mainController = Get.put(MainController());
@@ -172,7 +175,8 @@ class EditRiskController extends GetxController {
             isprogrammed: false,
             photoDate: [],
             saveContact: true,
-            createDate: DateTime.now());
+            createDate: DateTime.now(),
+            taskIds: []);
         const HiveDataRisk().saveContactRisk(contact);
       }
     }

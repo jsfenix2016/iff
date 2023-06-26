@@ -38,8 +38,8 @@ class ContactRiskApi {
     titleAlertMessage = contactRisk.titleMessage;
     alertMessage = contactRisk.messages;
     photoDate = [];
-    startDateTime = parseDurationRow(contactRisk.timeinit);
-    endDateTime = parseDurationRow(contactRisk.timefinish);
+    startDateTime = parseContactRiskDate(contactRisk.timeinit);
+    endDateTime = parseContactRiskDate(contactRisk.timefinish);
     customContactPhoneNumber = contactRisk.phones;
     notifyPredefinedContacts = contactRisk.sendWhatsapp;
     sendLocation = contactRisk.sendLocation;

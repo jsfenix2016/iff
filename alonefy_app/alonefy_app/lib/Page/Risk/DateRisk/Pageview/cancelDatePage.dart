@@ -19,6 +19,7 @@ import 'package:flutter/material.dart';
 
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ifeelefine/Page/Risk/DateRisk/Widgets/popUpContact.dart';
+import 'package:ifeelefine/Services/mainService.dart';
 import 'package:ifeelefine/Utils/Widgets/elevateButtonCustomBorder.dart';
 import 'package:ifeelefine/Utils/Widgets/elevatedButtonFilling.dart';
 import 'package:ifeelefine/main.dart';
@@ -26,9 +27,10 @@ import 'package:notification_center/notification_center.dart';
 import 'package:ifeelefine/Common/decoration_custom.dart';
 
 class CancelDatePage extends StatefulWidget {
-  const CancelDatePage({super.key, required this.contactRisk});
+  const CancelDatePage({super.key, required this.contactRisk, required this.taskIds});
 
   final ContactRiskBD contactRisk;
+  final List<String> taskIds;
   // final String timefinish;
   // final Timer useMobil;
   @override
@@ -55,19 +57,7 @@ class _CancelDatePageState extends State<CancelDatePage> {
   @override
   void initState() {
     contactRiskTemp = widget.contactRisk;
-    List<String> parts = [];
-    if (widget.contactRisk.code != "") {
-      parts = widget.contactRisk.code.split(',');
 
-      code.textCode1 = parts[0];
-      code.textCode2 = parts[1];
-      code.textCode3 = parts[2];
-      code.textCode4 = parts[3];
-    }
-    code.textCode1 = '';
-    code.textCode2 = '';
-    code.textCode3 = '';
-    code.textCode4 = '';
     // }
     startTimer();
     super.initState();
@@ -81,14 +71,22 @@ class _CancelDatePageState extends State<CancelDatePage> {
       // contactRiskTemp.timefinish = '00:00';
       // contactRiskTemp.timeinit = '00:00';
       var res = await editVC.updateContactRisk(context, contactRiskTemp);
+
+      if (contactRiskTemp.taskIds != null && contactRiskTemp.taskIds!.isNotEmpty) {
+        MainService().cancelAllNotifications(contactRiskTemp.taskIds!);
+      } else if (widget.taskIds.isNotEmpty){
+        MainService().cancelAllNotifications(widget.taskIds);
+      }
+
       if (res) {
         NotificationCenter().notify('getContactRisk');
         print("es igual");
         stopTimer();
         timerSendSMS.cancel();
-        Navigator.of(context).pop();
+
       }
     }
+    Navigator.of(context).pop();
   }
 
   void stopTimer() {

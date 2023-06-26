@@ -39,10 +39,31 @@ class MainController extends GetxController {
     const HiveData().saveUserPositionBD(mov);
   }
 
+  Future<void> saveUserRiskLog(LogAlertsBD alert) async {
+    await inicializeHiveBD();
+
+    var user = await getUserData();
+
+    var alertApi = await AlertsService().saveAlert(AlertApi.fromAlert(alert, user.telephone));
+
+    if (alertApi != null) {
+      alert.id = alertApi.id;
+    }
+    const HiveData().saveUserPositionBD(alert);
+  }
+
   Future<void> saveActivityLog(DateTime dateTime, String movementType) async {
     await inicializeHiveBD();
     LogActivityBD activityBD = LogActivityBD(time: dateTime, movementType: movementType);
     await logActivityController.saveLogActivity(activityBD);
     await logActivityController.saveLastMovement();
+  }
+
+  Future<void> saveDrop() async {
+    await inicializeHiveBD();
+
+    var user = await getUserData();
+
+    MainService().saveDrop(user);
   }
 }

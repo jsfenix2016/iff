@@ -36,7 +36,7 @@ class MainService {
     try {
       final response = await http.post(Uri.parse("${Constant.baseApi}/v1/notifications/cancel"),
               headers: Constant.headers,
-              body: taskIds);
+              body: jsonEncode(taskIds));
 
       return response.statusCode == 200;
     } catch (e) {
@@ -47,9 +47,11 @@ class MainService {
   Future<bool> sendAlertToContactImmediately(List<String> taskIds) async {
 
     try {
+      var json = jsonEncode(taskIds);
+
       final response = await http.post(Uri.parse("${Constant.baseApi}/v1/notifications/send"),
               headers: Constant.headers,
-              body: taskIds);
+              body: jsonEncode(taskIds));
 
       return response.statusCode == 200;
     } catch (e) {
@@ -63,7 +65,7 @@ class MainService {
     try {
       final resp = await http.post(
           Uri.parse(
-              "${Constant.baseApi}/v1/notifications/create/user/${user.telephone}/type/DROP"),
+              "${Constant.baseApi}/v1/notifications/create/user/${user.telephone.replaceAll("+34", "")}/type/DROP"),
           headers: Constant.headers);
 
       return resp.statusCode == 200;

@@ -71,6 +71,11 @@ class Constant {
   static const String drop = "DROP";
   static const String startRiskDate = "START_RISK_DATE";
   static const String finishRiskDate = "FINISH_RISK_DATE";
+  static const String contactStatusChanged = "CONTACT_STATUS_CHANGED";
+  static const String contactAccepted = "ACCEPTED";
+  static const String contactAcceptedLabel = "Aceptado";
+  static const String contactDenied = "REFUSED";
+  static const String contactDeniedLabel = "Rechazado";
   static const String riskZone = "RISK_ZONE";
   static const String riskDate = "RISK_DATE";
   static const String normalMovement = "RISK_ZONE";

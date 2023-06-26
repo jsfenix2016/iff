@@ -86,9 +86,6 @@ class _EditZoneRiskPageState extends State<EditZoneRiskPage> {
   }
 
   void saveContactZoneRisk(BuildContext context) async {
-    if (!saveConfig && widget.contactRisk.save == false) {
-      return;
-    }
     var contactRisk = ContactZoneRiskBD(
         id: widget.contactRisk.id,
         photo: contactSelect.photo,
@@ -102,13 +99,17 @@ class _EditZoneRiskPageState extends State<EditZoneRiskPage> {
         callme: widget.contactRisk.callme,
         save: widget.contactRisk.save,
         createDate: DateTime.now());
-    if (widget.contactRisk.id == -1) {
-      await editZoneVC.saveContactZoneRisk(context, contactRisk);
-    } else {
-      // contactRisk.id = widget.index;
-      await editZoneVC.updateContactZoneRisk(context, contactRisk);
-    }
 
+    if (!saveConfig && widget.contactRisk.save == false) {
+
+    } else {
+      if (widget.contactRisk.id == -1) {
+        await editZoneVC.saveContactZoneRisk(context, contactRisk);
+      } else {
+        // contactRisk.id = widget.index;
+        await editZoneVC.updateContactZoneRisk(context, contactRisk);
+      }
+    }
     Route route = MaterialPageRoute(
       builder: (context) => PushAlertPage(
         contactZone: contactRisk,

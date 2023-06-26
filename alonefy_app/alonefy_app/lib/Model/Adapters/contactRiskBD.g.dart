@@ -35,13 +35,14 @@ class ContactRiskBDAdapter extends TypeAdapter<ContactRiskBD> {
       photoDate: (fields[15] as List).cast<Uint8List>(),
       saveContact: fields[16] as bool,
       createDate: fields[17] as DateTime,
+      taskIds: fields[18] == null ? null : fields[18] as List<String>
     );
   }
 
   @override
   void write(BinaryWriter writer, ContactRiskBD obj) {
     writer
-      ..writeByte(18)
+      ..writeByte(19)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
@@ -77,7 +78,9 @@ class ContactRiskBDAdapter extends TypeAdapter<ContactRiskBD> {
       ..writeByte(16)
       ..write(obj.saveContact)
       ..writeByte(17)
-      ..write(obj.createDate);
+      ..write(obj.createDate)
+      ..writeByte(18)
+      ..write(obj.taskIds);
   }
 
   @override

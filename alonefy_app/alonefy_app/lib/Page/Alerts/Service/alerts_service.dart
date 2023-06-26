@@ -20,7 +20,7 @@ class AlertsService {
           );
 
       if (response.statusCode == 200) {
-        return jsonDecode(response.body);
+        return AlertApi.fromJson(jsonDecode(response.body));
       } else {
         return null;
       }

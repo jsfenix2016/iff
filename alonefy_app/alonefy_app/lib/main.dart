@@ -76,7 +76,9 @@ final LogActivityController logActivityController =
 
 final MainController mainController = Get.put(MainController());
 int _logActivityTimer = 60;
+int _logRudeMovementTimer = 60;
 const int _logActivityTimerRefresh = 60;
+const int _logRudeMovementTimerRefresh = 60;
 
 final _locationController = Get.put(ConfigGeolocatorController());
 
@@ -231,32 +233,50 @@ Future activateService() async {
           if (notificationResponse.actionId == "Inactived") {
             ismove = false;
             timerActive = true;
+            String taskIds = notificationResponse.actionId!.replaceAll("Inactived_", "");
+            var taskIdList = getTaskIdList(taskIds);
+            MainService().cancelAllNotifications(taskIdList);
           }
-          if (notificationResponse.actionId == "dateRisk") {
-            RedirectViewNotifier.onTapNotification(notificationResponse);
+          if (notificationResponse.actionId != null && notificationResponse.actionId!.contains("DateRisk")) {
+            String taskIds = notificationResponse.actionId!.substring(0, notificationResponse.actionId!.indexOf('id='));
+            taskIds = taskIds.replaceAll("DateRisk_", "");
+            String id = notificationResponse.actionId!.substring(
+                notificationResponse.actionId!.indexOf('id='), notificationResponse.actionId!.length);
+            id = id.replaceAll("id=", "");
+
+            var taskIdList = getTaskIdList(taskIds);
+            RedirectViewNotifier.onTapNotification(notificationResponse, taskIdList, int.parse(id));
           }
           break;
         case NotificationResponseType.selectedNotificationAction:
           if (notificationResponse.actionId != null &&
               notificationResponse.actionId!.contains("helpID")) {
-            String taskIds =
-                notificationResponse.actionId!.replaceAll("helpID_", "");
-            var taskIdList = taskIds.split(";");
-            //IdleLogic().notifyContact();
-            //mainController.saveUserLog("Envio de SMS", now);
+            String taskIds = notificationResponse.actionId!.replaceAll("helpID_", "");
+            var taskIdList = getTaskIdList(taskIds);
             MainService().sendAlertToContactImmediately(taskIdList);
           }
           if (notificationResponse.actionId != null &&
               notificationResponse.actionId!.contains("imgoodId")) {
-            String taskIds =
-                notificationResponse.actionId!.replaceAll("imgoodId_", "");
-            var taskIdList = taskIds.split(";");
+            String taskIds = notificationResponse.actionId!.replaceAll("imgoodId_", "");
+            var taskIdList = getTaskIdList(taskIds);
             ismove = false;
             timerActive = true;
             MainService().cancelAllNotifications(taskIdList);
           }
-          if (notificationResponse.actionId == "date") {
-            RedirectViewNotifier.onTapNotification(notificationResponse);
+          if (notificationResponse.actionId != null && notificationResponse.actionId!.contains("dateHelp")) {
+            String taskIds = notificationResponse.actionId!.replaceAll("dateHelp_", "");
+            var taskIdList = getTaskIdList(taskIds);
+            MainService().sendAlertToContactImmediately(taskIdList);
+          }
+          if (notificationResponse.actionId != null && notificationResponse.actionId!.contains("dateImgood")) {
+            String taskIds = notificationResponse.actionId!.substring(0, notificationResponse.actionId!.indexOf('id='));
+            taskIds = taskIds.replaceAll("dateImgood_", "");
+            String id = notificationResponse.actionId!.substring(
+                notificationResponse.actionId!.indexOf('id='), notificationResponse.actionId!.length);
+            id = id.replaceAll("id=", "");
+
+            var taskIdList = getTaskIdList(taskIds);
+            RedirectViewNotifier.onTapNotification(notificationResponse, taskIdList, int.parse(id));
           }
           break;
       }
@@ -323,6 +343,7 @@ void onStart(ServiceInstance service) async {
     }
 
     _logActivityTimer += 5;
+    _logRudeMovementTimer += 5;
     //getDateRisk();
 
     service.invoke(
@@ -387,10 +408,10 @@ Future accelerometer() async {
       if (accelerationMagnitude > 19) {
         isMovRude = true;
         print("movimiento rudo $accelerationMagnitude");
-        if (user != null) {
-          MainService().saveDrop(user!);
+        if (_logRudeMovementTimer >= _logRudeMovementTimerRefresh) {
+          mainController.saveDrop();
+          _logRudeMovementTimer = 0;
         }
-
         //RedirectViewNotifier.showNotifications();
         //mainController.saveUserLog("Movimiento rudo a ", now);
       } else {
@@ -410,7 +431,7 @@ Future accelerometer() async {
   );
 }
 
-Future getDateRisk() async {
+/*Future getDateRisk() async {
   await inicializeHiveBD();
   final user = await const HiveData().getuserbd;
 
@@ -454,7 +475,7 @@ Future getDateRisk() async {
       NotificationCenter().notify('getContactRisk');
     }
   }
-}
+}*/
 
 void sendMessageContact() async {
   Duration useMobil =

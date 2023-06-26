@@ -233,6 +233,24 @@ DateTime parseDurationRow(String s) {
   return pastDateTime;
 }
 
+DateTime parseContactRiskDate(String contactRiskDate) {
+  var day = contactRiskDate.substring(0, contactRiskDate.indexOf('-'));
+  contactRiskDate = contactRiskDate.substring(contactRiskDate.indexOf('-') +1, contactRiskDate.length);
+
+  var month = contactRiskDate.substring(0, contactRiskDate.indexOf('-'));
+  contactRiskDate = contactRiskDate.substring(contactRiskDate.indexOf('-') +1, contactRiskDate.length);
+
+  var year = contactRiskDate.substring(0, contactRiskDate.indexOf(' '));
+  contactRiskDate = contactRiskDate.substring(contactRiskDate.indexOf(' ') +1, contactRiskDate.length);
+
+  var hour = contactRiskDate.substring(0, contactRiskDate.indexOf(':'));
+  contactRiskDate = contactRiskDate.substring(contactRiskDate.indexOf(':') +1, contactRiskDate.length);
+
+  var minutes = contactRiskDate;
+
+  return DateTime(int.parse(year), int.parse(month), int.parse(day), int.parse(hour), int.parse(minutes)).toUtc();
+}
+
 String parseTimeString(String s) {
   List<String> parts = [];
   List<String> parts2 = [];
@@ -602,6 +620,37 @@ List<String> dynamicToStringList(List<dynamic> dynamicList) {
   }
 
   return stringList;
+}
+
+List<String> getTaskIdList(String taskIdsJson) {
+  List<String> taskIds = [];
+
+  if (taskIdsJson.isNotEmpty) {
+    taskIds = taskIdsJson.split(',');
+    print('task_ids');
+    print(taskIds);
+  }
+
+  return taskIds;
+}
+
+String getTaskIds(Map<String, dynamic> data) {
+  String taskIds = "";
+
+  if (data.isNotEmpty && data.values.isNotEmpty) {
+    var taskIdJson = data['task_ids'].toString();
+    if (taskIdJson != null && taskIdJson.isNotEmpty) {
+      var taskIdList = taskIdJson.split(',');
+      for (var taskId in taskIdList) {
+        taskIds += '$taskId;';
+      }
+      if (taskIds.isNotEmpty) {
+        taskIds = taskIds.substring(0, taskIds.length - 1);
+      }
+    }
+  }
+
+  return taskIds;
 }
 
 List<DateTime> dynamicToDateTimeList(List<dynamic> dynamicList) {

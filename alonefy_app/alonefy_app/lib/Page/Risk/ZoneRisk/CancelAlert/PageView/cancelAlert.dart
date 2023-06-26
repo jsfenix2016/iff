@@ -21,6 +21,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ifeelefine/Page/Risk/DateRisk/Widgets/popUpContact.dart';
 import 'package:ifeelefine/Page/Risk/ZoneRisk/ListContactZoneRisk/PageView/zoneRisk.dart';
+import 'package:ifeelefine/Services/mainService.dart';
 import 'package:ifeelefine/Utils/Widgets/elevateButtonCustomBorder.dart';
 import 'package:ifeelefine/Utils/Widgets/elevatedButtonFilling.dart';
 import 'package:ifeelefine/main.dart';
@@ -28,9 +29,10 @@ import 'package:notification_center/notification_center.dart';
 import 'package:ifeelefine/Common/decoration_custom.dart';
 
 class CancelAlertPage extends StatefulWidget {
-  const CancelAlertPage({super.key, required this.contactRisk});
+  const CancelAlertPage({super.key, required this.contactRisk, required this.taskdIds});
 
   final ContactZoneRiskBD contactRisk;
+  final List<String> taskdIds;
   // final String timefinish;
   // final Timer useMobil;
   @override
@@ -75,6 +77,9 @@ class _CancelAlertState extends State<CancelAlertPage> {
 
   void saveDate(BuildContext context) async {
     if (widget.contactRisk.code == codeTemp) {
+      if (widget.taskdIds != null && widget.taskdIds.isNotEmpty) {
+        MainService().cancelAllNotifications(widget.taskdIds);
+      }
       NotificationCenter().notify('getContactZoneRisk');
       stopTimer();
       timerSendSMS.cancel();

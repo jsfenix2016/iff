@@ -68,7 +68,8 @@ class _RiskPageState extends State<RiskPage> {
         isprogrammed: false,
         photoDate: [],
         saveContact: false,
-        createDate: DateTime.now());
+        createDate: DateTime.now(),
+        taskIds: []);
   }
 
   void deleteContactRisk(BuildContext context, ContactRiskBD contact) async {
@@ -167,7 +168,7 @@ class _RiskPageState extends State<RiskPage> {
       context,
       MaterialPageRoute(
         builder: (context) => CancelDatePage(
-          contactRisk: contactTemp,
+          contactRisk: contactTemp, taskIds: []
         ),
       ),
     );
