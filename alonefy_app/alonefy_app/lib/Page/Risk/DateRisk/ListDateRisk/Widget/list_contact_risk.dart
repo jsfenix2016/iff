@@ -41,7 +41,7 @@ class _ListContactRiskState extends State<ListContactRisk> {
       context,
       MaterialPageRoute(
         builder: (context) => CancelDatePage(
-          contactRisk: contactTemp,
+          contactRisk: contactTemp, taskIds: [],
         ),
       ),
     );

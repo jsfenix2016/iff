@@ -75,6 +75,7 @@ class _EditRiskPageState extends State<EditRiskPage> {
   List<Uint8List> imageData = [];
   String from = "";
   String to = "";
+  bool isLoading = false;
 
   late DateTime dateTimeTemp = DateTime.now();
   @override
