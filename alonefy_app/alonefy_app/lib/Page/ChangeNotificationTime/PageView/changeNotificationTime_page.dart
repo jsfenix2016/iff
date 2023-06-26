@@ -235,35 +235,36 @@ class _ChangeNotificationTimePageState
         child: SizedBox(
             height: 120,
             child: CupertinoApp(
-              debugShowCheckedModeBanner: false,
-              theme: const CupertinoThemeData(
-                brightness: Brightness.light,
-              ),
-              home: Stack(
-                children: [
-                  if (_prefs.getUserPremium) ...[
-                    _getCupertinoPicker(initialPosition, pickerId)
-                  ] else ...[
-                    GestureDetector(
-                      child: AbsorbPointer(
-                          absorbing: !_prefs.getUserPremium,
-                          child: _getCupertinoPicker(initialPosition, pickerId)),
-                      onVerticalDragEnd: (drag) {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const PremiumPage(
-                                  isFreeTrial: false,
-                                  img: 'Pantalla5.jpg',
-                                  title: Constant.premiumChangeTimeTitle,
-                                  subtitle: '')),
-                        );
-                      },
-                    )
-                  ]
-                ],
-              )
-            )));
+                debugShowCheckedModeBanner: false,
+                theme: const CupertinoThemeData(
+                  brightness: Brightness.light,
+                ),
+                home: Stack(
+                  children: [
+                    if (_prefs.getUserPremium || _prefs.getDemoActive) ...[
+                      _getCupertinoPicker(initialPosition, pickerId)
+                    ] else ...[
+                      GestureDetector(
+                        child: AbsorbPointer(
+                            absorbing:
+                                !_prefs.getUserPremium || _prefs.getDemoActive,
+                            child:
+                                _getCupertinoPicker(initialPosition, pickerId)),
+                        onVerticalDragEnd: (drag) {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const PremiumPage(
+                                    isFreeTrial: false,
+                                    img: 'Pantalla5.jpg',
+                                    title: Constant.premiumChangeTimeTitle,
+                                    subtitle: '')),
+                          );
+                        },
+                      )
+                    ]
+                  ],
+                ))));
   }
 
   Widget _getCupertinoPicker(int initialPosition, int pickerId) {
@@ -286,7 +287,7 @@ class _ChangeNotificationTimePageState
 // context, Constant.timeDic[value.toString()].toString());
       },
       scrollController:
-      FixedExtentScrollController(initialItem: initialPosition),
+          FixedExtentScrollController(initialItem: initialPosition),
       itemExtent: 60.0,
       children: [
         for (var i = 0; i < Constant.timeDic.length; i++)

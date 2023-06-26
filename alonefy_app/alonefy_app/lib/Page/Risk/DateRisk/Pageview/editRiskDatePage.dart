@@ -4,6 +4,8 @@ import 'dart:io';
 import 'package:ifeelefine/Common/manager_alerts.dart';
 import 'package:ifeelefine/Common/text_style_font.dart';
 import 'package:ifeelefine/Page/Calendar/calendarPopup.dart';
+import 'package:ifeelefine/Page/Risk/DateRisk/ListDateRisk/Controller/riskPageController.dart';
+import 'package:ifeelefine/Utils/Widgets/loading_page.dart';
 import 'package:ifeelefine/Views/space_heidht_custom.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
@@ -44,7 +46,8 @@ class EditRiskPage extends StatefulWidget {
 }
 
 class _EditRiskPageState extends State<EditRiskPage> {
-  EditRiskController editVC = EditRiskController();
+  EditRiskController editVC = Get.put(EditRiskController());
+  RiskController riskVC = Get.find<RiskController>();
   var isTimeInit = false;
   var isTimeFinish = false;
   var sendWhatsappSMS = false;
@@ -72,7 +75,7 @@ class _EditRiskPageState extends State<EditRiskPage> {
   List<Uint8List> imageData = [];
   String from = "";
   String to = "";
-
+  bool isLoading = false;
   late DateTime dateTimeTemp = DateTime.now();
   @override
   void initState() {
@@ -121,19 +124,30 @@ class _EditRiskPageState extends State<EditRiskPage> {
 
   // Función para solicitar permiso de acceso a la galería
   Future<void> requestGalleryPermission() async {
-    var result = await cameraPermissions(_prefs.getAcceptedCamera, context);
+    await cameraPermissions(_prefs.getAcceptedCamera, context);
   }
 
   void saveDate(BuildContext context) async {
-    print(dateTimeTemp);
-
+    setState(() {
+      isLoading = true;
+    });
     String temp =
         '${dateTimeTemp.day}-${dateTimeTemp.month}-${dateTimeTemp.year} ';
     var listTimeInit = widget.contactRisk.timeinit.split(' ');
-    var initTime = temp + listTimeInit[1];
-
     var listTimeFinish = widget.contactRisk.timefinish.split(' ');
-    var finishTime = temp + listTimeFinish[1];
+    var initTime = "";
+    var finishTime = "";
+    if (widget.contactRisk.timeinit == timeinit) {
+      initTime = temp + listTimeInit[0];
+    }
+
+    if (widget.contactRisk.timefinish == timefinish) {
+      finishTime = temp + listTimeFinish[0];
+    }
+    if (widget.contactRisk.id != -1) {
+      initTime = temp + listTimeInit[1];
+      finishTime = temp + listTimeFinish[1];
+    }
 
     var list = await convertImageData();
     var contactRisk = ContactRiskBD(
@@ -142,7 +156,8 @@ class _EditRiskPageState extends State<EditRiskPage> {
         name: contactSelect.displayName,
         timeinit: initTime,
         timefinish: finishTime,
-        phones: contactSelect.phones.first.normalizedNumber.replaceAll("+34", ""),
+        phones:
+            contactSelect.phones.first.normalizedNumber.replaceAll("+34", ""),
         titleMessage: titleMessage,
         messages: message,
         sendLocation: widget.contactRisk.sendLocation,
@@ -163,19 +178,26 @@ class _EditRiskPageState extends State<EditRiskPage> {
     if (widget.contactRisk.id == -1) {
       contactRisk.id = widget.index;
       bool save = await editVC.saveContactRisk(context, contactRisk);
-      if (save) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) => const RiskPage(),
-          ),
-        );
-      } else {
+      if (!save) {
+        setState(() {
+          isLoading = false;
+        });
         showSaveAlert(context, Constant.info, Constant.errorGeneric.tr);
+        return;
       }
     } else {
-      await editVC.updateContactRisk(context, contactRisk);
+      bool edit = await editVC.updateContactRisk(context, contactRisk);
+      if (!edit) {
+        setState(() {
+          isLoading = false;
+        });
+        showSaveAlert(context, Constant.info, Constant.errorGeneric.tr);
+        return;
+      }
     }
+    riskVC.update();
+
+    Navigator.of(context).pop();
   }
 
   Future<List<Uint8List>> convertImageData() async {
@@ -193,7 +215,11 @@ class _EditRiskPageState extends State<EditRiskPage> {
       if (path.path != "") {
         bytes = path.readAsBytesSync();
         img64 = base64Encode(bytes);
-        temp.insert(i, bytes);
+        if (temp.isEmpty) {
+          temp.insert(0, bytes);
+        } else {
+          temp.insert(i, bytes);
+        }
       }
     }
 
@@ -315,573 +341,581 @@ class _EditRiskPageState extends State<EditRiskPage> {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
 
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.brown,
-        title: const Text("Edición de mensaje de cita"),
-      ),
-      body: Container(
-        decoration: decorationCustom(),
-        child: SingleChildScrollView(
-          child: Center(
-            child: Column(
-              children: [
-                const SafeArea(
-                  child: SpaceHeightCustom(
-                    heightTemp: 10,
-                  ),
-                ),
-                getDateSelected("De"),
-                Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Container(
-                    decoration: const BoxDecoration(
-                      color: Color.fromRGBO(189, 196, 201, 1),
-                      borderRadius: BorderRadius.all(Radius.circular(20)),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.only(top: 1.0, bottom: 1),
-                      child: Container(
-                        decoration: const BoxDecoration(
-                          color: Color.fromARGB(255, 43, 35, 26),
-                          borderRadius: BorderRadius.all(Radius.circular(20)),
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Column(
-                            mainAxisSize: MainAxisSize.max,
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              SizedBox(
-                                height: 50.0,
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.max,
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    SizedBox(
-                                      width: size.width / 3,
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: Text(
-                                          "Hora inicio:",
-                                          textAlign: TextAlign.left,
-                                          style: textNormal20White(),
-                                        ),
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      width: 120,
-                                      height: 80,
-                                      child: CupertinoTheme(
-                                        data: const CupertinoThemeData(
-                                          brightness: Brightness.dark,
-                                          primaryColor: CupertinoColors.white,
-                                          barBackgroundColor:
-                                              CupertinoColors.white,
-                                          scaffoldBackgroundColor:
-                                              CupertinoColors.white,
-                                          textTheme: CupertinoTextThemeData(
-                                            primaryColor: CupertinoColors.white,
-                                            textStyle: TextStyle(
-                                                color: Colors.transparent),
-                                          ),
-                                        ),
-                                        child: CupertinoDatePicker(
-                                          key: const Key('init'),
-                                          initialDateTime: parseDurationRow(
-                                              widget.contactRisk.timeinit),
-                                          mode: CupertinoDatePickerMode.time,
-                                          use24hFormat: true,
-                                          onDateTimeChanged: (value) {
-                                            timeinit = value.toString();
-                                            widget.contactRisk.timeinit =
-                                                value.toString();
-                                          },
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              Container(
-                                height: 1.0,
-                                width: size.width,
-                                color: Colors.white,
-                              ),
-                              SizedBox(
-                                height: 50.0,
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.max,
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    SizedBox(
-                                      width: size.width / 3,
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: Text(
-                                          "Hora fin:",
-                                          textAlign: TextAlign.left,
-                                          style: textNormal20White(),
-                                        ),
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      width: 120,
-                                      height: 80,
-                                      child: CupertinoTheme(
-                                        data: const CupertinoThemeData(
-                                          brightness: Brightness.dark,
-                                          primaryColor: CupertinoColors.white,
-                                          barBackgroundColor:
-                                              CupertinoColors.black,
-                                          scaffoldBackgroundColor:
-                                              CupertinoColors.black,
-                                          textTheme: CupertinoTextThemeData(
-                                            primaryColor:
-                                                CupertinoColors.opaqueSeparator,
-                                            textStyle: TextStyle(
-                                                color: Colors.transparent),
-                                          ),
-                                        ),
-                                        child: CupertinoDatePicker(
-                                          key: const Key('finish'),
-                                          initialDateTime: parseDurationRow(
-                                              widget.contactRisk.timefinish),
-                                          mode: CupertinoDatePickerMode.time,
-                                          use24hFormat: true,
-                                          onDateTimeChanged: (value) {
-                                            timefinish = value.toString();
-                                            widget.contactRisk.timefinish =
-                                                timefinish;
-                                          },
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
+    return LoadingIndicator(
+      isLoading: isLoading,
+      child: Scaffold(
+        appBar: AppBar(
+          backgroundColor: Colors.brown,
+          title: const Text("Edición de mensaje de cita"),
+        ),
+        body: Container(
+          decoration: decorationCustom(),
+          child: SingleChildScrollView(
+            child: Center(
+              child: Column(
+                children: [
+                  const SafeArea(
+                    child: SpaceHeightCustom(
+                      heightTemp: 10,
                     ),
                   ),
-                ),
-                const SpaceHeightCustom(heightTemp: 20),
-                SizedBox(
-                  child: Column(
-                    children: [
-                      Center(
-                        child: Text(
-                          "Establece tu clave de cancelación",
-                          textAlign: TextAlign.center,
-                          style: textNomral18White(),
-                        ),
+                  getDateSelected("De"),
+                  Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Container(
+                      decoration: const BoxDecoration(
+                        color: Color.fromRGBO(189, 196, 201, 1),
+                        borderRadius: BorderRadius.all(Radius.circular(20)),
                       ),
-                      ContentCode(
-                        code: code,
-                        onChanged: (value) {
-                          code = value;
-                          widget.contactRisk.code =
-                              '${value.textCode1},${value.textCode2},${value.textCode3},${value.textCode4}';
-                        },
-                      ),
-                    ],
-                  ),
-                ),
-                const SpaceHeightCustom(heightTemp: 40),
-                SizedBox(
-                  child: Column(
-                    children: [
-                      Center(
-                        child: Padding(
-                          padding: const EdgeInsets.only(left: 8.0, right: 8),
-                          child: Text(
-                            "Después de la hora de fin llamar a:",
-                            textAlign: TextAlign.center,
-                            style: textNomral18White(),
-                          ),
-                        ),
-                      ),
-                      const SpaceHeightCustom(heightTemp: 12),
-                      CardContact(
-                        visible: true,
-                        photo: (indexSelect != -1 &&
-                                contactlist.isNotEmpty &&
-                                contactlist[indexSelect].photo != null)
-                            ? contactlist[indexSelect].photo
-                            : widget.contactRisk.photo,
-                        name: (indexSelect != -1 &&
-                                    contactlist.isNotEmpty &&
-                                    contactlist[indexSelect].displayName !=
-                                        '' ||
-                                widget.contactRisk.name != '')
-                            ? (indexSelect == -1)
-                                ? widget.contactRisk.name
-                                : contactlist[indexSelect].displayName
-                            : name,
-                        onChanged: (value) {
-                          showDialog(
-                            context: context,
-                            builder: (BuildContext context) => Container(
-                              width: size.width,
-                              height: size.height,
-                              color: const Color.fromRGBO(169, 146, 125, 1),
-                              child: Padding(
-                                padding: const EdgeInsets.only(
-                                    top: 28.0, left: 8, right: 8),
-                                child: PopUpContact(
-                                  listcontact: contactlist,
-                                  onChanged: (int value) {
-                                    indexSelect = value;
-                                    contactSelect = contactlist[value];
-                                    widget.contactRisk.name =
-                                        contactSelect.displayName;
-                                    setState(() {});
-                                  },
-                                ),
-                              ),
-                            ),
-                          );
-                        },
-                      ),
-                    ],
-                  ),
-                ),
-                const SpaceHeightCustom(heightTemp: 20),
-                Column(
-                  mainAxisSize: MainAxisSize.max,
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    Container(
-                      height: 65.0,
-                      color: Colors.transparent,
                       child: Padding(
-                        padding: const EdgeInsets.all(12.0),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.max,
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Container(
-                              width: 270,
-                              color: Colors.transparent,
-                              child: Text(
-                                "Enviar Whatsapp a mí contacto predefinido:",
-                                textAlign: TextAlign.left,
-                                style: textNormal14White(),
-                              ),
-                            ),
-                            Container(
-                              width: size.width / 6,
-                              color: Colors.transparent,
-                              child: Switch(
-                                onChanged: (value) {
-                                  sendWhatsappSMS = value;
-                                  widget.contactRisk.sendWhatsapp = value;
-                                  (context as Element).markNeedsBuild();
-                                },
-                                value: widget.contactRisk.sendWhatsapp,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 12.0, right: 8),
-                      child: Container(
-                        height: 65.0,
-                        color: Colors.transparent,
-                        child: Row(
-                          mainAxisSize: MainAxisSize.max,
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Container(
-                              width: 270,
-                              color: Colors.transparent,
-                              child: Text(
-                                "Enviar mi última ubicación registrada:",
-                                textAlign: TextAlign.left,
-                                style: textNormal14White(),
-                              ),
-                            ),
-                            Container(
-                              width: size.width / 6,
-                              color: Colors.transparent,
-                              child: Switch(
-                                onChanged: (value) {
-                                  sendLocation = value;
-                                  widget.contactRisk.sendLocation = value;
-                                  (context as Element).markNeedsBuild();
-                                },
-                                value: widget.contactRisk.sendLocation,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                const SpaceHeightCustom(heightTemp: 5),
-                Expanded(
-                  flex: 0,
-                  child: Container(
-                    color: Colors.transparent,
-                    child: Column(
-                      mainAxisSize: MainAxisSize.max,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: TextFormField(
-                            onChanged: (valor) {
-                              titleMessage = valor;
-                              widget.contactRisk.titleMessage = valor;
-                            },
-                            autofocus: false,
-                            key: const Key("Asunto"),
-                            initialValue: widget.contactRisk.titleMessage,
-                            textCapitalization: TextCapitalization.sentences,
-                            decoration: const InputDecoration(
-                              hintText: "",
-                              labelText: "Asunto",
-                              focusedBorder: UnderlineInputBorder(
-                                borderSide: BorderSide(color: Colors.white),
-                              ),
-                              enabledBorder: UnderlineInputBorder(
-                                borderSide: BorderSide(
-                                    width: 1,
-                                    color: Colors.white), //<-- SEE HERE
-                              ),
-                              hintStyle: TextStyle(color: Colors.white),
-                              filled: true,
-                              labelStyle: TextStyle(color: Colors.white),
-                            ),
-                            style: textNormal14White(),
-                            onSaved: (value) => {},
+                        padding: const EdgeInsets.only(top: 1.0, bottom: 1),
+                        child: Container(
+                          decoration: const BoxDecoration(
+                            color: Color.fromARGB(255, 43, 35, 26),
+                            borderRadius: BorderRadius.all(Radius.circular(20)),
                           ),
-                        ),
-                        const SpaceHeightCustom(heightTemp: 10),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: TextField(
-                            decoration: InputDecoration(
-                              hintText: "Mensaje:",
-                              labelText: widget.contactRisk.messages == ""
-                                  ? 'Mensaje:'
-                                  : widget.contactRisk.messages,
-                              focusedBorder: const UnderlineInputBorder(
-                                borderSide: BorderSide(color: Colors.white),
-                              ),
-                              enabledBorder: const UnderlineInputBorder(
-                                borderSide: BorderSide(
-                                    width: 1,
-                                    color: Colors.white), //<-- SEE HERE
-                              ),
-                              hintStyle: const TextStyle(color: Colors.white),
-                              filled: true,
-                              labelStyle: const TextStyle(color: Colors.white),
-                            ),
-                            style: textNormal14White(),
-                            keyboardType: TextInputType.multiline,
-                            maxLines: null,
-                            onChanged: (value) {
-                              message = value;
-                              widget.contactRisk.messages = message;
-                            },
-                          ),
-                        ),
-                        const SpaceHeightCustom(heightTemp: 20),
-                        Expanded(
-                          flex: 0,
-                          child: Container(
-                            color: Colors.transparent,
-                            child: Row(
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.max,
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Container(
-                                    width: 35,
-                                    height: 25,
-                                    color: Colors.transparent,
-                                    child: IconButton(
-                                      iconSize: 25,
-                                      onPressed: () async {
-                                        foto = await procesarImagen(
-                                            ImageSource.gallery);
-                                      },
-                                      icon: Column(
-                                        children: [
-                                          Container(
-                                            height: 7.5,
-                                            width: 14,
-                                            decoration: const BoxDecoration(
-                                              image: DecorationImage(
-                                                image: AssetImage(
-                                                    'assets/images/clip.png'),
-                                                fit: BoxFit.fill,
-                                              ),
-                                              color: Colors.transparent,
+                                SizedBox(
+                                  height: 50.0,
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.max,
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      SizedBox(
+                                        width: size.width / 3,
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: Text(
+                                            "Hora inicio:",
+                                            textAlign: TextAlign.left,
+                                            style: textNormal20White(),
+                                          ),
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        width: 120,
+                                        height: 80,
+                                        child: CupertinoTheme(
+                                          data: const CupertinoThemeData(
+                                            brightness: Brightness.dark,
+                                            primaryColor: CupertinoColors.white,
+                                            barBackgroundColor:
+                                                CupertinoColors.white,
+                                            scaffoldBackgroundColor:
+                                                CupertinoColors.white,
+                                            textTheme: CupertinoTextThemeData(
+                                              primaryColor:
+                                                  CupertinoColors.white,
+                                              textStyle: TextStyle(
+                                                  color: Colors.transparent),
                                             ),
                                           ),
-                                        ],
+                                          child: CupertinoDatePicker(
+                                            key: const Key('init'),
+                                            initialDateTime: parseDurationRow(
+                                                widget.contactRisk.timeinit),
+                                            mode: CupertinoDatePickerMode.time,
+                                            use24hFormat: true,
+                                            onDateTimeChanged: (value) {
+                                              timeinit = value.toString();
+                                              widget.contactRisk.timeinit =
+                                                  value.toString();
+                                            },
+                                          ),
+                                        ),
                                       ),
-                                    ),
+                                    ],
                                   ),
                                 ),
                                 Container(
-                                  width: 100,
-                                  color: Colors.transparent,
-                                  child: Text(
-                                    "Añadir imagen",
-                                    textAlign: TextAlign.left,
-                                    style: textNormal14White(),
-                                  ),
+                                  height: 1.0,
+                                  width: size.width,
+                                  color: Colors.white,
                                 ),
-                                ImageFanWidget(
-                                  onChanged: (List<File> value) {
-                                    imagePaths = value;
-                                  },
-                                  listImg: widget.contactRisk.photoDate,
-                                  isEdit: false,
-                                ),
-                                Visibility(
-                                  visible: imagePaths.isEmpty ? false : true,
-                                  child: IconButton(
-                                    onPressed: () {
-                                      //action coe when button is pressed
-                                      showDialog(
-                                        context: context,
-                                        builder: (BuildContext context) {
-                                          return Dialog(
-                                            child: SizedBox(
-                                              child: Column(
-                                                children: [
-                                                  Expanded(
-                                                    child: getImageFile(
-                                                        imagePaths[
-                                                            _currentIndex]),
-                                                  ),
-                                                  ButtonBar(
-                                                    alignment: MainAxisAlignment
-                                                        .center,
-                                                    children: [
-                                                      IconButton(
-                                                        icon: const Icon(
-                                                            Icons.arrow_back),
-                                                        onPressed: () {
-                                                          _currentIndex =
-                                                              (_currentIndex -
-                                                                      1) %
-                                                                  imagePaths
-                                                                      .length;
-                                                          if (_currentIndex <
-                                                              0) {
-                                                            _currentIndex =
-                                                                imagePaths
-                                                                        .length -
-                                                                    1;
-                                                          }
-                                                          (context as Element)
-                                                              .markNeedsBuild();
-                                                        },
-                                                      ),
-                                                      IconButton(
-                                                        icon: const Icon(Icons
-                                                            .arrow_forward),
-                                                        onPressed: () {
-                                                          _currentIndex =
-                                                              (_currentIndex +
-                                                                      1) %
-                                                                  imagePaths
-                                                                      .length;
-                                                          (context as Element)
-                                                              .markNeedsBuild();
-                                                        },
-                                                      ),
-                                                      IconButton(
-                                                        icon: const Icon(
-                                                            Icons.close),
-                                                        onPressed: () {
-                                                          Navigator.of(context)
-                                                              .pop();
-                                                        },
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ],
-                                              ),
+                                SizedBox(
+                                  height: 50.0,
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.max,
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      SizedBox(
+                                        width: size.width / 3,
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: Text(
+                                            "Hora fin:",
+                                            textAlign: TextAlign.left,
+                                            style: textNormal20White(),
+                                          ),
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        width: 120,
+                                        height: 80,
+                                        child: CupertinoTheme(
+                                          data: const CupertinoThemeData(
+                                            brightness: Brightness.dark,
+                                            primaryColor: CupertinoColors.white,
+                                            barBackgroundColor:
+                                                CupertinoColors.black,
+                                            scaffoldBackgroundColor:
+                                                CupertinoColors.black,
+                                            textTheme: CupertinoTextThemeData(
+                                              primaryColor: CupertinoColors
+                                                  .opaqueSeparator,
+                                              textStyle: TextStyle(
+                                                  color: Colors.transparent),
                                             ),
-                                          );
-                                        },
-                                      );
-                                    },
-                                    icon: const Icon(
-                                      Icons.preview,
-                                      color: Colors.white,
-                                    ),
+                                          ),
+                                          child: CupertinoDatePicker(
+                                            key: const Key('finish'),
+                                            initialDateTime: parseDurationRow(
+                                                widget.contactRisk.timefinish),
+                                            mode: CupertinoDatePickerMode.time,
+                                            use24hFormat: true,
+                                            onDateTimeChanged: (value) {
+                                              timefinish = value.toString();
+                                              widget.contactRisk.timefinish =
+                                                  timefinish;
+                                            },
+                                          ),
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
                               ],
                             ),
                           ),
                         ),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
+                      ),
+                    ),
+                  ),
+                  const SpaceHeightCustom(heightTemp: 20),
+                  SizedBox(
+                    child: Column(
+                      children: [
+                        Center(
+                          child: Text(
+                            "Establece tu clave de cancelación",
+                            textAlign: TextAlign.center,
+                            style: textNomral18White(),
+                          ),
+                        ),
+                        ContentCode(
+                          code: code,
+                          onChanged: (value) {
+                            code = value;
+                            widget.contactRisk.code =
+                                '${value.textCode1},${value.textCode2},${value.textCode3},${value.textCode4}';
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SpaceHeightCustom(heightTemp: 40),
+                  SizedBox(
+                    child: Column(
+                      children: [
+                        Center(
+                          child: Padding(
+                            padding: const EdgeInsets.only(left: 8.0, right: 8),
+                            child: Text(
+                              "Después de la hora de fin llamar a:",
+                              textAlign: TextAlign.center,
+                              style: textNomral18White(),
+                            ),
+                          ),
+                        ),
+                        const SpaceHeightCustom(heightTemp: 12),
+                        CardContact(
+                          visible: true,
+                          photo: (indexSelect != -1 &&
+                                  contactlist.isNotEmpty &&
+                                  contactlist[indexSelect].photo != null)
+                              ? contactlist[indexSelect].photo
+                              : widget.contactRisk.photo,
+                          name: (indexSelect != -1 &&
+                                      contactlist.isNotEmpty &&
+                                      contactlist[indexSelect].displayName !=
+                                          '' ||
+                                  widget.contactRisk.name != '')
+                              ? (indexSelect == -1)
+                                  ? widget.contactRisk.name
+                                  : contactlist[indexSelect].displayName
+                              : name,
+                          onChanged: (value) {
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) => Container(
+                                width: size.width,
+                                height: size.height,
+                                color: const Color.fromRGBO(169, 146, 125, 1),
+                                child: Padding(
+                                  padding: const EdgeInsets.only(
+                                      top: 28.0, left: 8, right: 8),
+                                  child: PopUpContact(
+                                    listcontact: contactlist,
+                                    onChanged: (int value) {
+                                      indexSelect = value;
+                                      contactSelect = contactlist[value];
+                                      widget.contactRisk.name =
+                                          contactSelect.displayName;
+                                      setState(() {});
+                                    },
+                                  ),
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SpaceHeightCustom(heightTemp: 20),
+                  Column(
+                    mainAxisSize: MainAxisSize.max,
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      Container(
+                        height: 65.0,
+                        color: Colors.transparent,
+                        child: Padding(
+                          padding: const EdgeInsets.all(12.0),
                           child: Row(
                             mainAxisSize: MainAxisSize.max,
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              SizedBox(
-                                width: 280,
+                              Container(
+                                width: 270,
+                                color: Colors.transparent,
                                 child: Text(
-                                  "Guardar esta configuración",
-                                  textAlign: TextAlign.right,
+                                  "Enviar Whatsapp a mí contacto predefinido:",
+                                  textAlign: TextAlign.left,
                                   style: textNormal14White(),
                                 ),
                               ),
-                              SizedBox(
+                              Container(
                                 width: size.width / 6,
+                                color: Colors.transparent,
                                 child: Switch(
                                   onChanged: (value) {
-                                    saveConfig = value;
-                                    widget.contactRisk.saveContact = value;
+                                    sendWhatsappSMS = value;
+                                    widget.contactRisk.sendWhatsapp = value;
+                                    (context as Element).markNeedsBuild();
                                   },
-                                  value: saveConfig,
+                                  value: widget.contactRisk.sendWhatsapp,
                                 ),
                               ),
                             ],
                           ),
                         ),
-                      ],
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 12.0, right: 8),
+                        child: Container(
+                          height: 65.0,
+                          color: Colors.transparent,
+                          child: Row(
+                            mainAxisSize: MainAxisSize.max,
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Container(
+                                width: 270,
+                                color: Colors.transparent,
+                                child: Text(
+                                  "Enviar mi última ubicación registrada:",
+                                  textAlign: TextAlign.left,
+                                  style: textNormal14White(),
+                                ),
+                              ),
+                              Container(
+                                width: size.width / 6,
+                                color: Colors.transparent,
+                                child: Switch(
+                                  onChanged: (value) {
+                                    sendLocation = value;
+                                    widget.contactRisk.sendLocation = value;
+                                    (context as Element).markNeedsBuild();
+                                  },
+                                  value: widget.contactRisk.sendLocation,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SpaceHeightCustom(heightTemp: 5),
+                  Expanded(
+                    flex: 0,
+                    child: Container(
+                      color: Colors.transparent,
+                      child: Column(
+                        mainAxisSize: MainAxisSize.max,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: TextFormField(
+                              onChanged: (valor) {
+                                titleMessage = valor;
+                                widget.contactRisk.titleMessage = valor;
+                              },
+                              autofocus: false,
+                              key: const Key("Asunto"),
+                              initialValue: widget.contactRisk.titleMessage,
+                              textCapitalization: TextCapitalization.sentences,
+                              decoration: const InputDecoration(
+                                hintText: "",
+                                labelText: "Asunto",
+                                focusedBorder: UnderlineInputBorder(
+                                  borderSide: BorderSide(color: Colors.white),
+                                ),
+                                enabledBorder: UnderlineInputBorder(
+                                  borderSide: BorderSide(
+                                      width: 1,
+                                      color: Colors.white), //<-- SEE HERE
+                                ),
+                                hintStyle: TextStyle(color: Colors.white),
+                                filled: true,
+                                labelStyle: TextStyle(color: Colors.white),
+                              ),
+                              style: textNormal14White(),
+                              onSaved: (value) => {},
+                            ),
+                          ),
+                          const SpaceHeightCustom(heightTemp: 10),
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: TextField(
+                              decoration: InputDecoration(
+                                hintText: "Mensaje:",
+                                labelText: widget.contactRisk.messages == ""
+                                    ? 'Mensaje:'
+                                    : widget.contactRisk.messages,
+                                focusedBorder: const UnderlineInputBorder(
+                                  borderSide: BorderSide(color: Colors.white),
+                                ),
+                                enabledBorder: const UnderlineInputBorder(
+                                  borderSide: BorderSide(
+                                      width: 1,
+                                      color: Colors.white), //<-- SEE HERE
+                                ),
+                                hintStyle: const TextStyle(color: Colors.white),
+                                filled: true,
+                                labelStyle:
+                                    const TextStyle(color: Colors.white),
+                              ),
+                              style: textNormal14White(),
+                              keyboardType: TextInputType.multiline,
+                              maxLines: null,
+                              onChanged: (value) {
+                                message = value;
+                                widget.contactRisk.messages = message;
+                              },
+                            ),
+                          ),
+                          const SpaceHeightCustom(heightTemp: 20),
+                          Expanded(
+                            flex: 0,
+                            child: Container(
+                              color: Colors.transparent,
+                              child: Row(
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Container(
+                                      width: 35,
+                                      height: 25,
+                                      color: Colors.transparent,
+                                      child: IconButton(
+                                        iconSize: 25,
+                                        onPressed: () async {
+                                          foto = await procesarImagen(
+                                              ImageSource.gallery);
+                                        },
+                                        icon: Column(
+                                          children: [
+                                            Container(
+                                              height: 7.5,
+                                              width: 14,
+                                              decoration: const BoxDecoration(
+                                                image: DecorationImage(
+                                                  image: AssetImage(
+                                                      'assets/images/clip.png'),
+                                                  fit: BoxFit.fill,
+                                                ),
+                                                color: Colors.transparent,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  Container(
+                                    width: 100,
+                                    color: Colors.transparent,
+                                    child: Text(
+                                      "Añadir imagen",
+                                      textAlign: TextAlign.left,
+                                      style: textNormal14White(),
+                                    ),
+                                  ),
+                                  ImageFanWidget(
+                                    onChanged: (List<File> value) {
+                                      imagePaths = value;
+                                      setState(() {});
+                                    },
+                                    listImg: widget.contactRisk.photoDate,
+                                    isEdit: false,
+                                  ),
+                                  Visibility(
+                                    visible: imagePaths.isEmpty ? false : true,
+                                    child: IconButton(
+                                      onPressed: () {
+                                        //action coe when button is pressed
+                                        showDialog(
+                                          context: context,
+                                          builder: (BuildContext context) {
+                                            return Dialog(
+                                              child: SizedBox(
+                                                child: Column(
+                                                  children: [
+                                                    Expanded(
+                                                      child: getImageFile(
+                                                          imagePaths[
+                                                              _currentIndex]),
+                                                    ),
+                                                    ButtonBar(
+                                                      alignment:
+                                                          MainAxisAlignment
+                                                              .center,
+                                                      children: [
+                                                        IconButton(
+                                                          icon: const Icon(
+                                                              Icons.arrow_back),
+                                                          onPressed: () {
+                                                            _currentIndex =
+                                                                (_currentIndex -
+                                                                        1) %
+                                                                    imagePaths
+                                                                        .length;
+                                                            if (_currentIndex <
+                                                                0) {
+                                                              _currentIndex =
+                                                                  imagePaths
+                                                                          .length -
+                                                                      1;
+                                                            }
+                                                            (context as Element)
+                                                                .markNeedsBuild();
+                                                          },
+                                                        ),
+                                                        IconButton(
+                                                          icon: const Icon(Icons
+                                                              .arrow_forward),
+                                                          onPressed: () {
+                                                            _currentIndex =
+                                                                (_currentIndex +
+                                                                        1) %
+                                                                    imagePaths
+                                                                        .length;
+                                                            (context as Element)
+                                                                .markNeedsBuild();
+                                                          },
+                                                        ),
+                                                        IconButton(
+                                                          icon: const Icon(
+                                                              Icons.close),
+                                                          onPressed: () {
+                                                            Navigator.of(
+                                                                    context)
+                                                                .pop();
+                                                          },
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            );
+                                          },
+                                        );
+                                      },
+                                      icon: const Icon(
+                                        Icons.preview,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.max,
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                SizedBox(
+                                  width: 280,
+                                  child: Text(
+                                    "Guardar esta configuración",
+                                    textAlign: TextAlign.right,
+                                    style: textNormal14White(),
+                                  ),
+                                ),
+                                SizedBox(
+                                  width: size.width / 6,
+                                  child: Switch(
+                                    onChanged: (value) {
+                                      saveConfig = value;
+                                      widget.contactRisk.saveContact = value;
+                                    },
+                                    value: saveConfig,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
-                ),
-                const SpaceHeightCustom(heightTemp: 20),
-                ElevateButtonFilling(
-                  onChanged: (value) {
-                    isActived = true;
-                    isprogrammed = false;
-                    widget.contactRisk.isActived = true;
-                    widget.contactRisk.isprogrammed = false;
-                    saveDate(context);
-                  },
-                  mensaje: 'Iniciar cita ahora',
-                ),
-                const SpaceHeightCustom(heightTemp: 20),
-                ElevateButtonCustomBorder(
-                  onChanged: (value) {
-                    isActived = false;
-                    isprogrammed = true;
-                    widget.contactRisk.isActived = false;
-                    widget.contactRisk.isprogrammed = true;
-                    saveDate(context);
-                  },
-                  mensaje: 'Programar activación',
-                ),
-              ],
+                  const SpaceHeightCustom(heightTemp: 20),
+                  ElevateButtonFilling(
+                    onChanged: (value) {
+                      isActived = true;
+                      isprogrammed = false;
+                      widget.contactRisk.isActived = true;
+                      widget.contactRisk.isprogrammed = false;
+                      saveDate(context);
+                    },
+                    mensaje: 'Iniciar cita ahora',
+                  ),
+                  const SpaceHeightCustom(heightTemp: 20),
+                  ElevateButtonCustomBorder(
+                    onChanged: (value) {
+                      isActived = false;
+                      isprogrammed = true;
+                      widget.contactRisk.isActived = false;
+                      widget.contactRisk.isprogrammed = true;
+                      saveDate(context);
+                    },
+                    mensaje: 'Programar activación',
+                  ),
+                ],
+              ),
             ),
           ),
         ),

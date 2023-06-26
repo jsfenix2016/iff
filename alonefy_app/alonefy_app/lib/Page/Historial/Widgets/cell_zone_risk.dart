@@ -1,15 +1,11 @@
-import 'dart:convert';
 import 'dart:io';
-import 'dart:typed_data';
-
-import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ifeelefine/Common/colorsPalette.dart';
 import 'package:ifeelefine/Common/utils.dart';
 import 'package:ifeelefine/Model/logAlertsBD.dart';
 import 'package:ifeelefine/Page/Historial/PageView/preview_video_screen.dart';
-import 'package:path_provider/path_provider.dart';
+
 import 'package:video_player/video_player.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 
@@ -23,9 +19,8 @@ class CellZoneRisk extends StatefulWidget {
 class _CellZoneRiskState extends State<CellZoneRisk> {
   late VideoPlayerController _videoPlayerController;
   late Future<void> _initializeVideoPlayerFuture;
-  late Stream<double> _videoPositionStream;
-  bool _isRecording = false;
-  bool _isLoading = false;
+  late Stream<double> videoPositionStream;
+
   late File fileTemp = File("");
 
   void _initializeVideoPlayer() async {
@@ -50,7 +45,7 @@ class _CellZoneRiskState extends State<CellZoneRisk> {
 
     _initializeVideoPlayerFuture = _videoPlayerController.initialize();
 
-    _videoPositionStream =
+    videoPositionStream =
         Stream<double>.periodic(const Duration(milliseconds: 200), (_) {
       return _videoPlayerController.value.position.inMilliseconds.toDouble();
     }).takeWhile((position) {
@@ -130,7 +125,7 @@ class _CellZoneRiskState extends State<CellZoneRisk> {
                         ),
                       );
                     } else {
-                      return Center(child: CircularProgressIndicator());
+                      return const Center(child: CircularProgressIndicator());
                     }
                   },
                 )

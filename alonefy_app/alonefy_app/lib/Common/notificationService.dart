@@ -13,10 +13,7 @@ import 'package:ifeelefine/Controllers/mainController.dart';
 import 'package:ifeelefine/Model/contactRiskBD.dart';
 import 'package:ifeelefine/Page/Risk/DateRisk/Controller/editRiskController.dart';
 import 'package:ifeelefine/Page/Risk/DateRisk/Pageview/cancelDatePage.dart';
-import 'package:ifeelefine/Page/Risk/DateRisk/ListDateRisk/PageView/riskDatePage.dart';
 import 'package:ifeelefine/main.dart';
-import 'package:notification_center/notification_center.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class RedirectViewNotifier with ChangeNotifier {
   static BuildContext? context;
@@ -45,7 +42,8 @@ class RedirectViewNotifier with ChangeNotifier {
   static Future<void> manageNotifications(RemoteMessage message) async {
     var data = message.data;
 
-    if (data.containsValue(Constant.inactive) || data.containsValue(Constant.drop)) {
+    if (data.containsValue(Constant.inactive) ||
+        data.containsValue(Constant.drop)) {
       final mainController = Get.put(MainController());
       if (data.containsValue(Constant.inactive)) {
         mainController.saveUserLog("Inactividad ", DateTime.now());
@@ -54,7 +52,9 @@ class RedirectViewNotifier with ChangeNotifier {
         mainController.saveActivityLog(DateTime.now(), "Movimiento brusco");
       }
       showHelpNotification(message);
-    } else if (data.containsValue('SMS') || data.containsValue('Whatsapp') || data.containsValue('Call')) {
+    } else if (data.containsValue('SMS') ||
+        data.containsValue('Whatsapp') ||
+        data.containsValue('Call')) {
       final mainController = Get.put(MainController());
       if (data.containsValue('SMS')) {
         mainController.saveUserLog("Envío de SMS a contacto", now);
@@ -66,7 +66,8 @@ class RedirectViewNotifier with ChangeNotifier {
         //launchUrl(call);
       }
       showSendToContactNotification(message);
-    } else if (data.containsValue('StartDateRisk') || data.containsValue('EndDateRisk')) {
+    } else if (data.containsValue('StartDateRisk') ||
+        data.containsValue('EndDateRisk')) {
       final editRiskController = Get.put(EditRiskController());
       String phones = data['phones'];
 
@@ -81,8 +82,9 @@ class RedirectViewNotifier with ChangeNotifier {
         }
         showDateFinishNotifications(message);
       }
-    } else if (data.containsValue('SMSRisk') || data.containsValue('WhatsappRisk')
-        || data.containsValue('CallRisk')) {
+    } else if (data.containsValue('SMSRisk') ||
+        data.containsValue('WhatsappRisk') ||
+        data.containsValue('CallRisk')) {
       final mainController = Get.put(MainController());
       if (data.containsValue('SMSRisk')) {
         mainController.saveUserLog("Envío de SMS a contacto cita", now);
@@ -94,7 +96,8 @@ class RedirectViewNotifier with ChangeNotifier {
         //launchUrl(call);
       }
       showSendToContactNotification(message);
-    } else if (data.containsValue('ContactAccepted') || data.containsValue('ContactDenied')) {
+    } else if (data.containsValue('ContactAccepted') ||
+        data.containsValue('ContactDenied')) {
       final contactUserController = Get.put(ContactUserController());
       String phones = data["phones"];
 
@@ -168,7 +171,8 @@ class RedirectViewNotifier with ChangeNotifier {
     );
   }
 
-  static Future<void> showSendToContactNotification(RemoteMessage message) async {
+  static Future<void> showSendToContactNotification(
+      RemoteMessage message) async {
     RemoteNotification? notification = message.notification;
 
     await flutterLocalNotificationsPlugin.show(
@@ -290,7 +294,8 @@ class RedirectViewNotifier with ChangeNotifier {
     );
   }
 
-  static Future<void> showContactResponseNotification(RemoteMessage message) async {
+  static Future<void> showContactResponseNotification(
+      RemoteMessage message) async {
     RemoteNotification? notification = message.notification;
 
     await flutterLocalNotificationsPlugin.show(

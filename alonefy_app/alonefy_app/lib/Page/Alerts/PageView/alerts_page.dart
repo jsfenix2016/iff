@@ -2,16 +2,15 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:ifeelefine/Common/colorsPalette.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:ifeelefine/Common/decoration_custom.dart';
 import 'package:ifeelefine/Model/logAlertsBD.dart';
 import 'package:ifeelefine/Page/Alerts/Controller/alertsController.dart';
 
 import 'package:notification_center/notification_center.dart';
 
 class AlertsPage extends StatefulWidget {
-  const AlertsPage({super.key});
-
   @override
-  State<AlertsPage> createState() => _AlertsPageState();
+  _AlertsPageState createState() => _AlertsPageState();
 }
 
 class _AlertsPageState extends State<AlertsPage> {
@@ -19,21 +18,23 @@ class _AlertsPageState extends State<AlertsPage> {
 
   final scaffoldKey = GlobalKey<ScaffoldState>();
 
-  Map<String, List<LogAlertsBD>> groupedProducts = {};
+  RxMap<String, List<LogAlertsBD>> groupedProducts =
+      RxMap<String, List<LogAlertsBD>>();
   late List<LogAlertsBD> listLog;
-  final _group = ValueNotifier<Map<String, List<LogAlertsBD>>>({});
+  final _group = ValueNotifier<RxMap<String, List<LogAlertsBD>>>(
+      RxMap<String, List<LogAlertsBD>>());
 
   Future<void> getLog() async {
-    groupedProducts = {};
+    groupedProducts.value = {};
 
-    groupedProducts = await alertsVC.getAllMov();
+    groupedProducts.value = await alertsVC.getAllMov();
     _group.value = groupedProducts;
     setState(() {});
   }
 
   Future<void> deleteForDayMov(
       BuildContext context, List<LogAlertsBD> listLog) async {
-    groupedProducts = {};
+    groupedProducts.value = {};
 
     var req = await alertsVC.deleteAlerts(context, listLog);
     if (req == 0) {
@@ -74,6 +75,7 @@ class _AlertsPageState extends State<AlertsPage> {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     final listData = groupedProducts.entries.toList();
+
     return Scaffold(
       key: scaffoldKey,
       appBar: AppBar(
@@ -81,177 +83,160 @@ class _AlertsPageState extends State<AlertsPage> {
         title: const Text("Alertas"),
       ),
       body: Container(
-        decoration: const BoxDecoration(
-          gradient: RadialGradient(
-            radius: 2,
-            colors: [
-              ColorPalette.secondView,
-              ColorPalette.principalView,
-            ],
-          ),
-        ),
+        decoration: decorationCustom(),
         width: size.width,
         height: size.height,
-        child: ListView(
-          children: [
-            const SizedBox(
-              height: 10,
-            ),
-            for (var i = 0; i <= listData.length - 1; i++)
-              Positioned(
-                top: (150),
-                child: Container(
-                  decoration: const BoxDecoration(
-                    color: Colors.transparent,
-                    borderRadius: BorderRadius.all(Radius.circular(20)),
-                  ),
-                  width: size.width,
-                  child: Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Expanded(
-                      flex: 2,
-                      child: Container(
-                        decoration: const BoxDecoration(
-                          color: Color.fromRGBO(11, 11, 10, 0.6),
-                          borderRadius: BorderRadius.all(Radius.circular(20)),
-                        ),
-                        width: size.width,
-                        child: Stack(
-                          children: [
-                            Positioned(
-                              right: 10,
-                              child: IconButton(
-                                iconSize: 35,
-                                onPressed: () {
-                                  var a = listData[i];
-                                  deleteForDayMov(context, a.value);
-                                  print("object");
-                                },
-                                icon: const Icon(
-                                  Icons.close,
-                                  color: Colors.white,
-                                ),
+        child: ListView.builder(
+          itemCount: listData.length,
+          itemBuilder: (BuildContext context, int i) {
+            var item = listData[i];
+
+            return Padding(
+              padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+              child: Stack(
+                children: [
+                  Container(
+                    decoration: const BoxDecoration(
+                      color: Colors.transparent,
+                      borderRadius: BorderRadius.all(Radius.circular(20)),
+                    ),
+                    width: size.width,
+                    child: Container(
+                      decoration: const BoxDecoration(
+                        color: Color.fromRGBO(11, 11, 10, 0.6),
+                        borderRadius: BorderRadius.all(Radius.circular(20)),
+                      ),
+                      width: size.width,
+                      child: Stack(
+                        children: [
+                          Positioned(
+                            right: 10,
+                            child: IconButton(
+                              iconSize: 35,
+                              onPressed: () {
+                                var a = listData[i];
+                                deleteForDayMov(context, a.value);
+                                print("object");
+                              },
+                              icon: const Icon(
+                                Icons.close,
+                                color: Colors.white,
                               ),
                             ),
-                            Padding(
-                              padding: const EdgeInsets.only(top: 15.0),
-                              child: Container(
-                                width: 310,
-                                color: Colors.transparent,
-                                child: ListView.builder(
-                                    shrinkWrap: true,
-                                    scrollDirection: Axis.vertical,
-                                    itemExtent: 70.0,
-                                    itemCount:
-                                        listData[i].value.toList().length,
-                                    itemBuilder:
-                                        (BuildContext context, int index) {
-                                      var listAlerts =
-                                          listData[i].value.toList();
-                                      listLog = listAlerts;
-                                      return ListTile(
-                                        title: Container(
-                                          color: Colors.transparent,
-                                          height: 70,
-                                          width: 300,
-                                          child: Stack(
-                                            children: [
-                                              Container(
-                                                width: 300,
-                                                color: Colors.transparent,
-                                                child: Row(
-                                                  mainAxisSize:
-                                                      MainAxisSize.min,
-                                                  children: [
-                                                    IconButton(
-                                                      iconSize: 35,
-                                                      color: ColorPalette
-                                                          .principal,
-                                                      onPressed: () {},
-                                                      icon: searchImageForIcon(
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(top: 15.0),
+                            child: Container(
+                              width: 310,
+                              color: Colors.transparent,
+                              child: ListView.builder(
+                                  physics: const NeverScrollableScrollPhysics(),
+                                  shrinkWrap: true,
+                                  scrollDirection: Axis.vertical,
+                                  itemExtent: 70.0,
+                                  itemCount: listData[i].value.toList().length,
+                                  itemBuilder:
+                                      (BuildContext context, int index) {
+                                    var listAlerts = listData[i].value.toList();
+                                    listLog = listAlerts;
+                                    return ListTile(
+                                      title: Container(
+                                        color: Colors.transparent,
+                                        height: 70,
+                                        width: 300,
+                                        child: Stack(
+                                          children: [
+                                            Container(
+                                              width: 300,
+                                              color: Colors.transparent,
+                                              child: Row(
+                                                mainAxisSize: MainAxisSize.min,
+                                                children: [
+                                                  IconButton(
+                                                    iconSize: 35,
+                                                    color:
+                                                        ColorPalette.principal,
+                                                    onPressed: () {},
+                                                    icon: searchImageForIcon(
+                                                        listAlerts[index].type),
+                                                  ),
+                                                  Container(
+                                                    color: Colors.transparent,
+                                                    height: 70,
+                                                    width: size.width - 166,
+                                                    child: Stack(children: [
+                                                      Positioned(
+                                                        top: 10,
+                                                        child: Text(
                                                           listAlerts[index]
-                                                              .type),
-                                                    ),
-                                                    Container(
-                                                      color: Colors.transparent,
-                                                      height: 70,
-                                                      width: size.width - 166,
-                                                      child: Stack(children: [
-                                                        Positioned(
-                                                          top: 10,
-                                                          child: Text(
-                                                            listAlerts[index]
-                                                                .type,
-                                                            textAlign:
-                                                                TextAlign.left,
-                                                            style: GoogleFonts
-                                                                .barlow(
-                                                              fontSize: 16.0,
-                                                              wordSpacing: 1,
-                                                              letterSpacing:
-                                                                  0.001,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .bold,
-                                                              color:
-                                                                  Colors.white,
-                                                            ),
+                                                              .type,
+                                                          textAlign:
+                                                              TextAlign.left,
+                                                          style: GoogleFonts
+                                                              .barlow(
+                                                            fontSize: 16.0,
+                                                            wordSpacing: 1,
+                                                            letterSpacing:
+                                                                0.001,
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                            color: Colors.white,
                                                           ),
                                                         ),
-                                                        Positioned(
-                                                          top: 40,
-                                                          child: Text(
-                                                            '${listAlerts[index].time.day}-${listAlerts[index].time.month}-${listAlerts[index].time.year} | ${listAlerts[index].time.hour}:${listAlerts[index].time.minute}',
-                                                            textAlign:
-                                                                TextAlign.left,
-                                                            style: GoogleFonts
-                                                                .barlow(
-                                                              fontSize: 16.0,
-                                                              wordSpacing: 1,
-                                                              letterSpacing:
-                                                                  0.001,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .normal,
-                                                              color:
-                                                                  Colors.white,
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      ]),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                              index >= 0 &&
-                                                      index <
-                                                          listAlerts.length - 1
-                                                  ? Positioned(
-                                                      left: 25,
-                                                      top: 100 /
-                                                          2, // La posición horizontal de la línea
-                                                      child: CustomPaint(
-                                                        painter: _LinePainter(),
                                                       ),
-                                                    )
-                                                  : const SizedBox(
-                                                      height: 0,
+                                                      Positioned(
+                                                        top: 40,
+                                                        child: Text(
+                                                          '${listAlerts[index].time.day}-${listAlerts[index].time.month}-${listAlerts[index].time.year} | ${listAlerts[index].time.hour}:${listAlerts[index].time.minute}',
+                                                          textAlign:
+                                                              TextAlign.left,
+                                                          style: GoogleFonts
+                                                              .barlow(
+                                                            fontSize: 16.0,
+                                                            wordSpacing: 1,
+                                                            letterSpacing:
+                                                                0.001,
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .normal,
+                                                            color: Colors.white,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ]),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                            index >= 0 &&
+                                                    index <
+                                                        listAlerts.length - 1
+                                                ? Positioned(
+                                                    left: 25,
+                                                    top: 100 /
+                                                        2, // La posición horizontal de la línea
+                                                    child: CustomPaint(
+                                                      painter: _LinePainter(),
                                                     ),
-                                            ],
-                                          ),
+                                                  )
+                                                : const SizedBox(
+                                                    height: 0,
+                                                  ),
+                                          ],
                                         ),
-                                      );
-                                    }),
-                              ),
+                                      ),
+                                    );
+                                  }),
                             ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
                     ),
                   ),
-                ),
+                ],
               ),
-          ],
+            );
+          },
         ),
       ),
     );

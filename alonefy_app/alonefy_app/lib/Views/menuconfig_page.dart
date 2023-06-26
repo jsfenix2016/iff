@@ -221,7 +221,7 @@ class _MenuConfigurationPageState extends State<MenuConfigurationPage> {
           redirectToConfigUser();
           return;
         }
-        if (_prefs.getUserPremium) {
+        if (_prefs.getUserPremium || _prefs.getDemoActive) {
           Navigator.push(
             context,
             MaterialPageRoute(
@@ -377,7 +377,8 @@ class _MenuConfigurationPageState extends State<MenuConfigurationPage> {
         width: 21,
       ),
       onChanged: (SlidableButtonPosition value) async {
-        if (value == SlidableButtonPosition.end && _prefs.getUserPremium) {
+        if (value == SlidableButtonPosition.end && _prefs.getUserPremium ||
+            _prefs.getDemoActive) {
           updateHabits(context);
         } else if (value == SlidableButtonPosition.end) {
           Navigator.push(

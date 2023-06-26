@@ -2,18 +2,15 @@ import 'dart:ffi';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ifeelefine/Common/Constant.dart';
 import 'package:ifeelefine/Common/colorsPalette.dart';
 import 'package:ifeelefine/Common/manager_alerts.dart';
-import 'package:ifeelefine/Common/utils.dart';
 import 'package:ifeelefine/Page/FallDetected/Controller/fall_detectedController.dart';
 
-import 'package:ifeelefine/Page/HomePage/Pageview/home_page.dart';
 import 'package:ifeelefine/Provider/prefencesUser.dart';
-import 'package:ifeelefine/Utils/Widgets/elevatedButtonFilling.dart';
+
 import 'package:slidable_button/slidable_button.dart';
 
 import '../../Premium/PageView/premium_page.dart';
@@ -146,8 +143,9 @@ class _FallActivationConfigPageState extends State<FallActivationConfigPage> {
               child: Container(
                 decoration: BoxDecoration(
                   color: Colors.transparent,
-                  border: Border.all(color: Color.fromRGBO(219, 177, 42, 1)),
-                  borderRadius: BorderRadius.all(Radius.circular(8)),
+                  border:
+                      Border.all(color: const Color.fromRGBO(219, 177, 42, 1)),
+                  borderRadius: const BorderRadius.all(Radius.circular(8)),
                 ),
                 width: 138,
                 height: 42,
@@ -239,7 +237,8 @@ class _FallActivationConfigPageState extends State<FallActivationConfigPage> {
         width: 21,
       ),
       onChanged: (SlidableButtonPosition value) {
-        if (value == SlidableButtonPosition.end && _prefs.getUserPremium) {
+        if (value == SlidableButtonPosition.end && _prefs.getUserPremium ||
+            _prefs.getDemoActive) {
           setState(() {
             isActive = !isActive;
           });

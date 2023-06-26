@@ -1,13 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_contacts/flutter_contacts.dart';
 
 import 'package:get/get.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:ifeelefine/Common/Constant.dart';
-import 'package:ifeelefine/Common/colorsPalette.dart';
-
-import 'package:ifeelefine/Common/utils.dart';
-import 'package:ifeelefine/Controllers/contactUserController.dart';
 import 'package:ifeelefine/Model/contact.dart';
 import 'package:ifeelefine/Page/Contact/EditContact/Controller/edit_controller.dart';
 import 'package:ifeelefine/Utils/Widgets/elevateButtonCustomBorder.dart';
@@ -27,7 +21,6 @@ class EditContact extends StatefulWidget {
 class _EditContactState extends State<EditContact> {
   final EditContactController contactVC = Get.put(EditContactController());
 
-  final List<Contact> _selectedContacts = [];
   var indexSelect = -1;
 
   bool isPremium = true;

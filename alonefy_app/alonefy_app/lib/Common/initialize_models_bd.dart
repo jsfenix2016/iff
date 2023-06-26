@@ -1,3 +1,4 @@
+import 'package:ifeelefine/Model/contactRiskBD.dart';
 import 'package:ifeelefine/Model/user.dart';
 import 'package:ifeelefine/Model/userbd.dart';
 
@@ -33,4 +34,26 @@ UserBD initUserBD() {
       age: '',
       country: '',
       city: '');
+}
+
+ContactRiskBD initContactRisk() {
+  return ContactRiskBD(
+      id: -1,
+      photo: null,
+      name: '',
+      timeinit: '00:00',
+      timefinish: '00:00',
+      phones: '',
+      titleMessage: '',
+      messages: '',
+      sendLocation: false,
+      sendWhatsapp: false,
+      isInitTime: false,
+      isFinishTime: false,
+      code: '',
+      isActived: false,
+      isprogrammed: false,
+      photoDate: [],
+      saveContact: false,
+      createDate: DateTime.now());
 }

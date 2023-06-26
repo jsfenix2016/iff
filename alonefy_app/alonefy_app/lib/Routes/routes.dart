@@ -1,6 +1,5 @@
 import 'package:ifeelefine/Common/initialize_models_bd.dart';
 import 'package:ifeelefine/Page/FinishConfig/Pageview/finishConfig_page.dart';
-import 'package:ifeelefine/Page/Geolocator/PageView/configGeolocator_page.dart';
 import 'package:ifeelefine/Page/Geolocator/PageView/geolocator_page.dart';
 import 'package:ifeelefine/Page/HomePage/Pageview/home_page.dart';
 import 'package:ifeelefine/Page/Onboarding/PageView/onboarding_page.dart';
@@ -13,13 +12,11 @@ import 'package:ifeelefine/Page/UserInactivityPage/PageView/configurationUserIna
 import 'package:ifeelefine/Page/UserRest/PageView/configurationUserRest_page.dart';
 import 'package:ifeelefine/Page/UserRest/PageView/previewRestTime.dart';
 import 'package:ifeelefine/Views/contact_page.dart';
-import 'package:ifeelefine/Views/protectuser_page.dart';
 import 'package:flutter/material.dart';
 
 final Map<String, Widget Function(BuildContext)> appRoute = {
   "home": (BuildContext context) => const HomePage(),
   "onboarding": (BuildContext context) => OnboardingPage(),
-  "protect": (BuildContext context) => const ProtectUserPage(),
   "risk": (BuildContext context) => const RiskPage(),
   "zone": (BuildContext context) => const ZoneRiskPage(),
   "contact": (BuildContext context) => const ContactList(

@@ -251,7 +251,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                 onPressed: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => const AlertsPage()),
+                    MaterialPageRoute(builder: (context) => AlertsPage()),
                   );
                 },
                 icon: Container(

@@ -24,6 +24,7 @@ class Constant {
   static const nextTxt = 'Siguiente';
   static const configurationbtn = 'Configurar';
   static const age = 'Edad';
+  static const newDate = 'Crear nuevo';
   static const onBoardingWelcome = 'Te damos la Bienvenida/o a I’m fine';
   static const onBoardingWelcomeMessage =
       'Si vives feliz solo o sola además, quieres sentirte protegido/a';
@@ -330,14 +331,14 @@ class Constant {
   static const String tokenRequestTxt = 'Solicitar códigos de verificación';
 
   static const String disambleProtected = "Se ha deshabilitado la protección";
-  static const String disambleProtectedError = "Ha habido un error al deshabilitar la protección";
+  static const String disambleProtectedError =
+      "Ha habido un error al deshabilitar la protección";
 
   static const String cancelChange = "Se ha cancelado los cambios";
   static const String saveCorrectly = "Se guardo correctamente";
   static const String contactSaveCorrectly =
       "Contacto guardado correctamente, se ha realizado la solicitud de autorización correctamente";
-  static const String contactEditCorrectly =
-      "Contacto editado correctamente";
+  static const String contactEditCorrectly = "Contacto editado correctamente";
   static const String timeMaxReachedInactivity =
       "Se ha alcanzado el máximo de tiempos de inactividad. Para poder programar más, hazte Premium.";
 
