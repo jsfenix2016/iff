@@ -2,13 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:get/get.dart';
 import 'package:ifeelefine/Common/Constant.dart';
-import 'package:ifeelefine/Common/utils.dart';
 import 'package:ifeelefine/Data/hiveRisk_data.dart';
 import 'package:ifeelefine/Data/hive_data.dart';
-import 'package:ifeelefine/Model/contact.dart';
 import 'package:ifeelefine/Model/contactRiskBD.dart';
+import 'package:ifeelefine/Page/Risk/DateRisk/ListDateRisk/Controller/riskPageController.dart';
 import 'package:ifeelefine/Page/Risk/DateRisk/Service/contactRiskService.dart';
-import 'package:ifeelefine/Model/logActivityBd.dart';
 import 'package:ifeelefine/Model/logAlertsBD.dart';
 import 'package:notification_center/notification_center.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -18,6 +16,7 @@ import '../../../../Model/ApiRest/ContactRiskApi.dart';
 import 'package:ifeelefine/Common/manager_alerts.dart';
 
 class EditRiskController extends GetxController {
+  RiskController riskVC = Get.find<RiskController>();
   Future<List<Contact>> getContacts(BuildContext context) async {
     PermissionStatus permission = await Permission.contacts.request();
 
@@ -43,8 +42,7 @@ class EditRiskController extends GetxController {
         type: "Cita de riesgo",
         time: DateTime.now(),
         photoDate: contact.photoDate);
-    MainController().saveUserRiskLog(mov);
-    //await const HiveData().saveUserPositionBD(mov);
+    await const HiveData().saveUserPositionBD(mov);
   }
 
   Future<bool> saveContactRisk(
@@ -70,8 +68,8 @@ class EditRiskController extends GetxController {
         final save = await const HiveDataRisk().saveContactRisk(contact);
         if (save) {
           saveActivityLog(contact);
-          NotificationCenter().notify('getContactRisk');
-
+          // NotificationCenter().notify('getContactRisk');
+          riskVC.update();
           showSaveAlert(context, Constant.info, Constant.saveCorrectly.tr);
           return true;
         } else {
@@ -104,7 +102,7 @@ class EditRiskController extends GetxController {
 
       var update = await const HiveDataRisk().updateContactRisk(contact);
       if (update) {
-        NotificationCenter().notify('getContactRisk');
+        // NotificationCenter().notify('getContactRisk');
 
         showSaveAlert(context, Constant.info, Constant.changeGeneric.tr);
         return true;
@@ -121,7 +119,6 @@ class EditRiskController extends GetxController {
     if (contactRisk != null) {
       contactRisk.isActived = true;
       contactRisk.isprogrammed = false;
-      //contactRisk.taskIds = getTaskIdList(data['task_ids'].toString());
       await const HiveDataRisk().updateContactRisk(contactRisk);
 
       final MainController mainController = Get.put(MainController());

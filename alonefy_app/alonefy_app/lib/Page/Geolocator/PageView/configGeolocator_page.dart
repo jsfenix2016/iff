@@ -1,15 +1,11 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ifeelefine/Common/Constant.dart';
 
-import 'package:ifeelefine/Common/utils.dart';
 import 'package:ifeelefine/Page/Geolocator/Controller/configGeolocatorController.dart';
 
-import 'package:ifeelefine/Page/TermsAndConditions/PageView/conditionGeneral_page.dart';
-import 'package:ifeelefine/Utils/Widgets/elevatedButtonFilling.dart';
 import 'package:slidable_button/slidable_button.dart';
 
 import '../../../Common/colorsPalette.dart';
@@ -225,7 +221,7 @@ class _ConfigGeolocatorState extends State<ConfigGeolocator> {
                 ),
                 onChanged: (SlidableButtonPosition value) {
                   if (value == SlidableButtonPosition.end) {
-                    if (_prefs.getUserPremium) {
+                    if (_prefs.getUserPremium || _prefs.getDemoActive) {
                       if (!isActive)
                         _checkPermission();
                       else {

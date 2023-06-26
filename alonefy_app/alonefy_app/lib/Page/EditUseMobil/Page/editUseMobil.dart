@@ -271,13 +271,15 @@ class _EditUseMobilPageState extends State<EditUseMobilPage> {
                                 height: 90,
                                 child: Stack(
                                   children: [
-                                    if (_prefs.getUserPremium) ...[
+                                    if (_prefs.getUserPremium ||
+                                        _prefs.getDemoActive) ...[
                                       _getCupertinoPicker(indexList, indexGroup,
                                           scrollController),
                                     ] else ...[
                                       GestureDetector(
                                         child: AbsorbPointer(
-                                            absorbing: !_prefs.getUserPremium,
+                                            absorbing: !_prefs.getUserPremium ||
+                                                _prefs.getDemoActive,
                                             child: _getCupertinoPicker(
                                                 indexList,
                                                 indexGroup,

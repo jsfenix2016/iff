@@ -75,6 +75,16 @@ TextStyle textBold24PrincipalColor() {
   );
 }
 
+TextStyle textNormal24White() {
+  return GoogleFonts.barlow(
+    fontSize: 24.0,
+    wordSpacing: 1,
+    letterSpacing: 1,
+    fontWeight: FontWeight.normal,
+    color: Colors.white,
+  );
+}
+
 TextStyle textBold36White() {
   return GoogleFonts.barlow(
     fontSize: 36.0,

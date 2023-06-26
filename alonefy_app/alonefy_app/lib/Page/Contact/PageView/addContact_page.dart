@@ -3,21 +3,13 @@ import 'package:flutter_contacts/contact.dart';
 import 'package:get/get.dart';
 
 import 'package:google_fonts/google_fonts.dart';
-import 'package:ifeelefine/Common/utils.dart';
 import 'package:ifeelefine/Page/Contact/ListContact/PageView/list_contact_page.dart';
 import 'package:ifeelefine/Utils/Widgets/widgetLogo.dart';
 import 'package:ifeelefine/Views/contact_page.dart';
 
-import '../../../Common/Constant.dart';
-import '../../../Common/colorsPalette.dart';
 import '../../../Controllers/contactUserController.dart';
-import '../../../Data/hive_data.dart';
-import '../../../Provider/prefencesUser.dart';
 import '../../../Utils/Widgets/elevatedButtonFilling.dart';
-import '../../Premium/PageView/premium_page.dart';
 import 'package:ifeelefine/Common/decoration_custom.dart';
-
-final _prefs = PreferenceUser();
 
 class AddContactPage extends StatefulWidget {
   const AddContactPage({super.key});

@@ -22,11 +22,9 @@ import 'package:ifeelefine/Page/RestoreMyConfiguration/Controller/restoreControl
 import 'package:ifeelefine/Page/Risk/DateRisk/ListDateRisk/PageView/riskDatePage.dart';
 import 'package:ifeelefine/Services/mainService.dart';
 
-import 'package:intl/intl.dart';
 import 'package:ifeelefine/Common/idleLogic.dart';
 import 'package:ifeelefine/Common/utils.dart';
 import 'package:ifeelefine/Data/hive_data.dart';
-import 'package:ifeelefine/Model/restdaybd.dart';
 import 'package:ifeelefine/Model/logAlerts.dart';
 
 import 'package:ifeelefine/Provider/prefencesUser.dart';
@@ -37,16 +35,12 @@ import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:flutter_background_service_android/flutter_background_service_android.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
-import 'package:jiffy/jiffy.dart';
 import 'package:notification_center/notification_center.dart';
-import 'package:permission_handler/permission_handler.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'Common/Constant.dart';
 import 'Common/Firebase/firebaseManager.dart';
 
-import 'Common/manager_alerts.dart';
 import 'Page/Geolocator/Controller/configGeolocatorController.dart';
 import 'Page/LogActivity/Controller/logActivity_controller.dart';
 
@@ -108,7 +102,7 @@ Future<void> main() async {
   }
 
   var premiumController = Get.put(PremiumController());
-
+  _prefs.setDemoActive = true;
   premiumController.initPlatformState();
 // Recupera la última ruta de pantalla visitada
   final lastRoute = await _prefs.getLastScreenRoute();
@@ -399,7 +393,8 @@ Future accelerometer() async {
 
   var enableIFF = await getEnableIFF();
 
-  if (!enableIFF && !_prefs.getDetectedFall && !_prefs.getUserPremium) return;
+  if (!enableIFF && !_prefs.getDetectedFall && !_prefs.getUserPremium ||
+      !_prefs.getDemoActive) return;
 
   _streamSubscriptions.add(
     accelerometerEvents!.listen((AccelerometerEvent event) {
@@ -412,6 +407,7 @@ Future accelerometer() async {
           mainController.saveDrop();
           _logRudeMovementTimer = 0;
         }
+
         //RedirectViewNotifier.showNotifications();
         //mainController.saveUserLog("Movimiento rudo a ", now);
       } else {

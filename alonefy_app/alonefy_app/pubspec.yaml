@@ -40,14 +40,11 @@ dependencies:
 
   numberpicker: ^2.1.1
 
-  url_launcher: ^6.1.11
   
   http: ^0.13.4
   get: ^4.6.5
-  rxdart: ^0.27.2
-  provider: ^6.0.3
+  
   flutter_local_notifications: ^13.0.0
-  # awesome_notifications: ^0.7.0-beta.7+5
 
   firebase_core: ^2.10.0
 
@@ -58,15 +55,15 @@ dependencies:
   uuid: ^3.0.5
   
   flutter_contacts: ^1.1.5+1
-  # contacts_service: ^0.6.3
+ 
   all_sensors2: ^1.0.1
   device_info_plus: ^7.0.1
   geolocator: ^9.0.2
-  baseflow_plugin_template: ^2.1.1
+  
   flutter_background_service: ^2.4.5
   shared_preferences: ^2.0.15
   image_picker: ^0.8.6
-  path_provider: ^2.0.11
+  
   permission_handler: ^10.2.0
   flutter_system_ringtones: ^0.0.6
   flutter_ringtone_player: ^3.2.0
@@ -85,9 +82,9 @@ dependencies:
   google_fonts: ^4.0.4
   notification_center: ^0.0.2
   camera: ^0.10.3+2
-  camerax: ^0.1.1
+
   gallery_saver: ^2.3.2
-  flutter_phoenix: ^1.1.1
+  
   video_player: ^2.5.1
   flutter_cache_manager: ^3.2.0
   webview_flutter: ^4.2.2

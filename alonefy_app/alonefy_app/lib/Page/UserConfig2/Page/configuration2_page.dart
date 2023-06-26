@@ -348,23 +348,30 @@ class _UserConfigPageState2 extends State<UserConfigPage2> {
     bool isupdate = await userConfigVC.updateUserDate(context, userbd!);
     if (isupdate) {
       updateFirebaseToken();
-      await Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) => PremiumPage(
-                isFreeTrial: isFreeTrial,
-                img: 'pantalla3.png',
-                title: Constant.premiumFallTitle,
-                subtitle: '')),
-      ).then((value) {
-        if (value != null && value) {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => UseMobilePage(userbd: userbd!)),
-          );
-        }
-      });
+
+      _prefs.getDemoActive
+          ? Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => UseMobilePage(userbd: userbd!)),
+            )
+          : await Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => PremiumPage(
+                      isFreeTrial: isFreeTrial,
+                      img: 'pantalla3.png',
+                      title: Constant.premiumFallTitle,
+                      subtitle: '')),
+            ).then((value) {
+              if (value != null && value) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => UseMobilePage(userbd: userbd!)),
+                );
+              }
+            });
     }
   }
 }

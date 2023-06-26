@@ -10,8 +10,6 @@ class HiveDataRisk {
       final Box<ContactRiskBD> box =
           await Hive.openBox<ContactRiskBD>('contactriskbd');
 
-      //var ind = box.values.length;
-      //contact.id = ind;
       final person = await box.add(contact);
       return true;
     } catch (error) {
@@ -45,7 +43,12 @@ class HiveDataRisk {
     try {
       final Box<ContactRiskBD> box =
           await Hive.openBox<ContactRiskBD>('contactriskbd');
-      await box.deleteAt(contact.id);
+
+      var temp = box.values.toList();
+      final index = temp.indexOf(contact);
+      await box.deleteAt(index);
+
+      print("delete");
     } catch (error) {
       print(error);
     }
@@ -158,7 +161,10 @@ class HiveDataRisk {
     try {
       final Box<ContactZoneRiskBD> box =
           await Hive.openBox<ContactZoneRiskBD>('ContactZoneRiskBD');
-      await box.delete(contact.id);
+
+      var temp = box.values.toList();
+      final index = temp.indexOf(contact);
+      await box.deleteAt(index);
 
       return true;
     } catch (error) {

@@ -65,7 +65,9 @@ class _ContactListState extends State<ContactList> {
       ),
       onChanged: (SlidableButtonPosition value) async {
         if (value == SlidableButtonPosition.end) {
-          if (_prefs.getUserPremium || _selectedContacts.isEmpty) {
+          if (_prefs.getUserPremium ||
+              _selectedContacts.isEmpty ||
+              _prefs.getDemoActive) {
             await showDialog(
               context: context,
               builder: (BuildContext context) => AlertDialog(
