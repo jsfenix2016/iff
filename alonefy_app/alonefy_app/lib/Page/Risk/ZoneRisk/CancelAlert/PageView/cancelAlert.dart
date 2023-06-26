@@ -40,8 +40,6 @@ class CancelAlertPage extends StatefulWidget {
 }
 
 class _CancelAlertState extends State<CancelAlertPage> {
-  EditRiskController editVC = EditRiskController();
-
   String timeinit = "00:05";
   String codeTemp = '';
   var code = CodeModel();

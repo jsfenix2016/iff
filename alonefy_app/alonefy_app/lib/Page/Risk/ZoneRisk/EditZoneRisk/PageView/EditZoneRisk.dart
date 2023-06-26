@@ -1,14 +1,5 @@
-import 'dart:ffi';
-
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter_contacts/flutter_contacts.dart';
-import 'package:ifeelefine/Common/Constant.dart';
-import 'package:ifeelefine/Common/colorsPalette.dart';
-import 'package:ifeelefine/Common/utils.dart';
-import 'package:ifeelefine/Model/contactRiskBD.dart';
 import 'package:ifeelefine/Model/contactZoneRiskBD.dart';
-import 'package:ifeelefine/Page/Risk/DateRisk/Controller/editRiskController.dart';
 import 'package:ifeelefine/Page/Risk/DateRisk/Widgets/cardContact.dart';
 import 'package:ifeelefine/Page/Risk/DateRisk/Widgets/contentCode.dart';
 
@@ -19,8 +10,6 @@ import 'package:ifeelefine/Page/Risk/DateRisk/Widgets/popUpContact.dart';
 import 'package:ifeelefine/Page/Risk/ZoneRisk/EditZoneRisk/Controller/EditZoneController.dart';
 import 'package:ifeelefine/Page/Risk/ZoneRisk/PushAlert/PageView/pushAlert.dart';
 import 'package:ifeelefine/Utils/Widgets/elevateButtonCustomBorder.dart';
-import 'package:ifeelefine/Utils/Widgets/elevatedButtonFilling.dart';
-import 'package:notification_center/notification_center.dart';
 import 'package:ifeelefine/Common/decoration_custom.dart';
 
 class EditZoneRiskPage extends StatefulWidget {
