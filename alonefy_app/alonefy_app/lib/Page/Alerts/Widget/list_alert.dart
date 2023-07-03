@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ifeelefine/Common/Constant.dart';
+import 'package:ifeelefine/Common/colorsPalette.dart';
+import 'package:ifeelefine/Common/text_style_font.dart';
+import 'package:ifeelefine/Common/utils.dart';
 import 'package:ifeelefine/Model/logAlertsBD.dart';
 import 'package:notification_center/notification_center.dart';
 
 import '../Controller/alertsController.dart';
 
 class ListAlert extends StatefulWidget {
-  const ListAlert({super.key});
-
+  ListAlert({super.key, required this.list});
+  List<LogAlertsBD> list;
   @override
   State<ListAlert> createState() => _ListAlertState();
 }
@@ -16,87 +19,131 @@ class ListAlert extends StatefulWidget {
 class _ListAlertState extends State<ListAlert> {
   final AlertsController alertsVC = Get.find<AlertsController>();
 
-  Map<String, List<LogAlertsBD>> groupedProducts = {};
-  late List<LogAlertsBD> listLog;
-  final _group = ValueNotifier<Map<String, List<LogAlertsBD>>>({});
+  // Map<String, List<LogAlertsBD>> groupedProducts = {};
+  // late List<LogAlertsBD> listLog;
+  // final _group = ValueNotifier<Map<String, List<LogAlertsBD>>>({});
 
-  Future<List<LogAlertsBD>> getLog() async {
-    groupedProducts = {};
+  // Future<Map<String, List<LogAlertsBD>>> getLog() async {
+  //   groupedProducts = {};
 
-    groupedProducts = await alertsVC.getAllMov();
-    _group.value = groupedProducts;
-    setState(() {});
-    return listLog;
-  }
+  //   groupedProducts = await alertsVC.getAllMov();
+  //   _group.value = groupedProducts;
 
-  Future<void> deleteForDayMov(
-      BuildContext context, List<LogAlertsBD> listLog) async {
-    groupedProducts = {};
+  //   return groupedProducts;
+  // }
 
-    var req = await alertsVC.deleteAlerts(context, listLog);
-    if (req == 0) {
-      NotificationCenter().notify('getAlerts');
-      getLog();
-    }
-  }
+  // Future<void> deleteForDayMov(
+  //     BuildContext context, List<LogAlertsBD> listLog) async {
+  //   groupedProducts = {};
 
-  Container searchImageForIcon(String typeAction) {
-    AssetImage name = const AssetImage('assets/images/Email.png');
-    if (typeAction.contains("SMS")) {
-      name = const AssetImage('assets/images/Email.png');
-    } else if (typeAction.contains("inactividad")) {
-      name = const AssetImage('assets/images/Warning.png');
-    } else if (typeAction.contains("Notificación")) {
-      name = const AssetImage('assets/images/Group 1283.png');
-    }
-
-    return Container(
-      height: 32,
-      width: 31.2,
-      decoration: BoxDecoration(
-        image: DecorationImage(
-          image: name,
-        ),
-        color: Colors.transparent,
-      ),
-    );
-  }
+  //   var req = await alertsVC.deleteAlerts(context, listLog);
+  //   if (req == 0) {
+  //     NotificationCenter().notify('getAlerts');
+  //     // getLog();
+  //   }
+  // }
 
   @override
   void initState() {
-    getLog();
+    // getLog();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<List<LogAlertsBD>>(
-      future: getLog(),
-      builder: (context, snapshot) {
-        if (snapshot.hasData) {
-          final listContact = snapshot.data!;
-          return Expanded(
-            child: ListView.builder(
-              scrollDirection: Axis.vertical,
-              itemExtent: 250.0,
-              padding: const EdgeInsets.only(top: 0.0, bottom: 50),
-              shrinkWrap: true,
-              itemCount: listContact.length,
-              itemBuilder: (context, index) {
-                if (index >= 0 && index < listContact.length) {
-                  var temp = listContact[index];
-                  return Container();
-                }
-                return const CircularProgressIndicator();
-              },
-            ),
-          );
-        } else if (snapshot.hasError) {
-          return Text(snapshot.error.toString());
-        } else {
-          return const CircularProgressIndicator();
-        }
-      },
+    final size = MediaQuery.of(context).size;
+    return Padding(
+      padding: const EdgeInsets.only(top: 15.0),
+      child: Container(
+        width: 310,
+        color: Colors.transparent,
+        child: ListView.builder(
+            physics: const NeverScrollableScrollPhysics(),
+            shrinkWrap: true,
+            scrollDirection: Axis.vertical,
+            itemExtent: 70.0,
+            itemCount: widget.list.length,
+            itemBuilder: (BuildContext context, int index) {
+              var listAlerts = widget.list.toList();
+              // listLog = listAlerts;
+              return ListTile(
+                title: Container(
+                  color: Colors.transparent,
+                  height: 70,
+                  width: 300,
+                  child: Stack(
+                    children: [
+                      Container(
+                        width: 300,
+                        color: Colors.transparent,
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            IconButton(
+                              iconSize: 35,
+                              color: ColorPalette.principal,
+                              onPressed: () {},
+                              icon: searchImageForIcon(listAlerts[index].type),
+                            ),
+                            Container(
+                              color: Colors.transparent,
+                              height: 70,
+                              width: size.width - 166,
+                              child: Stack(children: [
+                                Positioned(
+                                  top: 10,
+                                  child: Text(
+                                    listAlerts[index].type,
+                                    textAlign: TextAlign.left,
+                                    style: textNormal16White(),
+                                  ),
+                                ),
+                                Positioned(
+                                  top: 40,
+                                  child: Text(
+                                    '${listAlerts[index].time.day}-${listAlerts[index].time.month}-${listAlerts[index].time.year} | ${listAlerts[index].time.hour}:${listAlerts[index].time.minute}',
+                                    textAlign: TextAlign.left,
+                                    style: textNormal16White(),
+                                  ),
+                                ),
+                              ]),
+                            ),
+                          ],
+                        ),
+                      ),
+                      index >= 0 && index < listAlerts.length - 1
+                          ? Positioned(
+                              left: 25,
+                              top:
+                                  100 / 2, // La posición horizontal de la línea
+                              child: CustomPaint(
+                                painter: _LinePainter(),
+                              ),
+                            )
+                          : const SizedBox(
+                              height: 0,
+                            ),
+                    ],
+                  ),
+                ),
+              );
+            }),
+      ),
     );
   }
+}
+
+class _LinePainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = ColorPalette.principal
+      ..strokeWidth = 1.5;
+
+    canvas.drawLine(
+        const Offset(0.0, 70 / 2), Offset(size.width, size.height / 2), paint);
+  }
+
+  @override
+  bool shouldRepaint(_LinePainter oldDelegate) => false;
 }

@@ -18,26 +18,6 @@ import '../../../../../Model/ApiRest/ZoneRiskApi.dart';
 import 'package:ifeelefine/Common/manager_alerts.dart';
 
 class EditZoneController extends GetxController {
-  Future<List<Contact>> getContacts(BuildContext context) async {
-    PermissionStatus permission = await Permission.contacts.request();
-
-    if (permission.isPermanentlyDenied) {
-      // ignore: use_build_context_synchronously
-      showPermissionDialog(context, "Permitir acceder a los contactos");
-      return [];
-    } else if (permission.isDenied) {
-      return [];
-    } else {
-      // Retrieve the list of contacts from the device
-      var contacts = await FlutterContacts.getContacts();
-      // Set the list of contacts in the state
-      contacts = await FlutterContacts.getContacts(
-          withProperties: true, withPhoto: true);
-
-      return contacts;
-    }
-  }
-
   Future<void> saveActivityLog(ContactZoneRiskBD contact) async {
     LogAlertsBD mov = LogAlertsBD(
         id: 0,
@@ -55,9 +35,12 @@ class EditZoneController extends GetxController {
       var user = await mainController.getUserData();
       var contactZoneRiskApi = await ZoneRiskService().createContactZoneRisk(
           ZoneRiskApi.fromZoneRisk(contact, user.telephone));
-      if (contact.photo != null && contactZoneRiskApi != null
-          && contactZoneRiskApi.awsUploadCustomContactPresignedUrl.isNotEmpty) {
-        await ZoneRiskService().updateImage(contactZoneRiskApi.awsUploadCustomContactPresignedUrl, contact.photo);
+      if (contact.photo != null &&
+          contactZoneRiskApi != null &&
+          contactZoneRiskApi.awsUploadCustomContactPresignedUrl.isNotEmpty) {
+        await ZoneRiskService().updateImage(
+            contactZoneRiskApi.awsUploadCustomContactPresignedUrl,
+            contact.photo);
       }
       if (contactZoneRiskApi != null) {
         contact.id = contactZoneRiskApi.id;
@@ -80,14 +63,18 @@ class EditZoneController extends GetxController {
     try {
       final MainController mainController = Get.put(MainController());
       var user = await mainController.getUserData();
-      var zoneRiskApiResponse = await ZoneRiskService().updateZoneRisk(ZoneRiskApi.fromZoneRisk(contact, user.telephone), contact.id);
+      var zoneRiskApiResponse = await ZoneRiskService().updateZoneRisk(
+          ZoneRiskApi.fromZoneRisk(contact, user.telephone), contact.id);
 
-      if (contact.photo != null && zoneRiskApiResponse != null
-          && zoneRiskApiResponse.awsUploadCustomContactPresignedUrl.isNotEmpty) {
-        await ZoneRiskService().updateImage(zoneRiskApiResponse.awsUploadCustomContactPresignedUrl, contact.photo);
+      if (contact.photo != null &&
+          zoneRiskApiResponse != null &&
+          zoneRiskApiResponse.awsUploadCustomContactPresignedUrl.isNotEmpty) {
+        await ZoneRiskService().updateImage(
+            zoneRiskApiResponse.awsUploadCustomContactPresignedUrl,
+            contact.photo);
       }
 
-      var save = const HiveDataRisk().updateContactZoneRisk(contact);
+      var save = await const HiveDataRisk().updateContactZoneRisk(contact);
       NotificationCenter().notify('getContactZoneRisk');
 
       showSaveAlert(context, Constant.info, Constant.changeGeneric);
@@ -102,7 +89,8 @@ class EditZoneController extends GetxController {
     for (var contactZoneRiskApi in contactsZoneRiskApi) {
       if (contactZoneRiskApi.photo != null &&
           contactZoneRiskApi.photo.isNotEmpty) {
-        var bytes = await ZoneRiskService().getZoneRiskImage(contactZoneRiskApi.photo);
+        var bytes =
+            await ZoneRiskService().getZoneRiskImage(contactZoneRiskApi.photo);
         var contact = ContactZoneRiskBD(
             id: contactZoneRiskApi.id,
             photo: bytes,
@@ -112,7 +100,8 @@ class EditZoneController extends GetxController {
             sendWhatsapp: contactZoneRiskApi.notifyPredefinedContacts,
             code: "",
             isActived: true,
-            sendWhatsappContact: contactZoneRiskApi.customContactWhatsappNotification,
+            sendWhatsappContact:
+                contactZoneRiskApi.customContactWhatsappNotification,
             callme: contactZoneRiskApi.customContactVoiceNotification,
             save: false,
             createDate: DateTime.now());

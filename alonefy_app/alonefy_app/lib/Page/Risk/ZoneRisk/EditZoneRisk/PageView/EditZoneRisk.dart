@@ -1,4 +1,5 @@
 import 'package:flutter_contacts/flutter_contacts.dart';
+import 'package:ifeelefine/Common/utils.dart';
 import 'package:ifeelefine/Model/contactZoneRiskBD.dart';
 import 'package:ifeelefine/Page/Risk/DateRisk/Widgets/cardContact.dart';
 import 'package:ifeelefine/Page/Risk/DateRisk/Widgets/contentCode.dart';
@@ -63,7 +64,7 @@ class _EditZoneRiskPageState extends State<EditZoneRiskPage> {
   }
 
   Future getContact() async {
-    contactlist = await editZoneVC.getContacts(context);
+    contactlist = await getContacts(context);
 
     for (var element in contactlist) {
       if (widget.contactRisk.name == element.displayName) {
@@ -79,7 +80,8 @@ class _EditZoneRiskPageState extends State<EditZoneRiskPage> {
         id: widget.contactRisk.id,
         photo: contactSelect.photo,
         name: widget.contactRisk.name,
-        phones: contactSelect.phones.first.normalizedNumber.replaceAll("+34", ""),
+        phones:
+            contactSelect.phones.first.normalizedNumber.replaceAll("+34", ""),
         sendLocation: widget.contactRisk.sendLocation,
         sendWhatsapp: widget.contactRisk.sendWhatsapp,
         code: widget.contactRisk.code,
@@ -89,9 +91,7 @@ class _EditZoneRiskPageState extends State<EditZoneRiskPage> {
         save: widget.contactRisk.save,
         createDate: DateTime.now());
 
-    if (!saveConfig && widget.contactRisk.save == false) {
-
-    } else {
+    if (saveConfig && widget.contactRisk.save == true) {
       if (widget.contactRisk.id == -1) {
         await editZoneVC.saveContactZoneRisk(context, contactRisk);
       } else {

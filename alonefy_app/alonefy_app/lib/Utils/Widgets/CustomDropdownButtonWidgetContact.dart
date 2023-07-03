@@ -29,7 +29,7 @@ class _ContactDropdownButtonState extends State<ContactDropdownButton> {
   void initState() {
     super.initState();
     // Get the list of contacts from the device
-    _checkPermissionIsEnabled();
+    _getContacts();
   }
 
   void _checkPermissionIsEnabled() async {
@@ -58,10 +58,10 @@ class _ContactDropdownButtonState extends State<ContactDropdownButton> {
 
   void _getContacts() async {
     // Retrieve the list of contacts from the device
-    var contacts = await FlutterContacts.getContacts();
+    var contacts = await getContacts(context);
     // Set the list of contacts in the state
-    contacts = await FlutterContacts.getContacts(
-        withProperties: true, withPhoto: true);
+    // contacts = await FlutterContacts.getContacts(
+    //     withProperties: true, withPhoto: true);
     setState(() {
       _contacts = contacts;
     });

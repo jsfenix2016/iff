@@ -11,6 +11,8 @@ import 'package:collection/collection.dart';
 final _prefs = PreferenceUser();
 
 class AlertsController extends GetxController {
+  RxMap<String, List<LogAlertsBD>> contactList =
+      <String, List<LogAlertsBD>>{}.obs;
   Future<int> deleteAlerts(
       BuildContext context, List<LogAlertsBD> listAlerts) async {
     for (var logAlert in listAlerts) {
@@ -44,7 +46,7 @@ class AlertsController extends GetxController {
 
     groupedProducts = groupBy(
         temp, (product) => format.parse(product.time.toString()).toString());
-
+    contactList.value = groupedProducts;
     return groupedProducts;
   }
 

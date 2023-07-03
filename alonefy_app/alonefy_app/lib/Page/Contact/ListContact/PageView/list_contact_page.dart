@@ -67,10 +67,9 @@ class _ListContactState extends State<ListContact> {
 
   void _getContacts() async {
     // Retrieve the list of contacts from the device
-    var contacts = await FlutterContacts.getContacts();
+    // var contacts = await FlutterContacts.getContacts();
     // Set the list of contacts in the state
-    contacts = await FlutterContacts.getContacts(
-        withProperties: true, withPhoto: true);
+    var contacts = await getContacts(context);
     setState(() {
       _contacts = contacts;
     });

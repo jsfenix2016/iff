@@ -1,6 +1,5 @@
 import 'package:get/get.dart';
 import 'package:ifeelefine/Common/initialize_models_bd.dart';
-import 'package:ifeelefine/Common/utils.dart';
 import 'package:ifeelefine/Data/hive_constant_adapterInit.dart';
 import 'package:ifeelefine/Data/hive_data.dart';
 import 'package:ifeelefine/Model/ApiRest/AlertApi.dart';
@@ -31,7 +30,8 @@ class MainController extends GetxController {
     final MainController mainController = Get.put(MainController());
     var user = await mainController.getUserData();
 
-    var alertApi = await AlertsService().saveAlert(AlertApi.fromAlert(mov, user.telephone));
+    var alertApi = await AlertsService()
+        .saveAlert(AlertApi.fromAlert(mov, user.telephone));
 
     if (alertApi != null) {
       mov.id = alertApi.id;
@@ -44,7 +44,8 @@ class MainController extends GetxController {
 
     var user = await getUserData();
 
-    var alertApi = await AlertsService().saveAlert(AlertApi.fromAlert(alert, user.telephone));
+    var alertApi = await AlertsService()
+        .saveAlert(AlertApi.fromAlert(alert, user.telephone));
 
     if (alertApi != null) {
       alert.id = alertApi.id;
@@ -54,7 +55,8 @@ class MainController extends GetxController {
 
   Future<void> saveActivityLog(DateTime dateTime, String movementType) async {
     await inicializeHiveBD();
-    LogActivityBD activityBD = LogActivityBD(time: dateTime, movementType: movementType);
+    LogActivityBD activityBD =
+        LogActivityBD(time: dateTime, movementType: movementType);
     await logActivityController.saveLogActivity(activityBD);
     await logActivityController.saveLastMovement();
   }

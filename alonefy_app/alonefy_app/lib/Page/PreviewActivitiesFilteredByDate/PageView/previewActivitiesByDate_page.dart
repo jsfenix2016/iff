@@ -32,16 +32,6 @@ class _PreviewActivitiesByDateState extends State<PreviewActivitiesByDate>
     with WidgetsBindingObserver {
   final AddActivityController controller = Get.put(AddActivityController());
 
-  final List<String> tempNoSelectListDay = <String>[
-    "L",
-    "M",
-    "X",
-    "J",
-    "V",
-    "S",
-    "D",
-  ];
-
   final List<bool> _selectedDays = [
     false,
     false,
@@ -173,10 +163,10 @@ class _PreviewActivitiesByDateState extends State<PreviewActivitiesByDate>
                         !weeklyEndDate.isBefore(currentDate) &&
                         isFilteredDayValid(currentDate)) {
                       for (var index = 0;
-                          index < tempNoSelectListDay.length;
+                          index < Constant.tempListShortDay.length;
                           index++) {
                         if (currentDate.weekday == (index + 1) &&
-                            day == tempNoSelectListDay[index]) {
+                            day == Constant.tempListShortDay[index]) {
                           activitiesByDay.add(activity);
                           break;
                         }
@@ -832,7 +822,7 @@ class _PreviewActivitiesByDateState extends State<PreviewActivitiesByDate>
           });
         },
         child: Text(
-          tempNoSelectListDay[index],
+          Constant.tempListShortDay[index],
           textAlign: TextAlign.center,
           style: GoogleFonts.barlow(
             fontSize: 20.0,

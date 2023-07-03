@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:ifeelefine/Common/Constant.dart';
 import 'package:ifeelefine/Common/colorsPalette.dart';
-import 'package:ifeelefine/Common/utils.dart';
 import 'package:ifeelefine/Model/restdaybd.dart';
 
 class ListDayWeek extends StatefulWidget {
@@ -19,15 +19,6 @@ class ListDayWeek extends StatefulWidget {
 }
 
 class _ListDayWeekState extends State<ListDayWeek> {
-  final List<String> tempNoSelectListDay = <String>[
-    "L",
-    "M",
-    "X",
-    "J",
-    "V",
-    "S",
-    "D",
-  ];
   int indextemp = 0;
   int count = -1;
 
@@ -55,7 +46,7 @@ class _ListDayWeekState extends State<ListDayWeek> {
     return Row(
       mainAxisSize: MainAxisSize.max,
       children: [
-        for (var i = 0; i < tempNoSelectListDay.length; i++)
+        for (var i = 0; i < Constant.tempListShortDay.length; i++)
           GestureDetector(
             key: Key(i.toString()),
             onTap: () {
@@ -101,7 +92,7 @@ class _ListDayWeekState extends State<ListDayWeek> {
                       width: 38.59,
                       child: Center(
                         child: Text(
-                          tempNoSelectListDay[i],
+                          Constant.tempListShortDay[i],
                           textAlign: TextAlign.center,
                           style: GoogleFonts.barlow(
                             fontSize: 20.0,

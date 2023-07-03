@@ -42,15 +42,6 @@ class _UserRestPageState extends State<UserRestPage> {
 
   bool isVisibleBtn = false;
   final List<String> _selectedDays = [];
-  final List<String> tempNoSelectListDay = <String>[
-    "L",
-    "M",
-    "X",
-    "J",
-    "V",
-    "S",
-    "D",
-  ];
 
   List<RestDayBD> tempRestDays = [];
   final PreferenceUser _prefs = PreferenceUser();
@@ -60,7 +51,7 @@ class _UserRestPageState extends State<UserRestPage> {
     _prefs.saveLastScreenRoute("restDay");
     super.initState();
     if (tempRestDays.isEmpty) {
-      for (var element in tempNoSelectListDay) {
+      for (var element in Constant.tempListShortDay) {
         restDay = RestDayBD(
             day: element,
             timeSleep: timeLblPM,

@@ -9,10 +9,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:ifeelefine/Common/notificationService.dart';
 import 'package:ifeelefine/Controllers/mainController.dart';
-import 'package:ifeelefine/Data/hiveRisk_data.dart';
 import 'package:ifeelefine/Data/hive_constant_adapterInit.dart';
-import 'package:ifeelefine/Model/activitydaybd.dart';
-import 'package:ifeelefine/Model/contactRiskBD.dart';
 
 import 'package:ifeelefine/Model/userbd.dart';
 
@@ -24,7 +21,6 @@ import 'package:ifeelefine/Services/mainService.dart';
 
 import 'package:ifeelefine/Common/idleLogic.dart';
 import 'package:ifeelefine/Common/utils.dart';
-import 'package:ifeelefine/Data/hive_data.dart';
 import 'package:ifeelefine/Model/logAlerts.dart';
 
 import 'package:ifeelefine/Provider/prefencesUser.dart';
@@ -35,7 +31,6 @@ import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:flutter_background_service_android/flutter_background_service_android.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
-import 'package:notification_center/notification_center.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -58,7 +53,7 @@ final List<StreamSubscription<dynamic>> _streamSubscriptions =
 
 Duration dismbleTime = const Duration();
 PreferenceUser _prefs = PreferenceUser();
-FlutterBackgroundService _service = FlutterBackgroundService();
+
 bool ismove = true;
 bool timerActive = true;
 
@@ -135,7 +130,7 @@ Future activateService() async {
   /// OPTIONAL, using custom notification channel id
   const AndroidNotificationChannel channel = AndroidNotificationChannel(
     'my_foreground', // id
-    'AlertFriends – PERSONAL PROTECTION 1', // title
+    'AlertFriends – PERSONAL PROTECTION', // title
     description: 'AlertFriends está activado.', // description
     importance: Importance.high, // importance must be at low or higher level
   );
@@ -154,7 +149,7 @@ Future activateService() async {
       isForegroundMode: true,
 
       notificationChannelId: 'my_foreground',
-      initialNotificationTitle: 'AlertFriends – PERSONAL PROTECTION 2',
+      initialNotificationTitle: 'AlertFriends – PERSONAL PROTECTION',
       initialNotificationContent: 'AlertFriends está activado',
       foregroundServiceNotificationId: 888,
     ),
@@ -227,50 +222,63 @@ Future activateService() async {
           if (notificationResponse.actionId == "Inactived") {
             ismove = false;
             timerActive = true;
-            String taskIds = notificationResponse.actionId!.replaceAll("Inactived_", "");
+            String taskIds =
+                notificationResponse.actionId!.replaceAll("Inactived_", "");
             var taskIdList = getTaskIdList(taskIds);
             MainService().cancelAllNotifications(taskIdList);
           }
-          if (notificationResponse.actionId != null && notificationResponse.actionId!.contains("DateRisk")) {
-            String taskIds = notificationResponse.actionId!.substring(0, notificationResponse.actionId!.indexOf('id='));
+          if (notificationResponse.actionId != null &&
+              notificationResponse.actionId!.contains("DateRisk")) {
+            String taskIds = notificationResponse.actionId!
+                .substring(0, notificationResponse.actionId!.indexOf('id='));
             taskIds = taskIds.replaceAll("DateRisk_", "");
             String id = notificationResponse.actionId!.substring(
-                notificationResponse.actionId!.indexOf('id='), notificationResponse.actionId!.length);
+                notificationResponse.actionId!.indexOf('id='),
+                notificationResponse.actionId!.length);
             id = id.replaceAll("id=", "");
 
             var taskIdList = getTaskIdList(taskIds);
-            RedirectViewNotifier.onTapNotification(notificationResponse, taskIdList, int.parse(id));
+            RedirectViewNotifier.onTapNotification(
+                notificationResponse, taskIdList, int.parse(id));
           }
           break;
         case NotificationResponseType.selectedNotificationAction:
           if (notificationResponse.actionId != null &&
               notificationResponse.actionId!.contains("helpID")) {
-            String taskIds = notificationResponse.actionId!.replaceAll("helpID_", "");
+            String taskIds =
+                notificationResponse.actionId!.replaceAll("helpID_", "");
             var taskIdList = getTaskIdList(taskIds);
             MainService().sendAlertToContactImmediately(taskIdList);
           }
           if (notificationResponse.actionId != null &&
               notificationResponse.actionId!.contains("imgoodId")) {
-            String taskIds = notificationResponse.actionId!.replaceAll("imgoodId_", "");
+            String taskIds =
+                notificationResponse.actionId!.replaceAll("imgoodId_", "");
             var taskIdList = getTaskIdList(taskIds);
             ismove = false;
             timerActive = true;
             MainService().cancelAllNotifications(taskIdList);
           }
-          if (notificationResponse.actionId != null && notificationResponse.actionId!.contains("dateHelp")) {
-            String taskIds = notificationResponse.actionId!.replaceAll("dateHelp_", "");
+          if (notificationResponse.actionId != null &&
+              notificationResponse.actionId!.contains("dateHelp")) {
+            String taskIds =
+                notificationResponse.actionId!.replaceAll("dateHelp_", "");
             var taskIdList = getTaskIdList(taskIds);
             MainService().sendAlertToContactImmediately(taskIdList);
           }
-          if (notificationResponse.actionId != null && notificationResponse.actionId!.contains("dateImgood")) {
-            String taskIds = notificationResponse.actionId!.substring(0, notificationResponse.actionId!.indexOf('id='));
+          if (notificationResponse.actionId != null &&
+              notificationResponse.actionId!.contains("dateImgood")) {
+            String taskIds = notificationResponse.actionId!
+                .substring(0, notificationResponse.actionId!.indexOf('id='));
             taskIds = taskIds.replaceAll("dateImgood_", "");
             String id = notificationResponse.actionId!.substring(
-                notificationResponse.actionId!.indexOf('id='), notificationResponse.actionId!.length);
+                notificationResponse.actionId!.indexOf('id='),
+                notificationResponse.actionId!.length);
             id = id.replaceAll("id=", "");
 
             var taskIdList = getTaskIdList(taskIds);
-            RedirectViewNotifier.onTapNotification(notificationResponse, taskIdList, int.parse(id));
+            RedirectViewNotifier.onTapNotification(
+                notificationResponse, taskIdList, int.parse(id));
           }
           break;
       }
@@ -527,7 +535,8 @@ void sendLocation() async {
 
   if (_prefs.getAcceptedSendLocation == PreferencePermission.allow) {
     var position = await determinePosition();
-    _locationController.sendLocation(position.latitude.toString(), position.longitude.toString());
+    _locationController.sendLocation(
+        position.latitude.toString(), position.longitude.toString());
   }
 }
 

@@ -328,7 +328,8 @@ class _AddActivityPageState extends State<AddActivityPage>
                 onPressed: () async {
                   if (isRepeatTypeSelected()) {
                     var activities = await controller.getActivities();
-                    if (activities.length >= _maxActivitiesNoPremium && !_prefs.getUserPremium) {
+                    if (activities.length >= _maxActivitiesNoPremium &&
+                        !_prefs.getUserPremium) {
                       showSaveAlert(context, Constant.info,
                           Constant.timeMaxReachedInactivity);
                     } else {

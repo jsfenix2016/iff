@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:ifeelefine/Common/Constant.dart';
@@ -235,20 +236,26 @@ DateTime parseDurationRow(String s) {
 
 DateTime parseContactRiskDate(String contactRiskDate) {
   var day = contactRiskDate.substring(0, contactRiskDate.indexOf('-'));
-  contactRiskDate = contactRiskDate.substring(contactRiskDate.indexOf('-') +1, contactRiskDate.length);
+  contactRiskDate = contactRiskDate.substring(
+      contactRiskDate.indexOf('-') + 1, contactRiskDate.length);
 
   var month = contactRiskDate.substring(0, contactRiskDate.indexOf('-'));
-  contactRiskDate = contactRiskDate.substring(contactRiskDate.indexOf('-') +1, contactRiskDate.length);
+  contactRiskDate = contactRiskDate.substring(
+      contactRiskDate.indexOf('-') + 1, contactRiskDate.length);
 
   var year = contactRiskDate.substring(0, contactRiskDate.indexOf(' '));
-  contactRiskDate = contactRiskDate.substring(contactRiskDate.indexOf(' ') +1, contactRiskDate.length);
+  contactRiskDate = contactRiskDate.substring(
+      contactRiskDate.indexOf(' ') + 1, contactRiskDate.length);
 
   var hour = contactRiskDate.substring(0, contactRiskDate.indexOf(':'));
-  contactRiskDate = contactRiskDate.substring(contactRiskDate.indexOf(':') +1, contactRiskDate.length);
+  contactRiskDate = contactRiskDate.substring(
+      contactRiskDate.indexOf(':') + 1, contactRiskDate.length);
 
   var minutes = contactRiskDate;
 
-  return DateTime(int.parse(year), int.parse(month), int.parse(day), int.parse(hour), int.parse(minutes)).toUtc();
+  return DateTime(int.parse(year), int.parse(month), int.parse(day),
+          int.parse(hour), int.parse(minutes))
+      .toUtc();
 }
 
 String parseTimeString(String s) {
@@ -364,6 +371,28 @@ Container searchImageForIcon(String typeAction) {
   );
 }
 
+Container searchImageForIcona(String typeAction) {
+  AssetImage name = const AssetImage('assets/images/Email.png');
+  if (typeAction.contains("SMS")) {
+    name = const AssetImage('assets/images/Email.png');
+  } else if (typeAction.contains("inactividad")) {
+    name = const AssetImage('assets/images/Warning.png');
+  } else if (typeAction.contains("Notificación")) {
+    name = const AssetImage('assets/images/Group 1283.png');
+  }
+
+  return Container(
+    height: 32,
+    width: 31.2,
+    decoration: BoxDecoration(
+      image: DecorationImage(
+        image: name,
+      ),
+      color: Colors.transparent,
+    ),
+  );
+}
+
 /// Determine the current position of the device.
 ///
 /// When the location services are not enabled or permissions
@@ -444,6 +473,26 @@ Future<bool> cameraPermissions(
     return permissionStatus[Permission.camera] == PermissionStatus.granted;
   } else {
     return _prefs.getAcceptedCamera == PreferencePermission.allow;
+  }
+}
+
+Future<List<Contact>> getContacts(BuildContext context) async {
+  PermissionStatus permission = await Permission.contacts.request();
+
+  if (permission.isPermanentlyDenied) {
+    // ignore: use_build_context_synchronously
+    showPermissionDialog(context, "Permitir acceder a los contactos");
+    return [];
+  } else if (permission.isDenied) {
+    return [];
+  } else {
+    // Retrieve the list of contacts from the device
+    var contacts = await FlutterContacts.getContacts();
+    // Set the list of contacts in the state
+    contacts = await FlutterContacts.getContacts(
+        withProperties: true, withPhoto: true);
+
+    return contacts;
   }
 }
 

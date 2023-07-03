@@ -3,8 +3,11 @@ import 'package:ifeelefine/Common/colorsPalette.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ifeelefine/Common/decoration_custom.dart';
+import 'package:ifeelefine/Common/text_style_font.dart';
+import 'package:ifeelefine/Common/utils.dart';
 import 'package:ifeelefine/Model/logAlertsBD.dart';
 import 'package:ifeelefine/Page/Alerts/Controller/alertsController.dart';
+import 'package:ifeelefine/Page/Alerts/Widget/list_alert.dart';
 
 import 'package:notification_center/notification_center.dart';
 
@@ -41,28 +44,6 @@ class _AlertsPageState extends State<AlertsPage> {
       NotificationCenter().notify('getAlerts');
       getLog();
     }
-  }
-
-  Container searchImageForIcon(String typeAction) {
-    AssetImage name = const AssetImage('assets/images/Email.png');
-    if (typeAction.contains("SMS")) {
-      name = const AssetImage('assets/images/Email.png');
-    } else if (typeAction.contains("inactividad")) {
-      name = const AssetImage('assets/images/Warning.png');
-    } else if (typeAction.contains("Notificación")) {
-      name = const AssetImage('assets/images/Group 1283.png');
-    }
-
-    return Container(
-      height: 32,
-      width: 31.2,
-      decoration: BoxDecoration(
-        image: DecorationImage(
-          image: name,
-        ),
-        color: Colors.transparent,
-      ),
-    );
   }
 
   @override
@@ -116,7 +97,6 @@ class _AlertsPageState extends State<AlertsPage> {
                               onPressed: () {
                                 var a = listData[i];
                                 deleteForDayMov(context, a.value);
-                                print("object");
                               },
                               icon: const Icon(
                                 Icons.close,
@@ -172,16 +152,8 @@ class _AlertsPageState extends State<AlertsPage> {
                                                               .type,
                                                           textAlign:
                                                               TextAlign.left,
-                                                          style: GoogleFonts
-                                                              .barlow(
-                                                            fontSize: 16.0,
-                                                            wordSpacing: 1,
-                                                            letterSpacing:
-                                                                0.001,
-                                                            fontWeight:
-                                                                FontWeight.bold,
-                                                            color: Colors.white,
-                                                          ),
+                                                          style:
+                                                              textNormal16White(),
                                                         ),
                                                       ),
                                                       Positioned(
@@ -190,17 +162,8 @@ class _AlertsPageState extends State<AlertsPage> {
                                                           '${listAlerts[index].time.day}-${listAlerts[index].time.month}-${listAlerts[index].time.year} | ${listAlerts[index].time.hour}:${listAlerts[index].time.minute}',
                                                           textAlign:
                                                               TextAlign.left,
-                                                          style: GoogleFonts
-                                                              .barlow(
-                                                            fontSize: 16.0,
-                                                            wordSpacing: 1,
-                                                            letterSpacing:
-                                                                0.001,
-                                                            fontWeight:
-                                                                FontWeight
-                                                                    .normal,
-                                                            color: Colors.white,
-                                                          ),
+                                                          style:
+                                                              textNormal16White(),
                                                         ),
                                                       ),
                                                     ]),

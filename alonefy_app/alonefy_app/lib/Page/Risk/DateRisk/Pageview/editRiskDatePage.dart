@@ -112,7 +112,7 @@ class _EditRiskPageState extends State<EditRiskPage> {
   }
 
   Future getContact() async {
-    contactlist = await editVC.getContacts(context);
+    contactlist = await getContacts(context);
 
     for (var element in contactlist) {
       if (widget.contactRisk.name == element.displayName) {
@@ -173,7 +173,8 @@ class _EditRiskPageState extends State<EditRiskPage> {
         name: contactSelect.displayName,
         timeinit: initTime,
         timefinish: finishTime,
-        phones: contactSelect.phones.first.normalizedNumber.replaceAll("+34", ""),
+        phones:
+            contactSelect.phones.first.normalizedNumber.replaceAll("+34", ""),
         titleMessage: titleMessage,
         messages: message,
         sendLocation: widget.contactRisk.sendLocation,
@@ -440,7 +441,9 @@ class _EditRiskPageState extends State<EditRiskPage> {
                                             mode: CupertinoDatePickerMode.time,
                                             use24hFormat: true,
                                             onDateTimeChanged: (value) async {
-                                              timeinit = await convertDateTimeToStringTime(value);
+                                              timeinit =
+                                                  await convertDateTimeToStringTime(
+                                                      value);
                                               widget.contactRisk.timeinit =
                                                   value.toString();
                                             },
@@ -498,7 +501,9 @@ class _EditRiskPageState extends State<EditRiskPage> {
                                             mode: CupertinoDatePickerMode.time,
                                             use24hFormat: true,
                                             onDateTimeChanged: (value) async {
-                                              timefinish = await convertDateTimeToStringTime(value);
+                                              timefinish =
+                                                  await convertDateTimeToStringTime(
+                                                      value);
                                               widget.contactRisk.timefinish =
                                                   value.toString();
                                             },

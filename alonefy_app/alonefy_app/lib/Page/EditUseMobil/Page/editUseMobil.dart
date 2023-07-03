@@ -46,15 +46,6 @@ class _EditUseMobilPageState extends State<EditUseMobilPage> {
   var indexSelect = -1;
   int noSelectDay = 1;
   List<UseMobilBD> tempUseMobilBDDays = [];
-  final List<String> tempNoSelectListDay = <String>[
-    "L",
-    "M",
-    "X",
-    "J",
-    "V",
-    "S",
-    "D",
-  ];
 
   Map<String, String> timeDic = <String, String>{};
 
@@ -73,7 +64,7 @@ class _EditUseMobilPageState extends State<EditUseMobilPage> {
     getListUseMobilForDay();
     scrollController = FixedExtentScrollController(initialItem: 0);
     if (tempUseMobilBDDays.isEmpty) {
-      for (var element in tempNoSelectListDay) {
+      for (var element in Constant.tempListShortDay) {
         var useMobilBD = UseMobilBD(
             day: element, time: '5 min', selection: 0, isSelect: true);
 
@@ -175,7 +166,7 @@ class _EditUseMobilPageState extends State<EditUseMobilPage> {
     if (val == false) {
       noSelectDay++;
       List<UseMobilBD> newRestDays = [];
-      for (var element in tempNoSelectListDay) {
+      for (var element in Constant.tempListShortDay) {
         var useMobilDay = UseMobilBD(
             day: element,
             time: timeLblPM,

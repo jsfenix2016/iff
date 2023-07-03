@@ -122,7 +122,6 @@ flutter:
   
   assets:
     - assets/images/
-    - assets/sound/
     - assets/json/
     # - google_fonts/
   #   - images/a_dot_burr.jpeg

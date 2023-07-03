@@ -18,24 +18,6 @@ import 'package:ifeelefine/Common/manager_alerts.dart';
 
 class EditRiskController extends GetxController {
   RiskController riskVC = Get.find<RiskController>();
-  Future<List<Contact>> getContacts(BuildContext context) async {
-    PermissionStatus permission = await Permission.contacts.request();
-
-    if (permission.isPermanentlyDenied) {
-      showPermissionDialog(context, "Permitir acceder a los contactos");
-      return [];
-    } else if (permission.isDenied) {
-      return [];
-    } else {
-      // Retrieve the list of contacts from the device
-      var contacts = await FlutterContacts.getContacts();
-      // Set the list of contacts in the state
-      contacts = await FlutterContacts.getContacts(
-          withProperties: true, withPhoto: true);
-
-      return contacts;
-    }
-  }
 
   Future<void> saveActivityLog(ContactRiskBD contact) async {
     LogAlertsBD mov = LogAlertsBD(
@@ -51,13 +33,22 @@ class EditRiskController extends GetxController {
     try {
       final MainController mainController = Get.put(MainController());
       var user = await mainController.getUserData();
-      var contactRiskApi = ContactRiskApi.fromContact(contact, user.telephone.replaceAll("+34", ""), contact.photoDate.length);
-      var contactRiskApiResponse = await ContactRiskService().createContactRisk(contactRiskApi);
-      if (contact.photo != null && contactRiskApiResponse != null && contactRiskApiResponse.awsUploadCustomContactPresignedUrl.isNotEmpty) {
-        await ContactRiskService().updateImage(contactRiskApiResponse.awsUploadCustomContactPresignedUrl, contact.photo);
+      var contactRiskApi = ContactRiskApi.fromContact(contact,
+          user.telephone.replaceAll("+34", ""), contact.photoDate.length);
+      var contactRiskApiResponse =
+          await ContactRiskService().createContactRisk(contactRiskApi);
+      if (contact.photo != null &&
+          contactRiskApiResponse != null &&
+          contactRiskApiResponse
+              .awsUploadCustomContactPresignedUrl.isNotEmpty) {
+        await ContactRiskService().updateImage(
+            contactRiskApiResponse.awsUploadCustomContactPresignedUrl,
+            contact.photo);
       }
-      if (contact.photoDate.isNotEmpty && contactRiskApiResponse != null
-          && contactRiskApiResponse.awsUploadPresignedUrls != null && contactRiskApiResponse.awsUploadPresignedUrls!.isNotEmpty) {
+      if (contact.photoDate.isNotEmpty &&
+          contactRiskApiResponse != null &&
+          contactRiskApiResponse.awsUploadPresignedUrls != null &&
+          contactRiskApiResponse.awsUploadPresignedUrls!.isNotEmpty) {
         var index = 0;
         for (var url in contactRiskApiResponse.awsUploadPresignedUrls!) {
           await ContactRiskService().updateImage(url, contact.photoDate[index]);
@@ -90,10 +81,14 @@ class EditRiskController extends GetxController {
       final MainController mainController = Get.put(MainController());
       var user = await mainController.getUserData();
       var contactRiskApi = await ContactRiskService().updateContactRisk(
-          ContactRiskApi.fromContact(contact, user.telephone.replaceAll("+34", ""), contact.photoDate.length), contact.id);
+          ContactRiskApi.fromContact(contact,
+              user.telephone.replaceAll("+34", ""), contact.photoDate.length),
+          contact.id);
 
-      if (contact.photoDate.isNotEmpty && contactRiskApi != null
-          && contactRiskApi.awsUploadPresignedUrls != null && contactRiskApi.awsUploadPresignedUrls!.isNotEmpty) {
+      if (contact.photoDate.isNotEmpty &&
+          contactRiskApi != null &&
+          contactRiskApi.awsUploadPresignedUrls != null &&
+          contactRiskApi.awsUploadPresignedUrls!.isNotEmpty) {
         var index = 0;
         for (var url in contactRiskApi.awsUploadPresignedUrls!) {
           await ContactRiskService().updateImage(url, contact.photoDate[index]);
@@ -125,13 +120,18 @@ class EditRiskController extends GetxController {
       final MainController mainController = Get.put(MainController());
       var user = await mainController.getUserData();
       ContactRiskService().updateContactRisk(
-          ContactRiskApi.fromContact(contactRisk, user.telephone.replaceAll("+34", ""), contactRisk.photoDate.length), contactRisk.id);
+          ContactRiskApi.fromContact(
+              contactRisk,
+              user.telephone.replaceAll("+34", ""),
+              contactRisk.photoDate.length),
+          contactRisk.id);
 
       NotificationCenter().notify('getContactRisk');
     }
   }
 
-  Future<void> updateContactRiskWhenDateFinished(int id, Map<String, dynamic> data) async {
+  Future<void> updateContactRiskWhenDateFinished(
+      int id, Map<String, dynamic> data) async {
     var contactRisk = await const HiveDataRisk().getContactRiskBD(id);
 
     if (contactRisk != null) {
@@ -144,7 +144,11 @@ class EditRiskController extends GetxController {
       final MainController mainController = Get.put(MainController());
       var user = await mainController.getUserData();
       ContactRiskService().updateContactRisk(
-          ContactRiskApi.fromContact(contactRisk, user.telephone.replaceAll("+34", ""), contactRisk.photoDate.length), contactRisk.id);
+          ContactRiskApi.fromContact(
+              contactRisk,
+              user.telephone.replaceAll("+34", ""),
+              contactRisk.photoDate.length),
+          contactRisk.id);
 
       NotificationCenter().notify('getContactRisk');
     }

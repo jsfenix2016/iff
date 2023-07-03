@@ -32,11 +32,11 @@ class MainService {
   }
 
   Future<bool> cancelAllNotifications(List<String> taskIds) async {
-
     try {
-      final response = await http.post(Uri.parse("${Constant.baseApi}/v1/notifications/cancel"),
-              headers: Constant.headers,
-              body: jsonEncode(taskIds));
+      final response = await http.post(
+          Uri.parse("${Constant.baseApi}/v1/notifications/cancel"),
+          headers: Constant.headers,
+          body: jsonEncode(taskIds));
 
       return response.statusCode == 200;
     } catch (e) {
@@ -45,13 +45,13 @@ class MainService {
   }
 
   Future<bool> sendAlertToContactImmediately(List<String> taskIds) async {
-
     try {
       var json = jsonEncode(taskIds);
 
-      final response = await http.post(Uri.parse("${Constant.baseApi}/v1/notifications/send"),
-              headers: Constant.headers,
-              body: jsonEncode(taskIds));
+      final response = await http.post(
+          Uri.parse("${Constant.baseApi}/v1/notifications/send"),
+          headers: Constant.headers,
+          body: jsonEncode(taskIds));
 
       return response.statusCode == 200;
     } catch (e) {
@@ -60,8 +60,6 @@ class MainService {
   }
 
   Future<bool> saveDrop(UserBD user) async {
-    Map<String, dynamic> authData = {};
-
     try {
       final resp = await http.post(
           Uri.parse(
