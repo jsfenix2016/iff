@@ -50,14 +50,14 @@ class ContactApi {
 
   factory ContactApi.fromJson(Map<String, dynamic> json) {
     return ContactApi(
-      userPhoneNumber: "",
-      phoneNumber: "",
+      userPhoneNumber: json['userPhoneNumber'],
+      phoneNumber: json['phoneNumber'],
       name: json['name'],
       displayName: json['displayName'],
       timeSendSms: json['timeSendSms'],
       timeCall: json['timeCall'],
       timeWhatsapp: json['timeWhatsapp'],
-      photo: json["photo"] ?? "",
+      photo: json["awsDownloadPresignedUrl"] ?? "",
       status: json["status"]
     );
   }

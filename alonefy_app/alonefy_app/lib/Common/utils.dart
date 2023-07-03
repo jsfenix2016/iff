@@ -9,6 +9,8 @@ import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:ifeelefine/Common/Constant.dart';
 import 'package:ifeelefine/Common/manager_alerts.dart';
+import 'package:ifeelefine/Model/ApiRest/ContactApi.dart';
+import 'package:ifeelefine/Model/ApiRest/ZoneRiskApi.dart';
 import 'package:ifeelefine/Page/Geolocator/Controller/configGeolocatorController.dart';
 import 'package:ifeelefine/Provider/prefencesUser.dart';
 import 'package:image_picker/image_picker.dart';
@@ -16,6 +18,12 @@ import 'package:jiffy/jiffy.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:intl/intl.dart';
+
+import '../Model/ApiRest/AlertApi.dart';
+import '../Model/ApiRest/ContactRiskApi.dart';
+import '../Model/ApiRest/UseMobilApi.dart';
+import '../Model/ApiRest/UserRestApi.dart';
+import '../Model/ApiRest/activityDayApiResponse.dart';
 
 final _prefs = PreferenceUser();
 final _locationController = Get.put(ConfigGeolocatorController());
@@ -144,10 +152,14 @@ String calculateAge(DateTime birthDate) {
 }
 
 Image getImage(String urlImage) {
-  Uint8List bytesImages = const Base64Decoder().convert(urlImage);
+  try {
+    Uint8List bytesImages = const Base64Decoder().convert(urlImage);
 
-  return Image.memory(bytesImages,
-      fit: BoxFit.cover, width: double.infinity, height: 250.0);
+    return Image.memory(bytesImages,
+          fit: BoxFit.cover, width: double.infinity, height: 250.0);
+  } catch (e) {
+    return Image(image: FileImage(File(urlImage)));
+  }
 }
 
 Future<File> procesarImagen(ImageSource origen) async {
@@ -712,6 +724,34 @@ List<DateTime> dynamicToDateTimeList(List<dynamic> dynamicList) {
   return datetimeList;
 }
 
+List<T> jsonToGenericList<T>(Map<String, dynamic> json, String name) {
+  List<T> genericApiList = [];
+
+  var genericList = json[name];
+
+  for (var obj in genericList) {
+    var jsonObj;
+    if (name == "zoneRisk") {
+      jsonObj = ZoneRiskApi.fromJson(obj);
+    } else if (name == "contactRisk") {
+      jsonObj = ContactRiskApi.fromJson(obj);
+    } else if (name == "contact") {
+      jsonObj = ContactApi.fromJson(obj);
+    } else if (name == "activities") {
+      jsonObj = ActivityDayApiResponse.fromJson(obj);
+    } else if (name == "inactivityTimes") {
+      jsonObj = UseMobilApi.fromJson(obj);
+    } else if (name == "sleepHours") {
+      jsonObj = UserRestApi.fromJson(obj);
+    } else if (name == "logAlert") {
+      jsonObj = AlertApi.fromJson(obj);
+    }
+    genericApiList.add(jsonObj as T);
+  }
+
+  return genericApiList;
+}
+
 extension StringExtension on String {
   String capitalize() {
     return "${this[0].toUpperCase()}${substring(1).toLowerCase()}";
@@ -736,14 +776,32 @@ Future<bool> getEnableIFF() async {
   var strDatetime = _prefs.getStartDateTimeDisambleIFF;
   if (strDatetime != "") {
     String deactivatedTime = _prefs.getDisambleIFF;
-    var minutes = deactivateTimeToMinutes(deactivatedTime);
-    var datetime = Jiffy(strDatetime, getDefaultPattern()).dateTime;
-    datetime.add(Duration(minutes: minutes));
 
-    if (DateTime.now().isAfter(datetime)) {
+    if (deactivatedTime.isNotEmpty) {
+      var minutes = deactivateTimeToMinutes(deactivatedTime);
+      var datetime = Jiffy(strDatetime, getDefaultPattern()).dateTime;
+      datetime.add(Duration(minutes: minutes));
+
+      if (DateTime.now().isAfter(datetime)) {
+        _prefs.setEnableIFF = true;
+      }
+    } else {
       _prefs.setEnableIFF = true;
     }
+
   }
 
   return _prefs.getEnableIFF;
+}
+
+Future<bool> requestPermission(Permission permission) async {
+  PermissionStatus status = await permission.request();
+
+  if (status.isPermanentlyDenied) {
+    return false;
+  } else if (status.isDenied) {
+    return false;
+  } else {
+    return true;
+  }
 }

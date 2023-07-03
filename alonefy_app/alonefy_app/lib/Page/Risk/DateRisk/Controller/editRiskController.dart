@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:get/get.dart';
@@ -61,6 +63,7 @@ class EditRiskController extends GetxController {
         if (save) {
           saveActivityLog(contact);
           // NotificationCenter().notify('getContactRisk');
+          RiskController riskVC = Get.find<RiskController>();
           riskVC.update();
           showSaveAlert(context, Constant.info, Constant.saveCorrectly.tr);
           return true;
@@ -156,31 +159,41 @@ class EditRiskController extends GetxController {
 
   Future<void> saveFromApi(List<ContactRiskApi> contactsRiskApi) async {
     for (var contactRiskApi in contactsRiskApi) {
-      if (contactRiskApi.photo != null && contactRiskApi.photo.isNotEmpty) {
-        var bytes =
-            await ContactRiskService().getContactImage(contactRiskApi.photo);
-        var contact = ContactRiskBD(
-            id: contactRiskApi.id,
-            photo: bytes,
-            name: contactRiskApi.name,
-            timeinit: contactRiskApi.startDateTime.toString(),
-            timefinish: contactRiskApi.endDateTime.toString(),
-            phones: contactRiskApi.customContactPhoneNumber,
-            titleMessage: contactRiskApi.titleAlertMessage,
-            messages: contactRiskApi.alertMessage,
-            sendLocation: contactRiskApi.sendLocation,
-            sendWhatsapp: contactRiskApi.notifyPredefinedContacts,
-            isInitTime: false,
-            isFinishTime: false,
-            code: "",
-            isActived: false,
-            isprogrammed: false,
-            photoDate: [],
-            saveContact: true,
-            createDate: DateTime.now(),
-            taskIds: []);
-        const HiveDataRisk().saveContactRisk(contact);
+      var bytes;
+      if (contactRiskApi.awsDownloadCustomContactPresignedUrl != null &&
+          contactRiskApi.awsDownloadCustomContactPresignedUrl.isNotEmpty) {
+        bytes = await ContactRiskService().getContactImage(
+            contactRiskApi.awsDownloadCustomContactPresignedUrl);
       }
+      List<Uint8List> photoDate = [];
+      if (contactRiskApi.awsDownloadPresignedUrls != null &&
+          contactRiskApi.awsDownloadPresignedUrls!.isNotEmpty) {
+        for (var photo in contactRiskApi.awsDownloadPresignedUrls!) {
+          var photoBytes = await ContactRiskService().getContactImage(photo);
+          if (photoBytes != null) photoDate.add(photoBytes);
+        }
+      }
+      var contact = ContactRiskBD(
+          id: contactRiskApi.id,
+          photo: bytes,
+          name: contactRiskApi.name,
+          timeinit: contactRiskApi.startDateTime.toString().replaceAll("Z", ""),
+          timefinish: contactRiskApi.endDateTime.toString().replaceAll("Z", ""),
+          phones: contactRiskApi.customContactPhoneNumber,
+          titleMessage: contactRiskApi.titleAlertMessage,
+          messages: contactRiskApi.alertMessage,
+          sendLocation: contactRiskApi.sendLocation,
+          sendWhatsapp: contactRiskApi.notifyPredefinedContacts,
+          isInitTime: false,
+          isFinishTime: false,
+          code: "",
+          isActived: false,
+          isprogrammed: false,
+          photoDate: photoDate,
+          saveContact: true,
+          createDate: DateTime.now(),
+          taskIds: []);
+      await const HiveDataRisk().saveContactRisk(contact);
     }
   }
 }

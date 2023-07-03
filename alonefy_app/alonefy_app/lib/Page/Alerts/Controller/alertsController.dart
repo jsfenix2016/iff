@@ -8,6 +8,8 @@ import 'package:ifeelefine/Provider/prefencesUser.dart';
 import 'package:intl/intl.dart';
 import 'package:collection/collection.dart';
 
+import '../../../Model/ApiRest/AlertApi.dart';
+
 final _prefs = PreferenceUser();
 
 class AlertsController extends GetxController {
@@ -52,5 +54,19 @@ class AlertsController extends GetxController {
 
   List<LogAlertsBD> removeDuplicates(List<LogAlertsBD> originalList) {
     return originalList.toSet().toList();
+  }
+
+  Future<void> saveFromApi(List<AlertApi> alerts) async {
+    if (alerts != null && alerts.isNotEmpty) {
+      for (var alert in alerts) {
+        var alertBD = LogAlertsBD(
+            id: alert.id,
+            type: alert.typeaction,
+            photoDate: [],
+            time: alert.startdate);
+
+        await const HiveData().saveUserPositionBD(alertBD);
+      }
+    }
   }
 }

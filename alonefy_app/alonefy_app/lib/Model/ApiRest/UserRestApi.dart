@@ -1,3 +1,5 @@
+import 'package:ifeelefine/Common/utils.dart';
+
 class UserRestApi {
   late String phoneNumber;
   late String dayOfWeek;
@@ -28,8 +30,8 @@ class UserRestApi {
     return UserRestApi(
       phoneNumber: json['phoneNumber'],
       dayOfWeek: json['dayOfWeek'],
-      wakeUpHour: json['wakeUpHour'],
-      retireHour: json['retireHour'],
+      wakeUpHour: jsonToDatetime(json['wakeUpHour'], getDefaultPattern()),
+      retireHour: jsonToDatetime(json['retireHour'],getDefaultPattern()),
       index: json['index'],
       isSelect: json['selected'],
     );

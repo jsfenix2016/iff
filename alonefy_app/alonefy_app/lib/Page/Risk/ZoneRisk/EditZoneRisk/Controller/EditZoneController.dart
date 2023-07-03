@@ -87,26 +87,34 @@ class EditZoneController extends GetxController {
 
   Future<void> saveFromApi(List<ZoneRiskApi> contactsZoneRiskApi) async {
     for (var contactZoneRiskApi in contactsZoneRiskApi) {
-      if (contactZoneRiskApi.photo != null &&
-          contactZoneRiskApi.photo.isNotEmpty) {
-        var bytes =
-            await ZoneRiskService().getZoneRiskImage(contactZoneRiskApi.photo);
-        var contact = ContactZoneRiskBD(
-            id: contactZoneRiskApi.id,
-            photo: bytes,
-            name: contactZoneRiskApi.name,
-            phones: contactZoneRiskApi.customContactPhoneNumber,
-            sendLocation: contactZoneRiskApi.sendlocation,
-            sendWhatsapp: contactZoneRiskApi.notifyPredefinedContacts,
-            code: "",
-            isActived: true,
-            sendWhatsappContact:
-                contactZoneRiskApi.customContactWhatsappNotification,
-            callme: contactZoneRiskApi.customContactVoiceNotification,
-            save: false,
-            createDate: DateTime.now());
-        const HiveDataRisk().saveContactZoneRisk(contact);
+      var bytes;
+      if (contactZoneRiskApi.awsDownloadCustomContactPresignedUrl != null &&
+          contactZoneRiskApi.awsDownloadCustomContactPresignedUrl.isNotEmpty) {
+        bytes = await ZoneRiskService().getZoneRiskImage(
+            contactZoneRiskApi.awsDownloadCustomContactPresignedUrl);
       }
+      var videoBytes;
+      if (contactZoneRiskApi.awsDownloadVideoPresignedUrl != null &&
+          contactZoneRiskApi.awsDownloadVideoPresignedUrl.isNotEmpty) {
+        videoBytes = await ZoneRiskService()
+            .getZoneRiskImage(contactZoneRiskApi.awsDownloadVideoPresignedUrl);
+      }
+      var contact = ContactZoneRiskBD(
+          id: contactZoneRiskApi.id,
+          photo: bytes,
+          name: contactZoneRiskApi.name,
+          phones: contactZoneRiskApi.customContactPhoneNumber,
+          sendLocation: contactZoneRiskApi.sendlocation,
+          sendWhatsapp: contactZoneRiskApi.notifyPredefinedContacts,
+          code: "",
+          isActived: true,
+          sendWhatsappContact:
+              contactZoneRiskApi.customContactWhatsappNotification,
+          callme: contactZoneRiskApi.customContactVoiceNotification,
+          save: false,
+          createDate: DateTime.now(),
+          video: videoBytes);
+      const HiveDataRisk().saveContactZoneRisk(contact);
     }
   }
 }

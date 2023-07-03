@@ -18,6 +18,8 @@ class ContactRiskApi {
   late int totalImagesToUpload;
   List<String>? awsUploadPresignedUrls;
   late String awsUploadCustomContactPresignedUrl;
+  List<String>? awsDownloadPresignedUrls;
+  late String awsDownloadCustomContactPresignedUrl;
 
   ContactRiskApi({
       required this.phoneNumber,
@@ -60,7 +62,10 @@ class ContactRiskApi {
     required this.sendLocation,
     required this.totalImagesToUpload,
     required this.awsUploadCustomContactPresignedUrl,
-    required this.awsUploadPresignedUrls});
+    required this.awsUploadPresignedUrls,
+    required this.awsDownloadPresignedUrls,
+    required this.awsDownloadCustomContactPresignedUrl
+  });
 
   Map<String, dynamic> toJson() => {
     'phoneNumber': phoneNumber,
@@ -93,7 +98,9 @@ class ContactRiskApi {
         sendLocation: json['sendLocation'],
         totalImagesToUpload: json['totalImagesToUpload'] ?? 0,
         awsUploadPresignedUrls: json['awsUploadPresignedUrls'] != null ? dynamicToStringList(json['awsUploadPresignedUrls']) : [],
-        awsUploadCustomContactPresignedUrl: json['awsUploadCustomContactPresignedUrl'] ?? ""
+        awsUploadCustomContactPresignedUrl: json['awsUploadCustomContactPresignedUrl'] ?? "",
+        awsDownloadPresignedUrls: json['awsDownloadPresignedUrls'] != null ? dynamicToStringList(json['awsDownloadPresignedUrls']) : [],
+        awsDownloadCustomContactPresignedUrl: json['awsDownloadCustomContactPresignedUrl'] ?? ""
     );
   }
 }

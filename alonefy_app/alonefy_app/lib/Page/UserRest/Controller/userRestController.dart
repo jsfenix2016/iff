@@ -127,7 +127,7 @@ class UserRestController extends GetxController {
     if (dateTime.hour == 0 && dateTime.minute == 0) {
       return await convertDateTimeToStringTime(dateTime);
     } else {
-      return dateTime.toIso8601String();
+      return dateTime.toIso8601String().replaceAll("T", " ").replaceAll("Z", "");
     }
   }
 
