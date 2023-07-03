@@ -13,6 +13,9 @@ class ZoneRiskApi {
   late bool notifyPredefinedContacts;
   late bool sendlocation;
   late String awsUploadCustomContactPresignedUrl;
+  late DateTime createDate;
+  late String awsDownloadCustomContactPresignedUrl;
+  late String awsDownloadVideoPresignedUrl;
 
   ZoneRiskApi({
     required this.phoneNumber,
@@ -46,7 +49,10 @@ class ZoneRiskApi {
     required this.customContactVoiceNotification,
     required this.notifyPredefinedContacts,
     required this.sendlocation,
-    required this.awsUploadCustomContactPresignedUrl
+    required this.awsUploadCustomContactPresignedUrl,
+    required this.createDate,
+    required this.awsDownloadCustomContactPresignedUrl,
+    required this.awsDownloadVideoPresignedUrl
   });
 
   Map<String, dynamic> toJson() => {
@@ -70,6 +76,9 @@ class ZoneRiskApi {
         notifyPredefinedContacts: json['notifyPredefinedContacts'],
         sendlocation: json['sendLocation'],
         awsUploadCustomContactPresignedUrl: json['awsUploadCustomContactPresignedUrl'] ?? "",
+        createDate: jsonToDatetime(json['created'], getDefaultPattern()),
+        awsDownloadCustomContactPresignedUrl: json['awsDownloadCustomContactPresignedUrl'] ?? "",
+        awsDownloadVideoPresignedUrl: json['awsDownloadVideoPresignedUrl'] ?? "",
     );
   }
 }

@@ -77,6 +77,12 @@ class _PermitionUserPageState extends State<PermitionUserPage> {
         });
       }
     }
+
+    if (permissions[index] == Permission.sms) {
+      setState(() {
+        permissionStatus[index] = true;
+      });
+    }
   }
 
   Future<bool> checkScheduleExactAlarmPermission() async {

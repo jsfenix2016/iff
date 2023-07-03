@@ -10,6 +10,7 @@ import 'package:ifeelefine/Model/ApiRest/UseMobilApi.dart';
 import 'package:ifeelefine/Model/ApiRest/ZoneRiskApi.dart';
 import 'package:ifeelefine/Model/ApiRest/userApi.dart';
 import 'package:ifeelefine/Page/AddActivityPage/Controller/addActivityController.dart';
+import 'package:ifeelefine/Page/Alerts/Controller/alertsController.dart';
 import 'package:ifeelefine/Page/EditUseMobil/Controller/editUseController.dart';
 import 'package:ifeelefine/Page/RestoreMyConfiguration/Service/restoreService.dart';
 import 'package:ifeelefine/Page/Risk/DateRisk/Controller/editRiskController.dart';
@@ -18,11 +19,14 @@ import 'package:ifeelefine/Page/UserEdit/Controller/getUserController.dart';
 import 'package:ifeelefine/Page/UserEdit/Service/editUserService.dart';
 import 'package:ifeelefine/Page/UserRest/Controller/userRestController.dart';
 import 'package:ifeelefine/Provider/prefencesUser.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 import '../../../Data/hive_data.dart';
+import '../../../Model/ApiRest/AlertApi.dart';
 import '../../../Model/ApiRest/ContactApi.dart';
 import '../../../Model/ApiRest/UserRestApi.dart';
 import '../../../Model/ApiRest/activityDayApiResponse.dart';
+import '../../../Utils/MimeType/mime_type.dart';
 
 final _prefs = PreferenceUser();
 
@@ -31,19 +35,26 @@ class RestoreController extends GetxController {
 
   Future<void> sendData(
       BuildContext context, String number, String email) async {
-    final restoreApi = await restServ.restoreData(number, email);
+    final userApi = await restServ.getUser(number);
 
-    if (restoreApi != null) {
-      await _saveUserFromAPI(restoreApi.userApi);
-      await _saveTimeUseMobile(restoreApi.inactivities);
-      await _saveRestDays(restoreApi.restDays);
-      await _saveActivities(restoreApi.activities);
-      await _saveContacts(restoreApi.contacts);
-      await _saveContactRisk(restoreApi.contactsRisk);
-      await _saveContactZoneRisk(restoreApi.contactsZoneRisk);
-      await _saveLocation(restoreApi.userApi);
-      await _saveTermsAndConditions(restoreApi.userApi);
-      await _saveFall(restoreApi.userApi);
+    if (userApi != null) {
+      await _saveUserFromAPI(userApi);
+      await _saveTimeUseMobile(userApi.inactivityTimes);
+      await _saveRestDays(userApi.sleepHours);
+      await _saveActivities(userApi.activities);
+      await _saveContacts(userApi.contact);
+      await _saveContactRisk(userApi.contactRisk);
+      await _saveContactZoneRisk(userApi.zoneRisk);
+      await _saveLogAlerts(userApi.logAlert);
+      await _saveLocation(userApi);
+      await _saveTermsAndConditions(userApi);
+      await _saveFall(userApi);
+      await _saveContactPermission(userApi);
+      await _saveNotifications(userApi);
+      await _saveScheduleExactAlarm(userApi);
+      await _saveCameraPermission(userApi);
+
+      _saveConfig();
 
       showSaveAlert(context, Constant.info, Constant.restoredCorrectly.tr);
     } else {
@@ -53,22 +64,26 @@ class RestoreController extends GetxController {
 
   Future<void> _saveUserFromAPI(UserApi? userApi) async {
     if (userApi != null) {
-      var bytes = await GetUserController().getUserImage(userApi.pathImage);
+      var bytes = await GetUserController().getUserImage(userApi.awsDownloadPresignedUrl);
 
       var pathImage = "";
       if (bytes != null) {
-        var imageName = "";
-        if (userApi.pathImage.contains('png')) {
-          imageName = 'user.png';
-        } else {
-          imageName = 'user.jpg';
+        var mime = lookupMimeType('', headerBytes: bytes);
+        var extension = "";
+        if (mime != null) {
+          extension = extensionFromMime(mime);
         }
-        pathImage = await saveImageFromUrl(bytes, imageName);
+        pathImage = await saveImageFromUrl(bytes, 'user_profile.$extension');
       }
 
       var userBD = GetUserController().userApiToUserBD(userApi, pathImage);
 
-      await const HiveData().saveUserBD(userBD);
+      var existsUser = await HiveData().getuserbd;
+      if (existsUser.idUser == "-1") {
+        await const HiveData().saveUserBD(userBD);
+      } else {
+        await const HiveData().updateUser(userBD);
+      }
 
       await EditUserService().updateUser(userBD);
     }
@@ -89,8 +104,8 @@ class RestoreController extends GetxController {
 
   Future<void> _saveFall(UserApi? userApi) async {
     if (userApi != null) {
-      _prefs.setDetectedFall = userApi.fallAccepted;
-      _prefs.setFallTime = minutesToString(userApi.timeFall);
+      _prefs.setDetectedFall = userApi.activateFalls;
+      _prefs.setFallTime = minutesToString(userApi.fallTime);
     }
   }
 
@@ -99,17 +114,55 @@ class RestoreController extends GetxController {
   }
 
   Future<void> _saveLocation(UserApi? userApi) async {
+    if (userApi != null && userApi.activateLocation) {
+      var isAccepted = await requestPermission(Permission.location);
+
+      if (isAccepted) {
+        _prefs.setAcceptedSendLocation = PreferencePermission.allow;
+      }
+    }
+  }
+
+  Future<void> _saveTermsAndConditions(UserApi? userApi) async {
+    if (userApi != null ) {
+      _prefs.setAceptedTerms = userApi.smsCallAccepted;
+      _prefs.setAceptedSendSMS = userApi.smsCallAccepted;
+    }
+  }
+
+  Future<void> _saveContactPermission(UserApi? userApi) async {
+    if (userApi != null && userApi.activateContacts) {
+      var isAccepted = await requestPermission(Permission.contacts);
+
+      if (isAccepted) {
+        _prefs.setAcceptedContacts = PreferencePermission.allow;
+      }
+    }
+  }
+
+  Future<void> _saveCameraPermission(UserApi? userApi) async {
+    if (userApi != null && userApi.activateCamera) {
+      var isAccepted = await requestPermission(Permission.camera);
+
+      if (isAccepted) {
+        _prefs.setAcceptedCamera = PreferencePermission.allow;
+      }
+    }
+  }
+
+  Future<void> _saveNotifications(UserApi? userApi) async {
     if (userApi != null) {
-      _prefs.setAcceptedSendLocation = userApi.locationAccepted
+      _prefs.setAcceptedNotification = userApi.activateNotifications
           ? PreferencePermission.allow
           : PreferencePermission.noAccepted;
     }
   }
 
-  Future<void> _saveTermsAndConditions(UserApi? userApi) async {
+  Future<void> _saveScheduleExactAlarm(UserApi? userApi) async {
     if (userApi != null) {
-      _prefs.setAceptedTerms = userApi.smsCallAccepted;
-      _prefs.setAceptedSendSMS = userApi.smsCallAccepted;
+      _prefs.setAcceptedScheduleExactAlarm = userApi.activateAlarm
+          ? PreferencePermission.allow
+          : PreferencePermission.noAccepted;
     }
   }
 
@@ -120,6 +173,16 @@ class RestoreController extends GetxController {
   Future<void> _saveContactZoneRisk(
       List<ZoneRiskApi> contactsZoneRiskApi) async {
     EditZoneController().saveFromApi(contactsZoneRiskApi);
+  }
+
+  Future<void> _saveLogAlerts(List<AlertApi> alerts) async {
+    AlertsController().saveFromApi(alerts);
+  }
+
+  void _saveConfig() {
+    _prefs.firstConfig = true;
+    _prefs.config = true;
+    _prefs.saveLastScreenRoute("home");
   }
 
   Future deleteAllData() async {

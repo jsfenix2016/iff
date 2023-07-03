@@ -154,7 +154,7 @@ class Habits {
     RestDay restWeekDay = RestDay();
 
     for (var restDay in restDays) {
-      if (restDay.day == day) {
+      if (Constant.weekDays[restDay.day] == day) {
         restWeekDay = restDay;
         break;
       }

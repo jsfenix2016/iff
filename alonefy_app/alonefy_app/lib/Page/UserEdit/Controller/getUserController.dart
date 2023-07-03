@@ -11,29 +11,10 @@ import '../../../Model/user.dart';
 
 class GetUserController extends GetxController {
   
-  Future<User?> getUser(String phoneNumber) async {
+  Future<UserApi?> getUser(String phoneNumber) async {
     var userApi = await GetUserService().getUser(phoneNumber);
 
-    if (userApi != null) {
-      var user = User(
-        idUser: userApi.idUser,
-        name: userApi.name,
-        lastname: userApi.lastname,
-        email: userApi.email,
-        telephone: userApi.telephone,
-        gender: userApi.gender,
-        maritalStatus: userApi.maritalStatus,
-        styleLife: userApi.styleLife,
-        pathImage: userApi.pathImage,
-        age: userApi.age,
-        country: userApi.country,
-        city: userApi.city
-      );
-
-      return user;
-    }
-
-    return null;
+    return userApi;
   }
 
   UserBD userApiToUserBD(UserApi userApi, String pathImage) {
@@ -42,12 +23,12 @@ class GetUserController extends GetxController {
         name: userApi.name,
         lastname: userApi.lastname,
         email: userApi.email,
-        telephone: userApi.telephone,
+        telephone: userApi.phoneNumber,
         gender: userApi.gender,
         maritalStatus: userApi.maritalStatus,
         styleLife: userApi.styleLife,
         pathImage: pathImage,
-        age: userApi.age,
+        age: userApi.age > 0 ? userApi.age.toString() : "",
         country: userApi.country,
         city: userApi.city
     );

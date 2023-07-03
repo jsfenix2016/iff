@@ -1,7 +1,7 @@
 class Constant {
   static const baseApi = 'https://dev.alertfriends.app';
   static const baseApiMessageBird = 'https://rest.messagebird.com/';
-  static const codeMessageBird = '';
+  static const codeMessageBird = 'ScW7OrkmUB6YPlsrPTGNx4Zwt';
   static const urlTerms = 'https://alertfriends.app/politica_privacidad/';
   static const personalInformation = 'Datos personales';
   static const selectGender = 'Selecciona el genero';
@@ -203,6 +203,16 @@ class Constant {
     "Sabado",
     "Domingo",
   ];
+
+  static const Map<String, String> weekDays = {
+    "L": "Lunes",
+    "M": "Martes",
+    "X": "Miercoles",
+    "J": "Jueves",
+    "V": "Viernes",
+    "S": "Sabado",
+    "D": "Domingo",
+  };
 
   static const Map<String, String> tempMapDayApi = {
     "L": "MONDAY",

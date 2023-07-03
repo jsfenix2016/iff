@@ -1,63 +1,118 @@
+import 'dart:convert';
+
+import 'package:ifeelefine/Common/utils.dart';
+import 'package:ifeelefine/Model/ApiRest/ContactRiskApi.dart';
+import 'package:ifeelefine/Model/ApiRest/UseMobilApi.dart';
+import 'package:ifeelefine/Model/ApiRest/UserRestApi.dart';
+import 'package:ifeelefine/Model/ApiRest/ZoneRiskApi.dart';
+import 'package:ifeelefine/Model/ApiRest/activityDayApiResponse.dart';
+
+import 'AlertApi.dart';
+import 'ContactApi.dart';
+
 class UserApi {
+  late String phoneNumber;
+  late String fcmToken;
   late String idUser;
   late String name;
   late String lastname;
   late String email;
-  late String telephone;
   late String gender;
-  late String maritalStatus;
   late String styleLife;
-  late String pathImage;
-  late String age;
+  late String maritalStatus;
+  late int age;
   late String country;
   late String city;
-  late String fcmToken;
   late bool premium;
   late bool smsCallAccepted;
-  late bool locationAccepted;
-  late bool fallAccepted;
-  late int timeFall;
+  late bool activateFalls;
+  late bool activateLocation;
+  late bool activateNotifications;
+  late bool activateCamera;
+  late bool activateContacts;
+  late bool activateAlarm;
+  late int fallTime;
+  late DateTime lastMovement;
+  late bool currentlyDeactivated;
+  late String awsDownloadPresignedUrl;
+  late List<ContactApi> contact;
+  late List<ContactRiskApi> contactRisk;
+  late List<ZoneRiskApi> zoneRisk;
+  late List<ActivityDayApiResponse> activities;
+  late List<UseMobilApi> inactivityTimes;
+  late List<UserRestApi> sleepHours;
+  late List<AlertApi> logAlert;
+
 
   UserApi({
+      required this.phoneNumber,
+      required this.fcmToken,
       required this.idUser,
       required this.name,
       required this.lastname,
       required this.email,
-      required this.telephone,
       required this.gender,
       required this.maritalStatus,
-      required this.styleLife,
-      required this.pathImage,
       required this.age,
+      required this.styleLife,
       required this.country,
       required this.city,
-      required this.fcmToken,
       required this.premium,
       required this.smsCallAccepted,
-      required this.locationAccepted,
-      required this.fallAccepted,
-      required this.timeFall});
+      required this.activateFalls,
+      required this.activateLocation,
+      required this.activateNotifications,
+      required this.activateCamera,
+      required this.activateContacts,
+      required this.activateAlarm,
+      required this.fallTime,
+      required this.lastMovement,
+      required this.currentlyDeactivated,
+      required this.awsDownloadPresignedUrl,
+      required this.contact,
+      required this.contactRisk,
+      required this.zoneRisk,
+      required this.activities,
+      required this.inactivityTimes,
+      required this.sleepHours,
+      required this.logAlert});
+
+
+  UserApi.id(this.idUser);
 
   factory UserApi.fromJson(Map<String, dynamic> json) {
     return UserApi(
-        idUser: json['idUser'],
-        name: json['name'],
-        lastname: json['lastname'],
-        email: json['email'],
-        telephone: json['telephone'],
-        gender: json['gender'],
-        maritalStatus: json['maritalStatus'],
-        styleLife: json['styleLife'],
-        pathImage: json['pathImage'],
-        age: json['age'],
-        country: json['country'],
-        city: json['city'],
+        phoneNumber: json['phoneNumber'],
         fcmToken: json['fcmToken'],
+        idUser: json['idUser'] ?? "",
+        name: json['name'] ?? "",
+        lastname: json['lastname'] ?? "",
+        email: json['email'],
+        gender: json['gender'] ?? "",
+        maritalStatus: json['maritalStatus'] ?? "",
+        age: json['age'] ?? 0,
+        styleLife: json['styleLife'] ?? "",
+        country: json['country'] ?? "",
+        city: json['city'] ?? "",
         premium: json['premium'],
         smsCallAccepted: json['smsCallAccepted'],
-        locationAccepted: json['locationAccepted'],
-        fallAccepted: json['fallAccepted'],
-        timeFall: json['timeFall']
+        activateFalls: json['activateFalls'],
+        activateLocation: json['activateLocation'],
+        activateNotifications: json['activateNotifications'],
+        activateCamera: json['activateCamera'],
+        activateContacts: json['activateContacts'],
+        activateAlarm: json['activateAlarm'],
+        fallTime: json['fallTime'],
+        lastMovement: json['lastMovement'] != null ? jsonToDatetime(json['lastMovement'], getDefaultPattern()) : DateTime.now(),
+        currentlyDeactivated: json['currentlyDeactivated'] ?? false,
+        awsDownloadPresignedUrl: json['awsDownloadPresignedUrl'],
+        contact: jsonToGenericList<ContactApi>(json, "contact"),
+        contactRisk: jsonToGenericList<ContactRiskApi>(json, "contactRisk"),
+        zoneRisk: jsonToGenericList<ZoneRiskApi>(json, "zoneRisk"),
+        activities: jsonToGenericList<ActivityDayApiResponse>(json, "activities"),
+        inactivityTimes: jsonToGenericList<UseMobilApi>(json, "inactivityTimes"),
+        sleepHours: jsonToGenericList<UserRestApi>(json, "sleepHours"),
+        logAlert: jsonToGenericList<AlertApi>(json, "logAlert")
     );
   }
 }
