@@ -217,10 +217,10 @@ class _MenuConfigurationPageState extends State<MenuConfigurationPage> {
         );
         break;
       case 10:
-        if (!prefs.isConfig) {
-          redirectToConfigUser();
-          return;
-        }
+        //if (!prefs.isConfig) {
+        //  redirectToConfigUser();
+        //  return;
+        //}
         if (_prefs.getUserPremium || _prefs.getDemoActive) {
           Navigator.push(
             context,
@@ -429,14 +429,14 @@ class _MenuConfigurationPageState extends State<MenuConfigurationPage> {
       _prefs.setHabitsRefresh = strDatetime;
     }
 
-    //var habits = Habits();
-    //
-    //if (await habits.canUpdateHabits()) {
-    //  await habits.fillHabits();
-    //  await habits.fillRestDays();
-    //  await habits.fillActivityDays();
-    //  await habits.average();
-    //  habits.updateUseTime(context);
-    //}
+    var habits = Habits();
+
+    if (await habits.canUpdateHabits()) {
+      await habits.fillHabits();
+      await habits.fillRestDays();
+      await habits.fillActivityDays();
+      await habits.average();
+      habits.updateUseTime(context);
+    }
   }
 }

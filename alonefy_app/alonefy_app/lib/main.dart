@@ -43,6 +43,7 @@ import 'Common/Firebase/firebaseManager.dart';
 
 import 'Page/Geolocator/Controller/configGeolocatorController.dart';
 import 'Page/LogActivity/Controller/logActivity_controller.dart';
+import 'Page/UserEdit/Controller/getUserController.dart';
 
 DateTime now = DateTime.now();
 late LogAlerts userMov;
@@ -92,7 +93,7 @@ Future<void> main() async {
   user = await mainController.getUserData();
 
   if (user != null) {
-    var userApi = null; //await GetUserController().getUser(user!.telephone);
+    var userApi = await GetUserController().getUser(user!.telephone);
 
     if (userApi != null && userApi.idUser != user!.idUser) {
       await RestoreController().deleteAllData();
