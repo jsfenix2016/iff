@@ -28,8 +28,6 @@ class UserService {
       final resp = await http.post(Uri.parse("${Constant.baseApi}/v1/user"),
           headers: Constant.headers, body: dataTemp);
 
-      Map<String, dynamic> decodeResp = json.decode(resp.body);
-
       return resp.statusCode == 200;
     } catch (error) {
       return false;
