@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ifeelefine/Common/colorsPalette.dart';
 import 'package:ifeelefine/Common/habits.dart';
+import 'package:ifeelefine/Common/text_style_font.dart';
 
 import 'package:ifeelefine/Page/ChangeNotificationTime/PageView/changeNotificationTime_page.dart';
 import 'package:ifeelefine/Page/Contact/Notice/PageView/contactNotice_page.dart';
@@ -297,49 +298,52 @@ class _MenuConfigurationPageState extends State<MenuConfigurationPage> {
                         child: Stack(
                           children: [
                             Center(
-                              child: Container(
-                                decoration: const BoxDecoration(
-                                  color: Colors.transparent,
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(8)),
-                                ),
-                                height: 38,
-                                width: 312,
-                                child: Row(
-                                  children: [
-                                    Padding(
-                                      padding: const EdgeInsets.only(left: 8.0),
-                                      child: Container(
-                                        height: permissionStatusI[index].heigth,
-                                        width: permissionStatusI[index].weigth,
-                                        decoration: BoxDecoration(
-                                          image: DecorationImage(
-                                            image: AssetImage(
-                                                permissionStatusI[index].icon),
-                                            fit: BoxFit.fill,
+                              child: Expanded(
+                                flex: 1,
+                                child: Container(
+                                  decoration: const BoxDecoration(
+                                    color: Colors.transparent,
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(8)),
+                                  ),
+                                  height: 50,
+                                  width: 312,
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.max,
+                                    children: [
+                                      Padding(
+                                        padding:
+                                            const EdgeInsets.only(left: 8.0),
+                                        child: Container(
+                                          height:
+                                              permissionStatusI[index].heigth,
+                                          width:
+                                              permissionStatusI[index].weigth,
+                                          decoration: BoxDecoration(
+                                            image: DecorationImage(
+                                              image: AssetImage(
+                                                  permissionStatusI[index]
+                                                      .icon),
+                                              fit: BoxFit.fill,
+                                            ),
+                                            color: Colors.transparent,
                                           ),
-                                          color: Colors.transparent,
                                         ),
                                       ),
-                                    ),
-                                    const SizedBox(
-                                      width: 12,
-                                    ),
-                                    Expanded(
-                                      child: Text(
-                                        permissionStatusI[index].name,
-                                        maxLines: 2,
-                                        textAlign: TextAlign.left,
-                                        style: GoogleFonts.barlow(
-                                          fontSize: 16.0,
-                                          wordSpacing: 1,
-                                          letterSpacing: 1,
-                                          fontWeight: FontWeight.normal,
-                                          color: Colors.white,
+                                      const SizedBox(
+                                        width: 12,
+                                      ),
+                                      Expanded(
+                                        flex: 1,
+                                        child: Text(
+                                          permissionStatusI[index].name,
+                                          maxLines: 2,
+                                          textAlign: TextAlign.left,
+                                          style: textNormal16White(),
                                         ),
                                       ),
-                                    ),
-                                  ],
+                                    ],
+                                  ),
                                 ),
                               ),
                             )

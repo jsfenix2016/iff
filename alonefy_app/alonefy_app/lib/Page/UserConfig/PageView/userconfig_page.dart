@@ -116,7 +116,8 @@ class _UserConfigPageState extends State<UserConfigPage> {
                         typeInput: TextInputType.emailAddress,
                       ),
                       const SizedBox(height: 20),
-                      SizedBox(
+                      Container(
+                        color: Colors.transparent,
                         width: double.infinity,
                         child: Center(
                           child: ElevatedButton(
@@ -127,22 +128,26 @@ class _UserConfigPageState extends State<UserConfigPage> {
                                 borderRadius:
                                     BorderRadius.all(Radius.circular(100)),
                               ),
-                              height: 42,
                               width: 235,
-                              child: Center(
-                                child: Padding(
-                                  padding: const EdgeInsets.only(
-                                      left: 2.0, right: 2),
-                                  child: Text(
-                                    Constant.tokenRequestTxt,
-                                    textAlign: TextAlign.center,
-                                    style: textNormal16Black(),
-                                  ),
-                                ),
+                              child: Text(
+                                Constant.tokenRequestTxt,
+                                textAlign: TextAlign.center,
+                                style: textNormal16Black(),
                               ),
                             ),
                             onPressed: () async {
-                              if (user!.telephone.isEmpty) {
+                              if (!validatePhoneNumber(user!.telephone)) {
+                                showSaveAlert(context, Constant.info,
+                                    Constant.validatePhoneNumber);
+
+                                (context as Element).markNeedsBuild();
+                                return;
+                              }
+
+                              if (!validateEmail(user!.email)) {
+                                // El correo electrónico no es válido
+                                showSaveAlert(context, Constant.info,
+                                    Constant.validateEmail);
                                 return;
                               }
 

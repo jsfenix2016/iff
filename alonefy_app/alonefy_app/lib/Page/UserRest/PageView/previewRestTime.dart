@@ -4,17 +4,12 @@ import 'dart:collection';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:ifeelefine/Common/Constant.dart';
 import 'package:ifeelefine/Common/colorsPalette.dart';
 import 'package:ifeelefine/Common/manager_alerts.dart';
-import 'package:ifeelefine/Common/utils.dart';
-
-import 'package:ifeelefine/Model/restday.dart';
 import 'package:ifeelefine/Model/restdaybd.dart';
 import 'package:ifeelefine/Page/PreviewActivitiesFilteredByDate/PageView/previewActivitiesByDate_page.dart';
 
-import 'package:ifeelefine/Page/UserInactivityPage/PageView/configurationUserInactivity_page.dart';
 import 'package:ifeelefine/Page/UserRest/Controller/userRestController.dart';
 import 'package:ifeelefine/Page/UserRest/Widgets/rowSelectTimer.dart';
 import 'package:ifeelefine/Provider/prefencesUser.dart';

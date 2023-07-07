@@ -59,79 +59,77 @@ class _FallActivationPageState extends State<FallActivationPage> {
             : null,
         body: Container(
           decoration: decorationCustom(),
-          width: size.width,
           height: size.height,
-          child: Column(
-            mainAxisSize: MainAxisSize.max,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Center(
-                child: Column(
-                  mainAxisSize: MainAxisSize.max,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Column(
+          child: Expanded(
+            flex: 1,
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.max,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Center(
+                    child: Column(
                       mainAxisSize: MainAxisSize.max,
                       mainAxisAlignment: MainAxisAlignment.center,
-                      children: const [
-                        WidgetLogoApp(),
+                      children: [
+                        const WidgetLogoApp(),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 30.0),
+                          child: Text(
+                            'Detectar caidas.',
+                            textAlign: TextAlign.center,
+                            style: GoogleFonts.barlow(
+                              fontSize: 24.0,
+                              wordSpacing: 1,
+                              letterSpacing: 1.2,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                        SizedBox(
+                          height: 360,
+                          child: Image.asset(
+                            fit: BoxFit.contain,
+                            'assets/images/Group 1006.png',
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(0, 16, 0, 0),
+                          child: ElevateButtonFilling(
+                            onChanged: (value) {
+                              isActive = !isActive;
+                              fallVC.setDetectedFall(isActive);
+                              setState(() {});
+                            },
+                            mensaje: isActive ? 'Desactivar' : 'Activar',
+                          ),
+                        ),
                       ],
                     ),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 30.0),
-                      child: Text(
-                        'Detectar caidas.',
-                        textAlign: TextAlign.center,
-                        style: GoogleFonts.barlow(
-                          fontSize: 24.0,
-                          wordSpacing: 1,
-                          letterSpacing: 1.2,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
-                    SizedBox(
-                      height: 360,
-                      child: Image.asset(
-                        fit: BoxFit.contain,
-                        'assets/images/Group 1006.png',
-                      ),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.fromLTRB(0, 16, 0, 0),
+                  ),
+                  Positioned(
+                    bottom: 24,
+                    left: 0,
+                    right: 0,
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
                       child: ElevateButtonFilling(
                         onChanged: (value) {
-                          isActive = !isActive;
-                          fallVC.setDetectedFall(isActive);
-                          setState(() {});
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const AddContactPage(),
+                            ),
+                          );
                         },
-                        mensaje: isActive ? 'Desactivar' : 'Activar',
+                        mensaje: 'Continuar',
                       ),
                     ),
-                  ],
-                ),
-              ),
-              Positioned(
-                bottom: 24,
-                left: 0,
-                right: 0,
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: ElevateButtonFilling(
-                    onChanged: (value) {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const AddContactPage(),
-                        ),
-                      );
-                    },
-                    mensaje: 'Continuar',
                   ),
-                ),
+                ],
               ),
-            ],
+            ),
           ),
         ),
       ),
