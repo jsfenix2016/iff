@@ -46,9 +46,11 @@ class TextFieldFormCustomBorderState extends State<TextFieldFormCustomBorder> {
           widget.onChanged(value);
         },
         key: Key(widget.mesaje),
-        initialValue: widget.mesaje,
         textCapitalization: TextCapitalization.sentences,
         decoration: InputDecoration(
+          prefix: (widget.labelText == Constant.telephone)
+              ? const Text('+34 ')
+              : null,
           suffixIcon: (widget.labelText == Constant.email ||
                   widget.labelText == Constant.telephone)
               ? const Text(

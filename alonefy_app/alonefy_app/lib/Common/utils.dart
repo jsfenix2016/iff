@@ -156,7 +156,7 @@ Image getImage(String urlImage) {
     Uint8List bytesImages = const Base64Decoder().convert(urlImage);
 
     return Image.memory(bytesImages,
-          fit: BoxFit.cover, width: double.infinity, height: 250.0);
+        fit: BoxFit.cover, width: double.infinity, height: 250.0);
   } catch (e) {
     return Image(image: FileImage(File(urlImage)));
   }
@@ -788,7 +788,6 @@ Future<bool> getEnableIFF() async {
     } else {
       _prefs.setEnableIFF = true;
     }
-
   }
 
   return _prefs.getEnableIFF;

@@ -9,16 +9,16 @@ class Constant {
   static const maritalStatus = 'Estado civil';
   static const styleLive = 'Estilo de vida';
   static const telephone = 'Telefono';
-  static const telephonePlaceholder = 'Ingresa un telefono';
+  static const telephonePlaceholder = 'Ingresa un teléfono';
   static const nameUser = 'Nombre';
   static const namePlaceholder = 'Ingresa un nombre';
   static const lastName = 'Apellido';
-  static const email = 'Correo electronico';
+  static const email = 'Correo electrónico';
   static const lastnamePlaceholder = 'Ingresa un apellido';
-  static const codeEmail = 'Codigo de correo';
-  static const codeEmailPlaceholder = 'Ingresa un codigo correo';
-  static const codeSms = 'Codigo de sms';
-  static const codeSmsPlaceholder = 'Ingresa un codigo sms';
+  static const codeEmail = 'Código de correo';
+  static const codeEmailPlaceholder = 'Ingresa un código correo';
+  static const codeSms = 'Código de sms';
+  static const codeSmsPlaceholder = 'Ingresa un código sms';
   static const continueTxt = 'Continuar';
   static const saveBtn = 'Guardar';
   static const nextTxt = 'Siguiente';
@@ -30,21 +30,21 @@ class Constant {
       'Si vives feliz solo o sola además, quieres sentirte protegido/a';
 
   static const onBoardingPageTwoTitle =
-      'Ante una situación de riesgo cuando estas sol@';
+      'Ante una situación de riesgo cuando estas solo/a';
   static const onBoardingPageTwoSubtitle =
       'Si I’m fine no detecta actividad o movimiento en tu smartphone, avisa al amigo o familiar que desees';
 
   static const onBoardingPageTreeTitle = 'Cuando una cita privada no vaya bien';
   static const onBoardingPageTreeSubtitle =
-      'I’m fine avisa a tus amig@s de confianza y envía tu ubicación';
+      'I’m fine avisa a tus amigo/as de confianza y envía tu ubicación';
 
   static const onBoardingPageFourTitle =
-      'Si tienes que atravesar sol@ una zona peligrosa';
+      'Si tienes que atravesar solo/a una zona peligrosa';
   static const onBoardingPageFourSubtitle =
       'I’m fine activará una alerta inmediata si te ocurre algo';
 
   static const onBoardingPageFiveTitle =
-      'Sientete ahora más segur@ viviendo sol@';
+      'Sientete ahora más seguro/a viviendo solo/a';
   static const onBoardingPageFiveSubtitle =
       'Con I’m fine tu  smartphone será tu mejor protección personal';
 
@@ -99,7 +99,7 @@ class Constant {
   static const Map<String, String> maritalState = {
     '0': 'Soltero',
     '1': 'Casado',
-    '2': 'Divorsiado',
+    '2': 'Divorciado',
   };
 
   static const Map<String, String> lifeStyle = {
@@ -187,30 +187,30 @@ class Constant {
   static const Map<String, String> weekend = {
     '0': 'Lunes',
     '1': 'Martes',
-    '2': 'Miercoles',
+    '2': 'Miércoles',
     '3': 'Jueves',
     '4': 'Viernes',
-    '5': 'Sabado',
+    '5': 'Sábado',
     '6': 'Domingo'
   };
 
   static const List<String> tempListDay = <String>[
     "Lunes",
     "Martes",
-    "Miercoles",
+    "Miércoles",
     "Jueves",
     "Viernes",
-    "Sabado",
+    "Sábado",
     "Domingo",
   ];
 
   static const Map<String, String> weekDays = {
     "L": "Lunes",
     "M": "Martes",
-    "X": "Miercoles",
+    "X": "Miércoles",
     "J": "Jueves",
     "V": "Viernes",
-    "S": "Sabado",
+    "S": "Sábado",
     "D": "Domingo",
   };
 
@@ -310,12 +310,12 @@ class Constant {
       "Para poder activar el permiso, se ha de hacer desde los Ajustes de la app";
   static const String enableLocalPermission = "¿Aceptas el permiso de";
   static const String verifyPhoneNumber =
-      'Debe verificar su numero de telefono';
+      'Debe verificar su numero de teléfono';
   static const String validatePhoneNumber =
-      'Debe colocar un numero de telefono valido';
+      'Debe colocar un numero de teléfono válido';
   static const String info = 'Información';
 
-  static const String validateEmail = 'Debe colocar un email valido';
+  static const String validateEmail = 'Debe colocar un email válido';
 
   static const String premiumHabitsTitle = 'Aprende de tus hábitos';
 
@@ -333,7 +333,7 @@ class Constant {
       'Cuando tu smartphone detecte una caída avisará al amigo o familiar que desees';
 
   static const String conexionFail =
-      "Se produjo algún error, compruebe sú conexión";
+      "Se produjo algún error, compruebe su conexión";
 
   static const String validateCodeEmail =
       'Introduce el código enviado a tu correo';
@@ -341,7 +341,7 @@ class Constant {
       'Introduce el código enviado a tu teléfono';
 
   static const String alertMessageValidateUser =
-      'Debe tener el telefono e email validado para continuar.';
+      'Debe tener el teléfono e email validado para continuar.';
 
   static const String tokenRequestTxt = 'Solicitar códigos de verificación';
 
@@ -367,16 +367,23 @@ class Constant {
 
   static const String changeGeneric = "Cambios guardados correctamente";
 
-  static const String codeError = 'El codigo no coincide';
+  static const String codeError = 'El código no coincide';
   static const String deletectGeneric = "Eliminado correctamente";
-  static const String codeValid = "Codigo valido";
-  static const String codeInvalid = "Codigo invalido";
+  static const String codeValid = "Código válido";
+  static const String codeInvalid = "Código válido";
   static const String saveData = "Datos guardados";
   static const String ok = "Ok";
+
+  static const String zoneRisk = "Zona de riesgo";
+  static const String dateRisk = "Cita de riesgo";
+  static const String activity = "Actividad";
+  static const String history = "Historial";
 
   static const String habitsOk = "Los hábitos se han guardado correctamente";
   static const String habitsError = "Los hábitos no se han podido guardar";
 
-  static const String activitiesTimeError = "La hora de inicio no puede ser superior que la hora de fin";
+  static const String activitiesTimeError =
+      "La hora de inicio no puede ser superior que la hora de fin";
+
   // static const String
 }

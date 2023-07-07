@@ -6,6 +6,7 @@ import 'package:ifeelefine/Common/button_style_custom.dart';
 import 'package:ifeelefine/Common/Firebase/firebaseManager.dart';
 import 'package:ifeelefine/Common/colorsPalette.dart';
 import 'package:ifeelefine/Common/initialize_models_bd.dart';
+import 'package:ifeelefine/Common/text_style_font.dart';
 import 'package:ifeelefine/Common/utils.dart';
 
 import 'package:ifeelefine/Model/user.dart';
@@ -179,13 +180,7 @@ class _UserConfigPageState2 extends State<UserConfigPage2> {
                           padding: const EdgeInsets.all(8.0),
                           child: Text(
                             "Selecciona el pais",
-                            style: GoogleFonts.barlow(
-                              fontSize: 18.0,
-                              wordSpacing: 1,
-                              letterSpacing: 0.001,
-                              fontWeight: FontWeight.normal,
-                              color: Colors.white,
-                            ),
+                            style: textNomral18White(),
                           ),
                         ),
                         iconEnabledColor: ColorPalette.principal, //Ico
@@ -201,13 +196,7 @@ class _UserConfigPageState2 extends State<UserConfigPage2> {
                                   padding: const EdgeInsets.all(8.0),
                                   child: Text(
                                     e,
-                                    style: GoogleFonts.barlow(
-                                      fontSize: 18.0,
-                                      wordSpacing: 1,
-                                      letterSpacing: 0.001,
-                                      fontWeight: FontWeight.normal,
-                                      color: Colors.white,
-                                    ),
+                                    style: textNomral18White(),
                                   ),
                                 ),
                               ),
@@ -254,13 +243,7 @@ class _UserConfigPageState2 extends State<UserConfigPage2> {
                           padding: const EdgeInsets.all(8.0),
                           child: Text(
                             "Selecciona la ciudad",
-                            style: GoogleFonts.barlow(
-                              fontSize: 16.0,
-                              wordSpacing: 1,
-                              letterSpacing: 0.001,
-                              fontWeight: FontWeight.normal,
-                              color: Colors.white,
-                            ),
+                            style: textNormal16White(),
                           ),
                         ),
                         iconEnabledColor: ColorPalette.principal, //Ico
@@ -275,13 +258,7 @@ class _UserConfigPageState2 extends State<UserConfigPage2> {
                                   padding: const EdgeInsets.all(8.0),
                                   child: Text(
                                     e,
-                                    style: GoogleFonts.barlow(
-                                      fontSize: 16.0,
-                                      wordSpacing: 1,
-                                      letterSpacing: 0.001,
-                                      fontWeight: FontWeight.normal,
-                                      color: Colors.white,
-                                    ),
+                                    style: textNormal16White(),
                                   ),
                                 ),
                               ),
@@ -349,7 +326,7 @@ class _UserConfigPageState2 extends State<UserConfigPage2> {
     userbd!.maritalStatus = user!.maritalStatus;
     userbd!.gender = user!.gender;
     userbd!.country = user!.country;
-    bool isupdate = await userConfigVC.updateUserDate(context, userbd!);
+    bool isupdate = await userConfigVC.updateUserDate(userbd!);
     if (isupdate) {
       updateFirebaseToken();
 

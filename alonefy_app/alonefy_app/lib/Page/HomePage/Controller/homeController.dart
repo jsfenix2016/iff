@@ -42,7 +42,7 @@ class HomeController extends GetxController {
     return originalList.toSet().toList();
   }
 
-  Future<bool> changeImage(BuildContext context, File foto, User user) async {
+  Future<bool> changeImage(File foto, User user) async {
     try {
       Uint8List? bytes;
       String img64 = "";
@@ -67,10 +67,10 @@ class HomeController extends GetxController {
             age: user.age,
             country: user.country,
             city: user.city);
-        await UserConfig2COntroller().updateUserDate(context, userbd);
+        await UserConfig2COntroller().updateUserDate(userbd);
         await EditConfigController().updateUserImage(userbd, bytes);
       } else {
-        await userVC.saveUserData(context, user, const Uuid().v1());
+        await userVC.saveUserData(user, const Uuid().v1());
       }
 
       return true;

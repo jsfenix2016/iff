@@ -92,45 +92,6 @@ class _UserConfigPageState extends State<UserConfigPage> {
                         mainAxisSize: MainAxisSize.max,
                         children: [
                           Flexible(
-                              flex: 0,
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: SizedBox(
-                                  height: 30,
-                                  width: 60,
-                                  child: TextField(
-                                    style: textNormal20White(),
-                                    enabled:
-                                        false, // Establecer enabled en false para bloquear el TextField
-                                    controller: TextEditingController(text: ""),
-                                    // Opcionalmente, puedes establecer un valor inicial
-                                    textCapitalization:
-                                        TextCapitalization.sentences,
-                                    decoration: InputDecoration(
-                                      hintText: "",
-                                      labelText: "+34",
-                                      focusedBorder: OutlineInputBorder(
-                                        borderSide: const BorderSide(
-                                            color: ColorPalette.principal),
-                                        borderRadius:
-                                            BorderRadius.circular(100.0),
-                                      ),
-                                      enabledBorder: OutlineInputBorder(
-                                        borderSide: const BorderSide(
-                                            width: 1,
-                                            color: ColorPalette
-                                                .principal), //<-- SEE HERE
-                                        borderRadius:
-                                            BorderRadius.circular(100.0),
-                                      ),
-                                      hintStyle: textNormal20White(),
-                                      filled: true,
-                                      labelStyle: textNormal20White(),
-                                    ),
-                                  ),
-                                ),
-                              )),
-                          Flexible(
                             flex: 1,
                             child: TextFieldFormCustomBorder(
                               labelText: Constant.telephone,
@@ -292,8 +253,7 @@ class _UserConfigPageState extends State<UserConfigPage> {
     }
 
     if (isValidSms) {
-      UserBD resp =
-          await userVC.saveUserData(context, user!, const Uuid().v1());
+      UserBD resp = await userVC.saveUserData(user!, const Uuid().v1());
 
       if (resp.idUser != "-1") {
         await Future.delayed(

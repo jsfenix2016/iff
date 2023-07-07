@@ -17,7 +17,7 @@ class UserConfig2COntroller extends GetxController {
     }
   }
 
-  Future<bool> updateUserDate(BuildContext context, UserBD user) async {
+  Future<bool> updateUserDate(UserBD user) async {
     try {
       // Map info
 
