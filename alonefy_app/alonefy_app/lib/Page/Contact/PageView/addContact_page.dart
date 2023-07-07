@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ifeelefine/Page/Contact/ListContact/PageView/list_contact_page.dart';
+import 'package:ifeelefine/Provider/prefencesUser.dart';
 import 'package:ifeelefine/Utils/Widgets/widgetLogo.dart';
 import 'package:ifeelefine/Views/contact_page.dart';
 
@@ -20,6 +21,13 @@ class AddContactPage extends StatefulWidget {
 
 class _AddContactPageState extends State<AddContactPage> {
   final ContactUserController controller = Get.put(ContactUserController());
+  final _prefs = PreferenceUser();
+  @override
+  void initState() {
+    _prefs.saveLastScreenRoute("addContact");
+    // TODO: implement initState
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +43,7 @@ class _AddContactPageState extends State<AddContactPage> {
                   children: [
                     SafeArea(
                       child: Container(
-                        height: 100.0,
+                        height: 50.0,
                       ),
                     ),
                     const WidgetLogoApp(),
@@ -61,7 +69,7 @@ class _AddContactPageState extends State<AddContactPage> {
                                   fontSize: 24.0,
                                   wordSpacing: 1,
                                   letterSpacing: 0.001,
-                                  fontWeight: FontWeight.w300,
+                                  fontWeight: FontWeight.w200,
                                   color: Colors.white,
                                   height: 1.5),
                             ),

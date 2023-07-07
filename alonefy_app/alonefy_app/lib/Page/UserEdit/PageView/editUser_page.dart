@@ -14,7 +14,7 @@ import 'package:ifeelefine/Common/decoration_custom.dart';
 import 'package:ifeelefine/Common/manager_alerts.dart';
 
 import 'package:country_state_city_picker/model/select_status_model.dart'
-as StatusModel;
+    as StatusModel;
 
 class UserEditPage extends StatefulWidget {
   const UserEditPage({super.key});
@@ -65,7 +65,7 @@ class _UserEditPageState extends State<UserEditPage> {
     user = await editVC.getUserDate();
     ages = await editVC.getAgeVC();
     _country = await getCounty();
-    _states.addAll( await editVC.getState());
+    _states.addAll(await editVC.getState());
 
     indexCountry = _country.indexWhere((item) => item == user?.country);
     selectCountry = user!.country;
@@ -80,8 +80,7 @@ class _UserEditPageState extends State<UserEditPage> {
       model.name = data['name'];
       model.emoji = data['emoji'];
       if (!mounted) continue;
-      if (user!.country.contains(
-          ("${model.emoji!}  ${model.name!}"))) {
+      if (user!.country.contains(("${model.emoji!}  ${model.name!}"))) {
         stateTemp.add(data['state']);
       }
       setState(() {
@@ -113,8 +112,7 @@ class _UserEditPageState extends State<UserEditPage> {
       model.name = data['name'];
       model.emoji = data['emoji'];
       if (!mounted) continue;
-      if (user!.country.contains(
-          ("${model.emoji!}  ${model.name!}"))) {
+      if (user!.country.contains(("${model.emoji!}  ${model.name!}"))) {
         stateTemp.add(data['state']);
       }
     }
@@ -124,8 +122,8 @@ class _UserEditPageState extends State<UserEditPage> {
   }
 
   Future getResponse() async {
-    var res = await rootBundle
-        .loadString('packages/country_state_city_picker/lib/assets/country.json');
+    var res = await rootBundle.loadString(
+        'packages/country_state_city_picker/lib/assets/country.json');
 
     return jsonDecode(res);
   }
@@ -631,9 +629,9 @@ class _UserEditPageState extends State<UserEditPage> {
     bool resp = await editVC.updateUserDate(context, user!);
 
     if (resp) {
-      showSaveAlert(context, "Informacion", "Datos guardados".tr);
+      showSaveAlert(context, "Información", "Datos guardados".tr);
     } else {
-      showSaveAlert(context, "Informacion", "Hubo un error".tr);
+      showSaveAlert(context, "Información", "Hubo un error".tr);
     }
   }
 }

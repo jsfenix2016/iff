@@ -1,15 +1,13 @@
-import 'dart:ffi';
-
 import 'package:flutter/material.dart';
-import 'package:geolocator/geolocator.dart';
+
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:ifeelefine/Common/Constant.dart';
+
 import 'package:ifeelefine/Common/colorsPalette.dart';
-import 'package:ifeelefine/Common/utils.dart';
+import 'package:ifeelefine/Page/Contact/PageView/addContact_page.dart';
+
 import 'package:ifeelefine/Page/FallDetected/Controller/fall_detectedController.dart';
 
-import 'package:ifeelefine/Page/HomePage/Pageview/home_page.dart';
 import 'package:ifeelefine/Utils/Widgets/elevatedButtonFilling.dart';
 import 'package:ifeelefine/Utils/Widgets/widgetLogo.dart';
 
@@ -125,9 +123,7 @@ class _FallActivationPageState extends State<FallActivationPage> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => const ContactList(
-                            isMenu: false,
-                          ),
+                          builder: (context) => const AddContactPage(),
                         ),
                       );
                     },

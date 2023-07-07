@@ -97,9 +97,9 @@ Future<void> main() async {
     }
   }
 
-  var premiumController = Get.put(PremiumController());
+  // var premiumController = Get.put(PremiumController());
   _prefs.setDemoActive = true;
-  premiumController.initPlatformState();
+  // premiumController.initPlatformState();
 // Recupera la última ruta de pantalla visitada
   final lastRoute = await _prefs.getLastScreenRoute();
   initApp = _prefs.isFirstConfig == false ? 'onboarding' : lastRoute;
@@ -165,12 +165,14 @@ Future activateService() async {
       onBackground: onIosBackground,
     ),
   );
-  service.startService();
-  // if (_prefs.getAceptedSendLocation || _prefs.getDetectedFall) {
-  //   service.startService();
-  // } else {
-  //   service.invoke("stopService");
-  // }
+
+  if (_prefs.getAcceptedNotification ||
+      _prefs.getDetectedFall ||
+      _prefs.getAcceptedSendLocation) {
+    service.startService();
+  } else {
+    service.invoke("stopService");
+  }
 
   const AndroidInitializationSettings initializationSettingsAndroid =
       AndroidInitializationSettings('@mipmap/logo_alertfriends');

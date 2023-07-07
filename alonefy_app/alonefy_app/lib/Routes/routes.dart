@@ -1,4 +1,5 @@
 import 'package:ifeelefine/Common/initialize_models_bd.dart';
+import 'package:ifeelefine/Page/Contact/PageView/addContact_page.dart';
 import 'package:ifeelefine/Page/FinishConfig/Pageview/finishConfig_page.dart';
 import 'package:ifeelefine/Page/Geolocator/PageView/geolocator_page.dart';
 import 'package:ifeelefine/Page/HomePage/Pageview/home_page.dart';
@@ -36,4 +37,5 @@ final Map<String, Widget Function(BuildContext)> appRoute = {
   "configGeo": (BuildContext context) => const InitGeolocator(),
   "finishConfig": (BuildContext context) => const FinishConfigPage(),
   "userConfig": (BuildContext context) => const UserConfigPage(),
+  "addContact": (BuildContext context) => const AddContactPage(),
 };

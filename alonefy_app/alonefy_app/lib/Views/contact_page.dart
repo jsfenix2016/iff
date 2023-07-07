@@ -105,7 +105,9 @@ class _ContactListState extends State<ContactList> {
               padding: const EdgeInsets.only(left: 48.0),
               child: Center(
                 child: Text(
-                  "Obtener Premium",
+                  (_prefs.getUserPremium)
+                      ? "Obtener Premium"
+                      : 'Agregar mas contactos',
                   textAlign: TextAlign.center,
                   style: GoogleFonts.barlow(
                     fontSize: 16.0,

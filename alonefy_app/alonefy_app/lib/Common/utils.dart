@@ -156,7 +156,7 @@ Image getImage(String urlImage) {
     Uint8List bytesImages = const Base64Decoder().convert(urlImage);
 
     return Image.memory(bytesImages,
-          fit: BoxFit.cover, width: double.infinity, height: 250.0);
+        fit: BoxFit.cover, width: double.infinity, height: 250.0);
   } catch (e) {
     return Image(image: FileImage(File(urlImage)));
   }
@@ -340,7 +340,7 @@ void showAlert(BuildContext context, String mensaje) {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: const Text("Informacion "),
+          title: const Text("Información "),
           content: Text(mensaje),
           actions: <Widget>[
             TextButton(
@@ -788,7 +788,6 @@ Future<bool> getEnableIFF() async {
     } else {
       _prefs.setEnableIFF = true;
     }
-
   }
 
   return _prefs.getEnableIFF;

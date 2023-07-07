@@ -1,4 +1,5 @@
 import 'package:google_fonts/google_fonts.dart';
+import 'package:ifeelefine/Common/button_style_custom.dart';
 import 'package:ifeelefine/Common/colorsPalette.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -8,6 +9,9 @@ import 'package:ifeelefine/Common/utils.dart';
 import 'package:ifeelefine/Model/logAlertsBD.dart';
 import 'package:ifeelefine/Page/Alerts/Controller/alertsController.dart';
 import 'package:ifeelefine/Page/Alerts/Widget/list_alert.dart';
+import 'package:ifeelefine/Page/Disamble/Pageview/disambleIfeelfine_page.dart';
+import 'package:ifeelefine/Utils/Widgets/elevateButtonCustomBorder.dart';
+import 'package:ifeelefine/Utils/Widgets/elevatedButtonFilling.dart';
 
 import 'package:notification_center/notification_center.dart';
 
@@ -70,8 +74,6 @@ class _AlertsPageState extends State<AlertsPage> {
         child: ListView.builder(
           itemCount: listData.length,
           itemBuilder: (BuildContext context, int i) {
-            var item = listData[i];
-
             return Padding(
               padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
               child: Stack(
@@ -110,89 +112,105 @@ class _AlertsPageState extends State<AlertsPage> {
                               width: 310,
                               color: Colors.transparent,
                               child: ListView.builder(
-                                  physics: const NeverScrollableScrollPhysics(),
-                                  shrinkWrap: true,
-                                  scrollDirection: Axis.vertical,
-                                  itemExtent: 70.0,
-                                  itemCount: listData[i].value.toList().length,
-                                  itemBuilder:
-                                      (BuildContext context, int index) {
-                                    var listAlerts = listData[i].value.toList();
-                                    listLog = listAlerts;
-                                    return ListTile(
-                                      title: Container(
-                                        color: Colors.transparent,
-                                        height: 70,
-                                        width: 300,
-                                        child: Stack(
-                                          children: [
-                                            Container(
-                                              width: 300,
-                                              color: Colors.transparent,
-                                              child: Row(
-                                                mainAxisSize: MainAxisSize.min,
-                                                children: [
-                                                  IconButton(
-                                                    iconSize: 35,
-                                                    color:
-                                                        ColorPalette.principal,
-                                                    onPressed: () {},
-                                                    icon: searchImageForIcon(
-                                                        listAlerts[index].type),
-                                                  ),
-                                                  Container(
-                                                    color: Colors.transparent,
-                                                    height: 70,
-                                                    width: size.width - 166,
-                                                    child: Stack(children: [
-                                                      Positioned(
-                                                        top: 10,
-                                                        child: Text(
-                                                          listAlerts[index]
-                                                              .type,
-                                                          textAlign:
-                                                              TextAlign.left,
-                                                          style:
-                                                              textNormal16White(),
-                                                        ),
+                                physics: const NeverScrollableScrollPhysics(),
+                                shrinkWrap: true,
+                                scrollDirection: Axis.vertical,
+                                itemExtent: 130.0,
+                                itemCount: listData[i].value.toList().length,
+                                itemBuilder: (BuildContext context, int index) {
+                                  var listAlerts = listData[i].value.toList();
+                                  listLog = listAlerts;
+                                  return ListTile(
+                                    title: Container(
+                                      color: Colors.transparent,
+                                      height: 130,
+                                      width: 300,
+                                      child: Stack(
+                                        children: [
+                                          Container(
+                                            width: 300,
+                                            color: Colors.transparent,
+                                            child: Row(
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: [
+                                                IconButton(
+                                                  iconSize: 35,
+                                                  color: ColorPalette.principal,
+                                                  onPressed: () {},
+                                                  icon: searchImageForIcon(
+                                                      listAlerts[index].type),
+                                                ),
+                                                Container(
+                                                  color: Colors.transparent,
+                                                  height: 70,
+                                                  width: size.width - 166,
+                                                  child: Stack(children: [
+                                                    Positioned(
+                                                      top: 10,
+                                                      child: Text(
+                                                        listAlerts[index].type,
+                                                        textAlign:
+                                                            TextAlign.left,
+                                                        style:
+                                                            textNormal16White(),
                                                       ),
-                                                      Positioned(
-                                                        top: 40,
-                                                        child: Text(
-                                                          '${listAlerts[index].time.day}-${listAlerts[index].time.month}-${listAlerts[index].time.year} | ${listAlerts[index].time.hour}:${listAlerts[index].time.minute}',
-                                                          textAlign:
-                                                              TextAlign.left,
-                                                          style:
-                                                              textNormal16White(),
-                                                        ),
-                                                      ),
-                                                    ]),
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                            index >= 0 &&
-                                                    index <
-                                                        listAlerts.length - 1
-                                                ? Positioned(
-                                                    left: 25,
-                                                    top: 100 /
-                                                        2, // La posición horizontal de la línea
-                                                    child: CustomPaint(
-                                                      painter: _LinePainter(),
                                                     ),
-                                                  )
-                                                : const SizedBox(
-                                                    height: 0,
+                                                    Positioned(
+                                                      top: 40,
+                                                      child: Text(
+                                                        '${listAlerts[index].time.day}-${listAlerts[index].time.month}-${listAlerts[index].time.year} | ${listAlerts[index].time.hour}:${listAlerts[index].time.minute}',
+                                                        textAlign:
+                                                            TextAlign.left,
+                                                        style:
+                                                            textNormal16White(),
+                                                      ),
+                                                    ),
+                                                  ]),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                          index >= 0 &&
+                                                  index < listAlerts.length - 1
+                                              ? Positioned(
+                                                  left: 25,
+                                                  top: 100 /
+                                                      2, // La posición horizontal de la línea
+                                                  child: CustomPaint(
+                                                    painter: _LinePainter(),
                                                   ),
-                                          ],
-                                        ),
+                                                )
+                                              : const SizedBox(
+                                                  height: 0,
+                                                ),
+                                        ],
                                       ),
-                                    );
-                                  }),
+                                    ),
+                                  );
+                                },
+                              ),
                             ),
                           ),
                         ],
+                      ),
+                    ),
+                  ),
+                  Positioned(
+                    bottom: 0,
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 50.0),
+                      child: ElevateButtonFilling(
+                        onChanged: (value) {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const DesactivePage(
+                                isMenu: false,
+                              ),
+                            ),
+                          );
+                        },
+                        mensaje: "Desactivar",
                       ),
                     ),
                   ),
@@ -214,7 +232,7 @@ class _LinePainter extends CustomPainter {
       ..strokeWidth = 1.5;
 
     canvas.drawLine(
-        const Offset(0.0, 70 / 2), Offset(size.width, size.height / 2), paint);
+        const Offset(0.0, 170 / 2), Offset(size.width, size.height / 2), paint);
   }
 
   @override

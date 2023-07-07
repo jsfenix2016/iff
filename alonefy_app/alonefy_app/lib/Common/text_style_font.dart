@@ -4,6 +4,16 @@ import 'package:ifeelefine/Common/colorsPalette.dart';
 
 class TextStyleFont {}
 
+TextStyle textNormal9White() {
+  return GoogleFonts.barlow(
+    fontSize: 9.0,
+    wordSpacing: 1,
+    letterSpacing: 0.001,
+    fontWeight: FontWeight.normal,
+    color: Colors.white,
+  );
+}
+
 TextStyle textNormal14White() {
   return GoogleFonts.barlow(
     fontSize: 14.0,

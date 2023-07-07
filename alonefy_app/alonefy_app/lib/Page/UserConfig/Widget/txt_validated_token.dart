@@ -28,11 +28,12 @@ class _TextValidateTokenState extends State<TextValidateToken> {
       child: Container(
         color: Colors.transparent,
         child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          //crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             SizedBox(
-              width: 120,
-              height: 50,
+              width: 140,
+              height: 70,
               child: Text(
                 widget.message,
                 textAlign: TextAlign.right,
@@ -42,8 +43,8 @@ class _TextValidateTokenState extends State<TextValidateToken> {
             const SizedBox(
               width: 10,
             ),
-            SizedBox(
-              width: 200,
+            Expanded(
+              flex: 1,
               child: TextFormField(
                 keyboardType: TextInputType.number,
                 initialValue: widget.code,

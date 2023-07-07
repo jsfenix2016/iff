@@ -71,25 +71,51 @@ class _AlternativePagePageState extends State<AlternativePage> {
                         ),
                       );
                     },
-                    child: Container(
-                      decoration: BoxDecoration(
-                        gradient: linerGradientButtonFilling(),
-                        borderRadius:
-                            const BorderRadius.all(Radius.circular(100)),
-                      ),
-                      height: 42,
-                      width: 200,
-                      child: Padding(
-                        padding: const EdgeInsets.only(left: 9.0, right: 8),
+                    child: FractionallySizedBox(
+                      widthFactor: 0.6,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          gradient: linerGradientButtonFilling(),
+                          borderRadius:
+                              const BorderRadius.all(Radius.circular(100)),
+                        ),
+                        height: 42,
+                        width: 200,
                         child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Center(
-                              child: Text(
-                                Constant.alternativePageButtonInit,
-                                style: textNormal16Black(),
+                            RichText(
+                              textAlign: TextAlign.center,
+                              text: TextSpan(
+                                text: Constant.alternativePageButtonInit,
+                                style: GoogleFonts.barlow(
+                                  fontSize: 16.0,
+                                  wordSpacing: 1,
+                                  letterSpacing: 0.001,
+                                  fontWeight: FontWeight.normal,
+                                  color: Colors.black,
+                                ),
+                                children: <TextSpan>[
+                                  TextSpan(
+                                    text: " I'm fine",
+                                    style: textNormal16Black(),
+                                  ),
+                                ],
                               ),
                             ),
-                            Text(" I'm fine", style: textNormal16Black()),
+                            // Center(
+                            //   child: Text(
+                            //     Constant.alternativePageButtonInit,
+                            // style: GoogleFonts.barlow(
+                            //   fontSize: 16.0,
+                            //   wordSpacing: 1,
+                            //   letterSpacing: 0.001,
+                            //   fontWeight: FontWeight.normal,
+                            //   color: Colors.black,
+                            // ),
+                            //   ),
+                            // ),
+                            // Text(" I'm fine", style: textNormal16Black()),
                           ],
                         ),
                       ),

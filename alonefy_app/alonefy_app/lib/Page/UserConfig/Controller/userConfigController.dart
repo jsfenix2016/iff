@@ -4,13 +4,10 @@ import 'package:ifeelefine/Common/Constant.dart';
 import 'package:ifeelefine/Common/initialize_models_bd.dart';
 import 'package:ifeelefine/Common/manager_alerts.dart';
 
-import 'package:ifeelefine/Common/utils.dart';
-
 import 'package:ifeelefine/Data/hive_data.dart';
 import 'package:ifeelefine/Model/user.dart';
 import 'package:ifeelefine/Model/userbd.dart';
 import 'package:ifeelefine/Page/UserConfig/Service/userService.dart';
-import 'package:ifeelefine/Page/UserConfig2/Service/userConfig2Service.dart';
 import 'package:ifeelefine/Provider/prefencesUser.dart';
 import 'package:ifeelefine/Provider/user_provider.dart';
 
@@ -33,7 +30,7 @@ class UserConfigCOntroller extends GetxController {
 
       // Utiliza la variable local dentro del espacio asyncronizado
       await Future.delayed(const Duration(milliseconds: 10), () {
-        showSaveAlert(context, Constant.info, "Se a enviado el codigo");
+        showSaveAlert(context, Constant.info, "Se ha enviado el código");
       });
     } else {
       // Utiliza la variable local dentro del espacio asyncronizado
@@ -68,19 +65,18 @@ class UserConfigCOntroller extends GetxController {
     if (res["ok"]) {
       // Utiliza la variable local dentro del espacio asyncronizado
       await Future.delayed(const Duration(milliseconds: 10), () {
-        showSaveAlert(context, Constant.info, "Codigo valido");
+        showSaveAlert(context, Constant.info, "Código válido");
       });
       return true;
     } else {
       await Future.delayed(const Duration(milliseconds: 10), () {
-        showSaveAlert(context, Constant.info, "Codigo invalido");
+        showSaveAlert(context, Constant.info, "Código invalido");
       });
       return false;
     }
   }
 
-  Future<UserBD> saveUserData(
-      BuildContext context, User user, String uuid) async {
+  Future<UserBD> saveUserData(User user, String uuid) async {
     try {
       user.idUser = (uuid);
       var person = UserBD(

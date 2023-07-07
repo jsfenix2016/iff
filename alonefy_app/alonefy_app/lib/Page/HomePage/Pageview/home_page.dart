@@ -92,7 +92,11 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   Future serviceBackgroundPlay() async {
     final service = FlutterBackgroundService();
 
-    service.startService();
+    if (_prefs.getAcceptedNotification ||
+        _prefs.getDetectedFall ||
+        _prefs.getAcceptedSendLocation) {
+      service.startService();
+    }
   }
 
   @override
@@ -140,11 +144,9 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     }
 
     if (foto != null) {
-      await homeVC.changeImage(context, foto, user!);
+      await homeVC.changeImage(foto, user!);
 
       showSaveAlert(context, Constant.info, Constant.saveImageAvatar.tr);
-    } else {
-      showSaveAlert(context, Constant.info, Constant.errorGeneric.tr);
     }
   }
 
