@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:ifeelefine/Common/utils.dart';
 import 'package:ifeelefine/Common/Constant.dart';
+import 'package:ifeelefine/Data/hive_data.dart';
 import 'package:ifeelefine/Model/activityDay.dart';
 import 'package:ifeelefine/Model/restday.dart';
 import 'package:ifeelefine/Page/LogActivity/Controller/logActivity_controller.dart';
@@ -44,12 +45,23 @@ class Habits {
 
   Future<bool> canUpdateHabits() async {
     Jiffy.locale('es');
-    var refreshTime = _prefs.getHabitsRefresh;
-    var date = Jiffy(refreshTime, getDefaultPattern());
 
-    var offset = DateTime(date.year, date.month, date.day + 1);
+    var logActivities = await const HiveData().listLogActivitybd;
 
-    return DateTime.now().isAfter(offset);
+    DateTime validDate = DateTime.now();
+    validDate = DateTime(validDate.year, validDate.month, validDate.day - 1);
+
+    if (logActivities.isNotEmpty && logActivities[0].time.isBefore(validDate)) {
+      return true;
+    } else {
+      return true;
+    }
+    //var refreshTime = _prefs.getHabitsRefresh;
+    //var date = Jiffy(refreshTime, getDefaultPattern());
+//
+    //var offset = DateTime(date.year, date.month, date.day + 1);
+
+    //return DateTime.now().isAfter(offset);
   }
 
   Future<void> fillHabits() async {
@@ -119,17 +131,24 @@ class Habits {
 
     print('Result movements: ' + movements.toString());
     print('Result result: ' + result.toString());
-    print('Result average: ' + (result / movements).toString());
+    //print('Result average: ' + (result / movements).toString());
   }
 
   void updateUseTime(BuildContext context) {
-    var useMobile = result / movements;
-    print('Use time average: ' + (result / movements).toString());
-    _prefs.setHabitsTime = '$useMobile min';
+    if (result > 0 && movements > 0) {
+      var useMobile = result / movements;
+      var useMobileInt = useMobile.toInt();
+      print('Use time average: ' + (result / movements).toString());
+      _prefs.setHabitsTime = '$useMobileInt min';
 
-    updateUseTimeBD(context, '$useMobile min');
+      updateUseTimeBD(context, '$useMobileInt min');
 
-    print("Use time: " + _prefs.getHabitsTime);
+      print("Use time: " + _prefs.getHabitsTime);
+
+      showAlert(context, Constant.habitsOk);
+    } else {
+      showAlert(context, Constant.habitsError);
+    }
   }
 
   void updateUseTimeBD(BuildContext context, String time) {
@@ -185,7 +204,7 @@ class Habits {
           logActivity.dateTime.day, sleep.hour, sleep.minute);
     }
 
-    if (sleep.hour == 0 && sleep.minute == 0) {
+    if (sleep.hour < 5) {
       sleep = DateTime(sleep.year, sleep.month, sleep.day + 1);
     }
 
@@ -403,7 +422,17 @@ class Habits {
   bool isAfterWakeUp(LogActivity logActivity) {
     RestDay restDay = getRestDay(logActivity.dateTime.weekday);
 
-    DateTime wakeUp = parseTime(restDay.timeWakeup, logActivity.dateTime);
+    DateTime wakeUp = DateTime.now();
+
+    if (restDay.timeWakeup.length == 5) {
+      wakeUp = parseTime(restDay.timeWakeup, logActivity.dateTime);
+    } else {
+      wakeUp = parseDurationRow(restDay.timeWakeup);
+      wakeUp = DateTime(logActivity.dateTime.year, logActivity.dateTime.month,
+          logActivity.dateTime.day, wakeUp.hour, wakeUp.minute);
+    }
+
+    //DateTime wakeUp = parseTime(restDay.timeWakeup, logActivity.dateTime);
 
     print("Resultado wake: " + wakeUp.toString());
 
@@ -413,7 +442,18 @@ class Habits {
   bool isPreviousBeforeSleep(
       LogActivity currentLogActivity, LogActivity logActivity) {
     RestDay restDay = getRestDay(logActivity.dateTime.weekday);
-    DateTime sleep = parseTime(restDay.timeSleep, logActivity.dateTime);
+
+    DateTime sleep = DateTime.now();
+
+    if (restDay.timeSleep.length == 5) {
+      sleep = parseTime(restDay.timeSleep, logActivity.dateTime);
+    } else {
+      sleep = parseDurationRow(restDay.timeSleep);
+      sleep = DateTime(logActivity.dateTime.year, logActivity.dateTime.month,
+          logActivity.dateTime.day, sleep.hour, sleep.minute);
+    }
+
+    //DateTime sleep = parseTime(restDay.timeSleep, logActivity.dateTime);
     if (sleep.hour == 0 && sleep.minute == 0) {
       sleep = DateTime(sleep.year, sleep.month, sleep.day + 1);
     }
@@ -429,7 +469,18 @@ class Habits {
 
   int getTimeBetweenMovementAndRestSleep(LogActivity logActivity) {
     RestDay restSleep = getRestDay(logActivity.dateTime.weekday);
-    DateTime sleep = parseTime(restSleep.timeSleep, logActivity.dateTime);
+
+    DateTime sleep = DateTime.now();
+
+    if (restSleep.timeSleep.length == 5) {
+      sleep = parseTime(restSleep.timeSleep, logActivity.dateTime);
+    } else {
+      sleep = parseDurationRow(restSleep.timeSleep);
+      sleep = DateTime(logActivity.dateTime.year, logActivity.dateTime.month,
+          logActivity.dateTime.day, sleep.hour, sleep.minute);
+    }
+
+    //DateTime sleep = parseTime(restSleep.timeSleep, logActivity.dateTime);
     if (sleep.hour == 0 && sleep.minute == 0) {
       sleep = DateTime(sleep.year, sleep.month, sleep.day + 1);
     }
@@ -437,8 +488,18 @@ class Habits {
   }
 
   int getTimeBetweenMovementAndRestWakeUp(LogActivity logActivity) {
-    RestDay restSleep = getRestDay(logActivity.dateTime.weekday);
-    DateTime wakeUp = parseTime(restSleep.timeWakeup, logActivity.dateTime);
+    RestDay restWakeUp = getRestDay(logActivity.dateTime.weekday);
+
+    DateTime wakeUp = DateTime.now();
+
+    if (restWakeUp.timeWakeup.length == 5) {
+      wakeUp = parseTime(restWakeUp.timeWakeup, logActivity.dateTime);
+    } else {
+      wakeUp = parseDurationRow(restWakeUp.timeWakeup);
+      wakeUp = DateTime(logActivity.dateTime.year, logActivity.dateTime.month,
+          logActivity.dateTime.day, wakeUp.hour, wakeUp.minute);
+    }
+    //DateTime wakeUp = parseTime(restWakeUp.timeWakeup, logActivity.dateTime);
     return getTimeBetweenMovementAndRest(wakeUp, logActivity);
   }
 
@@ -458,7 +519,7 @@ class Habits {
     print("Result between wake: " + diffWakeUp.toString());
     print("Result between: " + minutes.toString());
 
-    if (minutes > minMinutes) {
+    if (minutes >= minMinutes) {
       result = result + minutes;
       movements++;
       print("Result minutes added: " + minutes.toString());
@@ -474,7 +535,7 @@ class Habits {
 
     print("Activity time: " + minutes.toString());
 
-    if (minutes > minMinutes) {
+    if (minutes >= minMinutes) {
       result = result + minutes;
       movements++;
     }
@@ -506,7 +567,7 @@ class Habits {
     if (movements > -1) {
       if (activity.dateTime
               .difference(previousLogActivity!.dateTime)
-              .inMinutes >
+              .inMinutes >=
           minMinutes) {
         var minutes = activity.dateTime
             .difference(previousLogActivity!.dateTime)

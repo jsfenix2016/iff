@@ -30,6 +30,18 @@ class AddActivityController extends GetxController {
     }
   }
 
+  bool startTimeIsBeforeEndTime(String hour1, String hour2, String minutes1, String minutes2) {
+    if (int.parse(hour1) < int.parse(hour2)) {
+      return true;
+    } else if (int.parse(hour1) == int.parse(hour2)) {
+      return int.parse(minutes1) < int.parse(minutes2);
+    } else if (int.parse(hour1) > int.parse(hour2)) {
+      return false;
+    }
+
+    return false;
+  }
+
   Future<int> saveActivity(BuildContext context, ActivityDay activity) async {
     ActivityDayBD activitybd = await convertActivityDayToBD(activity);
 

@@ -373,10 +373,17 @@ class Constant {
   static const String codeInvalid = "Código válido";
   static const String saveData = "Datos guardados";
   static const String ok = "Ok";
+
   static const String zoneRisk = "Zona de riesgo";
   static const String dateRisk = "Cita de riesgo";
   static const String activity = "Actividad";
   static const String history = "Historial";
+
+  static const String habitsOk = "Los hábitos se han guardado correctamente";
+  static const String habitsError = "Los hábitos no se han podido guardar";
+
+  static const String activitiesTimeError =
+      "La hora de inicio no puede ser superior que la hora de fin";
 
   // static const String
 }

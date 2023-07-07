@@ -19,7 +19,6 @@ import '../../../../Model/ApiRest/ContactRiskApi.dart';
 import 'package:ifeelefine/Common/manager_alerts.dart';
 
 class EditRiskController extends GetxController {
-  RiskController riskVC = Get.find<RiskController>();
 
   Future<void> saveActivityLog(ContactRiskBD contact) async {
     LogAlertsBD mov = LogAlertsBD(

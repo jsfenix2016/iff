@@ -328,20 +328,25 @@ class _AddActivityPageState extends State<AddActivityPage>
                 onPressed: () async {
                   if (isRepeatTypeSelected()) {
                     var activities = await controller.getActivities();
-                    if (activities.length >= _maxActivitiesNoPremium &&
-                        !_prefs.getUserPremium) {
+                    if (activities.length > _maxActivitiesNoPremium &&
+                        !_prefs.getUserPremium && !_prefs.getDemoActive) {
                       showSaveAlert(context, Constant.info,
                           Constant.timeMaxReachedInactivity);
                     } else {
-                      var activity = createActivity();
-                      var activityApiResponse =
-                          await controller.saveActivityApi(activity);
-                      if (activityApiResponse != null) {
-                        activity.id = activityApiResponse.id;
-                        await controller.saveActivity(context, activity);
-                      }
+                      if (controller.startTimeIsBeforeEndTime(hoursPicker1, hoursPicker2,
+                          minutesPicker1, minutesPicker2)) {
+                        var activity = createActivity();
+                        var activityApiResponse =
+                        await controller.saveActivityApi(activity);
+                        if (activityApiResponse != null) {
+                          activity.id = activityApiResponse.id;
+                          await controller.saveActivity(context, activity);
+                        }
 
-                      Navigator.of(context).pop();
+                        Navigator.of(context).pop();
+                      } else {
+                        showAlert(context, Constant.activitiesTimeError);
+                      }
                     }
                   } else {
                     showRepeatTypeError();
