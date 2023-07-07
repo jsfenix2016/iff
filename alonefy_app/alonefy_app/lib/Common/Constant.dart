@@ -1,7 +1,7 @@
 class Constant {
   static const baseApi = 'https://dev.alertfriends.app';
   static const baseApiMessageBird = 'https://rest.messagebird.com/';
-  static const codeMessageBird = 'ScW7OrkmUB6YPlsrPTGNx4Zwt';
+  static const codeMessageBird = '';
   static const urlTerms = 'https://alertfriends.app/politica_privacidad/';
   static const personalInformation = 'Datos personales';
   static const selectGender = 'Selecciona el genero';
@@ -373,5 +373,10 @@ class Constant {
   static const String codeInvalid = "Codigo invalido";
   static const String saveData = "Datos guardados";
   static const String ok = "Ok";
+
+  static const String habitsOk = "Los hábitos se han guardado correctamente";
+  static const String habitsError = "Los hábitos no se han podido guardar";
+
+  static const String activitiesTimeError = "La hora de inicio no puede ser superior que la hora de fin";
   // static const String
 }

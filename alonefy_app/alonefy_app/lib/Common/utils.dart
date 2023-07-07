@@ -340,7 +340,7 @@ void showAlert(BuildContext context, String mensaje) {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: const Text("Informacion "),
+          title: const Text("Información "),
           content: Text(mensaje),
           actions: <Widget>[
             TextButton(
