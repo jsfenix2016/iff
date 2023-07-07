@@ -100,6 +100,9 @@ class _UserConfigPageState2 extends State<UserConfigPage2> {
   }
 
   Future filterState() async {
+    _states.clear();
+    _states.add('Seleccionar estado');
+    selectState = "";
     for (var f in stateTemp) {
       if (!mounted) continue;
       f.forEach((data) {
@@ -221,6 +224,7 @@ class _UserConfigPageState2 extends State<UserConfigPage2> {
 
                             if (v.contains(
                                 ("${model.emoji!}  ${model.name!}"))) {
+                              stateTemp.clear();
                               stateTemp.add(element['state']);
                             }
                           }
