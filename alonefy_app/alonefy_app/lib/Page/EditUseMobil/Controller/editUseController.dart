@@ -1,16 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ifeelefine/Common/Constant.dart';
-import 'package:ifeelefine/Common/Firebase/firebaseManager.dart';
+
 import 'package:ifeelefine/Common/utils.dart';
 import 'package:ifeelefine/Data/hive_data.dart';
 import 'package:ifeelefine/Model/useMobilbd.dart';
 import 'package:ifeelefine/Page/EditUseMobil/Service/editUseMobilService.dart';
-import 'package:ifeelefine/Page/UserEdit/Service/editUserService.dart';
 
-import '../../../Common/Firebase/FirebaseService.dart';
 import '../../../Controllers/mainController.dart';
-import '../../../Model/ApiRest/FirebaseTokenApi.dart';
+
 import '../../../Model/ApiRest/UseMobilApi.dart';
 
 class EditUseMobilController extends GetxController {
@@ -26,8 +24,7 @@ class EditUseMobilController extends GetxController {
     return listUse;
   }
 
-  Future<bool> saveTimeUseMobil(
-      BuildContext context, List<UseMobilBD> selecDicActivity) async {
+  Future<bool> saveTimeUseMobil(List<UseMobilBD> selecDicActivity) async {
     var user = await const HiveData().saveListTimeUseMobil(selecDicActivity);
 
     saveTimeUseMobilApi(selecDicActivity);
@@ -48,7 +45,8 @@ class EditUseMobilController extends GetxController {
     EditUseMobilService().saveUseMobil(listUseMobilApi);
   }
 
-  List<UseMobilApi> _convertToApi(List<UseMobilBD> listMobilBD, String phoneNumber) {
+  List<UseMobilApi> _convertToApi(
+      List<UseMobilBD> listMobilBD, String phoneNumber) {
     List<UseMobilApi> listMobilApi = [];
 
     for (var useMobil in listMobilBD) {
@@ -57,8 +55,7 @@ class EditUseMobilController extends GetxController {
           dayOfWeek: Constant.tempMapDayApi[useMobil.day]!,
           time: stringTimeToInt(useMobil.time),
           index: useMobil.selection,
-          isSelect: useMobil.isSelect
-      );
+          isSelect: useMobil.isSelect);
 
       listMobilApi.add(useMobilApi);
     }
@@ -79,8 +76,7 @@ class EditUseMobilController extends GetxController {
           day: Constant.tempMapDayReverseApi[useMobilApi.dayOfWeek]!,
           time: minutesToString(useMobilApi.time),
           selection: useMobilApi.index,
-          isSelect: useMobilApi.isSelect
-      );
+          isSelect: useMobilApi.isSelect);
 
       list.add(useMobil);
     }
@@ -101,7 +97,8 @@ class EditUseMobilController extends GetxController {
     return minutes;
   }
 
-  Future<void> saveTimeUseMobileFromHabits(BuildContext context, String time) async {
+  Future<void> saveTimeUseMobileFromHabits(
+      BuildContext context, String time) async {
     var useMobileList = await const HiveData().listUseMobilBd;
 
     List<UseMobilBD> useMobileUpdate = [];
@@ -111,7 +108,7 @@ class EditUseMobilController extends GetxController {
       useMobileUpdate.add(useMobileDay);
     }
 
-    saveTimeUseMobil(context, useMobileList);
+    saveTimeUseMobil(useMobileList);
   }
 
   Map<String, String> getMapWithHabitsTime(String habits) {

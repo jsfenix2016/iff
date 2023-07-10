@@ -7,7 +7,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:ifeelefine/Common/Constant.dart';
 import 'package:ifeelefine/Common/colorsPalette.dart';
 import 'package:ifeelefine/Common/manager_alerts.dart';
-import 'package:ifeelefine/Common/utils.dart';
 import 'package:ifeelefine/Data/hive_data.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
@@ -18,6 +17,7 @@ import 'package:ifeelefine/Page/EditUseMobil/Page/Widget/listWeekDayCustom.dart'
 import 'package:ifeelefine/Utils/Widgets/elevateButtonCustomBorder.dart';
 
 import 'package:collection/collection.dart';
+import 'package:ifeelefine/Utils/Widgets/loading_page.dart';
 
 import '../../../Provider/prefencesUser.dart';
 import '../../Premium/PageView/premium_page.dart';
@@ -156,7 +156,7 @@ class _EditUseMobilPageState extends State<EditUseMobilPage> {
   }
 
   void btnCancel() async {
-    await editUseMobilVC.saveTimeUseMobil(context, selecDicActivityCancel);
+    await editUseMobilVC.saveTimeUseMobil(selecDicActivityCancel);
     // showAlert(context, "Se ha cancelado los cambios");
     showSaveAlert(context, Constant.info, Constant.cancelChange);
   }
@@ -178,11 +178,15 @@ class _EditUseMobilPageState extends State<EditUseMobilPage> {
       var a = {"${noSelectDay - 1}": sortWeekdays(newRestDays)};
       groupedProducts.addAll(a);
 
-      setState(() {});
+      showSaveAlert(context, Constant.info, "Faltan días por seleccionar");
     } else {
-      await editUseMobilVC.saveTimeUseMobil(
-          context, sortWeekdays(selecListUseMobilDays));
+      var save = await editUseMobilVC
+          .saveTimeUseMobil(sortWeekdays(selecListUseMobilDays));
+      if (save) {
+        showSaveAlert(context, Constant.info, Constant.saveCorrectly);
+      }
     }
+    setState(() {});
   }
 
   @override
@@ -258,40 +262,39 @@ class _EditUseMobilPageState extends State<EditUseMobilPage> {
                             height: 200,
                             color: Colors.transparent,
                             child: SizedBox(
-                                width: 200,
-                                height: 90,
-                                child: Stack(
-                                  children: [
-                                    if (_prefs.getUserPremium ||
-                                        _prefs.getDemoActive) ...[
-                                      _getCupertinoPicker(indexList, indexGroup,
-                                          scrollController),
-                                    ] else ...[
-                                      GestureDetector(
-                                        child: AbsorbPointer(
-                                            absorbing: !_prefs.getUserPremium ||
-                                                _prefs.getDemoActive,
-                                            child: _getCupertinoPicker(
-                                                indexList,
-                                                indexGroup,
-                                                scrollController)),
-                                        onVerticalDragEnd: (drag) {
-                                          Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    const PremiumPage(
-                                                        isFreeTrial: false,
-                                                        img: 'pantalla3.png',
-                                                        title: Constant
-                                                            .premiumUseTimeTitle,
-                                                        subtitle: '')),
-                                          );
-                                        },
-                                      )
-                                    ]
+                              width: 200,
+                              height: 90,
+                              child: Stack(
+                                children: [
+                                  if (_prefs.getUserPremium ||
+                                      _prefs.getDemoActive) ...[
+                                    _getCupertinoPicker(indexList, indexGroup,
+                                        scrollController),
+                                  ] else ...[
+                                    GestureDetector(
+                                      child: AbsorbPointer(
+                                          absorbing: !_prefs.getUserPremium ||
+                                              _prefs.getDemoActive,
+                                          child: _getCupertinoPicker(indexList,
+                                              indexGroup, scrollController)),
+                                      onVerticalDragEnd: (drag) {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  const PremiumPage(
+                                                      isFreeTrial: false,
+                                                      img: 'pantalla3.png',
+                                                      title: Constant
+                                                          .premiumUseTimeTitle,
+                                                      subtitle: '')),
+                                        );
+                                      },
+                                    ),
                                   ],
-                                )),
+                                ],
+                              ),
+                            ),
                           ),
                         ],
                       );
@@ -330,7 +333,7 @@ class _EditUseMobilPageState extends State<EditUseMobilPage> {
                       width: size.width,
                       child: Center(
                         child: ElevateButtonCustomBorder(
-                          onChanged: (value) async {
+                          onChanged: (value) {
                             btnAdd();
                           },
                           mensaje: Constant.saveBtn,
@@ -358,12 +361,12 @@ class _EditUseMobilPageState extends State<EditUseMobilPage> {
         timeLblPM = timeDic[value.toString()].toString();
         processSelectedInfo();
       },
-      itemExtent: 56.0,
+      itemExtent: 60.0,
       children: List.generate(timeDic.length, (index) {
         return Container(
           key: Key(indexList.toString()),
-          height: 64,
-          width: 125,
+          height: 65,
+          width: 150,
           color: Colors.transparent,
           child: Column(
             key: Key(indexList.toString()),
