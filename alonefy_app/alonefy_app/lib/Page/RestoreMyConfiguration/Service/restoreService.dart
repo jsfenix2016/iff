@@ -19,7 +19,10 @@ class RestoreService {
       );
 
       if (resp.statusCode == 200) {
-        return UserApi.fromJson(jsonDecode(resp.body));
+        var bytes = resp.bodyBytes;
+        var utfBody = utf8.decode(bytes);
+        var decodeUtf = jsonDecode(utfBody);
+        return UserApi.fromJson(decodeUtf);
       } else {
         return null;
       }

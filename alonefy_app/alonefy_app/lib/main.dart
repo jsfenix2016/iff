@@ -166,9 +166,9 @@ Future activateService() async {
     ),
   );
 
-  if (_prefs.getAcceptedNotification ||
+  if (_prefs.getAcceptedNotification == PreferencePermission.allow ||
       _prefs.getDetectedFall ||
-      _prefs.getAcceptedSendLocation) {
+      _prefs.getAcceptedSendLocation == PreferencePermission.allow) {
     service.startService();
   } else {
     service.invoke("stopService");
