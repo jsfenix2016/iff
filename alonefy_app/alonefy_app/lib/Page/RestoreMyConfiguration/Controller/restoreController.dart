@@ -65,7 +65,8 @@ class RestoreController extends GetxController {
 
   Future<void> _saveUserFromAPI(UserApi? userApi) async {
     if (userApi != null) {
-      var bytes = await GetUserController().getUserImage(userApi.awsDownloadPresignedUrl);
+      var bytes = await GetUserController()
+          .getUserImage(userApi.awsDownloadPresignedUrl);
 
       var pathImage = "";
       if (bytes != null) {
@@ -127,7 +128,7 @@ class RestoreController extends GetxController {
   }
 
   Future<void> _saveTermsAndConditions(UserApi? userApi) async {
-    if (userApi != null ) {
+    if (userApi != null) {
       _prefs.setAceptedTerms = userApi.smsCallAccepted;
       _prefs.setAceptedSendSMS = userApi.smsCallAccepted;
     }
@@ -183,7 +184,7 @@ class RestoreController extends GetxController {
   }
 
   void _saveConfig() {
-    _prefs.firstConfig = true;
+    _prefs.firstConfig = false;
     _prefs.config = true;
     _prefs.saveLastScreenRoute("home");
   }

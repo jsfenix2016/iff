@@ -1,16 +1,11 @@
-import 'dart:math';
-
-import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ifeelefine/Common/Constant.dart';
 import 'package:ifeelefine/Common/colorsPalette.dart';
 import 'package:ifeelefine/Common/manager_alerts.dart';
+import 'package:ifeelefine/Common/text_style_font.dart';
 
-import 'package:ifeelefine/Common/utils.dart';
-import 'package:ifeelefine/Model/restday.dart';
 import 'package:ifeelefine/Model/restdaybd.dart';
-import 'package:ifeelefine/Page/UserInactivityPage/PageView/previewInactivityPage.dart';
 
 import 'package:ifeelefine/Page/UserRest/Controller/userRestController.dart';
 
@@ -88,20 +83,14 @@ class _UserRestPageState extends State<UserRestPage> {
                     ),
                     Padding(
                       padding: const EdgeInsets.only(
-                          top: 100.0, left: 30, right: 30, bottom: 30),
+                          top: 90.0, left: 30, right: 30, bottom: 30),
                       child: Container(
                         color: Colors.transparent,
                         width: size.width,
                         child: Text(
                           Constant.hoursSleepAndWakeup,
                           textAlign: TextAlign.center,
-                          style: GoogleFonts.barlow(
-                            fontSize: 24.0,
-                            wordSpacing: 1,
-                            letterSpacing: 1.2,
-                            fontWeight: FontWeight.bold,
-                            color: ColorPalette.principal,
-                          ),
+                          style: textBold24PrincipalColor(),
                         ),
                       ),
                     ),
@@ -146,6 +135,13 @@ class _UserRestPageState extends State<UserRestPage> {
                                   timeLblAM = value.timeWakeup;
                                   timeLblPM = value.timeSleep;
                                   indexFile = index;
+
+                                  for (var element in tempRestDays) {
+                                    if (element.selection == index) {
+                                      element.timeWakeup = timeLblAM;
+                                      element.timeSleep = timeLblPM;
+                                    }
+                                  }
                                   setState(() {});
                                 },
                               ),

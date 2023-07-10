@@ -37,7 +37,10 @@ class UserService {
   Future<Map<String, dynamic>> validateCodeSMS(String id, String code) async {
     // final authData = {"recipient": "$num", "originator": (code)};
     final headersData = {
-      "Authorization": "AccessKey ${Constant.codeMessageBird}"
+      "Authorization": "AccessKey ${Constant.codeMessageBird}",
+      "timeout": "240",
+      "language": "es-es",
+      "country": "ES"
     };
 
     try {
