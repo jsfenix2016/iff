@@ -19,6 +19,7 @@ import 'package:ifeelefine/Page/UserEdit/Controller/getUserController.dart';
 import 'package:ifeelefine/Page/UserEdit/Service/editUserService.dart';
 import 'package:ifeelefine/Page/UserRest/Controller/userRestController.dart';
 import 'package:ifeelefine/Provider/prefencesUser.dart';
+import 'package:notification_center/notification_center.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import '../../../Data/hive_data.dart';
@@ -87,6 +88,8 @@ class RestoreController extends GetxController {
       }
 
       await EditUserService().updateUser(userBD);
+
+      NotificationCenter().notify('getUserData');
     }
   }
 
