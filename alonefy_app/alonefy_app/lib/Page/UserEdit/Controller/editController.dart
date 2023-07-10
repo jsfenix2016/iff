@@ -11,6 +11,7 @@ import 'package:ifeelefine/Model/userbd.dart';
 import 'package:ifeelefine/Page/UserEdit/Service/editUserService.dart';
 import 'package:country_state_city_picker/model/select_status_model.dart'
     as StatusModel;
+import 'package:notification_center/notification_center.dart';
 
 class EditConfigController extends GetxController {
   // final usuarioProvider = UsuarioProvider();
@@ -170,6 +171,8 @@ class EditConfigController extends GetxController {
       await const HiveData().updateUser(userbd);
 
       EditUserService().updateUser(userbd);
+
+      NotificationCenter().notify('getUserData');
 
       return true;
     } catch (error) {

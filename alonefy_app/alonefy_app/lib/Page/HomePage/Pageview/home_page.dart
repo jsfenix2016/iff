@@ -79,6 +79,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     WidgetsBinding.instance.addObserver(this);
     serviceBackgroundPause();
     NotificationCenter().subscribe('getAlerts', getAlerts);
+    NotificationCenter().subscribe('getUserData', getUserData);
   }
 
   Future serviceBackgroundPause() async {
@@ -92,9 +93,9 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   Future serviceBackgroundPlay() async {
     final service = FlutterBackgroundService();
 
-    if (_prefs.getAcceptedNotification ||
+    if (_prefs.getAcceptedNotification == PreferencePermission.allow ||
         _prefs.getDetectedFall ||
-        _prefs.getAcceptedSendLocation) {
+        _prefs.getAcceptedSendLocation == PreferencePermission.allow) {
       service.startService();
     }
   }
@@ -188,7 +189,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   Widget build(BuildContext context) {
     final Size size = MediaQuery.of(context).size;
     if (user != null) {
-      nameComplete = user!.name + user!.lastname;
+      nameComplete = "${user!.name} ${user!.lastname}";
     } else {
       nameComplete = "Usuario";
     }
