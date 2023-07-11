@@ -34,7 +34,7 @@ final _prefs = PreferenceUser();
 class RestoreController extends GetxController {
   final RestoreService restServ = Get.put(RestoreService());
 
-  Future<void> sendData(
+  Future<bool> sendData(
       BuildContext context, String number, String email) async {
     final userApi = await restServ.getUser(number);
 
@@ -58,8 +58,10 @@ class RestoreController extends GetxController {
       _saveConfig();
 
       showSaveAlert(context, Constant.info, Constant.restoredCorrectly.tr);
+      return true;
     } else {
       showSaveAlert(context, Constant.info, Constant.errorGenericConextion.tr);
+      return false;
     }
   }
 
