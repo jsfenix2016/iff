@@ -219,7 +219,13 @@ class _RestoreMyConfigPageState extends State<RestoreMyConfigPage> {
                         setState(() {
                           _isRestoreInProgress = true;
                         });
-                        await restVC.sendData(context, phone, email);
+                        var result = await restVC.sendData(context, phone, email);
+
+                        if (result) {
+                          Navigator.of(context)
+                            ..pop()
+                            ..pop();
+                        }
                         setState(() {
                           _isRestoreInProgress = false;
                         });
