@@ -186,7 +186,7 @@ class RestoreController extends GetxController {
   }
 
   void _saveConfig() {
-    _prefs.firstConfig = false;
+    _prefs.firstConfig = true;
     _prefs.config = true;
     _prefs.saveLastScreenRoute("home");
   }

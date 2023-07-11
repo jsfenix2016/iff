@@ -779,7 +779,7 @@ class _PreviewActivitiesByDateState extends State<PreviewActivitiesByDate>
     await Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => AddActivityPage(isMenu: widget.isMenu),
+        builder: (context) => AddActivityPage(isMenu: widget.isMenu, from: _from!, to: _to!),
       ),
     );
 
