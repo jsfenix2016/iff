@@ -410,19 +410,16 @@ Future accelerometer() async {
     accelerometerEvents!.listen((AccelerometerEvent event) {
       double accelerationMagnitude =
           sqrt(event.x * event.x + event.y * event.y + event.z * event.z);
-      if (accelerationMagnitude > 19) {
+      if (accelerationMagnitude > 21) {
         isMovRude = true;
         print("movimiento rudo $accelerationMagnitude");
         if (_logRudeMovementTimer >= _logRudeMovementTimerRefresh) {
           mainController.saveDrop();
           _logRudeMovementTimer = 0;
         }
-
-        //RedirectViewNotifier.showNotifications();
-        //mainController.saveUserLog("Movimiento rudo a ", now);
       } else {
         isMovRude = false;
-        if (accelerationMagnitude < 19 && accelerationMagnitude > 10) {
+        if (accelerationMagnitude < 21 && accelerationMagnitude > 10) {
           print("me movi");
           if (_logActivityTimer >= _logActivityTimerRefresh) {
             print("Movimiento normal");

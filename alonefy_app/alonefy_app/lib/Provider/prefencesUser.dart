@@ -263,6 +263,38 @@ class PreferenceUser {
   get getHrefSMS {
     return _prefs.getString('HrefSMS') ?? '';
   }
+
+  void resetToDefault() {
+    onboarding = false;
+    firstConfig = false;
+    config = false;
+    notConfigUser = false;
+    setHabitsTime = '';
+    setHabitsEnable = false;
+    setHabitsRefresh = '';
+    setEmailTime = '10 min';
+    setSMSTime = '10 min';
+    setPhoneTime = '10 min';
+    setAceptedTerms = false;
+    setAceptedSendSMS = false;
+    setAcceptedSendLocation = PreferencePermission.values[0];
+    setAcceptedCamera = PreferencePermission.values[0];
+    setAcceptedContacts = PreferencePermission.values[0];
+    setAcceptedNotification = PreferencePermission.values[0];
+    setAcceptedScheduleExactAlarm = PreferencePermission.values[0];
+    setDetectedFall = false;
+    setFallTime = '5 min';
+    setUserPremium = false;
+    setDemoActive = false;
+    setPremiumPrice = '4.99€/mes';
+    setUserNotification = false;
+    setDisambleIFF = '';
+    setEnableIFF = true;
+    setStartDateTimeDisambleIFF = '';
+    setDisambleIFFForActivity = 5;
+    setNotificationAudio = '';
+    // Restablecer otras variables según sea necesario
+  }
 }
 
 enum PreferencePermission { init, denied, deniedForever, allow, noAccepted }

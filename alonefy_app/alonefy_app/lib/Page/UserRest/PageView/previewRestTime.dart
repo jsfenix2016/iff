@@ -39,8 +39,8 @@ class _PreviewRestTimePageState extends State<PreviewRestTimePage> {
   List<RestDayBD> tempSave = <RestDayBD>[];
 
   List<RestDayBD> lista = [];
-  int indexFile = 0;
-  var indexSelect = -1;
+  int indexFile = -1;
+  // var indexSelect = -1;
 
   @override
   void initState() {
@@ -118,6 +118,9 @@ class _PreviewRestTimePageState extends State<PreviewRestTimePage> {
   }
 
   Future processSelectedInfo() async {
+    if (indexFile == -1) {
+      return;
+    }
     for (int i = 0; i < selecDicActivity.length; i++) {
       if (selecDicActivity[i].selection == indexFile) {
         var restDay = selecDicActivity[i];

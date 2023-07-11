@@ -16,8 +16,8 @@ User initUser() {
       styleLife: "",
       pathImage: "",
       age: '',
-      country: '',
-      city: '');
+      country: '🇪🇸  Spain',
+      city: 'Comunidad de Madrid');
 }
 
 UserBD initUserBD() {
@@ -32,8 +32,8 @@ UserBD initUserBD() {
       styleLife: "",
       pathImage: "",
       age: '',
-      country: '',
-      city: '');
+      country: '🇪🇸  Spain',
+      city: 'Comunidad de Madrid');
 }
 
 ContactRiskBD initContactRisk() {

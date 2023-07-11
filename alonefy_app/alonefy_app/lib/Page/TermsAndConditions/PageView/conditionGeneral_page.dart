@@ -10,7 +10,7 @@ import 'package:ifeelefine/Page/PermissionUser/Controller/permission_controller.
 import 'package:ifeelefine/Page/TermsAndConditions/Controller/terms_conditionController.dart';
 import 'package:flutter/material.dart';
 import 'package:ifeelefine/Page/TermsAndConditions/PageView/webview_terms_conditions.dart';
-import 'package:ifeelefine/Provider/prefencesUser.dart';
+
 import 'package:ifeelefine/Utils/Widgets/widgetLogo.dart';
 
 import '../../../Common/colorsPalette.dart';

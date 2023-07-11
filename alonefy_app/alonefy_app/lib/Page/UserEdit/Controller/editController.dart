@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:get/get.dart';
 import 'package:ifeelefine/Common/initialize_models_bd.dart';
 import 'package:ifeelefine/Common/utils.dart';
@@ -11,11 +12,13 @@ import 'package:ifeelefine/Model/userbd.dart';
 import 'package:ifeelefine/Page/UserEdit/Service/editUserService.dart';
 import 'package:country_state_city_picker/model/select_status_model.dart'
     as StatusModel;
+import 'package:ifeelefine/Provider/prefencesUser.dart';
 import 'package:notification_center/notification_center.dart';
 
 class EditConfigController extends GetxController {
   // final usuarioProvider = UsuarioProvider();
 
+  final _prefs = PreferenceUser();
   final List<String> _states = ["Seleccionar estado"];
   final List<String> _country = ["Seleccionar pais"];
   final String _selectedCountry = "Choose Country";
@@ -181,7 +184,8 @@ class EditConfigController extends GetxController {
   }
 
   Future<void> updateUserImage(UserBD user, Uint8List? bytes) async {
-    var url = await EditUserService().getUrlPhoto(user.telephone.replaceAll("+34", ""));
+    var url = await EditUserService()
+        .getUrlPhoto(user.telephone.replaceAll("+34", ""));
     if (url != null && url.isNotEmpty && bytes != null) {
       await EditUserService().updateImage(url, bytes);
     }
@@ -207,6 +211,31 @@ class EditConfigController extends GetxController {
     } else {
       user = initUser();
       return user!;
+    }
+  }
+
+  Future<bool> deleteUser(User user) async {
+    try {
+      bool isdelete = await EditUserService()
+          .deleteUser(user.telephone.replaceAll("+34", ""));
+      if (isdelete) {
+        bool deleteUserBD = await const HiveData().deleteUsers();
+        if (deleteUserBD) {
+          _prefs.resetToDefault();
+          final service = FlutterBackgroundService();
+          var isRunning = await service.isRunning();
+          if (isRunning) {
+            service.invoke("stopService");
+          }
+          return true;
+        } else {
+          return false;
+        }
+      } else {
+        return false;
+      }
+    } catch (error) {
+      return false;
     }
   }
 }

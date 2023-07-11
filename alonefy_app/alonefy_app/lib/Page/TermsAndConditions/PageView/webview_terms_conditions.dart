@@ -14,7 +14,7 @@ class WebViewTermsConditions extends StatefulWidget {
 
 class _WebViewTermsConditionsState extends State<WebViewTermsConditions> {
   late WebViewController controller;
-  @override
+
   @override
   void initState() {
     super.initState();
@@ -30,7 +30,7 @@ class _WebViewTermsConditionsState extends State<WebViewTermsConditions> {
     }
 
     controller = WebViewController.fromPlatformCreationParams(params);
-// ···
+
     if (controller.platform is AndroidWebViewController) {
       AndroidWebViewController.enableDebugging(true);
       (controller.platform as AndroidWebViewController)

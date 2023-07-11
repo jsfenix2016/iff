@@ -56,11 +56,14 @@ class HiveData {
     }
   }
 
-  Future<void> deleteUsers() async {
-    Box<UserBD> box = await Hive.openBox<UserBD>('userBD');
+  Future<bool> deleteUsers() async {
+    // Box<UserBD> box = await Hive.openBox<UserBD>('userBD');
 
-    for (var element in box.values) {
-      box.delete(element);
+    try {
+      await Hive.deleteFromDisk();
+      return true;
+    } catch (error) {
+      return false;
     }
   }
 

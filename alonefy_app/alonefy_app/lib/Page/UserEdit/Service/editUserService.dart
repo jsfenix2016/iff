@@ -43,12 +43,12 @@ class EditUserService {
 
   Future<String?> getUrlPhoto(String phoneNumber) async {
     try {
-      var json = { "phoneNumber": phoneNumber };
+      var json = {"phoneNumber": phoneNumber};
 
       final resp = await http.put(
-              Uri.parse("${Constant.baseApi}/v1/user/photo"),
-              headers: Constant.headers,
-              body: jsonEncode(json));
+          Uri.parse("${Constant.baseApi}/v1/user/photo"),
+          headers: Constant.headers,
+          body: jsonEncode(json));
 
       return resp.body;
     } catch (e) {
@@ -66,13 +66,22 @@ class EditUserService {
         extension = extensionFromMime(mime);
       }
 
-      final resp = await http.put(
-          postUri,
-          headers: {'Content-Type': mime ?? 'image/jpeg'},
-          body: bytes);
-
+      final resp = await http.put(postUri,
+          headers: {'Content-Type': mime ?? 'image/jpeg'}, body: bytes);
     } catch (e) {
       print(e);
+    }
+  }
+
+  Future<bool> deleteUser(String phoneNumber) async {
+    try {
+      final resp = await http.delete(
+          Uri.parse("${Constant.baseApi}/v1/user/$phoneNumber"),
+          headers: Constant.headers);
+
+      return resp.statusCode == 200;
+    } catch (e) {
+      return false;
     }
   }
 }

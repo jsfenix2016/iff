@@ -6,7 +6,7 @@ import 'package:ifeelefine/Common/text_style_font.dart';
 
 import 'package:ifeelefine/Page/ChangeNotificationTime/PageView/changeNotificationTime_page.dart';
 import 'package:ifeelefine/Page/Contact/Notice/PageView/contactNotice_page.dart';
-import 'package:ifeelefine/Page/Contact/PageView/addContact_page.dart';
+
 import 'package:ifeelefine/Page/Disamble/Pageview/disambleIfeelfine_page.dart';
 import 'package:ifeelefine/Page/EditUseMobil/Page/editUseMobil.dart';
 import 'package:ifeelefine/Page/FallDetected/Pageview/fall_activation_config_page.dart';
@@ -19,12 +19,8 @@ import 'package:ifeelefine/Page/UserConfig/PageView/userconfig_page.dart';
 
 import 'package:ifeelefine/Page/UserEdit/PageView/editUser_page.dart';
 
-import 'package:ifeelefine/Page/UserInactivityPage/PageView/configurationUserInactivity_page.dart';
-
 import 'package:ifeelefine/Page/UserRest/PageView/previewRestTime.dart';
 import 'package:ifeelefine/Provider/prefencesUser.dart';
-import 'package:ifeelefine/Views/contact_page.dart';
-import 'package:ifeelefine/Views/geolocatos_test_page.dart';
 
 import 'package:ifeelefine/Page/PermissionUser/Pageview/permission_page.dart';
 import 'package:ifeelefine/Views/ringtone_page.dart';
@@ -284,7 +280,7 @@ class _MenuConfigurationPageState extends State<MenuConfigurationPage> {
         child: Stack(
           children: [
             Padding(
-              padding: EdgeInsets.fromLTRB(0, 0, 0, 100),
+              padding: const EdgeInsets.fromLTRB(0, 0, 0, 100),
               child: ListView.builder(
                 itemCount: permissionStatusI.length,
                 itemBuilder: (context, index) {

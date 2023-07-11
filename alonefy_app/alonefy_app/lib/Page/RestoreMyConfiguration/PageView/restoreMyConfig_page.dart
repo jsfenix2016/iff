@@ -1,16 +1,12 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:ifeelefine/Common/Constant.dart';
-
-import 'package:ifeelefine/Common/utils.dart';
 
 import 'package:ifeelefine/Page/RestoreMyConfiguration/Controller/restoreController.dart';
 
 import '../../../Common/colorsPalette.dart';
-import '../../../Provider/prefencesUser.dart';
+
 import 'package:ifeelefine/Common/decoration_custom.dart';
 
 class RestoreMyConfigPage extends StatefulWidget {
@@ -26,7 +22,6 @@ class RestoreMyConfigPage extends StatefulWidget {
 class _RestoreMyConfigPageState extends State<RestoreMyConfigPage> {
   final RestoreController restVC = Get.put(RestoreController());
 
-  final _prefs = PreferenceUser();
   String phone = '';
   String email = '';
 
