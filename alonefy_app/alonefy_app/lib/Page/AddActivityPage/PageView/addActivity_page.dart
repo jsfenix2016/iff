@@ -17,9 +17,12 @@ import 'package:ifeelefine/Common/decoration_custom.dart';
 
 class AddActivityPage extends StatefulWidget {
   /// Creates a new GeolocatorWidget.
-  const AddActivityPage({Key? key, required this.isMenu}) : super(key: key);
+  const AddActivityPage({Key? key, required this.isMenu,
+    required this.from, required this.to}) : super(key: key);
 
   final bool isMenu;
+  final DateTime from;
+  final DateTime to;
 
   @override
   State<AddActivityPage> createState() => _AddActivityPageState();
@@ -104,8 +107,13 @@ class _AddActivityPageState extends State<AddActivityPage>
     var date = Jiffy().format('EEEE, d [de] MMMM [del] yyyy');
 
     setState(() {
-      from = date.capitalizeFirst!;
-      to = date.capitalizeFirst!;
+      if (widget.from != null && widget.to != null) {
+        from = Jiffy(widget.from).format('EEEE, d [de] MMMM [del] yyyy');
+        to = Jiffy(widget.to).format('EEEE, d [de] MMMM [del] yyyy');
+      } else {
+        from = date.capitalizeFirst!;
+        to = date.capitalizeFirst!;
+      }
     });
   }
 
