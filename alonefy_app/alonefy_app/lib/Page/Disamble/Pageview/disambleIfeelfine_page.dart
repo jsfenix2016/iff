@@ -104,8 +104,7 @@ class _DesactivePageState extends State<DesactivePage> {
                       )),
                 ),
               ),
-              Expanded(
-                child: Padding(
+              Padding(
                   padding: const EdgeInsets.fromLTRB(0, 100, 0, 100),
                   child: ListView.builder(
                     itemCount: listDisamble.length,
@@ -157,7 +156,6 @@ class _DesactivePageState extends State<DesactivePage> {
                     },
                   ),
                 ),
-              ),
               Positioned(
                 bottom: 20,
                 right: 32,

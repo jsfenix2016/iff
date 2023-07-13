@@ -95,7 +95,6 @@ class _ChangeNotificationTimePageState
             ),
             Padding(
               padding: const EdgeInsets.fromLTRB(0, 68, 0, 70),
-              child: Expanded(
                 child: SingleChildScrollView(
                   child: Column(children: [
                     getRow(
@@ -117,7 +116,7 @@ class _ChangeNotificationTimePageState
                         "assets/images/line_xlarge.png", phonePosition, 2)
                   ]),
                 ),
-              ),
+
             ),
             Positioned(
               bottom: 20,
@@ -241,13 +240,13 @@ class _ChangeNotificationTimePageState
                 ),
                 home: Stack(
                   children: [
-                    if (_prefs.getUserPremium || _prefs.getDemoActive) ...[
+                    if (_prefs.getUserPremium) ...[
                       _getCupertinoPicker(initialPosition, pickerId)
                     ] else ...[
                       GestureDetector(
                         child: AbsorbPointer(
                             absorbing:
-                                !_prefs.getUserPremium || _prefs.getDemoActive,
+                                !_prefs.getUserPremium,
                             child:
                                 _getCupertinoPicker(initialPosition, pickerId)),
                         onVerticalDragEnd: (drag) {

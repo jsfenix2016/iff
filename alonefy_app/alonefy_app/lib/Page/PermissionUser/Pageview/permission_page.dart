@@ -176,8 +176,7 @@ class _PermitionUserPageState extends State<PermitionUserPage> {
                     )),
               ),
             ),
-            Expanded(
-                child: Padding(
+            Padding(
               padding: const EdgeInsets.fromLTRB(0, 90, 0, 0),
               child: ListView.builder(
                 itemCount: permissionsName.length,
@@ -213,7 +212,7 @@ class _PermitionUserPageState extends State<PermitionUserPage> {
                   );
                 },
               ),
-            )),
+            ),
             Positioned(
               bottom: 20,
               right: 32,

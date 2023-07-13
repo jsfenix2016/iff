@@ -211,10 +211,7 @@ class _EditUseMobilPageState extends State<EditUseMobilPage> {
             for (var indexGroup = 0;
                 indexGroup <= groupedProducts.length - 1;
                 indexGroup++)
-              Positioned(
-                key: Key(indexGroup.toString()),
-                top: (indexGroup * 150),
-                child: Container(
+              Container(
                   key: Key(indexGroup.toString()),
                   color: Colors.transparent,
                   width: size.width,
@@ -266,15 +263,13 @@ class _EditUseMobilPageState extends State<EditUseMobilPage> {
                               height: 90,
                               child: Stack(
                                 children: [
-                                  if (_prefs.getUserPremium ||
-                                      _prefs.getDemoActive) ...[
+                                  if (_prefs.getUserPremium) ...[
                                     _getCupertinoPicker(indexList, indexGroup,
                                         scrollController),
                                   ] else ...[
                                     GestureDetector(
                                       child: AbsorbPointer(
-                                          absorbing: !_prefs.getUserPremium ||
-                                              _prefs.getDemoActive,
+                                          absorbing: !_prefs.getUserPremium,
                                           child: _getCupertinoPicker(indexList,
                                               indexGroup, scrollController)),
                                       onVerticalDragEnd: (drag) {
@@ -301,15 +296,12 @@ class _EditUseMobilPageState extends State<EditUseMobilPage> {
                     },
                   ),
                 ),
-              ),
             Row(
               children: [
                 Container(
                   color: Colors.transparent,
                   height: 50,
                   width: size.width / 2,
-                  child: Positioned(
-                    bottom: 10,
                     child: SizedBox(
                       width: size.width,
                       child: Center(
@@ -322,13 +314,10 @@ class _EditUseMobilPageState extends State<EditUseMobilPage> {
                       ),
                     ),
                   ),
-                ),
                 Container(
                   color: Colors.transparent,
                   height: 50,
                   width: size.width / 2,
-                  child: Positioned(
-                    bottom: 10,
                     child: SizedBox(
                       width: size.width,
                       child: Center(
@@ -341,7 +330,6 @@ class _EditUseMobilPageState extends State<EditUseMobilPage> {
                       ),
                     ),
                   ),
-                ),
               ],
             )
           ],

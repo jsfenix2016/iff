@@ -1,33 +1,33 @@
 {
   "project_info": {
-    "project_number": "509585336823",
-    "project_id": "alertfriends-72e7a",
-    "storage_bucket": "alertfriends-72e7a.appspot.com"
+    "project_number": "804802715762",
+    "project_id": "alert-friends",
+    "storage_bucket": "alert-friends.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:509585336823:android:51d1249374216cabe8e6f2",
+        "mobilesdk_app_id": "1:804802715762:android:d3552fc51873cb47fb62eb",
         "android_client_info": {
-          "package_name": "com.al2023.alertfriends"
+          "package_name": "com.alertfriends.alertfriends"
         }
       },
       "oauth_client": [
         {
-          "client_id": "509585336823-cifve56mh125d1k9f4n6jf930ba92815.apps.googleusercontent.com",
+          "client_id": "804802715762-ch6hrtajhdptc41ddb5i4fku33rc257l.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyAgl25m_sziseckcMNDOsoHt9vLvPEhYHU"
+          "current_key": "AIzaSyC9OSaWZjyXE_OvwMlvJ1INLpg24GrhI-M"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "509585336823-cifve56mh125d1k9f4n6jf930ba92815.apps.googleusercontent.com",
+              "client_id": "804802715762-ch6hrtajhdptc41ddb5i4fku33rc257l.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

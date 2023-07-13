@@ -330,29 +330,29 @@ class _UserConfigPageState2 extends State<UserConfigPage2> {
     if (isupdate) {
       updateFirebaseToken();
 
-      _prefs.getDemoActive
-          ? Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => UseMobilePage(userbd: userbd!)),
-            )
-          : await Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => PremiumPage(
-                      isFreeTrial: isFreeTrial,
-                      img: 'pantalla3.png',
-                      title: Constant.premiumFallTitle,
-                      subtitle: '')),
-            ).then((value) {
-              if (value != null && value) {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => UseMobilePage(userbd: userbd!)),
-                );
-              }
-            });
+    !_prefs.getUserPremium
+        ? await Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => PremiumPage(
+                    isFreeTrial: isFreeTrial,
+                    img: 'pantalla3.png',
+                    title: Constant.premiumFallTitle,
+                    subtitle: '')),
+          ).then((value) {
+            if (value != null && value) {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => UseMobilePage(userbd: userbd!)),
+              );
+            }
+          })
+        : Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => UseMobilePage(userbd: userbd!)),
+          );
     }
   }
 }

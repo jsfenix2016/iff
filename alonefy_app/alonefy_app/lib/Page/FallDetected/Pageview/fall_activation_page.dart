@@ -60,8 +60,6 @@ class _FallActivationPageState extends State<FallActivationPage> {
         body: Container(
           decoration: decorationCustom(),
           height: size.height,
-          child: Expanded(
-            flex: 1,
             child: SingleChildScrollView(
               child: Column(
                 mainAxisSize: MainAxisSize.max,
@@ -108,11 +106,7 @@ class _FallActivationPageState extends State<FallActivationPage> {
                       ],
                     ),
                   ),
-                  Positioned(
-                    bottom: 24,
-                    left: 0,
-                    right: 0,
-                    child: Padding(
+                  Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: ElevateButtonFilling(
                         onChanged: (value) {
@@ -126,11 +120,9 @@ class _FallActivationPageState extends State<FallActivationPage> {
                         mensaje: 'Continuar',
                       ),
                     ),
-                  ),
                 ],
               ),
             ),
-          ),
         ),
       ),
     );

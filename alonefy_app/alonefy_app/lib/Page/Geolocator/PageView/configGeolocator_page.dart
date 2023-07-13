@@ -221,7 +221,7 @@ class _ConfigGeolocatorState extends State<ConfigGeolocator> {
                 ),
                 onChanged: (SlidableButtonPosition value) {
                   if (value == SlidableButtonPosition.end) {
-                    if (_prefs.getUserPremium || _prefs.getDemoActive) {
+                    if (_prefs.getUserPremium) {
                       if (!isActive)
                         _checkPermission();
                       else {
