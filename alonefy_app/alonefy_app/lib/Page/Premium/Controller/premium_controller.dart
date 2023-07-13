@@ -13,10 +13,10 @@ import '../../../Controllers/mainController.dart';
 class PremiumController extends GetxController {
   StreamSubscription? _purchaseUpdatedSubscription;
   StreamSubscription? _purchaseErrorSubscription;
-  StreamSubscription? _conectionSubscription;
+  StreamSubscription? _connectionSubscription;
 
-  static const String subscriptionId = 'subscription_test';
-  static const String subscriptionFreeTrialId = 'subscription_test_free_trial';
+  static const String subscriptionId = 'subscription';
+  static const String subscriptionFreeTrialId = 'subscription_free_trial';
 
   final _prefs = PreferenceUser();
 
@@ -24,42 +24,13 @@ class PremiumController extends GetxController {
 
   List<String> _productLists = [subscriptionId, subscriptionFreeTrialId];
   List<IAPItem> _items = [];
-  List<PurchasedItem> _purchases = [];
-
-  //void _loadProducts() async {
-  //  final ProductDetailsResponse response = await InAppPurchase.instance.queryProductDetails(_kProducts);
-  //  if (response.notFoundIDs.isNotEmpty) {
-  //    // Handle the error.
-  //  }
-  //  List<ProductDetails> products = response.productDetails;
-//
-  //  if (products[0] is GooglePlayProductDetails) {
-  //    SkuDetailsWrapper skuDetails = (products[0] as GooglePlayProductDetails).skuDetails;
-  //    print(skuDetails.introductoryPricePeriod);
-  //  }
-//
-  //  await InAppPurchase.instance.purchaseStream;
-//
-  //  if (purchaseDetails is GooglePlayPurchaseDetails) {
-  //    PurchaseWrapper billingClientPurchase = (purchaseDetails as GooglePlayPurchaseDetails).billingClientPurchase;
-  //    print(billingClientPurchase.originalJson);
-  //  }
-  //}
 
   Future<void> initPlatformState() async {
     // prepare
     var result = await FlutterInappPurchase.instance.initialize();
     print('result: $result');
 
-    // refresh items for android
-    try {
-      String msg = await FlutterInappPurchase.instance.consumeAll();
-      print('consumeAllItems: $msg');
-    } catch (err) {
-      print('consumeAllItems error: $err');
-    }
-
-    _conectionSubscription =
+    _connectionSubscription =
         FlutterInappPurchase.connectionUpdated.listen((connected) async {
       if (await isSubscribed()) {
         _prefs.setUserPremium = true;
@@ -88,20 +59,32 @@ class PremiumController extends GetxController {
       if (_response != null) _response!(false);
       print('purchase-error: $purchaseError');
     });
+
+    _getProducts();
+    if (await isSubscribed()) {
+      _prefs.setUserPremium = true;
+    } else {
+      _prefs.setUserPremium = false;
+    }
   }
 
   void requestPurchase(IAPItem item) {
-    FlutterInappPurchase.instance.requestPurchase(item.productId!);
+    FlutterInappPurchase.instance.requestSubscription(item.productId!);
   }
 
   void requestPurchaseByProductId(String productId, Function response) {
     _response = response;
-    FlutterInappPurchase.instance.requestPurchase(productId);
+    //FlutterInappPurchase.instance.requestPurchase(productId);
+    try {
+      FlutterInappPurchase.instance.requestSubscription(productId);
+    } catch (e) {
+      print(e);
+    }
   }
 
   Future _getProducts() async {
     List<IAPItem> items =
-        await FlutterInappPurchase.instance.getProducts(_productLists);
+        await FlutterInappPurchase.instance.getSubscriptions(_productLists);
     for (var item in items) {
       print('${item.toString()}');
       this._items.add(item);
@@ -116,7 +99,7 @@ class PremiumController extends GetxController {
   Future<bool> isSubscribed() async {
     var purchases = await _getPurchases();
 
-    if (purchases != null && _purchases.isNotEmpty) {
+    if (purchases != null && purchases.isNotEmpty) {
       for (var item in purchases) {
         if (item.productId == subscriptionId ||
             item.productId == subscriptionFreeTrialId) {
@@ -138,10 +121,14 @@ class PremiumController extends GetxController {
     return items;
   }
 
+  @override
   void dispose() {
-    if (_conectionSubscription != null) {
-      _conectionSubscription!.cancel();
-      _conectionSubscription = null;
+    super.dispose();
+    if (_connectionSubscription != null) {
+      _connectionSubscription!.cancel();
+      _purchaseErrorSubscription?.cancel();
+      _purchaseUpdatedSubscription?.cancel();
+      FlutterInappPurchase.instance.finalize();
     }
   }
 

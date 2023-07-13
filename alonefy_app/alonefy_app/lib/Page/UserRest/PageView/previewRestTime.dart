@@ -180,10 +180,7 @@ class _PreviewRestTimePageState extends State<PreviewRestTimePage> {
               height: 10,
             ),
             for (var i = 0; i <= groupedProducts.length - 1; i++)
-              Positioned(
-                key: Key(i.toString()),
-                top: (i * 150),
-                child: Container(
+              Container(
                   key: Key(i.toString()),
                   color: Colors.transparent,
                   width: size.width,
@@ -240,15 +237,12 @@ class _PreviewRestTimePageState extends State<PreviewRestTimePage> {
                     },
                   ),
                 ),
-              ),
             Row(
               children: [
                 Container(
                   color: Colors.transparent,
                   height: 50,
                   width: size.width / 2,
-                  child: Positioned(
-                    bottom: 10,
                     child: SizedBox(
                       width: size.width,
                       child: Center(
@@ -266,7 +260,6 @@ class _PreviewRestTimePageState extends State<PreviewRestTimePage> {
                           },
                           mensaje: "Cancelar",
                         ),
-                      ),
                     ),
                   ),
                 ),
@@ -274,8 +267,6 @@ class _PreviewRestTimePageState extends State<PreviewRestTimePage> {
                   color: Colors.transparent,
                   height: 50,
                   width: size.width / 2,
-                  child: Positioned(
-                    bottom: 10,
                     child: SizedBox(
                       width: size.width,
                       child: Center(
@@ -296,7 +287,6 @@ class _PreviewRestTimePageState extends State<PreviewRestTimePage> {
                         ),
                       ),
                     ),
-                  ),
                 ),
               ],
             )

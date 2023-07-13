@@ -66,8 +66,7 @@ class _ContactListState extends State<ContactList> {
       onChanged: (SlidableButtonPosition value) async {
         if (value == SlidableButtonPosition.end) {
           if (_prefs.getUserPremium ||
-              _selectedContacts.isEmpty ||
-              _prefs.getDemoActive) {
+              _selectedContacts.isEmpty) {
             await showDialog(
               context: context,
               builder: (BuildContext context) => AlertDialog(
@@ -106,8 +105,8 @@ class _ContactListState extends State<ContactList> {
               child: Center(
                 child: Text(
                   (_prefs.getUserPremium)
-                      ? "Obtener Premium"
-                      : 'Agregar mas contactos',
+                      ? 'Agregar mas contactos'
+                      : "Obtener Premium",
                   textAlign: TextAlign.center,
                   style: GoogleFonts.barlow(
                     fontSize: 16.0,
