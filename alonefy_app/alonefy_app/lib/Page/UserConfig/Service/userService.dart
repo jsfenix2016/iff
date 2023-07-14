@@ -82,7 +82,7 @@ class UserService {
         return {"ok": false, "mesaje": "error"};
       }
 
-      if (decodeResp['status'] != "verified") {
+      if (decodeResp['status'] == "verified") {
         return {"ok": true, "status": decodeResp['status']};
       } else {
         return {"ok": false, "status": decodeResp['status']};
@@ -146,14 +146,15 @@ class UserService {
       Map<String, dynamic> decodeResp = json.decode(resp.body);
 
       // print(decodeResp);
+      // print(decodeResp);
       if (decodeResp['errors'] != null) {
         return {"ok": false, "mesaje": "error"};
       }
 
-      if (decodeResp["id"] != null) {
-        return {"ok": true, "id": decodeResp["id"]};
+      if (decodeResp['id'] != null) {
+        return {"ok": true, "href": decodeResp['href']};
       } else {
-        return {"ko": false, "mesaje": "error"};
+        return {"ok": false, "href": decodeResp['href']};
       }
     } catch (error) {
       return {"ko": false, "mesaje": error.toString()};

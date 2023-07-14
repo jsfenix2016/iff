@@ -264,6 +264,14 @@ class PreferenceUser {
     return _prefs.getString('HrefSMS') ?? '';
   }
 
+  set setHrefMail(String id) {
+    _prefs.setString('HrefMail', id);
+  }
+
+  get getHrefMail {
+    return _prefs.getString('HrefMail') ?? '';
+  }
+
   void resetToDefault() {
     onboarding = false;
     firstConfig = false;

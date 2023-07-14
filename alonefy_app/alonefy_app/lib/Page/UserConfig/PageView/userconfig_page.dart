@@ -38,9 +38,9 @@ class _UserConfigPageState extends State<UserConfigPage> {
   final formKey = GlobalKey<FormState>();
   final scaffoldKey = GlobalKey<ScaffoldState>();
   final _prefs = PreferenceUser();
-  var isValidEmail = true;
+  var isValidEmail = false;
   var isValidSms = false;
-  bool isVisibilyEmail = false;
+  bool isVisibilyEmail = true;
   @override
   void initState() {
     user = initUser();
@@ -123,12 +123,14 @@ class _UserConfigPageState extends State<UserConfigPage> {
                           child: ElevatedButton(
                             style: styleColorClear(),
                             child: Container(
+                              alignment: Alignment.center,
                               decoration: const BoxDecoration(
                                 color: ColorPalette.principal,
                                 borderRadius:
                                     BorderRadius.all(Radius.circular(100)),
                               ),
                               width: 235,
+                              height: 45,
                               child: Text(
                                 Constant.tokenRequestTxt,
                                 textAlign: TextAlign.center,
@@ -158,13 +160,14 @@ class _UserConfigPageState extends State<UserConfigPage> {
                       ),
                       const SizedBox(height: 20),
                       Visibility(
-                        visible: isVisibilyEmail,
+                        visible: true,
                         child: TextValidateToken(
                           type: "email",
                           code: "",
                           message: Constant.validateCodeEmail,
                           onChanged: (String value) async {
                             if (!validateEmail(user!.email)) {
+                              isValidEmail = false;
                               // El correo electrónico no es válido
                               showSaveAlert(context, Constant.info,
                                   Constant.validateEmail);
@@ -174,6 +177,7 @@ class _UserConfigPageState extends State<UserConfigPage> {
                             isValidEmail =
                                 await userVC.validateCodeEmail(context, value);
                             (context as Element).markNeedsBuild();
+                            print(isValidEmail);
                           },
                           isValid: isValidEmail,
                         ),

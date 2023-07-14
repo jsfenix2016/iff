@@ -20,13 +20,27 @@ class UserConfigCOntroller extends GetxController {
   PreferenceUser prefs = PreferenceUser();
 
   Future<void> requestCode(BuildContext context, User user) async {
-    if (user.telephone.isEmpty) {
+    if (user.telephone.isEmpty && user.email.isEmpty) {
       return;
     }
     var resq = await userVC.verificateSMS(int.parse(user.telephone));
-    // var resq = await userVC.validateEmailWithMessageBird(user.email);
+
     if (resq["ok"]) {
       prefs.setHrefSMS = (resq["href"]);
+
+      // Utiliza la variable local dentro del espacio asyncronizado
+      await Future.delayed(const Duration(milliseconds: 10), () {
+        showSaveAlert(context, Constant.info, "Se ha enviado el código");
+      });
+    } else {
+      // Utiliza la variable local dentro del espacio asyncronizado
+      await Future.delayed(const Duration(milliseconds: 10), () {
+        showSaveAlert(context, Constant.info, Constant.errorGenericConextion);
+      });
+    }
+    var resqEamil = await userVC.validateEmailWithMessageBird(user.email);
+    if (resqEamil["ok"]) {
+      prefs.setHrefMail = (resqEamil["href"]);
 
       // Utiliza la variable local dentro del espacio asyncronizado
       await Future.delayed(const Duration(milliseconds: 10), () {
@@ -60,7 +74,7 @@ class UserConfigCOntroller extends GetxController {
   }
 
   Future<bool> validateCodeEmail(BuildContext context, String code) async {
-    var res = await userVC.validateCodeEmail(prefs.geIdTokenEmail, code);
+    var res = await userVC.validateCodeEmail(prefs.getHrefMail, code);
 
     if (res["ok"]) {
       // Utiliza la variable local dentro del espacio asyncronizado

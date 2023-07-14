@@ -3,6 +3,7 @@ import 'dart:io';
 import 'dart:math';
 import 'dart:ui';
 // import 'package:all_sensors2/all_sensors2.dart';
+import 'package:ifeelefine/Page/UserConfig/PageView/userconfig_page.dart';
 import 'package:sensors_plus/sensors_plus.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
@@ -112,9 +113,7 @@ Future<void> main() async {
 
   runApp(
     GetMaterialApp(
-      home: MyApp(
-        initApp: initApp!,
-      ),
+      home: UserConfigPage(),
       debugShowCheckedModeBanner: false,
     ),
   );
