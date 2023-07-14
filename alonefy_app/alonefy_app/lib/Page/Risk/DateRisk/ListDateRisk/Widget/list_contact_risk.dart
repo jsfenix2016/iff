@@ -41,7 +41,8 @@ class _ListContactRiskState extends State<ListContactRisk> {
       context,
       MaterialPageRoute(
         builder: (context) => CancelDatePage(
-          contactRisk: contactTemp, taskIds: [],
+          contactRisk: contactTemp,
+          taskIds: [],
         ),
       ),
     );
@@ -55,74 +56,71 @@ class _ListContactRiskState extends State<ListContactRisk> {
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             final listContact = snapshot.data!;
-            return Expanded(
-              child: ListView.builder(
-                scrollDirection: Axis.vertical,
-                itemExtent: 250.0,
-                padding: const EdgeInsets.only(top: 0.0, bottom: 50),
-                shrinkWrap: true,
-                itemCount: listContact.length,
-                itemBuilder: (context, index) {
-                  if (index >= 0 && index < listContact.length) {
-                    var temp = listContact[index];
-                    return RowContact(
-                      contactRisk: temp,
-                      index: index,
-                      onChanged: ((value) {
-                        contactTemp = temp;
-                        if (contactTemp.isActived || contactTemp.isprogrammed) {
-                          redirectCancelDate();
-                        } else {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => EditRiskPage(
-                                contactRisk: contactTemp,
-                                index: index,
-                              ),
-                            ),
-                          );
-                        }
-                      }),
-                      onChangedDelete: (bool value) {
-                        contactTemp = temp;
-                        if (contactTemp.isActived || contactTemp.isprogrammed) {
-                          redirectCancelDate();
-                        } else {
-                          showDialog(
-                            context: context,
-                            builder: (context) {
-                              return AlertDialog(
-                                title: const Text("Información"),
-                                content: const Text(
-                                    "Si continua eliminara la configuracion de la notificación"),
-                                actions: <Widget>[
-                                  TextButton(
-                                    child: const Text("Cerrar"),
-                                    onPressed: () =>
-                                        Navigator.of(context).pop(),
-                                  ),
-                                  TextButton(
-                                    child: const Text(Constant.continueTxt),
-                                    onPressed: () => {
-                                      deleteContactRisk(context, contactTemp),
-                                    },
-                                  )
-                                ],
-                              );
-                            },
-                          );
-                        }
-                      },
-                      onCancel: (bool value) {
-                        contactTemp = temp;
+            return ListView.builder(
+              scrollDirection: Axis.vertical,
+              itemExtent: 250.0,
+              padding: const EdgeInsets.only(top: 0.0, bottom: 50),
+              shrinkWrap: true,
+              itemCount: listContact.length,
+              itemBuilder: (context, index) {
+                if (index >= 0 && index < listContact.length) {
+                  var temp = listContact[index];
+                  return RowContact(
+                    contactRisk: temp,
+                    index: index,
+                    onChanged: ((value) {
+                      contactTemp = temp;
+                      if (contactTemp.isActived || contactTemp.isprogrammed) {
                         redirectCancelDate();
-                      },
-                    );
-                  }
-                  return const CircularProgressIndicator();
-                },
-              ),
+                      } else {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => EditRiskPage(
+                              contactRisk: contactTemp,
+                              index: index,
+                            ),
+                          ),
+                        );
+                      }
+                    }),
+                    onChangedDelete: (bool value) {
+                      contactTemp = temp;
+                      if (contactTemp.isActived || contactTemp.isprogrammed) {
+                        redirectCancelDate();
+                      } else {
+                        showDialog(
+                          context: context,
+                          builder: (context) {
+                            return AlertDialog(
+                              title: const Text("Información"),
+                              content: const Text(
+                                  "Si continua eliminara la configuracion de la notificación"),
+                              actions: <Widget>[
+                                TextButton(
+                                  child: const Text("Cerrar"),
+                                  onPressed: () => Navigator.of(context).pop(),
+                                ),
+                                TextButton(
+                                  child: const Text(Constant.continueTxt),
+                                  onPressed: () => {
+                                    deleteContactRisk(context, contactTemp),
+                                  },
+                                )
+                              ],
+                            );
+                          },
+                        );
+                      }
+                    },
+                    onCancel: (bool value) {
+                      contactTemp = temp;
+                      redirectCancelDate();
+                    },
+                  );
+                }
+                return const CircularProgressIndicator();
+              },
             );
           } else if (snapshot.hasError) {
             return Text(snapshot.error.toString());

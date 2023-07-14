@@ -55,8 +55,8 @@ dependencies:
   uuid: ^3.0.5
   
   flutter_contacts: ^1.1.5+1
- 
-  all_sensors2: ^1.0.1
+  sensors_plus: ^3.0.2
+  #all_sensors2: ^1.0.1
   device_info_plus: ^7.0.1
   geolocator: ^9.0.2
   

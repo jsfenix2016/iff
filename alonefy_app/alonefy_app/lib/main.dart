@@ -2,8 +2,8 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:math';
 import 'dart:ui';
-import 'package:all_sensors2/all_sensors2.dart';
-
+// import 'package:all_sensors2/all_sensors2.dart';
+import 'package:sensors_plus/sensors_plus.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:geolocator/geolocator.dart';
@@ -407,7 +407,7 @@ Future accelerometer() async {
       !_prefs.getDemoActive) return;
 
   _streamSubscriptions.add(
-    accelerometerEvents!.listen((AccelerometerEvent event) {
+    accelerometerEvents.listen((AccelerometerEvent event) {
       double accelerationMagnitude =
           sqrt(event.x * event.x + event.y * event.y + event.z * event.z);
       if (accelerationMagnitude > 21) {

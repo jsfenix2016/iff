@@ -58,7 +58,7 @@ class _EditRiskPageState extends State<EditRiskPage> {
   String timeinit = "00:00";
   String timefinish = "00:00";
   List<Contact> contactlist = [];
-  late Contact contactSelect;
+  Contact? contactSelect;
   var indexSelect = -1;
   var code = CodeModel();
 
@@ -103,7 +103,9 @@ class _EditRiskPageState extends State<EditRiskPage> {
 
   void initDates() async {
     await Jiffy.locale("es");
-    var date = Jiffy().format('EEEE, d [de] MMMM [del] yyyy');
+
+    var date = Jiffy(widget.contactRisk.createDate)
+        .format('EEEE, d [de] MMMM [del] yyyy');
 
     setState(() {
       from = date.capitalizeFirst!;
@@ -129,6 +131,11 @@ class _EditRiskPageState extends State<EditRiskPage> {
   }
 
   void saveDate(BuildContext context) async {
+    if (contactSelect == null) {
+      showSaveAlert(context, Constant.info, "Debe seleccionar un contacto".tr);
+
+      return;
+    }
     setState(() {
       isLoading = true;
     });
@@ -169,12 +176,12 @@ class _EditRiskPageState extends State<EditRiskPage> {
     var list = await convertImageData();
     var contactRisk = ContactRiskBD(
         id: widget.contactRisk.id,
-        photo: contactSelect.photo,
-        name: contactSelect.displayName,
+        photo: contactSelect!.photo,
+        name: contactSelect!.displayName,
         timeinit: initTime,
         timefinish: finishTime,
         phones:
-            contactSelect.phones.first.normalizedNumber.replaceAll("+34", ""),
+            contactSelect!.phones.first.normalizedNumber.replaceAll("+34", ""),
         titleMessage: titleMessage,
         messages: message,
         sendLocation: widget.contactRisk.sendLocation,
@@ -212,6 +219,9 @@ class _EditRiskPageState extends State<EditRiskPage> {
         showSaveAlert(context, Constant.info, Constant.errorGeneric.tr);
         return;
       }
+      setState(() {
+        isLoading = false;
+      });
     }
     riskVC.update();
 
@@ -223,7 +233,9 @@ class _EditRiskPageState extends State<EditRiskPage> {
 
     Uint8List? bytes;
     String img64 = "";
-
+    if (imagePaths.isEmpty) {
+      return [];
+    }
     for (var i = 0; i < imagePaths.length; i++) {
       var path = File(imagePaths[i].path);
 
@@ -589,7 +601,7 @@ class _EditRiskPageState extends State<EditRiskPage> {
                                       indexSelect = value;
                                       contactSelect = contactlist[value];
                                       widget.contactRisk.name =
-                                          contactSelect.displayName;
+                                          contactSelect!.displayName;
                                       setState(() {});
                                     },
                                   ),
