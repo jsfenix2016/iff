@@ -113,7 +113,9 @@ Future<void> main() async {
 
   runApp(
     GetMaterialApp(
-      home: UserConfigPage(),
+      home: MyApp(
+        initApp: initApp!,
+      ),
       debugShowCheckedModeBanner: false,
     ),
   );
