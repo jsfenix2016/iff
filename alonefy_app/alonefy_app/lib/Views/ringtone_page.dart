@@ -135,8 +135,7 @@ class _RingTonePageState extends State<RingTonePage>
                     )),
               ),
             ),
-            Expanded(
-              child: Padding(
+            Padding(
                 padding: const EdgeInsets.fromLTRB(0, 70, 0, 100),
                 child: ListView.builder(
                   itemCount: ringtones.length,
@@ -190,7 +189,6 @@ class _RingTonePageState extends State<RingTonePage>
                     );
                   },
                 ),
-              ),
             ),
             Positioned(
               bottom: 20,

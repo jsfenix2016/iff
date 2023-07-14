@@ -166,7 +166,6 @@ class _AddActivityPageState extends State<AddActivityPage>
         ),
         Padding(
           padding: const EdgeInsets.fromLTRB(0, 70, 0, 100),
-          child: Expanded(
             child: SingleChildScrollView(
               child: Column(children: [
                 Padding(
@@ -186,10 +185,8 @@ class _AddActivityPageState extends State<AddActivityPage>
                             fontWeight: FontWeight.w500,
                             color: Colors.white),
                       ),
-                    ),
-                    Positioned(
-                        right: 32,
-                        child: SizedBox(
+                      flex: 1,
+                    ),SizedBox(
                             width: 120,
                             child: StatefulBuilder(
                               builder:
@@ -204,7 +201,7 @@ class _AddActivityPageState extends State<AddActivityPage>
                                   },
                                 );
                               },
-                            )))
+                            ))
                   ],
                 ),
                 const SizedBox(height: 40),
@@ -219,12 +216,14 @@ class _AddActivityPageState extends State<AddActivityPage>
                         padding: const EdgeInsets.fromLTRB(12, 0, 0, 0),
                         child: getHourTitle("Hora Inicio"),
                       ),
+                      flex: 1,
                     ),
                     Expanded(
                       child: Padding(
                         padding: const EdgeInsets.fromLTRB(0, 0, 56, 0),
                         child: getHourTitle("Hora Fin"),
                       ),
+                      flex: 1,
                     ),
                   ],
                 ),
@@ -237,6 +236,7 @@ class _AddActivityPageState extends State<AddActivityPage>
                         child: getFutureColumnPicker(
                             hoursPositionPicker1, minutesPositionPicker1, 0),
                       ),
+                      flex: 1,
                     ),
                     Expanded(
                       child: Padding(
@@ -244,6 +244,7 @@ class _AddActivityPageState extends State<AddActivityPage>
                         child: getFutureColumnPicker(
                             hoursPositionPicker2, minutesPositionPicker2, 1),
                       ),
+                      flex: 1,
                     ),
                   ],
                 ),
@@ -283,7 +284,9 @@ class _AddActivityPageState extends State<AddActivityPage>
                                       fontWeight: FontWeight.w500,
                                       color: Colors.white),
                                 ),
-                              ))),
+                              )),
+                        flex: 1,
+                      ),
                       SizedBox(
                           width: 60,
                           child: Padding(
@@ -307,7 +310,6 @@ class _AddActivityPageState extends State<AddActivityPage>
                 getSwitches(size),
                 const SizedBox(height: 32)
               ]),
-            ),
           ),
         ),
         Positioned(
@@ -337,7 +339,7 @@ class _AddActivityPageState extends State<AddActivityPage>
                   if (isRepeatTypeSelected()) {
                     var activities = await controller.getActivities();
                     if (activities.length > _maxActivitiesNoPremium &&
-                        !_prefs.getUserPremium && !_prefs.getDemoActive) {
+                        !_prefs.getUserPremium) {
                       showSaveAlert(context, Constant.info,
                           Constant.timeMaxReachedInactivity);
                     } else {
@@ -431,6 +433,7 @@ class _AddActivityPageState extends State<AddActivityPage>
 
   Widget getDateSelected(String dateType) {
     return Row(
+      mainAxisSize: MainAxisSize.max,
       children: [
         SizedBox(
             width: 100,
@@ -445,9 +448,8 @@ class _AddActivityPageState extends State<AddActivityPage>
                       fontWeight: FontWeight.w500,
                       color: Colors.white),
                 ))),
-        Expanded(
-            child: Padding(
-                padding: const EdgeInsets.fromLTRB(0, 0, 16, 0),
+    Padding(
+                padding: const EdgeInsets.fromLTRB(0, 0, 4, 0),
                 child: TextButton(
                     style: const ButtonStyle(alignment: Alignment.centerRight),
                     onPressed: () async {
@@ -472,7 +474,7 @@ class _AddActivityPageState extends State<AddActivityPage>
                           letterSpacing: 0.001,
                           fontWeight: FontWeight.w500,
                           color: Colors.white),
-                    ))))
+                    ),),),
       ],
     );
   }
@@ -697,8 +699,8 @@ class _AddActivityPageState extends State<AddActivityPage>
             const SizedBox(height: 12),
             if (itemsDropDown[2]) ...[
               Row(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const SizedBox(width: 16),
                   getFutureDayContainer(0, size),
                   getFutureDayContainer(1, size),
                   getFutureDayContainer(2, size),
@@ -706,7 +708,6 @@ class _AddActivityPageState extends State<AddActivityPage>
                   getFutureDayContainer(4, size),
                   getFutureDayContainer(5, size),
                   getFutureDayContainer(6, size),
-                  const SizedBox(width: 16)
                 ],
               ),
             ],
@@ -748,10 +749,8 @@ class _AddActivityPageState extends State<AddActivityPage>
                   fontWeight: FontWeight.w500,
                   color: const Color.fromARGB(255, 222, 222, 222)),
             ),
-          ),
-          Positioned(
-              right: 24,
-              child: SizedBox(
+            flex: 1,
+          ),SizedBox(
                 width: 120,
                 child: CupertinoSwitch(
                   value: itemsDropDown[getIndexOfItemsDropDown(text)],
@@ -769,7 +768,7 @@ class _AddActivityPageState extends State<AddActivityPage>
                     setState(() {});
                   },
                 ),
-              ))
+              )
         ]
       ],
     );

@@ -172,8 +172,7 @@ class _FallActivationConfigPageState extends State<FallActivationConfigPage> {
   }
 
   Widget getPicker(int initialPosition) {
-    return Expanded(
-        child: SizedBox(
+    return SizedBox(
       height: 120,
       child: CupertinoPicker(
         diameterRatio: 1.4,
@@ -216,7 +215,7 @@ class _FallActivationConfigPageState extends State<FallActivationConfigPage> {
             ),
         ],
       ),
-    ));
+    );
   }
 
   Widget getSlideableActivate() {
@@ -237,8 +236,7 @@ class _FallActivationConfigPageState extends State<FallActivationConfigPage> {
         width: 21,
       ),
       onChanged: (SlidableButtonPosition value) {
-        if (value == SlidableButtonPosition.end && _prefs.getUserPremium ||
-            _prefs.getDemoActive) {
+        if (value == SlidableButtonPosition.end && _prefs.getUserPremium) {
           setState(() {
             isActive = !isActive;
           });

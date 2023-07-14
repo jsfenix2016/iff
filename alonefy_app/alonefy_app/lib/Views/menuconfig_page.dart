@@ -218,7 +218,7 @@ class _MenuConfigurationPageState extends State<MenuConfigurationPage> {
         //  redirectToConfigUser();
         //  return;
         //}
-        if (_prefs.getUserPremium || _prefs.getDemoActive) {
+        if (_prefs.getUserPremium) {
           Navigator.push(
             context,
             MaterialPageRoute(
@@ -290,13 +290,9 @@ class _MenuConfigurationPageState extends State<MenuConfigurationPage> {
                     },
                     child: Padding(
                       padding: const EdgeInsets.all(16.0),
-                      child: SizedBox(
                         child: Stack(
                           children: [
-                            Center(
-                              child: Expanded(
-                                flex: 1,
-                                child: Container(
+                            Container(
                                   decoration: const BoxDecoration(
                                     color: Colors.transparent,
                                     borderRadius:
@@ -341,11 +337,8 @@ class _MenuConfigurationPageState extends State<MenuConfigurationPage> {
                                     ],
                                   ),
                                 ),
-                              ),
-                            )
                           ],
                         ),
-                      ),
                     ),
                   );
                 },
@@ -377,8 +370,7 @@ class _MenuConfigurationPageState extends State<MenuConfigurationPage> {
         width: 21,
       ),
       onChanged: (SlidableButtonPosition value) async {
-        if (value == SlidableButtonPosition.end && _prefs.getUserPremium ||
-            _prefs.getDemoActive) {
+        if (value == SlidableButtonPosition.end && _prefs.getUserPremium) {
           updateHabits(context);
         } else if (value == SlidableButtonPosition.end) {
           Navigator.push(

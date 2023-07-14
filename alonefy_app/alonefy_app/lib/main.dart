@@ -37,6 +37,7 @@ import 'Common/Firebase/firebaseManager.dart';
 
 import 'Page/Geolocator/Controller/configGeolocatorController.dart';
 import 'Page/LogActivity/Controller/logActivity_controller.dart';
+import 'Page/Premium/Controller/premium_controller.dart';
 import 'Page/UserEdit/Controller/getUserController.dart';
 
 DateTime now = DateTime.now();
@@ -96,9 +97,9 @@ Future<void> main() async {
     }
   }
 
-  // var premiumController = Get.put(PremiumController());
-  _prefs.setDemoActive = true;
-  // premiumController.initPlatformState();
+  var premiumController = Get.put(PremiumController());
+  _prefs.setDemoActive = false;
+  premiumController.initPlatformState();
 // Recupera la última ruta de pantalla visitada
   final lastRoute = await _prefs.getLastScreenRoute();
   initApp = _prefs.isFirstConfig == false ? 'onboarding' : lastRoute;
@@ -403,8 +404,7 @@ Future accelerometer() async {
 
   var enableIFF = await getEnableIFF();
 
-  if (!enableIFF && !_prefs.getDetectedFall && !_prefs.getUserPremium ||
-      !_prefs.getDemoActive) return;
+  if (!enableIFF && !_prefs.getDetectedFall && !_prefs.getUserPremium) return;
 
   _streamSubscriptions.add(
     accelerometerEvents.listen((AccelerometerEvent event) {

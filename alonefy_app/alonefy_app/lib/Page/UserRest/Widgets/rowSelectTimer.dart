@@ -55,8 +55,8 @@ class _RowSelectTimerState extends State<RowSelectTimer> {
                       scale: 1,
                       fit: BoxFit.fill,
                       'assets/images/Group 979.png',
-                      height: 24,
-                      width: 44,
+                      height: 30,
+                      width: 54,
                     ),
                   ),
                   const SizedBox(
