@@ -290,55 +290,51 @@ class _MenuConfigurationPageState extends State<MenuConfigurationPage> {
                     },
                     child: Padding(
                       padding: const EdgeInsets.all(16.0),
-                        child: Stack(
-                          children: [
-                            Container(
-                                  decoration: const BoxDecoration(
-                                    color: Colors.transparent,
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(8)),
-                                  ),
-                                  height: 50,
-                                  width: 312,
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.max,
-                                    children: [
-                                      Padding(
-                                        padding:
-                                            const EdgeInsets.only(left: 8.0),
-                                        child: Container(
-                                          height:
-                                              permissionStatusI[index].heigth,
-                                          width:
-                                              permissionStatusI[index].weigth,
-                                          decoration: BoxDecoration(
-                                            image: DecorationImage(
-                                              image: AssetImage(
-                                                  permissionStatusI[index]
-                                                      .icon),
-                                              fit: BoxFit.fill,
-                                            ),
-                                            color: Colors.transparent,
-                                          ),
-                                        ),
+                      child: Stack(
+                        children: [
+                          Container(
+                            decoration: const BoxDecoration(
+                              color: Colors.transparent,
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(8)),
+                            ),
+                            height: 50,
+                            width: 312,
+                            child: Row(
+                              mainAxisSize: MainAxisSize.max,
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.only(left: 8.0),
+                                  child: Container(
+                                    height: permissionStatusI[index].heigth,
+                                    width: permissionStatusI[index].weigth,
+                                    decoration: BoxDecoration(
+                                      image: DecorationImage(
+                                        image: AssetImage(
+                                            permissionStatusI[index].icon),
+                                        fit: BoxFit.fill,
                                       ),
-                                      const SizedBox(
-                                        width: 12,
-                                      ),
-                                      Expanded(
-                                        flex: 1,
-                                        child: Text(
-                                          permissionStatusI[index].name,
-                                          maxLines: 2,
-                                          textAlign: TextAlign.left,
-                                          style: textNormal16White(),
-                                        ),
-                                      ),
-                                    ],
+                                      color: Colors.transparent,
+                                    ),
                                   ),
                                 ),
-                          ],
-                        ),
+                                const SizedBox(
+                                  width: 12,
+                                ),
+                                Expanded(
+                                  flex: 1,
+                                  child: Text(
+                                    permissionStatusI[index].name,
+                                    maxLines: 2,
+                                    textAlign: TextAlign.left,
+                                    style: textNormal16White(),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   );
                 },
