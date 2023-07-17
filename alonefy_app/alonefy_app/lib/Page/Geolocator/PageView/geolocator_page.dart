@@ -190,102 +190,85 @@ class _InitGeolocatorState extends State<InitGeolocator> {
           decoration: decorationCustom(),
           width: size.width,
           height: size.height,
-          child: Stack(
-            children: [
-              Center(
-                child: Column(
-                  mainAxisSize: MainAxisSize.max,
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.max,
+              children: [
+                Stack(
                   children: [
-                    Stack(
-                      children: [
-                        //SizedBox(
-                        //  child: Image.asset(
-                        //    fit: BoxFit.fill,
-                        //    scale: 0.65,
-                        //    'assets/images/Map.png',
-                        //    height: 400,
-                        //    width: double.infinity,
-                        //  ),
-                        //),
-                        //getPremiumImageGradient('assets/images/Map.png'),
-                        getMapImageGradient(),
-                        Center(
-                          heightFactor: 2.2,
-                          child: SizedBox(
-                            child: Image.asset(
-                              fit: BoxFit.fill,
-                              scale: 0.65,
-                              'assets/images/Shape.png',
-                              height: 171.92,
-                              width: 133,
-                            ),
-                          ),
+                    getMapImageGradient(),
+                    Center(
+                      heightFactor: 2.2,
+                      child: SizedBox(
+                        child: Image.asset(
+                          fit: BoxFit.fill,
+                          scale: 0.65,
+                          'assets/images/Shape.png',
+                          height: 171.92,
+                          width: 133,
                         ),
-                      ],
-                    ),
-                    SizedBox(
-                      child: Column(
-                        children: <Widget>[
-                          Padding(
-                            padding: const EdgeInsets.only(
-                                left: 8.0, right: 8.0, bottom: 8.0),
-                            child: Text(
-                              Constant.casefallText,
-                              textAlign: TextAlign.center,
-                              style: GoogleFonts.barlow(
-                                fontSize: 24.0,
-                                wordSpacing: 1,
-                                letterSpacing: 1.2,
-                                fontWeight: FontWeight.w500,
-                                color: const Color.fromRGBO(255, 255, 255, 1),
-                              ),
-                            ),
-                          ),
-                          // Add the image here
-
-                          CupertinoSwitch(
-                            value: isActive,
-                            activeColor: ColorPalette.activeSwitch,
-                            trackColor: CupertinoColors.inactiveGray,
-                            onChanged: ((value) async {
-                              setState(() {
-                                isActive = value;
-                              });
-                              if (value) {
-                                await _checkPermission();
-                                getCurrentPosition();
-                              } else {
-                                //_prefs.setAcceptedSendLocation = PreferencePermission.noAccepted;
-                                _locationController.activateLocation(
-                                    PreferencePermission.noAccepted);
-                              }
-                              // geoVC.saveSendLocation(context, value);
-                            }),
-                          ),
-                        ],
                       ),
                     ),
                   ],
                 ),
-              ),
-              Positioned(
-                bottom: 40,
-                left: 70,
-                child: Padding(
+                SizedBox(
+                  child: Column(
+                    children: <Widget>[
+                      Padding(
+                        padding: const EdgeInsets.only(
+                            left: 8.0, right: 8.0, bottom: 8.0),
+                        child: Text(
+                          Constant.casefallText,
+                          textAlign: TextAlign.center,
+                          style: GoogleFonts.barlow(
+                            fontSize: 24.0,
+                            wordSpacing: 1,
+                            letterSpacing: 1.2,
+                            fontWeight: FontWeight.w500,
+                            color: const Color.fromRGBO(255, 255, 255, 1),
+                          ),
+                        ),
+                      ),
+                      // Add the image here
+
+                      CupertinoSwitch(
+                        value: isActive,
+                        activeColor: ColorPalette.activeSwitch,
+                        trackColor: CupertinoColors.inactiveGray,
+                        onChanged: ((value) async {
+                          setState(() {
+                            isActive = value;
+                          });
+                          if (value) {
+                            await _checkPermission();
+                            getCurrentPosition();
+                          } else {
+                            //_prefs.setAcceptedSendLocation = PreferencePermission.noAccepted;
+                            _locationController.activateLocation(
+                                PreferencePermission.noAccepted);
+                          }
+                          // geoVC.saveSendLocation(context, value);
+                        }),
+                      ),
+                    ],
+                  ),
+                ),
+                Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: ElevateButtonFilling(
                     onChanged: (value) {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const ConditionGeneralPage()),
-                      );
+                      // Navigator.push(
+                      //   context,
+                      //   MaterialPageRoute(
+                      //       builder: (context) => const ConditionGeneralPage()),
+                      // );
+                      Get.off(const ConditionGeneralPage());
                     },
                     mensaje: Constant.continueTxt,
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

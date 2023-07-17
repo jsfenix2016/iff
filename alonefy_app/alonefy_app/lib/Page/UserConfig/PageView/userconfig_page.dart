@@ -278,12 +278,9 @@ class _UserConfigPageState extends State<UserConfigPage> {
                     TextButton(
                       child: const Text(Constant.ok),
                       onPressed: () {
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => UserConfigPage2(
-                              userbd: resp,
-                            ),
+                        Get.off(
+                          UserConfigPage2(
+                            userbd: resp,
                           ),
                         );
                       },

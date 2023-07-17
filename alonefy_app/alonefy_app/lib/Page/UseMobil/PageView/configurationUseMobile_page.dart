@@ -208,10 +208,8 @@ class _UseMobilePageState extends State<UseMobilePage> {
                           userbd!);
 
                       if (result) {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const UserRestPage()),
+                        Get.off(
+                          const UserRestPage(),
                         );
                       }
                     },

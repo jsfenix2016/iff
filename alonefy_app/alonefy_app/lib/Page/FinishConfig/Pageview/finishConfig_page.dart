@@ -1,7 +1,9 @@
 import 'package:flutter_background_service/flutter_background_service.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ifeelefine/Common/Constant.dart';
 import 'package:ifeelefine/Common/colorsPalette.dart';
+import 'package:ifeelefine/Common/decoration_custom.dart';
 import 'package:ifeelefine/Common/utils.dart';
 import 'package:ifeelefine/Page/HomePage/Pageview/home_page.dart';
 import 'package:flutter/material.dart';
@@ -32,15 +34,7 @@ class _FinishConfigPageState extends State<FinishConfigPage> {
       debugShowCheckedModeBanner: false,
       home: Scaffold(
         body: Container(
-          decoration: const BoxDecoration(
-            gradient: RadialGradient(
-              radius: 1,
-              colors: [
-                ColorPalette.secondView,
-                ColorPalette.principalView,
-              ],
-            ),
-          ),
+          decoration: decorationCustom(),
           child: Stack(
             children: [
               Center(
@@ -136,11 +130,7 @@ class _FinishConfigPageState extends State<FinishConfigPage> {
                                     service.startService();
                                   }
                                   _prefs.config = true;
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => const HomePage()),
-                                  );
+                                  Get.off(const HomePage());
                                 }),
                                 mensaje: 'Acceder'),
                           ),
