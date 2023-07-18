@@ -78,6 +78,7 @@ class _EditRiskPageState extends State<EditRiskPage> {
   bool isLoading = false;
 
   late DateTime dateTimeTemp = DateTime.now();
+  late DateTime dateTimeTempIncrease = DateTime.now();
   @override
   void initState() {
     getContact();
@@ -139,39 +140,43 @@ class _EditRiskPageState extends State<EditRiskPage> {
     setState(() {
       isLoading = true;
     });
+
+    // Agregar un día a la fecha actual
+    DateTime fechaMasUnDia = dateTimeTemp.add(const Duration(days: 1));
+
     String temp =
         '${dateTimeTemp.day}-${dateTimeTemp.month}-${dateTimeTemp.year} ';
-    //var listTimeInit = widget.contactRisk.timeinit.split(' ');
-//
-    //var listTimeFinish = widget.contactRisk.timefinish.split(' ');
-//
+    String temp2 =
+        '${fechaMasUnDia.day}-${fechaMasUnDia.month}-${fechaMasUnDia.year} ';
+
     var initTime = "";
-//
     var finishTime = "";
-//
-    //if (widget.contactRisk.timeinit == timeinit) {
-//
-    //  initTime = temp + listTimeInit[0];
-//
-    //}
-//
-    //if (widget.contactRisk.timefinish == timefinish) {
-//
-    //  finishTime = temp + listTimeFinish[0];
-//
-    //}
-//
-    //if (widget.contactRisk.id != -1) {
-//
-    //  initTime = temp + listTimeInit[1];
-//
-    //  finishTime = temp + listTimeFinish[1];
-//
-    //}
+    List<String> partesdate = widget.contactRisk.timeinit.split(' ');
+    List<String> partesInit = partesdate[1].split(':');
+    List<String> partesDate = widget.contactRisk.timefinish.split(' ');
+    List<String> partesFinish = partesDate[1].split(':');
 
-    initTime = temp + timeinit;
+    int horasInit = int.parse(partesInit[0]);
+    int minutosInit = int.parse(partesInit[1]);
 
-    finishTime = temp + timefinish;
+    int totalMinutosInit = horasInit * 60 + minutosInit;
+
+    print("Total de minutos: $totalMinutosInit");
+
+    int horasFinish = int.parse(partesFinish[0]);
+    int minutosFinish = int.parse(partesFinish[1]);
+
+    int totalMinutosFinish = horasFinish * 60 + minutosFinish;
+
+    print("Total de minutos: $totalMinutosFinish");
+
+    if (totalMinutosInit > totalMinutosFinish) {
+      initTime = temp + widget.contactRisk.timeinit.split(' ').last;
+      finishTime = temp2 + widget.contactRisk.timefinish.split(' ').last;
+    } else {
+      initTime = temp + widget.contactRisk.timeinit.split(' ').last;
+      finishTime = temp + widget.contactRisk.timefinish.split(' ').last;
+    }
 
     var list = await convertImageData();
     var contactRisk = ContactRiskBD(
@@ -206,8 +211,9 @@ class _EditRiskPageState extends State<EditRiskPage> {
       if (!save) {
         setState(() {
           isLoading = false;
+          showSaveAlert(context, Constant.info, Constant.errorGeneric.tr);
         });
-        showSaveAlert(context, Constant.info, Constant.errorGeneric.tr);
+
         return;
       }
     } else {
@@ -215,17 +221,22 @@ class _EditRiskPageState extends State<EditRiskPage> {
       if (!edit) {
         setState(() {
           isLoading = false;
+          showSaveAlert(context, Constant.info, Constant.errorGeneric.tr);
         });
-        showSaveAlert(context, Constant.info, Constant.errorGeneric.tr);
-        return;
-      }
-      setState(() {
-        isLoading = false;
-      });
-    }
-    riskVC.update();
 
-    Navigator.of(context).pop();
+        return;
+      } else {
+        setState(() {
+          showSaveAlert(context, Constant.info, Constant.saveCorrectly.tr);
+        });
+      }
+    }
+
+    setState(() {
+      riskVC.update();
+      isLoading = false;
+      Navigator.of(context).pop();
+    });
   }
 
   Future<List<Uint8List>> convertImageData() async {
@@ -448,8 +459,10 @@ class _EditRiskPageState extends State<EditRiskPage> {
                                           ),
                                           child: CupertinoDatePicker(
                                             key: const Key('init'),
-                                            initialDateTime: parseDurationRow(
-                                                widget.contactRisk.timeinit),
+                                            initialDateTime: parseStringHours(
+                                                widget.contactRisk.timeinit
+                                                    .split(' ')
+                                                    .last),
                                             mode: CupertinoDatePickerMode.time,
                                             use24hFormat: true,
                                             onDateTimeChanged: (value) async {
@@ -508,8 +521,10 @@ class _EditRiskPageState extends State<EditRiskPage> {
                                           ),
                                           child: CupertinoDatePicker(
                                             key: const Key('finish'),
-                                            initialDateTime: parseDurationRow(
-                                                widget.contactRisk.timefinish),
+                                            initialDateTime: parseStringHours(
+                                                widget.contactRisk.timefinish
+                                                    .split(" ")
+                                                    .last),
                                             mode: CupertinoDatePickerMode.time,
                                             use24hFormat: true,
                                             onDateTimeChanged: (value) async {

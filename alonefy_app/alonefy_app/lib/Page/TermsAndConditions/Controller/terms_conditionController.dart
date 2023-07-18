@@ -39,10 +39,11 @@ class TermsAndConditionsController extends GetxController {
   }
 
   void goTO() {
-    Navigator.push(
-      contextTemp,
-      MaterialPageRoute(builder: (context) => const FinishConfigPage()),
-    );
+    Get.off(const FinishConfigPage());
+    // Navigator.push(
+    //   contextTemp,
+    //   MaterialPageRoute(builder: (context) => const FinishConfigPage()),
+    // );
   }
 
   void showAlertTemp(BuildContext context, String text) {

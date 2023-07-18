@@ -65,74 +65,71 @@ class _CellZoneRiskState extends State<CellZoneRisk> {
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-      flex: 0,
-      child: Container(
-        color: Colors.transparent,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          mainAxisSize: MainAxisSize.max,
-          children: [
-            Row(
-              children: [
-                IconButton(
-                  iconSize: 35,
-                  color: ColorPalette.principal,
-                  onPressed: () {},
-                  icon: searchImageForIcon(widget.logAlert.type),
-                ),
-                Container(
-                  width: 200,
-                  color: Colors.transparent,
-                  child: Text(
-                    "Zona - ${widget.logAlert.time}",
-                    textAlign: TextAlign.left,
-                    style: GoogleFonts.barlow(
-                      fontSize: 14.0,
-                      wordSpacing: 1,
-                      letterSpacing: 0.01,
-                      fontWeight: FontWeight.normal,
-                      color: Colors.white,
-                    ),
+    return Container(
+      color: Colors.transparent,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisSize: MainAxisSize.max,
+        children: [
+          Row(
+            children: [
+              IconButton(
+                iconSize: 35,
+                color: ColorPalette.principal,
+                onPressed: () {},
+                icon: searchImageForIcon(widget.logAlert.type),
+              ),
+              Container(
+                width: 200,
+                color: Colors.transparent,
+                child: Text(
+                  "Zona - ${widget.logAlert.time}",
+                  textAlign: TextAlign.left,
+                  style: GoogleFonts.barlow(
+                    fontSize: 14.0,
+                    wordSpacing: 1,
+                    letterSpacing: 0.01,
+                    fontWeight: FontWeight.normal,
+                    color: Colors.white,
                   ),
                 ),
-              ],
-            ),
-            Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                FutureBuilder(
-                  future: _initializeVideoPlayerFuture,
-                  builder: (context, state) {
-                    if (state.connectionState == ConnectionState.done) {
-                      return GestureDetector(
-                        onTap: () {
-                          if (fileTemp.path.isNotEmpty) {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => PreviewVideoPage(
-                                  filePath: fileTemp.path,
-                                ),
+              ),
+            ],
+          ),
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              FutureBuilder(
+                future: _initializeVideoPlayerFuture,
+                builder: (context, state) {
+                  if (state.connectionState == ConnectionState.done) {
+                    return GestureDetector(
+                      onTap: () {
+                        if (fileTemp.path.isNotEmpty) {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => PreviewVideoPage(
+                                filePath: fileTemp.path,
                               ),
-                            );
-                          }
-                        },
-                        child: SizedBox(
-                          width: 200,
-                          height: 70,
-                          child: VideoPlayer(_videoPlayerController),
-                        ),
-                      );
-                    } else {
-                      return const Center(child: CircularProgressIndicator());
-                    }
-                  },
-                )
-              ],
-            ),
-          ],
-        ),
+                            ),
+                          );
+                        }
+                      },
+                      child: SizedBox(
+                        width: 200,
+                        height: 70,
+                        child: VideoPlayer(_videoPlayerController),
+                      ),
+                    );
+                  } else {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+                },
+              )
+            ],
+          ),
+        ],
       ),
     );
   }

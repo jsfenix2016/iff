@@ -55,6 +55,19 @@ class _PreviewRestTimePageState extends State<PreviewRestTimePage> {
     selecDicActivityTemp = [];
     lista = [];
     selecDicActivity = await restVC.getUserRest();
+
+    if (selecDicActivity.isEmpty) {
+      for (var element in Constant.tempListShortDay) {
+        RestDayBD restDay = RestDayBD(
+            day: element,
+            timeSleep: timeLblPM,
+            timeWakeup: timeLblAM,
+            selection: 0,
+            isSelect: false);
+
+        selecDicActivity.add(restDay);
+      }
+    }
     if (tempSave.isEmpty) {
       tempSave = selecDicActivity;
     }
@@ -181,85 +194,85 @@ class _PreviewRestTimePageState extends State<PreviewRestTimePage> {
             ),
             for (var i = 0; i <= groupedProducts.length - 1; i++)
               Container(
+                key: Key(i.toString()),
+                color: Colors.transparent,
+                width: size.width,
+                height: 210,
+                child: ListView.builder(
                   key: Key(i.toString()),
-                  color: Colors.transparent,
-                  width: size.width,
-                  height: 210,
-                  child: ListView.builder(
-                    key: Key(i.toString()),
-                    shrinkWrap: true,
-                    scrollDirection: Axis.vertical,
-                    physics: const NeverScrollableScrollPhysics(),
-                    itemCount: 1,
-                    itemBuilder: (context, index) {
-                      return Column(
-                        mainAxisSize: MainAxisSize.max,
-                        key: Key(index.toString()),
-                        children: [
-                          ListDayWeek(
-                            listRest: selecDicActivity,
-                            newIndex: i,
-                            onChanged: (value) async {
-                              indexFile = value;
-                              var temp = selecDicActivity[value];
-                              temp.isSelect =
-                                  (temp.isSelect == false) ? true : false;
-                              temp.selection = i;
+                  shrinkWrap: true,
+                  scrollDirection: Axis.vertical,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: 1,
+                  itemBuilder: (context, index) {
+                    return Column(
+                      mainAxisSize: MainAxisSize.max,
+                      key: Key(index.toString()),
+                      children: [
+                        ListDayWeek(
+                          listRest: selecDicActivity,
+                          newIndex: i,
+                          onChanged: (value) async {
+                            indexFile = value;
+                            var temp = selecDicActivity[value];
+                            temp.isSelect =
+                                (temp.isSelect == false) ? true : false;
+                            temp.selection = i;
 
-                              selecDicActivity.removeAt(value);
-                              selecDicActivity.insert(value, temp);
+                            selecDicActivity.removeAt(value);
+                            selecDicActivity.insert(value, temp);
 
-                              setState(() {});
-                            },
-                          ),
-                          RowSelectTimer(
-                            index: i,
-                            timeLblAM: selecDicActivityTemp[i].timeWakeup, //AM
-                            timeLblPM: selecDicActivityTemp[i].timeSleep, //PM
-                            onChanged: (value) {
-                              timeLblAM = value.timeWakeup;
-                              timeLblPM = value.timeSleep;
-                              indexFile = i;
-                              var listgroup = groupedProducts[i.toString()];
-                              for (var ic = 0; ic < listgroup!.length; ic++) {
-                                var temp = listgroup[ic];
-                                if (temp.selection == indexFile) {
-                                  selecDicActivity.remove(temp);
-                                  temp.timeSleep = timeLblPM;
-                                  temp.timeWakeup = timeLblAM;
-                                  selecDicActivity.add(temp);
-                                }
+                            setState(() {});
+                          },
+                        ),
+                        RowSelectTimer(
+                          index: i,
+                          timeLblAM: selecDicActivityTemp[i].timeWakeup, //AM
+                          timeLblPM: selecDicActivityTemp[i].timeSleep, //PM
+                          onChanged: (value) {
+                            timeLblAM = value.timeWakeup;
+                            timeLblPM = value.timeSleep;
+                            indexFile = i;
+                            var listgroup = groupedProducts[i.toString()];
+                            for (var ic = 0; ic < listgroup!.length; ic++) {
+                              var temp = listgroup[ic];
+                              if (temp.selection == indexFile) {
+                                selecDicActivity.remove(temp);
+                                temp.timeSleep = timeLblPM;
+                                temp.timeWakeup = timeLblAM;
+                                selecDicActivity.add(temp);
                               }
-                            },
-                          ),
-                        ],
-                      );
-                    },
-                  ),
+                            }
+                          },
+                        ),
+                      ],
+                    );
+                  },
                 ),
+              ),
             Row(
               children: [
                 Container(
                   color: Colors.transparent,
                   height: 50,
                   width: size.width / 2,
-                    child: SizedBox(
-                      width: size.width,
-                      child: Center(
-                        child: ElevateButtonCustomBorder(
-                          onChanged: (value) async {
-                            int id = await restVC.saveUserListRestTime(
-                                context, tempSave);
+                  child: SizedBox(
+                    width: size.width,
+                    child: Center(
+                      child: ElevateButtonCustomBorder(
+                        onChanged: (value) async {
+                          int id = await restVC.saveUserListRestTime(
+                              context, tempSave);
 
-                            if (id == -1) {
-                              showSaveAlert(context, Constant.info,
-                                  Constant.errorGeneric);
-                              return;
-                            }
-                            setState(() {});
-                          },
-                          mensaje: "Cancelar",
-                        ),
+                          if (id == -1) {
+                            showSaveAlert(
+                                context, Constant.info, Constant.errorGeneric);
+                            return;
+                          }
+                          setState(() {});
+                        },
+                        mensaje: "Cancelar",
+                      ),
                     ),
                   ),
                 ),
@@ -267,26 +280,26 @@ class _PreviewRestTimePageState extends State<PreviewRestTimePage> {
                   color: Colors.transparent,
                   height: 50,
                   width: size.width / 2,
-                    child: SizedBox(
-                      width: size.width,
-                      child: Center(
-                        child: ElevateButtonCustomBorder(
-                          onChanged: (value) async {
-                            if (await validateAllDaySelect()) {
-                              showSaveAlert(context, Constant.info,
-                                  "Debes seleccionar los dias restantes antes de continuar");
-                              return;
-                            } else {
-                              await processSelectedInfo();
-                              updateRestDay(context);
-                            }
+                  child: SizedBox(
+                    width: size.width,
+                    child: Center(
+                      child: ElevateButtonCustomBorder(
+                        onChanged: (value) async {
+                          if (await validateAllDaySelect()) {
+                            showSaveAlert(context, Constant.info,
+                                "Debes seleccionar los dias restantes antes de continuar");
+                            return;
+                          } else {
+                            await processSelectedInfo();
+                            updateRestDay(context);
+                          }
 
-                            if (widget.isMenu) return;
-                          },
-                          mensaje: Constant.saveBtn,
-                        ),
+                          if (widget.isMenu) return;
+                        },
+                        mensaje: Constant.saveBtn,
                       ),
                     ),
+                  ),
                 ),
               ],
             )
