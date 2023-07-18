@@ -1,36 +1,28 @@
-import 'dart:ffi';
 import 'dart:async';
-import 'dart:io';
-import 'dart:ui';
 
-import 'package:flutter/cupertino.dart';
-import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:get/get.dart';
-import 'package:get/get_connect/http/src/utils/utils.dart';
-import 'package:ifeelefine/Common/Constant.dart';
+
 import 'package:ifeelefine/Common/colorsPalette.dart';
 import 'package:ifeelefine/Common/text_style_font.dart';
-import 'package:ifeelefine/Common/utils.dart';
+
 import 'package:ifeelefine/Model/contactRiskBD.dart';
 import 'package:ifeelefine/Page/Risk/DateRisk/Controller/editRiskController.dart';
 import 'package:ifeelefine/Page/Risk/DateRisk/ListDateRisk/Controller/riskPageController.dart';
-import 'package:ifeelefine/Page/Risk/DateRisk/ListDateRisk/PageView/riskDatePage.dart';
+
 import 'package:ifeelefine/Page/Risk/DateRisk/Widgets/contentCode.dart';
 
 import 'package:flutter/material.dart';
 
 import 'package:google_fonts/google_fonts.dart';
-import 'package:ifeelefine/Page/Risk/DateRisk/Widgets/popUpContact.dart';
 import 'package:ifeelefine/Services/mainService.dart';
-import 'package:ifeelefine/Utils/Widgets/elevateButtonCustomBorder.dart';
 import 'package:ifeelefine/Utils/Widgets/elevatedButtonFilling.dart';
 import 'package:ifeelefine/Utils/Widgets/loading_page.dart';
 import 'package:ifeelefine/main.dart';
-import 'package:notification_center/notification_center.dart';
 import 'package:ifeelefine/Common/decoration_custom.dart';
 
 class CancelDatePage extends StatefulWidget {
-  const CancelDatePage({super.key, required this.contactRisk, required this.taskIds});
+  const CancelDatePage(
+      {super.key, required this.contactRisk, required this.taskIds});
 
   final ContactRiskBD contactRisk;
   final List<String> taskIds;
@@ -78,9 +70,10 @@ class _CancelDatePageState extends State<CancelDatePage> {
       // contactRiskTemp.timeinit = '00:00';
       var res = await editVC.updateContactRisk(context, contactRiskTemp);
 
-      if (contactRiskTemp.taskIds != null && contactRiskTemp.taskIds!.isNotEmpty) {
+      if (contactRiskTemp.taskIds != null &&
+          contactRiskTemp.taskIds!.isNotEmpty) {
         MainService().cancelAllNotifications(contactRiskTemp.taskIds!);
-      } else if (widget.taskIds.isNotEmpty){
+      } else if (widget.taskIds.isNotEmpty) {
         MainService().cancelAllNotifications(widget.taskIds);
       }
 
@@ -91,12 +84,12 @@ class _CancelDatePageState extends State<CancelDatePage> {
         riskVC.update();
         stopTimer();
         timerSendSMS.cancel();
-
-      } else {
-        riskVC.update();
       }
     }
-    Navigator.of(context).pop();
+    setState(() {
+      riskVC.update();
+      Navigator.of(context).pop();
+    });
   }
 
   void stopTimer() {

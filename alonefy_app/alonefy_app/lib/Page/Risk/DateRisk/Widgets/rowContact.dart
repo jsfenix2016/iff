@@ -50,10 +50,8 @@ class _RowContactState extends State<RowContact> {
   Color _getColor(
       DateTime endTime, DateTime startTime, bool isActive, bool isProgrammed) {
     DateTime now = DateTime.now();
-    bool isAfter = startTime.hour > endTime.hour ||
-        (now.hour == endTime.hour && startTime.minute >= endTime.minute);
-    bool isBefore = startTime.hour < endTime.hour ||
-        (now.hour == endTime.hour && startTime.minute < endTime.minute);
+    bool isAfter = startTime.isAfter(endTime);
+    bool isBefore = startTime.isBefore(endTime);
 
     if (isActive && !isProgrammed && !isAfter) {
       // La cita está activa y no está programada, se muestra en amarillo
@@ -71,8 +69,8 @@ class _RowContactState extends State<RowContact> {
   }
 
   Color getColor(ContactRiskBD contactRisk) {
-    DateTime starTime = parseDurationRow(contactRisk.timeinit);
-    DateTime endTime = parseDurationRow(contactRisk.timefinish);
+    DateTime starTime = parseContactRiskDate(contactRisk.timeinit);
+    DateTime endTime = parseContactRiskDate(contactRisk.timefinish);
     return _getColor(
         endTime, starTime, contactRisk.isActived, contactRisk.isprogrammed);
   }

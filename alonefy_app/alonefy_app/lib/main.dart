@@ -435,52 +435,6 @@ Future accelerometer() async {
   );
 }
 
-/*Future getDateRisk() async {
-  await inicializeHiveBD();
-  final user = await const HiveData().getuserbd;
-
-  final box = await const HiveDataRisk().getcontactRiskbd;
-
-  List<ContactRiskBD> dateRisk = box.toList();
-
-  if (dateRisk.isEmpty) {
-    return;
-  }
-
-  for (var element in dateRisk) {
-    DateTime start = parseDurationRow(element.timeinit);
-    DateTime end = parseDurationRow(element.timefinish);
-
-    RedirectViewNotifier.contactRisk = element;
-
-    if (now.hour.compareTo(start.hour) == 0 &&
-        now.minute.compareTo(start.minute) > 0) {
-      if (element.isActived == false && element.isFinishTime == false) {
-        element.isActived = true;
-        element.isprogrammed = false;
-        await const HiveDataRisk().updateContactRisk(element);
-        //RedirectViewNotifier.showDateNotifications();
-      } else {
-        print(
-            "ahora: ${now.hour}:${now.minute}, hora fin: ${end.hour}:${end.minute},isActived: ${element.isActived}");
-        if ((now.hour.compareTo(end.hour) == 0 &&
-                now.minute.compareTo(end.minute) >= 0) &&
-            element.isActived) {
-          if (element.isActived && element.isFinishTime == false) {
-            element.isActived = true;
-            element.isprogrammed = false;
-            element.isFinishTime = true;
-            await const HiveDataRisk().updateContactRisk(element);
-            RedirectViewNotifier.sendMessageContactDate(element);
-            //RedirectViewNotifier.showDateFinishNotifications();
-          }
-        }
-      }
-      NotificationCenter().notify('getContactRisk');
-    }
-  }
-}*/
-
 void sendMessageContact() async {
   Duration useMobil =
       await IdleLogic().convertStringToDuration(_prefs.getHabitsTime);

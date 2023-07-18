@@ -82,118 +82,115 @@ class _CellDateRiskState extends State<CellDateRisk> {
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-      flex: 0,
-      child: Container(
-        color: Colors.transparent,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          mainAxisSize: MainAxisSize.max,
-          children: [
-            Row(
-              children: [
-                IconButton(
-                  iconSize: 35,
-                  color: ColorPalette.principal,
-                  onPressed: () {},
-                  icon: searchImageForIcon(widget.logAlert.type),
-                ),
-                Container(
-                  width: 200,
-                  color: Colors.transparent,
-                  child: Text(
-                    "Cita - ${widget.logAlert.time}",
-                    textAlign: TextAlign.left,
-                    style: GoogleFonts.barlow(
-                      fontSize: 14.0,
-                      wordSpacing: 1,
-                      letterSpacing: 0.01,
-                      fontWeight: FontWeight.normal,
-                      color: Colors.white,
-                    ),
+    return Container(
+      color: Colors.transparent,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisSize: MainAxisSize.max,
+        children: [
+          Row(
+            children: [
+              IconButton(
+                iconSize: 35,
+                color: ColorPalette.principal,
+                onPressed: () {},
+                icon: searchImageForIcon(widget.logAlert.type),
+              ),
+              Container(
+                width: 200,
+                color: Colors.transparent,
+                child: Text(
+                  "Cita - ${widget.logAlert.time}",
+                  textAlign: TextAlign.left,
+                  style: GoogleFonts.barlow(
+                    fontSize: 14.0,
+                    wordSpacing: 1,
+                    letterSpacing: 0.01,
+                    fontWeight: FontWeight.normal,
+                    color: Colors.white,
                   ),
                 ),
-              ],
-            ),
-            const SizedBox(
-              height: 10,
-            ),
-            Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                ImageFanWidget(
-                  onChanged: (List<File> value) {
-                    imagePaths = value;
-                    setState(() {});
-                  },
-                  listImg: widget.logAlert.photoDate!,
-                  isEdit: false,
-                ),
-                Visibility(
-                  visible: widget.logAlert.photoDate!.isEmpty ? false : true,
-                  child: IconButton(
-                    onPressed: () {
-                      //action coe when button is pressed
-                      showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return Dialog(
-                            child: SizedBox(
-                              child: Column(
-                                children: [
-                                  Expanded(
-                                    child: getImageData(widget
-                                        .logAlert.photoDate![_currentIndex]),
-                                  ),
-                                  ButtonBar(
-                                    alignment: MainAxisAlignment.center,
-                                    children: [
-                                      IconButton(
-                                        icon: const Icon(Icons.arrow_back),
-                                        onPressed: () {
-                                          _currentIndex = (_currentIndex - 1) %
-                                              widget.logAlert.photoDate!.length;
-                                          if (_currentIndex < 0) {
-                                            _currentIndex = widget.logAlert
-                                                    .photoDate!.length -
-                                                1;
-                                          }
-                                          (context as Element).markNeedsBuild();
-                                        },
-                                      ),
-                                      IconButton(
-                                        icon: const Icon(Icons.arrow_forward),
-                                        onPressed: () {
-                                          _currentIndex = (_currentIndex + 1) %
-                                              widget.logAlert.photoDate!.length;
-                                          (context as Element).markNeedsBuild();
-                                        },
-                                      ),
-                                      IconButton(
-                                        icon: const Icon(Icons.close),
-                                        onPressed: () {
-                                          Navigator.of(context).pop();
-                                        },
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
+              ),
+            ],
+          ),
+          const SizedBox(
+            height: 10,
+          ),
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ImageFanWidget(
+                onChanged: (List<File> value) {
+                  imagePaths = value;
+                  setState(() {});
+                },
+                listImg: widget.logAlert.photoDate!,
+                isEdit: false,
+              ),
+              Visibility(
+                visible: widget.logAlert.photoDate!.isEmpty ? false : true,
+                child: IconButton(
+                  onPressed: () {
+                    //action coe when button is pressed
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return Dialog(
+                          child: SizedBox(
+                            child: Column(
+                              children: [
+                                Expanded(
+                                  child: getImageData(widget
+                                      .logAlert.photoDate![_currentIndex]),
+                                ),
+                                ButtonBar(
+                                  alignment: MainAxisAlignment.center,
+                                  children: [
+                                    IconButton(
+                                      icon: const Icon(Icons.arrow_back),
+                                      onPressed: () {
+                                        _currentIndex = (_currentIndex - 1) %
+                                            widget.logAlert.photoDate!.length;
+                                        if (_currentIndex < 0) {
+                                          _currentIndex = widget
+                                                  .logAlert.photoDate!.length -
+                                              1;
+                                        }
+                                        (context as Element).markNeedsBuild();
+                                      },
+                                    ),
+                                    IconButton(
+                                      icon: const Icon(Icons.arrow_forward),
+                                      onPressed: () {
+                                        _currentIndex = (_currentIndex + 1) %
+                                            widget.logAlert.photoDate!.length;
+                                        (context as Element).markNeedsBuild();
+                                      },
+                                    ),
+                                    IconButton(
+                                      icon: const Icon(Icons.close),
+                                      onPressed: () {
+                                        Navigator.of(context).pop();
+                                      },
+                                    ),
+                                  ],
+                                ),
+                              ],
                             ),
-                          );
-                        },
-                      );
-                    },
-                    icon: const Icon(
-                      Icons.preview,
-                      color: Colors.white,
-                    ),
+                          ),
+                        );
+                      },
+                    );
+                  },
+                  icon: const Icon(
+                    Icons.preview,
+                    color: Colors.white,
                   ),
                 ),
-              ],
-            ),
-          ],
-        ),
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }

@@ -246,6 +246,27 @@ DateTime parseDurationRow(String s) {
   return pastDateTime;
 }
 
+DateTime parseStringHours(String s) {
+  List<String> parts = [];
+
+  Duration temp = Duration.zero;
+
+  if (s == "00:00") {
+    parts = s.split(':');
+    temp = getDuration(parts);
+  } else {
+    parts = s.split(':');
+
+    temp = getDuration(parts);
+  }
+
+  var format = DateFormat("HH:mm");
+
+  String sDuration = "${temp.inHours}:${temp.inMinutes.remainder(60)}";
+  DateTime pastDateTime = format.parse(sDuration);
+  return pastDateTime;
+}
+
 DateTime parseContactRiskDate(String contactRiskDate) {
   var day = contactRiskDate.substring(0, contactRiskDate.indexOf('-'));
   contactRiskDate = contactRiskDate.substring(
@@ -263,7 +284,7 @@ DateTime parseContactRiskDate(String contactRiskDate) {
   contactRiskDate = contactRiskDate.substring(
       contactRiskDate.indexOf(':') + 1, contactRiskDate.length);
 
-  var minutes = contactRiskDate;
+  var minutes = contactRiskDate.substring(0, 2);
 
   return DateTime(int.parse(year), int.parse(month), int.parse(day),
           int.parse(hour), int.parse(minutes))

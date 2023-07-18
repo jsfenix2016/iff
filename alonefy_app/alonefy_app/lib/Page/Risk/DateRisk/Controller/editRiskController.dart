@@ -19,7 +19,6 @@ import '../../../../Model/ApiRest/ContactRiskApi.dart';
 import 'package:ifeelefine/Common/manager_alerts.dart';
 
 class EditRiskController extends GetxController {
-
   Future<void> saveActivityLog(ContactRiskBD contact) async {
     LogAlertsBD mov = LogAlertsBD(
         id: 0,
@@ -34,8 +33,12 @@ class EditRiskController extends GetxController {
     try {
       final MainController mainController = Get.put(MainController());
       var user = await mainController.getUserData();
-      var contactRiskApi = ContactRiskApi.fromContact(contact,
-          user.telephone.replaceAll("+34", ""), contact.photoDate.length);
+      var contactRiskApi = ContactRiskApi.fromContact(
+          contact,
+          user.telephone.contains("+34")
+              ? user.telephone.replaceAll("+34", "")
+              : user.telephone,
+          contact.photoDate.length);
       var contactRiskApiResponse =
           await ContactRiskService().createContactRisk(contactRiskApi);
       if (contact.photo != null &&
@@ -64,7 +67,7 @@ class EditRiskController extends GetxController {
           // NotificationCenter().notify('getContactRisk');
           RiskController riskVC = Get.find<RiskController>();
           riskVC.update();
-          showSaveAlert(context, Constant.info, Constant.saveCorrectly.tr);
+
           return true;
         } else {
           return false;
@@ -102,7 +105,6 @@ class EditRiskController extends GetxController {
       if (update) {
         // NotificationCenter().notify('getContactRisk');
 
-        showSaveAlert(context, Constant.info, Constant.changeGeneric.tr);
         return true;
       }
       return false;
