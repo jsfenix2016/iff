@@ -634,22 +634,25 @@ int stringTimeToInt(String strTime) {
 }
 
 int deactivateTimeToMinutes(String strTime) {
-  var time = strTime.replaceAll(" hora", "");
-  time = time.replaceAll(" horas", "");
-  time = time.replaceAll(" semana", "");
-  time = time.replaceAll(" mes", "");
-  time = time.replaceAll(" año", "");
+  RegExp regExp = RegExp(r'\d+ (hora|horas)');
 
-  if (strTime.contains('hora')) {
+  if (regExp.hasMatch(strTime.split(" ").last)) {
+    var time = strTime.replaceAll(" hora", "");
+    return int.parse(time) * 60;
+  } else if (strTime.contains('horas')) {
+    var time = strTime.replaceAll(" horas", "");
     return int.parse(time) * 60;
   } else if (strTime.contains('semana')) {
+    var time = strTime.replaceAll(" semana", "");
     return int.parse(time) * 60 * 24 * 7;
   } else if (strTime.contains('mes')) {
+    var time = strTime.replaceAll(" mes", "");
     return int.parse(time) * 60 * 24 * 30;
   } else if (strTime.contains('año')) {
+    var time = strTime.replaceAll(" año", "");
     return int.parse(time) * 60 * 24 * 365;
   } else {
-    return int.parse(time) * 60 * 24 * 365 * 10;
+    return int.parse("1") * 60 * 24 * 365 * 10;
   }
 }
 

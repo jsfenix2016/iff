@@ -178,8 +178,8 @@ class _CustomNavbarState extends State<CustomNavbar> {
                             ),
                           ],
                         ),
-                        onPressed: () {
-                          Navigator.push(
+                        onPressed: () async {
+                          await Navigator.push(
                             context,
                             MaterialPageRoute(
                                 builder: (context) => const RiskPage()),

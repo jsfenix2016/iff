@@ -105,57 +105,61 @@ class _DesactivePageState extends State<DesactivePage> {
                 ),
               ),
               Padding(
-                  padding: const EdgeInsets.fromLTRB(0, 100, 0, 100),
-                  child: ListView.builder(
-                    itemCount: listDisamble.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      return Row(
-                        children: [
-                          Expanded(
-                              child: Align(
-                            alignment: Alignment.centerRight,
-                            child: TextButton(
-                                onPressed: () {
-                                  if (indexDisamble == index) {
-                                    indexDisamble = -1;
-                                  } else {
-                                    indexDisamble = index;
-                                  }
+                padding: const EdgeInsets.fromLTRB(0, 100, 0, 100),
+                child: ListView.builder(
+                  itemCount: listDisamble.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    return Row(
+                      children: [
+                        Expanded(
+                            child: Align(
+                          alignment: Alignment.centerRight,
+                          child: TextButton(
+                              onPressed: () {
+                                desactiveIFeelFine = listDisamble[index];
+                                if (indexDisamble == index) {
+                                  indexDisamble = -1;
+                                } else {
+                                  indexDisamble = index;
+                                }
+                              },
+                              child: Text(listDisamble[index],
+                                  style: GoogleFonts.barlow(
+                                    fontSize: 20.0,
+                                    fontWeight: FontWeight.w500,
+                                    color: CupertinoColors.white,
+                                  ))),
+                        )),
+                        Expanded(
+                          child: Align(
+                            alignment: Alignment.centerLeft,
+                            child: Padding(
+                              padding: const EdgeInsets.only(left: 16),
+                              child: CupertinoSwitch(
+                                value: listDisambleEnabled[index],
+                                activeColor: ColorPalette.activeSwitch,
+                                trackColor: CupertinoColors.inactiveGray,
+                                onChanged: (bool? value) {
+                                  setState(() {
+                                    desactiveIFeelFine = listDisamble[index];
+                                    var count = 0;
+                                    for (var disambleEnabled
+                                        in listDisambleEnabled) {
+                                      listDisambleEnabled[count] = false;
+                                      count++;
+                                    }
+                                    listDisambleEnabled[index] = value!;
+                                  });
                                 },
-                                child: Text(listDisamble[index],
-                                    style: GoogleFonts.barlow(
-                                      fontSize: 20.0,
-                                      fontWeight: FontWeight.w500,
-                                      color: CupertinoColors.white,
-                                    ))),
-                          )),
-                          Expanded(
-                              child: Align(
-                                  alignment: Alignment.centerLeft,
-                                  child: Padding(
-                                    padding: EdgeInsets.only(left: 16),
-                                    child: CupertinoSwitch(
-                                      value: listDisambleEnabled[index],
-                                      activeColor: ColorPalette.activeSwitch,
-                                      trackColor: CupertinoColors.inactiveGray,
-                                      onChanged: (bool? value) {
-                                        setState(() {
-                                          var count = 0;
-                                          for (var disambleEnabled
-                                              in listDisambleEnabled) {
-                                            listDisambleEnabled[count] = false;
-                                            count++;
-                                          }
-                                          listDisambleEnabled[index] = value!;
-                                        });
-                                      },
-                                    ),
-                                  )))
-                        ],
-                      );
-                    },
-                  ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    );
+                  },
                 ),
+              ),
               Positioned(
                 bottom: 20,
                 right: 32,
@@ -190,8 +194,9 @@ class _DesactivePageState extends State<DesactivePage> {
                 child: Container(
                   decoration: BoxDecoration(
                     color: Colors.transparent,
-                    border: Border.all(color: Color.fromRGBO(219, 177, 42, 1)),
-                    borderRadius: BorderRadius.all(Radius.circular(8)),
+                    border: Border.all(
+                        color: const Color.fromRGBO(219, 177, 42, 1)),
+                    borderRadius: const BorderRadius.all(Radius.circular(8)),
                   ),
                   width: 138,
                   height: 42,
@@ -217,15 +222,6 @@ class _DesactivePageState extends State<DesactivePage> {
   }
 
   void saveDisamble() {
-    for (var i = 0; i < listDisamble.length; i++) {
-      if (listDisambleEnabled[i]) {
-        DisambleController().saveDisamble(context, listDisamble[i]);
-        break;
-      }
-    }
-
-    //showAlert();
-    showSaveAlert(context, "Tiempo guardado",
-        "El tiempo en el que queda desactivado la aplicación se ha guardado correctamente.");
+    DisambleController().saveDisamble(context, desactiveIFeelFine);
   }
 }

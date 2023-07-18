@@ -310,9 +310,9 @@ class Constant {
       "Para poder activar el permiso, se ha de hacer desde los Ajustes de la app";
   static const String enableLocalPermission = "¿Aceptas el permiso de";
   static const String verifyPhoneNumber =
-      'Debe verificar su numero de teléfono';
+      'Debe verificar su número de teléfono';
   static const String validatePhoneNumber =
-      'Debe colocar un numero de teléfono válido';
+      'Debe colocar un número de teléfono válido';
   static const String info = 'Información';
 
   static const String validateEmail = 'Debe colocar un email válido';

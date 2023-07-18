@@ -55,12 +55,18 @@ class RestoreController extends GetxController {
       await _saveScheduleExactAlarm(userApi);
       await _saveCameraPermission(userApi);
 
-      _saveConfig();
+      Future.sync(() => {
+            _saveConfig(),
+            showSaveAlert(context, Constant.info, Constant.restoredCorrectly.tr)
+          });
 
-      showSaveAlert(context, Constant.info, Constant.restoredCorrectly.tr);
       return true;
     } else {
-      showSaveAlert(context, Constant.info, Constant.errorGenericConextion.tr);
+      Future.sync(() => {
+            showSaveAlert(
+                context, Constant.info, Constant.errorGenericConextion.tr)
+          });
+
       return false;
     }
   }

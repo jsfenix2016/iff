@@ -138,7 +138,9 @@ class _UserConfigPageState extends State<UserConfigPage> {
                               ),
                             ),
                             onPressed: () async {
-                              if (!validatePhoneNumber(user!.telephone)) {
+                              if (!validatePhoneNumber(user!.telephone) ||
+                                  user!.telephone.length > 12 ||
+                                  user!.telephone.isEmpty) {
                                 showSaveAlert(context, Constant.info,
                                     Constant.validatePhoneNumber);
 

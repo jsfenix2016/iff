@@ -23,13 +23,22 @@ class DisambleController extends GetxController {
     final MainController mainController = Get.put(MainController());
     var user = await mainController.getUserData();
 
-    var response = await DeactivateService()
-        .saveData(user.telephone.replaceAll("+34", ""), deactivateTimeToMinutes(deactivateTime));
+    var response = await DeactivateService().saveData(
+        user.telephone.contains('+34')
+            ? user.telephone.replaceAll("+34", "")
+            : user.telephone,
+        deactivateTimeToMinutes(deactivateTime));
 
     if (response) {
-      showSaveAlert(context, Constant.info, Constant.disambleProtected);
+      Future.sync(() => {
+            showSaveAlert(context, "Tiempo guardado",
+                "El tiempo en el que queda desactivado la aplicación se ha guardado correctamente.")
+          });
     } else {
-      showSaveAlert(context, Constant.info, Constant.disambleProtectedError);
+      Future.sync(() => {
+            showSaveAlert(
+                context, Constant.info, Constant.disambleProtectedError)
+          });
     }
   }
 }

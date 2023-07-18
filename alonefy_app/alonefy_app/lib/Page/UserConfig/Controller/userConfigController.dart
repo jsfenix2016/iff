@@ -84,7 +84,7 @@ class UserConfigCOntroller extends GetxController {
       return true;
     } else {
       await Future.delayed(const Duration(milliseconds: 10), () {
-        showSaveAlert(context, Constant.info, "Código invalido");
+        showSaveAlert(context, Constant.info, "Código inválido");
       });
       return false;
     }

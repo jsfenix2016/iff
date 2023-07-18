@@ -1,3 +1,4 @@
+import 'package:get/get.dart';
 import 'package:ifeelefine/Common/Constant.dart';
 import 'package:ifeelefine/Common/colorsPalette.dart';
 import 'package:ifeelefine/Common/utils.dart';
@@ -88,12 +89,7 @@ class OnboardingPage extends StatelessWidget {
                 child: Center(
                   child: ElevateButtonFilling(
                     onChanged: (value) {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const AlternativePage(),
-                        ),
-                      );
+                      Get.off(const AlternativePage());
                     },
                     mensaje: Constant.continueTxt,
                   ),
