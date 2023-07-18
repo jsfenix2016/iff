@@ -569,21 +569,21 @@ class _UserEditPageState extends State<UserEditPage> {
                                             ),
                                             tooltip: 'Borrar',
                                             onPressed: () async {
+                                              Navigator.of(context).pop(true);
                                               setState(() {
-                                                Navigator.of(context).pop(true);
                                                 isloading = true;
                                               });
                                               bool delete = await editVC
                                                   .deleteUser(user!);
                                               if (delete) {
+                                                Navigator.pushReplacement(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          OnboardingPage()),
+                                                );
                                                 setState(() {
                                                   isloading = false;
-                                                  Navigator.pushReplacement(
-                                                    context,
-                                                    MaterialPageRoute(
-                                                        builder: (context) =>
-                                                            OnboardingPage()),
-                                                  );
                                                 });
                                               }
                                             }),

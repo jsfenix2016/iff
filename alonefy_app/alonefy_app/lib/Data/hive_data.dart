@@ -209,7 +209,16 @@ class HiveData {
     Box<ActivityDayBD> box =
         await Hive.openBox<ActivityDayBD>('listActivityDayBD');
 
-    box.put(activity.id, activity);
+    var index = 0;
+    for (var activityBD in box.values) {
+      if (activityBD.id == activity.id) {
+        box.putAt(index, activity);
+        break;
+      }
+      index++;
+    }
+
+    //box.put(activity.id, activity);
 
     return 0;
   }
