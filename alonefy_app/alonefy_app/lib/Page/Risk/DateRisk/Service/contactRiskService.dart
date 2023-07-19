@@ -9,11 +9,9 @@ import 'package:ifeelefine/Model/ApiRest/ContactRiskApi.dart';
 import '../../../../Utils/MimeType/mime_type.dart';
 
 class ContactRiskService {
-
   Future<ContactRiskApi?> createContactRisk(ContactRiskApi contactRisk) async {
-
-    var json = jsonEncode(contactRisk);
-
+    var contactRiskJson = contactRisk.toJson();
+    var json = jsonEncode(contactRiskJson);
     var response = await http.post(
         Uri.parse("${Constant.baseApi}/v1/contactRisk"),
         headers: Constant.headers,
@@ -26,21 +24,19 @@ class ContactRiskService {
     }
   }
 
-  Future<ContactRiskApi?> updateContactRisk(ContactRiskApi contactRisk, int id) async {
-
+  Future<ContactRiskApi?> updateContactRisk(
+      ContactRiskApi contactRisk, int id) async {
     try {
       var contactRiskJson = contactRisk.toJson();
-      var idMap = <String, dynamic> {
-            "id": id
-          };
+      var idMap = <String, dynamic>{"id": id};
       contactRiskJson.addAll(idMap);
 
       var json = jsonEncode(contactRiskJson);
 
       var response = await http.put(
-              Uri.parse("${Constant.baseApi}/v1/contactRisk"),
-              headers: Constant.headers,
-              body: json);
+          Uri.parse("${Constant.baseApi}/v1/contactRisk"),
+          headers: Constant.headers,
+          body: json);
 
       if (response.statusCode == 200) {
         return ContactRiskApi.fromJson(jsonDecode(response.body));
@@ -53,9 +49,8 @@ class ContactRiskService {
   }
 
   Future<List<ContactRiskApi>> getContactsRisk(String phoneNumber) async {
-
-    var response = await http.get(
-        Uri.parse("${Constant.baseApi}/v1/contactRisk/$phoneNumber"));
+    var response = await http
+        .get(Uri.parse("${Constant.baseApi}/v1/contactRisk/$phoneNumber"));
 
     if (response.statusCode == 200) {
       return jsonDecode(response.body);
@@ -67,8 +62,8 @@ class ContactRiskService {
   Future<void> deleteContactsRisk(int id) async {
     try {
       var response = await http.delete(
-              Uri.parse("${Constant.baseApi}/v1/contactRisk/$id"),
-              headers: Constant.headers);
+          Uri.parse("${Constant.baseApi}/v1/contactRisk/$id"),
+          headers: Constant.headers);
 
       var status = response.statusCode;
     } catch (e) {
@@ -86,20 +81,16 @@ class ContactRiskService {
         extension = extensionFromMime(mime);
       }
 
-      final resp = await http.put(
-          postUri,
-          headers: {'Content-Type': mime ?? 'image/jpeg'},
-          body: bytes);
+      final resp = await http.put(postUri,
+          headers: {'Content-Type': mime ?? 'image/jpeg'}, body: bytes);
 
       var status = resp.statusCode;
-
     } catch (e) {
       print(e);
     }
   }
 
   Future<Uint8List?> getContactImage(String url) async {
-
     final resp = await http.get(Uri.parse(url));
 
     if (resp.statusCode == 200) {

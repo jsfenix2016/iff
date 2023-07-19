@@ -58,9 +58,10 @@ class _ListContactRiskState extends State<ListContactRisk> {
           if (snapshot.hasData) {
             final listContact = snapshot.data!;
             return ListView.builder(
+              physics: const ClampingScrollPhysics(),
               scrollDirection: Axis.vertical,
               itemExtent: 250.0,
-              padding: const EdgeInsets.only(top: 0.0, bottom: 50),
+              padding: const EdgeInsets.only(top: 0.0, bottom: 70),
               shrinkWrap: true,
               itemCount: listContact.length,
               itemBuilder: (context, index) {

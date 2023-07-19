@@ -9,6 +9,7 @@ class ContactRiskApi {
   late String name;
   late String titleAlertMessage;
   late String alertMessage;
+  late String phones;
   late List<String> photoDate;
   late DateTime startDateTime;
   late DateTime endDateTime;
@@ -21,12 +22,13 @@ class ContactRiskApi {
   List<String>? awsDownloadPresignedUrls;
   late String awsDownloadCustomContactPresignedUrl;
 
-  ContactRiskApi({
-      required this.phoneNumber,
+  ContactRiskApi(
+      {required this.phoneNumber,
       required this.photo,
       required this.name,
       required this.titleAlertMessage,
       required this.alertMessage,
+      required this.phones,
       required this.photoDate,
       required this.startDateTime,
       required this.endDateTime,
@@ -34,11 +36,13 @@ class ContactRiskApi {
       required this.notifyPredefinedContacts,
       required this.sendLocation});
 
-  ContactRiskApi.fromContact(ContactRiskBD contactRisk, this.phoneNumber, this.totalImagesToUpload) {
+  ContactRiskApi.fromContact(
+      ContactRiskBD contactRisk, this.phoneNumber, this.totalImagesToUpload) {
     photo = contactRisk.photo.toString();
     name = contactRisk.name;
     titleAlertMessage = contactRisk.titleMessage;
     alertMessage = contactRisk.messages;
+    phones = contactRisk.phones;
     photoDate = [];
     startDateTime = parseContactRiskDate(contactRisk.timeinit);
     endDateTime = parseContactRiskDate(contactRisk.timefinish);
@@ -47,40 +51,40 @@ class ContactRiskApi {
     sendLocation = contactRisk.sendLocation;
   }
 
-  ContactRiskApi.fromApi({
-    required this.id,
-    required this.phoneNumber,
-    required this.photo,
-    required this.name,
-    required this.titleAlertMessage,
-    required this.alertMessage,
-    required this.photoDate,
-    required this.startDateTime,
-    required this.endDateTime,
-    required this.customContactPhoneNumber,
-    required this.notifyPredefinedContacts,
-    required this.sendLocation,
-    required this.totalImagesToUpload,
-    required this.awsUploadCustomContactPresignedUrl,
-    required this.awsUploadPresignedUrls,
-    required this.awsDownloadPresignedUrls,
-    required this.awsDownloadCustomContactPresignedUrl
-  });
+  ContactRiskApi.fromApi(
+      {required this.id,
+      required this.phoneNumber,
+      required this.photo,
+      required this.name,
+      required this.titleAlertMessage,
+      required this.alertMessage,
+      required this.phones,
+      required this.photoDate,
+      required this.startDateTime,
+      required this.endDateTime,
+      required this.customContactPhoneNumber,
+      required this.notifyPredefinedContacts,
+      required this.sendLocation,
+      required this.totalImagesToUpload,
+      required this.awsUploadCustomContactPresignedUrl,
+      required this.awsUploadPresignedUrls,
+      required this.awsDownloadPresignedUrls,
+      required this.awsDownloadCustomContactPresignedUrl});
 
   Map<String, dynamic> toJson() => {
-    'phoneNumber': phoneNumber,
-    //'photo': photo,
-    //'name': name,
-    //'titleAlertMessage': titleAlertMessage,
-    //'alertMessage': alertMessage,
-    //'photoDate': photoDate,
-    'startDateTime': startDateTime.toIso8601String(),
-    'endDateTime': endDateTime.toIso8601String(),
-    //'customContactPhoneNumber': customContactPhoneNumber,
-    'notifyPredefinedContacts': notifyPredefinedContacts,
-    'sendLocation': sendLocation,
-    'totalImagesToUpload': totalImagesToUpload
-  };
+        'phoneNumber': phoneNumber,
+        'phones': phones,
+        'name': name,
+        'titleAlertMessage': titleAlertMessage,
+        'alertMessage': alertMessage,
+        //'photoDate': photoDate,
+        'startDateTime': startDateTime.toIso8601String(),
+        'endDateTime': endDateTime.toIso8601String(),
+        'customContactPhoneNumber': customContactPhoneNumber,
+        'notifyPredefinedContacts': notifyPredefinedContacts,
+        'sendLocation': sendLocation,
+        'totalImagesToUpload': totalImagesToUpload
+      };
 
   factory ContactRiskApi.fromJson(Map<String, dynamic> json) {
     return ContactRiskApi.fromApi(
@@ -90,17 +94,24 @@ class ContactRiskApi {
         name: json['name'] ?? "",
         titleAlertMessage: json['titleAlertMessage'] ?? "",
         alertMessage: json['alertMessage'] ?? "",
+        phones: json['phones'] ?? "",
         photoDate: [],
-        startDateTime: jsonToDatetime(json['startDateTime'], getDefaultPattern()),
+        startDateTime:
+            jsonToDatetime(json['startDateTime'], getDefaultPattern()),
         endDateTime: jsonToDatetime(json['endDateTime'], getDefaultPattern()),
         customContactPhoneNumber: json['customContactPhoneNumber'] ?? "",
         notifyPredefinedContacts: json['notifyPredefinedContacts'],
         sendLocation: json['sendLocation'],
         totalImagesToUpload: json['totalImagesToUpload'] ?? 0,
-        awsUploadPresignedUrls: json['awsUploadPresignedUrls'] != null ? dynamicToStringList(json['awsUploadPresignedUrls']) : [],
-        awsUploadCustomContactPresignedUrl: json['awsUploadCustomContactPresignedUrl'] ?? "",
-        awsDownloadPresignedUrls: json['awsDownloadPresignedUrls'] != null ? dynamicToStringList(json['awsDownloadPresignedUrls']) : [],
-        awsDownloadCustomContactPresignedUrl: json['awsDownloadCustomContactPresignedUrl'] ?? ""
-    );
+        awsUploadPresignedUrls: json['awsUploadPresignedUrls'] != null
+            ? dynamicToStringList(json['awsUploadPresignedUrls'])
+            : [],
+        awsUploadCustomContactPresignedUrl:
+            json['awsUploadCustomContactPresignedUrl'] ?? "",
+        awsDownloadPresignedUrls: json['awsDownloadPresignedUrls'] != null
+            ? dynamicToStringList(json['awsDownloadPresignedUrls'])
+            : [],
+        awsDownloadCustomContactPresignedUrl:
+            json['awsDownloadCustomContactPresignedUrl'] ?? "");
   }
 }

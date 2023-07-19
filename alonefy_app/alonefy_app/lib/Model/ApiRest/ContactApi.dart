@@ -29,8 +29,12 @@ class ContactApi {
   //}
 
   ContactApi.fromContact(ContactBD contact, String userPhoneNumber) {
-    this.userPhoneNumber = userPhoneNumber.replaceAll("+34", "");
-    this.phoneNumber = contact.phones.replaceAll("+34", "");
+    this.userPhoneNumber = userPhoneNumber.contains("+34")
+        ? userPhoneNumber.replaceAll("+34", "")
+        : userPhoneNumber;
+    this.phoneNumber = contact.phones.contains("+34")
+        ? contact.phones.replaceAll("+34", "")
+        : contact.phones;
     this.name = contact.name;
     this.displayName = contact.displayName;
     this.timeSendSms = stringTimeToInt(contact.timeSendSMS);
@@ -39,26 +43,25 @@ class ContactApi {
   }
 
   Map<String, dynamic> toJson() => {
-    'userPhoneNumber': userPhoneNumber,
-    'phoneNumber': phoneNumber,
-    'name': name,
-    'displayName': displayName,
-    'timeSendSms': timeSendSms,
-    'timeCall': timeCall,
-    'timeWhatsapp': timeWhatsapp,
-  };
+        'userPhoneNumber': userPhoneNumber,
+        'phoneNumber': phoneNumber,
+        'name': name,
+        'displayName': displayName,
+        'timeSendSms': timeSendSms,
+        'timeCall': timeCall,
+        'timeWhatsapp': timeWhatsapp,
+      };
 
   factory ContactApi.fromJson(Map<String, dynamic> json) {
     return ContactApi(
-      userPhoneNumber: json['userPhoneNumber'],
-      phoneNumber: json['phoneNumber'],
-      name: json['name'],
-      displayName: json['displayName'],
-      timeSendSms: json['timeSendSms'],
-      timeCall: json['timeCall'],
-      timeWhatsapp: json['timeWhatsapp'],
-      photo: json["awsDownloadPresignedUrl"] ?? "",
-      status: json["status"]
-    );
+        userPhoneNumber: json['userPhoneNumber'],
+        phoneNumber: json['phoneNumber'],
+        name: json['name'],
+        displayName: json['displayName'],
+        timeSendSms: json['timeSendSms'],
+        timeCall: json['timeCall'],
+        timeWhatsapp: json['timeWhatsapp'],
+        photo: json["awsDownloadPresignedUrl"] ?? "",
+        status: json["status"]);
   }
 }

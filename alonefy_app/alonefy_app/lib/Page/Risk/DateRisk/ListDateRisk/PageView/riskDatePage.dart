@@ -59,7 +59,7 @@ class _RiskPageState extends State<RiskPage> {
             SizedBox(
               height: size.height,
               child: Column(
-                mainAxisSize: MainAxisSize.max,
+                mainAxisSize: MainAxisSize.min,
                 children: [
                   const SpaceHeightCustom(heightTemp: 20),
                   Text(
@@ -68,7 +68,14 @@ class _RiskPageState extends State<RiskPage> {
                     style: textNormal24White(),
                   ),
                   const SpaceHeightCustom(heightTemp: 20),
-                  const ListContactRisk()
+                  Expanded(
+                    flex: 1,
+                    child: Container(
+                      width: size.width,
+                      color: Colors.transparent,
+                      child: const ListContactRisk(),
+                    ),
+                  )
                 ],
               ),
             ),
