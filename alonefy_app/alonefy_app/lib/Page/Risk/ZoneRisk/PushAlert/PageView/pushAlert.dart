@@ -87,7 +87,9 @@ class _PushAlertPageState extends State<PushAlertPage> {
         Future.sync(() =>
             {showSaveAlert(context, Constant.info, Constant.changeGeneric)});
       }
+      setState(() => _isLoading = false);
     } else {
+      setState(() => _isLoading = false);
       Future.sync(() => {
             showSaveAlert(context, Constant.info,
                 "Se produjo un error al detener la grabación")
