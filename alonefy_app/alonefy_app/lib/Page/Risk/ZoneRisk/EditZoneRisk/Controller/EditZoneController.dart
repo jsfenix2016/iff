@@ -33,8 +33,9 @@ class EditZoneController extends GetxController {
     try {
       final MainController mainController = Get.put(MainController());
       var user = await mainController.getUserData();
-      var contactZoneRiskApi = await ZoneRiskService().createContactZoneRisk(
-          ZoneRiskApi.fromZoneRisk(contact, user.telephone));
+      var con = ZoneRiskApi.fromZoneRisk(contact, user.telephone);
+      var contactZoneRiskApi =
+          await ZoneRiskService().createContactZoneRisk(con);
       if (contact.photo != null &&
           contactZoneRiskApi != null &&
           contactZoneRiskApi.awsUploadCustomContactPresignedUrl.isNotEmpty) {
@@ -47,7 +48,6 @@ class EditZoneController extends GetxController {
         await const HiveDataRisk().saveContactZoneRisk(contact);
         NotificationCenter().notify('getContactZoneRisk');
 
-        showSaveAlert(context, Constant.info, Constant.saveCorrectly);
         return true;
       } else {
         return false;
@@ -63,8 +63,9 @@ class EditZoneController extends GetxController {
     try {
       final MainController mainController = Get.put(MainController());
       var user = await mainController.getUserData();
-      var zoneRiskApiResponse = await ZoneRiskService().updateZoneRisk(
-          ZoneRiskApi.fromZoneRisk(contact, user.telephone), contact.id);
+      var con = ZoneRiskApi.fromZoneRisk(contact, user.telephone);
+      var zoneRiskApiResponse =
+          await ZoneRiskService().updateZoneRisk(con, contact.id);
 
       if (contact.photo != null &&
           zoneRiskApiResponse != null &&
@@ -77,7 +78,6 @@ class EditZoneController extends GetxController {
       var save = await const HiveDataRisk().updateContactZoneRisk(contact);
       NotificationCenter().notify('getContactZoneRisk');
 
-      showSaveAlert(context, Constant.info, Constant.changeGeneric);
       return true;
     } catch (error) {
       print(error);

@@ -18,7 +18,7 @@ class LoadingIndicator extends StatelessWidget {
         if (isLoading)
           Container(
             color: Colors.black.withOpacity(0.5),
-            child: Center(
+            child: const Center(
               child: CircularProgressIndicator(),
             ),
           ),

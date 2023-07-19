@@ -1,4 +1,6 @@
 import 'package:flutter_contacts/flutter_contacts.dart';
+import 'package:ifeelefine/Common/Constant.dart';
+import 'package:ifeelefine/Common/manager_alerts.dart';
 import 'package:ifeelefine/Common/utils.dart';
 import 'package:ifeelefine/Model/contactZoneRiskBD.dart';
 import 'package:ifeelefine/Page/Risk/DateRisk/Widgets/cardContact.dart';
@@ -60,6 +62,10 @@ class _EditZoneRiskPageState extends State<EditZoneRiskPage> {
       code.textCode4 = '';
     }
 
+    if (widget.contactRisk.id != -1) {
+      saveConfig = widget.contactRisk.save;
+    }
+
     super.initState();
   }
 
@@ -93,18 +99,67 @@ class _EditZoneRiskPageState extends State<EditZoneRiskPage> {
 
     if (saveConfig && widget.contactRisk.save == true) {
       if (widget.contactRisk.id == -1) {
-        await editZoneVC.saveContactZoneRisk(context, contactRisk);
+        var save = await editZoneVC.saveContactZoneRisk(context, contactRisk);
+        if (save) {
+          await showDialog(
+            context: context,
+            builder: (context) {
+              return AlertDialog(
+                title: const Text(Constant.info),
+                content: const Text(Constant.saveCorrectly),
+                actions: <Widget>[
+                  TextButton(
+                    onPressed: () {
+                      goToPush(contactRisk);
+                    },
+                    child: const Text("Ok"),
+                  )
+                ],
+              );
+            },
+          );
+        }
       } else {
         // contactRisk.id = widget.index;
-        await editZoneVC.updateContactZoneRisk(context, contactRisk);
+        var update =
+            await editZoneVC.updateContactZoneRisk(context, contactRisk);
+        if (update) {
+          await showDialog(
+            context: context,
+            builder: (context) {
+              return AlertDialog(
+                title: const Text(Constant.info),
+                content: const Text(Constant.saveCorrectly),
+                actions: <Widget>[
+                  TextButton(
+                    onPressed: () {
+                      setState(() {
+                        Navigator.of(context).pop();
+                      });
+                      goToPush(contactRisk);
+                    },
+                    child: const Text("Ok"),
+                  )
+                ],
+              );
+            },
+          );
+        }
       }
+    } else {
+      goToPush(contactRisk);
     }
-    Route route = MaterialPageRoute(
-      builder: (context) => PushAlertPage(
-        contactZone: contactRisk,
+  }
+
+  void goToPush(ContactZoneRiskBD contactRisk) async {
+    await Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+        builder: (context) => PushAlertPage(
+          contactZone: contactRisk,
+        ),
       ),
     );
-    Navigator.pushReplacement(context, route);
   }
 
   Widget space(double heigth) {

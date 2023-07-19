@@ -17,19 +17,22 @@ class ZoneRiskApi {
   late String awsDownloadCustomContactPresignedUrl;
   late String awsDownloadVideoPresignedUrl;
 
-  ZoneRiskApi({
-    required this.phoneNumber,
-    required this.photo,
-    required this.name,
-    required this.customContactPhoneNumber,
-    required this.customContactWhatsappNotification,
-    required this.customContactVoiceNotification,
-    required this.notifyPredefinedContacts,
-    required this.sendlocation,
-    required this.awsUploadCustomContactPresignedUrl});
+  ZoneRiskApi(
+      {required this.phoneNumber,
+      required this.photo,
+      required this.name,
+      required this.customContactPhoneNumber,
+      required this.customContactWhatsappNotification,
+      required this.customContactVoiceNotification,
+      required this.notifyPredefinedContacts,
+      required this.sendlocation,
+      required this.awsUploadCustomContactPresignedUrl});
 
-  ZoneRiskApi.fromZoneRisk(ContactZoneRiskBD contactZoneRiskBD, String phoneNumber) {
-    this.phoneNumber = phoneNumber.replaceAll("+34", "");
+  ZoneRiskApi.fromZoneRisk(
+      ContactZoneRiskBD contactZoneRiskBD, String phoneNumber) {
+    this.phoneNumber = phoneNumber.contains("+34")
+        ? phoneNumber.replaceAll("+34", "")
+        : phoneNumber;
     photo = contactZoneRiskBD.photo.toString();
     name = contactZoneRiskBD.name;
     customContactPhoneNumber = contactZoneRiskBD.phones;
@@ -39,46 +42,50 @@ class ZoneRiskApi {
     sendlocation = contactZoneRiskBD.sendLocation;
   }
 
-  ZoneRiskApi.fromApi({
-    required this.id,
-    required this.phoneNumber,
-    required this.photo,
-    required this.name,
-    required this.customContactPhoneNumber,
-    required this.customContactWhatsappNotification,
-    required this.customContactVoiceNotification,
-    required this.notifyPredefinedContacts,
-    required this.sendlocation,
-    required this.awsUploadCustomContactPresignedUrl,
-    required this.createDate,
-    required this.awsDownloadCustomContactPresignedUrl,
-    required this.awsDownloadVideoPresignedUrl
-  });
+  ZoneRiskApi.fromApi(
+      {required this.id,
+      required this.phoneNumber,
+      required this.photo,
+      required this.name,
+      required this.customContactPhoneNumber,
+      required this.customContactWhatsappNotification,
+      required this.customContactVoiceNotification,
+      required this.notifyPredefinedContacts,
+      required this.sendlocation,
+      required this.awsUploadCustomContactPresignedUrl,
+      required this.createDate,
+      required this.awsDownloadCustomContactPresignedUrl,
+      required this.awsDownloadVideoPresignedUrl});
 
   Map<String, dynamic> toJson() => {
-    'phoneNumber': phoneNumber,
-    'customContactPhoneNumber': customContactPhoneNumber,
-    'customContactWhatsappNotification': customContactWhatsappNotification,
-    'customContactVoiceNotification': customContactVoiceNotification,
-    'notifyPredefinedContacts': notifyPredefinedContacts,
-    'sendLocation': sendlocation
-  };
+        'phoneNumber': phoneNumber,
+        'name': name,
+        'photo': photo,
+        'customContactPhoneNumber': customContactPhoneNumber,
+        'customContactWhatsappNotification': customContactWhatsappNotification,
+        'customContactVoiceNotification': customContactVoiceNotification,
+        'notifyPredefinedContacts': notifyPredefinedContacts,
+        'sendLocation': sendlocation
+      };
 
   factory ZoneRiskApi.fromJson(Map<String, dynamic> json) {
     return ZoneRiskApi.fromApi(
-        id: json['id'],
-        phoneNumber: json['phoneNumber'],
-        photo: json['photo'] ?? "",
-        name: json['name'] ?? "",
-        customContactPhoneNumber: json['customContactPhoneNumber'],
-        customContactWhatsappNotification: json['customContactWhatsappNotification'],
-        customContactVoiceNotification: json['customContactVoiceNotification'],
-        notifyPredefinedContacts: json['notifyPredefinedContacts'],
-        sendlocation: json['sendLocation'],
-        awsUploadCustomContactPresignedUrl: json['awsUploadCustomContactPresignedUrl'] ?? "",
-        createDate: jsonToDatetime(json['created'], getDefaultPattern()),
-        awsDownloadCustomContactPresignedUrl: json['awsDownloadCustomContactPresignedUrl'] ?? "",
-        awsDownloadVideoPresignedUrl: json['awsDownloadVideoPresignedUrl'] ?? "",
+      id: json['id'],
+      phoneNumber: json['phoneNumber'],
+      photo: json['photo'] ?? "",
+      name: json['name'] ?? "",
+      customContactPhoneNumber: json['customContactPhoneNumber'],
+      customContactWhatsappNotification:
+          json['customContactWhatsappNotification'],
+      customContactVoiceNotification: json['customContactVoiceNotification'],
+      notifyPredefinedContacts: json['notifyPredefinedContacts'],
+      sendlocation: json['sendLocation'],
+      awsUploadCustomContactPresignedUrl:
+          json['awsUploadCustomContactPresignedUrl'] ?? "",
+      createDate: jsonToDatetime(json['created'], getDefaultPattern()),
+      awsDownloadCustomContactPresignedUrl:
+          json['awsDownloadCustomContactPresignedUrl'] ?? "",
+      awsDownloadVideoPresignedUrl: json['awsDownloadVideoPresignedUrl'] ?? "",
     );
   }
 }
