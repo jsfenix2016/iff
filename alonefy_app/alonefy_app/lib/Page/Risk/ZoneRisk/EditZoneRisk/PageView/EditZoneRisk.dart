@@ -358,7 +358,7 @@ class _EditZoneRiskPageState extends State<EditZoneRiskPage> {
                               SizedBox(
                                 width: 270,
                                 child: Text(
-                                  "Enviar Whatsapp a mi mensaje predefinido:",
+                                  "Enviar Whatsapp a mi contacto predefinido:",
                                   textAlign: TextAlign.right,
                                   style: GoogleFonts.barlow(
                                     fontSize: 14.0,

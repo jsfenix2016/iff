@@ -3,6 +3,7 @@ import 'dart:io';
 import 'dart:math';
 import 'dart:ui';
 // import 'package:all_sensors2/all_sensors2.dart';
+import 'package:flutter/services.dart';
 import 'package:ifeelefine/Page/UserConfig/PageView/userconfig_page.dart';
 import 'package:sensors_plus/sensors_plus.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -458,6 +459,11 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   @override
   void initState() {
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+    ]).then((_) {
+      // Iniciar la grabación de video
+    });
     super.initState();
   }
 

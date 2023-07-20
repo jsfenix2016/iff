@@ -46,7 +46,7 @@ class _AlternativePagePageState extends State<AlternativePage> {
                     ),
                   ),
                   Text(
-                    "I'm fine",
+                    "AlertFriend",
                     textAlign: TextAlign.center,
                     style: GoogleFonts.barlow(
                       fontSize: 44.5,
@@ -97,25 +97,12 @@ class _AlternativePagePageState extends State<AlternativePage> {
                                 ),
                                 children: <TextSpan>[
                                   TextSpan(
-                                    text: " I'm fine",
+                                    text: " AlertFriend",
                                     style: textNormal16Black(),
                                   ),
                                 ],
                               ),
                             ),
-                            // Center(
-                            //   child: Text(
-                            //     Constant.alternativePageButtonInit,
-                            // style: GoogleFonts.barlow(
-                            //   fontSize: 16.0,
-                            //   wordSpacing: 1,
-                            //   letterSpacing: 0.001,
-                            //   fontWeight: FontWeight.normal,
-                            //   color: Colors.black,
-                            // ),
-                            //   ),
-                            // ),
-                            // Text(" I'm fine", style: textNormal16Black()),
                           ],
                         ),
                       ),

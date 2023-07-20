@@ -218,6 +218,7 @@ class _MenuConfigurationPageState extends State<MenuConfigurationPage> {
         //  redirectToConfigUser();
         //  return;
         //}
+
         if (_prefs.getUserPremium) {
           Navigator.push(
             context,

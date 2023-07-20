@@ -4,7 +4,7 @@ class Constant {
   static const codeMessageBird = '';
   static const urlTerms = 'https://alertfriends.app/politica_privacidad/';
   static const personalInformation = 'Datos personales';
-  static const selectGender = 'Selecciona el genero';
+  static const selectGender = 'Selecciona el género';
   static const selectCity = 'Selecciona la ciudad';
   static const maritalStatus = 'Estado civil';
   static const styleLive = 'Estilo de vida';
@@ -25,28 +25,28 @@ class Constant {
   static const configurationbtn = 'Configurar';
   static const age = 'Edad';
   static const newDate = 'Crear nuevo';
-  static const onBoardingWelcome = 'Te damos la Bienvenida/o a I’m fine';
+  static const onBoardingWelcome = 'Te damos la Bienvenida/o a AlertFriends';
   static const onBoardingWelcomeMessage =
       'Si vives feliz solo o sola además, quieres sentirte protegido/a';
 
   static const onBoardingPageTwoTitle =
       'Ante una situación de riesgo cuando estas solo/a';
   static const onBoardingPageTwoSubtitle =
-      'Si I’m fine no detecta actividad o movimiento en tu smartphone, avisa al amigo o familiar que desees';
+      'Si AlertFriends no detecta actividad o movimiento en tu smartphone, avisa al amigo o familiar que desees';
 
   static const onBoardingPageTreeTitle = 'Cuando una cita privada no vaya bien';
   static const onBoardingPageTreeSubtitle =
-      'I’m fine avisa a tus amigo/as de confianza y envía tu ubicación';
+      'AlertFriends avisa a tus amigo/as de confianza y envía tu ubicación';
 
   static const onBoardingPageFourTitle =
       'Si tienes que atravesar solo/a una zona peligrosa';
   static const onBoardingPageFourSubtitle =
-      'I’m fine activará una alerta inmediata si te ocurre algo';
+      'AlertFriends activará una alerta inmediata si te ocurre algo';
 
   static const onBoardingPageFiveTitle =
       'Sientete ahora más seguro/a viviendo solo/a';
   static const onBoardingPageFiveSubtitle =
-      'Con I’m fine tu  smartphone será tu mejor protección personal';
+      'Con AlertFriends tu  smartphone será tu mejor protección personal';
 
   static const alternativePageButtonPersonalizar = 'Personalizar ajustes';
   static const alternativePageButtonInit = 'Comenzar a usar';
@@ -100,12 +100,15 @@ class Constant {
     '0': 'Soltero',
     '1': 'Casado',
     '2': 'Divorciado',
+    '3': 'Solo',
+    '4': 'En pareja',
+    '5': 'Otros',
   };
 
   static const Map<String, String> lifeStyle = {
     '0': 'Sedentario',
     '1': 'Aventurero',
-    '2': 'Etc',
+    '2': 'Otros',
   };
 
   static const Map<String, String> timeDic = {

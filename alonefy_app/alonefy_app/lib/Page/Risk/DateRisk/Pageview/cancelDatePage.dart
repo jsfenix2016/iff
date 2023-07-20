@@ -34,7 +34,7 @@ class CancelDatePage extends StatefulWidget {
 
 class _CancelDatePageState extends State<CancelDatePage> {
   EditRiskController editVC = Get.put(EditRiskController());
-  RiskController riskVC = Get.find<RiskController>();
+  RiskController riskVC = Get.put(RiskController());
   // String timeinit = "00:05";
   String codeTemp = '';
   var code = CodeModel();
@@ -175,7 +175,7 @@ class _CancelDatePageState extends State<CancelDatePage> {
                                 padding: const EdgeInsets.only(
                                     left: 8.0, top: 20, right: 8),
                                 child: Text(
-                                  "Introduce tu clave de cancelación",
+                                  "Introduce tú clave de cancelación",
                                   textAlign: TextAlign.center,
                                   style: textNomral18White(),
                                 ),
@@ -207,26 +207,6 @@ class _CancelDatePageState extends State<CancelDatePage> {
                           mensaje: 'Cancelar alerta',
                         ),
                       ),
-                      SizedBox(
-                        child: Column(
-                          children: [
-                            Center(
-                              child: Padding(
-                                padding: const EdgeInsets.only(
-                                    left: 27.0, top: 20, right: 27),
-                                child: Text(
-                                  "Si no cancelas, el servidor de  I’m fine enviará una alerta con tu última ubicación en: ",
-                                  textAlign: TextAlign.center,
-                                  style: textNomral18White(),
-                                ),
-                              ),
-                            ),
-                            const SizedBox(
-                              height: 12,
-                            ),
-                          ],
-                        ),
-                      ),
                       Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Center(
@@ -247,7 +227,7 @@ class _CancelDatePageState extends State<CancelDatePage> {
                         padding: const EdgeInsets.all(20.0),
                         child: Center(
                           child: Text(
-                            "Aunque se apague el smartphone, el servidor de I´m fine ha registrado tu última ubicación y emitirá una alerta a tu contacto",
+                            "Aunque se apague el smartphone, el servidor de AlertFriends ha registrado tu última ubicación y emitirá una alerta a tu contacto",
                             textAlign: TextAlign.center,
                             style: textNormal14White(),
                           ),

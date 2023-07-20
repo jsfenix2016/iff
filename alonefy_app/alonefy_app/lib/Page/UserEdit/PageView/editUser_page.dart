@@ -576,14 +576,9 @@ class _UserEditPageState extends State<UserEditPage> {
                                               bool delete = await editVC
                                                   .deleteUser(user!);
                                               if (delete) {
-                                                Navigator.pushReplacement(
-                                                  context,
-                                                  MaterialPageRoute(
-                                                      builder: (context) =>
-                                                          OnboardingPage()),
-                                                );
                                                 setState(() {
                                                   isloading = false;
+                                                  Get.off(OnboardingPage());
                                                 });
                                               }
                                             }),

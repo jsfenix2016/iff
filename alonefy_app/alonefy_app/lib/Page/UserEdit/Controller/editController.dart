@@ -216,8 +216,10 @@ class EditConfigController extends GetxController {
 
   Future<bool> deleteUser(User user) async {
     try {
-      bool isdelete = await EditUserService()
-          .deleteUser(user.telephone.replaceAll("+34", ""));
+      bool isdelete = await EditUserService().deleteUser(
+          user.telephone.contains("+34")
+              ? user.telephone.replaceAll("+34", "")
+              : user.telephone);
       if (isdelete) {
         bool deleteUserBD = await const HiveData().deleteUsers();
         if (deleteUserBD) {

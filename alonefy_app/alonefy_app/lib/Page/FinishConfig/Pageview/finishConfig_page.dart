@@ -79,7 +79,7 @@ class _FinishConfigPageState extends State<FinishConfigPage> {
                                 RichText(
                                   textAlign: TextAlign.center,
                                   text: TextSpan(
-                                    text: "I'm fine ",
+                                    text: "AlertFriend ",
                                     style: GoogleFonts.barlow(
                                       fontSize: 22.0,
                                       wordSpacing: 1,
