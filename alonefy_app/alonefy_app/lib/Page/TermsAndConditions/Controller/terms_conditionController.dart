@@ -25,25 +25,24 @@ class TermsAndConditionsController extends GetxController {
     final MainController mainController = Get.put(MainController());
     var user = await mainController.getUserData();
     var termsAndConditionsApi = TermsAndConditionsApi(
-        phoneNumber: user.telephone.replaceAll("+34", ""),
+        phoneNumber: user.telephone.contains('+34')
+            ? user.telephone.replaceAll("+34", "")
+            : user.telephone,
         smsCallAccepted: true);
 
     var resp =
         await TermsAndConditionsService().saveData(termsAndConditionsApi);
     if (resp) {
-      showAlertTemp(context, Constant.saveCorrectly);
+      Future.sync(() => showAlertTemp(context, Constant.saveCorrectly));
+
       goTO();
     } else {
-      showAlertTemp(context, Constant.errorGeneric);
+      Future.sync(() => showAlertTemp(context, Constant.errorGeneric));
     }
   }
 
   void goTO() {
     Get.off(const FinishConfigPage());
-    // Navigator.push(
-    //   contextTemp,
-    //   MaterialPageRoute(builder: (context) => const FinishConfigPage()),
-    // );
   }
 
   void showAlertTemp(BuildContext context, String text) {

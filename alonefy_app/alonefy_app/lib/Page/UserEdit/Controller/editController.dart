@@ -184,8 +184,9 @@ class EditConfigController extends GetxController {
   }
 
   Future<void> updateUserImage(UserBD user, Uint8List? bytes) async {
-    var url = await EditUserService()
-        .getUrlPhoto(user.telephone.replaceAll("+34", ""));
+    var url = await EditUserService().getUrlPhoto(user.telephone.contains('+34')
+        ? user.telephone.replaceAll("+34", "")
+        : user.telephone);
     if (url != null && url.isNotEmpty && bytes != null) {
       await EditUserService().updateImage(url, bytes);
     }

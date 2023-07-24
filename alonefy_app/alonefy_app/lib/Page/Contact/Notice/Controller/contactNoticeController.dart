@@ -27,7 +27,13 @@ class ContactNoticeController extends GetxController {
     final MainController mainController = Get.put(MainController());
     var user = await mainController.getUserData();
 
-    await ContactService().deleteContact(user.telephone.replaceAll("+34", ""), contact.phones.replaceAll("+34", ""));
+    await ContactService().deleteContact(
+        user.telephone.contains('+34')
+            ? user.telephone.replaceAll("+34", "")
+            : user.telephone,
+        contact.phones.contains('+34')
+            ? contact.phones.replaceAll("+34", "")
+            : contact.phones);
 
     NotificationCenter().notify('getContact');
   }

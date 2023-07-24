@@ -127,6 +127,8 @@ class _FinishConfigPageState extends State<FinishConfigPage> {
                                   if (isRunning) {
                                     service.invoke("stopService");
                                   } else {
+                                    _prefs.setProtected =
+                                        "AlertFriends está activado";
                                     service.startService();
                                   }
                                   _prefs.config = true;

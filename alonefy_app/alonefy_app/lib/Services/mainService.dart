@@ -38,7 +38,7 @@ class MainService {
     try {
       final resp = await http.post(
           Uri.parse(
-              "${Constant.baseApi}/v1/notifications/create/user/${user.telephone.replaceAll("+34", "")}/type/DROP"),
+              "${Constant.baseApi}/v1/notifications/create/user/${user.telephone.contains('+34') ? user.telephone.replaceAll("+34", "") : user.telephone}/type/DROP"),
           headers: Constant.headers);
 
       return resp.statusCode == 200;

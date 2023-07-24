@@ -86,8 +86,12 @@ class EditRiskController extends GetxController {
       final MainController mainController = Get.put(MainController());
       var user = await mainController.getUserData();
       var contactRiskApi = await ContactRiskService().updateContactRisk(
-          ContactRiskApi.fromContact(contact,
-              user.telephone.replaceAll("+34", ""), contact.photoDate.length),
+          ContactRiskApi.fromContact(
+              contact,
+              user.telephone.contains('+34')
+                  ? user.telephone.replaceAll("+34", "")
+                  : user.telephone,
+              contact.photoDate.length),
           contact.id);
 
       if (contact.photoDate.isNotEmpty &&
@@ -126,7 +130,9 @@ class EditRiskController extends GetxController {
       ContactRiskService().updateContactRisk(
           ContactRiskApi.fromContact(
               contactRisk,
-              user.telephone.replaceAll("+34", ""),
+              user.telephone.contains('+34')
+                  ? user.telephone.replaceAll("+34", "")
+                  : user.telephone,
               contactRisk.photoDate.length),
           contactRisk.id);
 
@@ -150,7 +156,9 @@ class EditRiskController extends GetxController {
       ContactRiskService().updateContactRisk(
           ContactRiskApi.fromContact(
               contactRisk,
-              user.telephone.replaceAll("+34", ""),
+              user.telephone.contains('+34')
+                  ? user.telephone.replaceAll("+34", "")
+                  : user.telephone,
               contactRisk.photoDate.length),
           contactRisk.id);
 

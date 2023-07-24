@@ -4,11 +4,11 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
+
 import 'package:ifeelefine/Common/Constant.dart';
 import 'package:ifeelefine/Common/colorsPalette.dart';
 import 'package:ifeelefine/Common/idleLogic.dart';
-import 'package:ifeelefine/Common/utils.dart';
+
 import 'package:ifeelefine/Controllers/contactUserController.dart';
 import 'package:ifeelefine/Controllers/mainController.dart';
 import 'package:ifeelefine/Data/hiveRisk_data.dart';
@@ -28,7 +28,8 @@ class RedirectViewNotifier with ChangeNotifier {
   //    RedirectViewNotifier.contactRisk = contactRisk;
 
   /// when app is in the foreground
-  static Future<void> onTapNotification(NotificationResponse? response, List<String> taskIds, int id) async {
+  static Future<void> onTapNotification(
+      NotificationResponse? response, List<String> taskIds, int id) async {
     if (RedirectViewNotifier.context == null || response?.payload == null)
       return;
 
@@ -40,7 +41,8 @@ class RedirectViewNotifier with ChangeNotifier {
       RedirectViewNotifier.context!,
       MaterialPageRoute(
         builder: (context) => CancelDatePage(
-          contactRisk: contactRisk!, taskIds: taskIds,
+          contactRisk: contactRisk!,
+          taskIds: taskIds,
         ),
       ),
     );
@@ -49,7 +51,8 @@ class RedirectViewNotifier with ChangeNotifier {
   static Future<void> manageNotifications(RemoteMessage message) async {
     var data = message.data;
 
-    if (data.containsValue(Constant.inactive) || data.containsValue(Constant.drop)) {
+    if (data.containsValue(Constant.inactive) ||
+        data.containsValue(Constant.drop)) {
       final mainController = Get.put(MainController());
       if (data.containsValue(Constant.inactive)) {
         mainController.saveUserLog("Inactividad ", DateTime.now());
@@ -58,7 +61,8 @@ class RedirectViewNotifier with ChangeNotifier {
         mainController.saveActivityLog(DateTime.now(), "Movimiento rudo");
       }
       showHelpNotification(message);
-    } else if (data.containsValue(Constant.startRiskDate) || data.containsValue(Constant.finishRiskDate)) {
+    } else if (data.containsValue(Constant.startRiskDate) ||
+        data.containsValue(Constant.finishRiskDate)) {
       final editRiskController = Get.put(EditRiskController());
       var id = int.parse(data['id']);
 
@@ -76,11 +80,13 @@ class RedirectViewNotifier with ChangeNotifier {
 
       if (status == Constant.contactAccepted) {
         if (phoneNumber.isNotEmpty) {
-          contactUserController.updateContactStatus(phoneNumber, Constant.contactAcceptedLabel);
+          contactUserController.updateContactStatus(
+              phoneNumber, Constant.contactAcceptedLabel);
         }
-      } else if (status == Constant.contactDenied){
+      } else if (status == Constant.contactDenied) {
         if (phoneNumber.isNotEmpty) {
-          contactUserController.updateContactStatus(phoneNumber, Constant.contactDeniedLabel);
+          contactUserController.updateContactStatus(
+              phoneNumber, Constant.contactDeniedLabel);
         }
       }
       showContactResponseNotification(message);
@@ -88,16 +94,17 @@ class RedirectViewNotifier with ChangeNotifier {
   }
 
   static Future<void> showHelpNotification(RemoteMessage message) async {
-    RemoteNotification? notification = message.notification;
+    // RemoteNotification? notification = message.notification;
 
-    String? taskIds = message.data['task_ids'];//getTaskIds(message.data);
-
+    String? taskIds = message.data['task_ids']; //getTaskIds(message.data);
+    String? title = message.data['title'];
+    String? body = message.data['body'];
     taskIds ??= "";
 
     await flutterLocalNotificationsPlugin.show(
       0,
-      notification?.title,
-      notification?.body,
+      title,
+      body,
       NotificationDetails(
         android: AndroidNotificationDetails(
           '0',
@@ -112,21 +119,24 @@ class RedirectViewNotifier with ChangeNotifier {
           channelShowBadge: false,
           priority: Priority.high,
 
-          largeIcon: DrawableResourceAndroidBitmap('@mipmap/logo_alertfriends'),
+          largeIcon:
+              const DrawableResourceAndroidBitmap('@mipmap/logo_alertfriends'),
           // sound: RawResourceAndroidNotificationSound(
           //     "content://media/internal/audio/media/26.wav"),
           actions: <AndroidNotificationAction>[
             AndroidNotificationAction(
               "helpID_$taskIds",
               "AYUDA",
-              icon: DrawableResourceAndroidBitmap('@mipmap/logo_alertfriends'),
+              icon: const DrawableResourceAndroidBitmap(
+                  '@mipmap/logo_alertfriends'),
               showsUserInterface: true,
               cancelNotification: true,
             ),
             AndroidNotificationAction(
               "imgoodId_$taskIds",
               "ESTOY BIEN",
-              icon: DrawableResourceAndroidBitmap('@mipmap/logo_alertfriends'),
+              icon: const DrawableResourceAndroidBitmap(
+                  '@mipmap/logo_alertfriends'),
               showsUserInterface: true,
               cancelNotification: true,
             ),
@@ -137,13 +147,15 @@ class RedirectViewNotifier with ChangeNotifier {
     );
   }
 
-  static Future<void> showSendToContactNotification(RemoteMessage message) async {
-    RemoteNotification? notification = message.notification;
-
+  static Future<void> showSendToContactNotification(
+      RemoteMessage message) async {
+    // RemoteNotification? notification = message.notification;
+    String? title = message.data['title'];
+    String? body = message.data['body'];
     await flutterLocalNotificationsPlugin.show(
       20,
-      notification?.title,
-      notification?.body,
+      title,
+      body,
       const NotificationDetails(
         android: AndroidNotificationDetails(
           '20',
@@ -180,13 +192,14 @@ class RedirectViewNotifier with ChangeNotifier {
   }
 
   static Future<void> showDateNotifications(RemoteMessage message) async {
-    RemoteNotification? notification = message.notification;
-
+    // RemoteNotification? notification = message.notification;
+    String? title = message.data['title'];
+    String? body = message.data['body'];
     await flutterLocalNotificationsPlugin.show(
       1,
-      notification?.title,
-      notification?.body,
-      NotificationDetails(
+      title,
+      body,
+      const NotificationDetails(
         android: AndroidNotificationDetails(
           '1',
           'MY FOREGROUND SERVICE',
@@ -210,17 +223,19 @@ class RedirectViewNotifier with ChangeNotifier {
     );
   }
 
-  static Future<void> showDateFinishNotifications(RemoteMessage message, int id) async {
-    RemoteNotification? notification = message.notification;
-
+  static Future<void> showDateFinishNotifications(
+      RemoteMessage message, int id) async {
+    // RemoteNotification? notification = message.notification;
+    String? title = message.data['title'];
+    String? body = message.data['body'];
     String? taskIds = message.data['task_ids'];
 
     taskIds ??= "";
 
     await flutterLocalNotificationsPlugin.show(
       2,
-      notification?.title,
-      notification?.body,
+      title,
+      body,
       NotificationDetails(
         android: AndroidNotificationDetails(
           '2',
@@ -236,21 +251,24 @@ class RedirectViewNotifier with ChangeNotifier {
           // groupAlertBehavior: GroupAlertBehavior.children,
           priority: Priority.high,
 
-          largeIcon: DrawableResourceAndroidBitmap('@mipmap/logo_alertfriends'),
+          largeIcon:
+              const DrawableResourceAndroidBitmap('@mipmap/logo_alertfriends'),
           // sound: RawResourceAndroidNotificationSound(
           //     "content://media/internal/audio/media/26.wav"),
           actions: <AndroidNotificationAction>[
             AndroidNotificationAction(
               "dateHelp_$taskIds",
               "AYUDA",
-              icon: DrawableResourceAndroidBitmap('@mipmap/logo_alertfriends'),
+              icon: const DrawableResourceAndroidBitmap(
+                  '@mipmap/logo_alertfriends'),
               showsUserInterface: true,
               cancelNotification: true,
             ),
             AndroidNotificationAction(
               "dateImgood_${taskIds}id=$id",
               "CANCELAR CITA",
-              icon: DrawableResourceAndroidBitmap('@mipmap/logo_alertfriends'),
+              icon: const DrawableResourceAndroidBitmap(
+                  '@mipmap/logo_alertfriends'),
               showsUserInterface: true,
               cancelNotification: true,
             ),
@@ -261,16 +279,18 @@ class RedirectViewNotifier with ChangeNotifier {
     );
   }
 
-  static Future<void> showContactResponseNotification(RemoteMessage message) async {
-    RemoteNotification? notification = message.notification;
-
+  static Future<void> showContactResponseNotification(
+      RemoteMessage message) async {
+    // RemoteNotification? notification = message.notification;
+    String? title = message.data['title'];
+    String? body = message.data['body'];
     await flutterLocalNotificationsPlugin.show(
       10,
-      notification?.title,
-      notification?.body,
+      title,
+      body,
       const NotificationDetails(
         android: AndroidNotificationDetails(
-          '20',
+          '10',
           'MY FOREGROUND SERVICE',
           icon: '@mipmap/logo_alertfriends',
           color: ColorPalette.principal,

@@ -43,7 +43,8 @@ class UserRestController extends GetxController {
     }
   }
 
-  Future<List<UserRestApi>> _convertRestBDToRestDayApi(List<RestDayBD> listRest, UserBD user) async {
+  Future<List<UserRestApi>> _convertRestBDToRestDayApi(
+      List<RestDayBD> listRest, UserBD user) async {
     Jiffy.locale('es');
 
     List<UserRestApi> listRestApi = [];
@@ -53,13 +54,14 @@ class UserRestController extends GetxController {
       var retireHour = parseDurationRow(restDayBD.timeSleep);
 
       listRestApi.add(UserRestApi(
-          phoneNumber: user.telephone.replaceAll("+34", ""),
+          phoneNumber: user.telephone.contains('+34')
+              ? user.telephone.replaceAll("+34", "")
+              : user.telephone,
           dayOfWeek: Constant.tempMapDayApi[restDayBD.day]!,
           wakeUpHour: wakeUpHour,
           retireHour: retireHour,
           index: restDayBD.selection,
-          isSelect: restDayBD.isSelect)
-      );
+          isSelect: restDayBD.isSelect));
     }
 
     return listRestApi;
@@ -81,10 +83,11 @@ class UserRestController extends GetxController {
   Future<List<RestDay>> getRestDays() async {
     var userRestDays = await getUserRest();
 
-     return convertRestDayBDToRestDay(userRestDays);
+    return convertRestDayBDToRestDay(userRestDays);
   }
 
-  Future<List<RestDay>> convertRestDayBDToRestDay(List<RestDayBD> userRestDays) async {
+  Future<List<RestDay>> convertRestDayBDToRestDay(
+      List<RestDayBD> userRestDays) async {
     List<RestDay> restDays = [];
 
     for (var userRestDay in userRestDays) {
@@ -105,17 +108,18 @@ class UserRestController extends GetxController {
     await const HiveData().saveListTimeRest(list);
   }
 
-  Future<List<RestDayBD>> _convertFromApi(List<UserRestApi> userRestApiList) async {
+  Future<List<RestDayBD>> _convertFromApi(
+      List<UserRestApi> userRestApiList) async {
     List<RestDayBD> list = [];
 
     for (var userRestApi in userRestApiList) {
       var restDay = RestDayBD(
           day: Constant.tempMapDayReverseApi[userRestApi.dayOfWeek]!,
-          timeWakeup: await _convertDateTimeToStringTime(userRestApi.wakeUpHour),
+          timeWakeup:
+              await _convertDateTimeToStringTime(userRestApi.wakeUpHour),
           timeSleep: await _convertDateTimeToStringTime(userRestApi.retireHour),
           selection: userRestApi.index,
-          isSelect: userRestApi.isSelect
-      );
+          isSelect: userRestApi.isSelect);
 
       list.add(restDay);
     }
@@ -127,7 +131,10 @@ class UserRestController extends GetxController {
     if (dateTime.hour == 0 && dateTime.minute == 0) {
       return await convertDateTimeToStringTime(dateTime);
     } else {
-      return dateTime.toIso8601String().replaceAll("T", " ").replaceAll("Z", "");
+      return dateTime
+          .toIso8601String()
+          .replaceAll("T", " ")
+          .replaceAll("Z", "");
     }
   }
 

@@ -41,6 +41,8 @@ class LogActivityController extends GetxController {
   Future<void> saveLastMovement() async {
     final MainController mainController = Get.put(MainController());
     var user = await mainController.getUserData();
-    LogActivityService().saveData(user.telephone.replaceAll("+34", ""));
+    LogActivityService().saveData(user.telephone.contains('+34')
+        ? user.telephone.replaceAll("+34", "")
+        : user.telephone);
   }
 }

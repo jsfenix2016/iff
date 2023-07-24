@@ -10,17 +10,18 @@ import '../../../Controllers/mainController.dart';
 final _prefs = PreferenceUser();
 
 class ConfigGeolocatorController extends GetxController {
-
-  Future<void> activateLocation(PreferencePermission preferencePermission) async {
+  Future<void> activateLocation(
+      PreferencePermission preferencePermission) async {
     _prefs.setAcceptedSendLocation = preferencePermission;
 
     final MainController mainController = Get.put(MainController());
     var user = await mainController.getUserData();
 
     LocationService().activateLocation(
-        user.telephone.replaceAll("+34", ""),
-        _prefs.getAcceptedSendLocation == PreferencePermission.allow
-    );
+        user.telephone.contains('+34')
+            ? user.telephone.replaceAll("+34", "")
+            : user.telephone,
+        _prefs.getAcceptedSendLocation == PreferencePermission.allow);
 
     //showAlert(context, "Se guardo correctamente");
   }
@@ -31,7 +32,11 @@ class ConfigGeolocatorController extends GetxController {
 
     if (user.telephone != "") {
       LocationService().sendLocation(
-          user.telephone.replaceAll("+34", ""), latitude, longitude);
+          user.telephone.contains('+34')
+              ? user.telephone.replaceAll("+34", "")
+              : user.telephone,
+          latitude,
+          longitude);
     }
   }
 }

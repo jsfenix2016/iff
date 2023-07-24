@@ -13,19 +13,25 @@ import 'package:ifeelefine/Page/Risk/ZoneRisk/Service/zone_risk_service.dart';
 import '../../../../../Controllers/mainController.dart';
 
 class PushAlertController extends GetxController {
-  Future<List<String>> updateVideo(ContactZoneRiskBD contact, String path) async {
+  Future<List<String>> updateVideo(
+      ContactZoneRiskBD contact, String path) async {
     await GallerySaver.saveVideo(path);
     contact.video = await convertImageData(path);
 
     final MainController mainController = Get.put(MainController());
     var user = await mainController.getUserData();
 
-    var taskIds = await ZoneRiskService().createZoneRiskAlert(ZoneRiskApi.fromZoneRisk(contact, user.telephone));
+    var taskIds = await ZoneRiskService()
+        .createZoneRiskAlert(ZoneRiskApi.fromZoneRisk(contact, user.telephone));
 
     if (contact.save) {
       await const HiveDataRisk().updateContactZoneRisk(contact);
 
-      var url = await ZoneRiskService().getVideoUrl(user.telephone.replaceAll("+34", ""), contact.id);
+      var url = await ZoneRiskService().getVideoUrl(
+          user.telephone.contains('+34')
+              ? user.telephone.replaceAll("+34", "")
+              : user.telephone,
+          contact.id);
 
       if (url != null && url.isNotEmpty) {
         ZoneRiskService().updateVideo(url, contact.video);

@@ -14,7 +14,9 @@ import '../../../Utils/MimeType/mime_type.dart';
 class EditUserService {
   Future<bool> updateUser(UserBD user) async {
     final authData = {
-      "phoneNumber": (user.telephone.replaceAll("+34", "")),
+      "phoneNumber": user.telephone.contains('+34')
+          ? user.telephone.replaceAll("+34", "")
+          : user.telephone,
       "idUser": (user.idUser),
       "name": (user.name),
       "lastname": (user.lastname),

@@ -4,7 +4,8 @@ import 'dart:math';
 import 'dart:ui';
 // import 'package:all_sensors2/all_sensors2.dart';
 import 'package:flutter/services.dart';
-import 'package:ifeelefine/Page/UserConfig/PageView/userconfig_page.dart';
+import 'package:flutter_background_service/flutter_background_service.dart';
+
 import 'package:sensors_plus/sensors_plus.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
@@ -28,7 +29,7 @@ import 'package:ifeelefine/Provider/prefencesUser.dart';
 import 'package:ifeelefine/Routes/routes.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_background_service/flutter_background_service.dart';
+
 import 'package:flutter_background_service_android/flutter_background_service_android.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
@@ -83,6 +84,7 @@ Future<void> main() async {
   userMov = LogAlerts(mov: [], time: now);
 
   await _prefs.initPrefs();
+  _prefs.setProtected = "AlertFriends no está activado";
   await inicializeHiveBD();
   await initializeFirebase();
   await initializeService();
@@ -101,6 +103,7 @@ Future<void> main() async {
 
   var premiumController = Get.put(PremiumController());
   _prefs.setDemoActive = false;
+
   premiumController.initPlatformState();
 // Recupera la última ruta de pantalla visitada
   final lastRoute = await _prefs.getLastScreenRoute();
@@ -153,7 +156,9 @@ Future activateService() async {
 
       notificationChannelId: 'my_foreground',
       initialNotificationTitle: 'AlertFriends – PERSONAL PROTECTION',
-      initialNotificationContent: 'AlertFriends está activado',
+      initialNotificationContent: _prefs.isFirstConfig
+          ? 'AlertFriends está activado.'
+          : 'AlertFriends no está activado.',
       foregroundServiceNotificationId: 888,
     ),
     iosConfiguration: IosConfiguration(
@@ -172,8 +177,6 @@ Future activateService() async {
       _prefs.getDetectedFall ||
       _prefs.getAcceptedSendLocation == PreferencePermission.allow) {
     service.startService();
-  } else {
-    service.invoke("stopService");
   }
 
   const AndroidInitializationSettings initializationSettingsAndroid =
@@ -298,11 +301,6 @@ Future activateService() async {
   );
 }
 
-Future<void> onSelectNotification(String payload) async {
-  // Aquí es donde se maneja la redirección cuando el usuario toca la notificación
-  // await Navigator.push(context, MaterialPageRoute(builder: (context) => CancelDatePage()));
-}
-
 ///Funcion utilizada para inicializar el servicio en segundo plano
 ///Variables:
 ///getEnableIFF: se utiliza para activar y desactivar el servicio de segundo plano por indicacion del usuario
@@ -332,7 +330,6 @@ void onStart(ServiceInstance service) async {
       service.setAsBackgroundService();
     });
   }
-
   service.on('stopService').listen((event) {
     service.stopSelf();
   });
@@ -353,13 +350,7 @@ void onStart(ServiceInstance service) async {
     _logRudeMovementTimer += 5;
     //getDateRisk();
 
-    service.invoke(
-      'update',
-      {
-        "current_date": DateTime.now().toIso8601String(),
-        "device": device,
-      },
-    );
+    service.invoke('update');
   });
 
   Timer.periodic(const Duration(minutes: 2), (timer) async {

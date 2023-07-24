@@ -80,18 +80,24 @@ class PermissionController extends GetxController {
       }
 
       var termsAndConditionsApi = TermsAndConditionsApi(
-          phoneNumber: user.telephone.replaceAll("+34", ""),
-          smsCallAccepted: _prefs.getAceptedSendSMS
-      );
+          phoneNumber: user.telephone.contains('+34')
+              ? user.telephone.replaceAll("+34", "")
+              : user.telephone,
+          smsCallAccepted: _prefs.getAceptedSendSMS);
       await TermsAndConditionsService().saveData(termsAndConditionsApi);
 
       var permissionApi = PermissionApi(
-          phoneNumber: user.telephone.replaceAll("+34", ""),
-          activateNotifications: _prefs.getAcceptedNotification == PreferencePermission.allow,
-          activateCamera: _prefs.getAcceptedCamera == PreferencePermission.allow,
-          activateContacts: _prefs.getAcceptedContacts == PreferencePermission.allow,
-          activateAlarm: _prefs.getAcceptedScheduleExactAlarm == PreferencePermission.allow
-      );
+          phoneNumber: user.telephone.contains('+34')
+              ? user.telephone.replaceAll("+34", "")
+              : user.telephone,
+          activateNotifications:
+              _prefs.getAcceptedNotification == PreferencePermission.allow,
+          activateCamera:
+              _prefs.getAcceptedCamera == PreferencePermission.allow,
+          activateContacts:
+              _prefs.getAcceptedContacts == PreferencePermission.allow,
+          activateAlarm: _prefs.getAcceptedScheduleExactAlarm ==
+              PreferencePermission.allow);
       await PermissionService().activatePermissions(permissionApi);
     }
 
@@ -105,12 +111,16 @@ class PermissionController extends GetxController {
     _prefs.setAcceptedNotification = PreferencePermission.allow;
 
     var permissionApi = PermissionApi(
-        phoneNumber: user.telephone.replaceAll("+34", ""),
-        activateNotifications: _prefs.getAcceptedNotification == PreferencePermission.allow,
+        phoneNumber: user.telephone.contains('+34')
+            ? user.telephone.replaceAll("+34", "")
+            : user.telephone,
+        activateNotifications:
+            _prefs.getAcceptedNotification == PreferencePermission.allow,
         activateCamera: _prefs.getAcceptedCamera == PreferencePermission.allow,
-        activateContacts: _prefs.getAcceptedContacts == PreferencePermission.allow,
-        activateAlarm: _prefs.getAcceptedScheduleExactAlarm == PreferencePermission.allow
-    );
+        activateContacts:
+            _prefs.getAcceptedContacts == PreferencePermission.allow,
+        activateAlarm:
+            _prefs.getAcceptedScheduleExactAlarm == PreferencePermission.allow);
     await PermissionService().activatePermissions(permissionApi);
   }
 }

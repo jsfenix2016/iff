@@ -1,17 +1,15 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
+
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ifeelefine/Common/manager_alerts.dart';
-import 'package:ifeelefine/Common/utils.dart';
+
 import 'package:ifeelefine/Controllers/contactUserController.dart';
-import 'package:ifeelefine/Model/ApiRest/ContactApi.dart';
-import 'package:ifeelefine/Page/Contact/Service/contactService.dart';
 
 import '../../../Common/Constant.dart';
 import '../../../Common/colorsPalette.dart';
-import '../../../Controllers/mainController.dart';
+
 import '../../../Data/hive_data.dart';
 import '../../../Provider/prefencesUser.dart';
 import '../../Premium/PageView/premium_page.dart';
@@ -95,28 +93,26 @@ class _ChangeNotificationTimePageState
             ),
             Padding(
               padding: const EdgeInsets.fromLTRB(0, 68, 0, 70),
-                child: SingleChildScrollView(
-                  child: Column(children: [
-                    getRow(
-                        'Al detectar alerta', "assets/images/Warning.png", 24),
-                    const SizedBox(height: 5),
-                    getLine("assets/images/line_small.png"),
-                    const SizedBox(height: 5),
-                    getRow("Enviarme notificación pasados",
-                        "assets/images/Email.png", 28),
-                    getRowWithPicker(
-                        "assets/images/line_xlarge.png", emailPosition, 0),
-                    getRow("Enviar SMS a mis contactos pasados",
-                        "assets/images/Whatsapp.png", 24),
-                    getRowWithPicker(
-                        "assets/images/line_xlarge.png", whatsappPosition, 1),
-                    getRow("Enviar llamada a mis contactos pasados",
-                        "assets/images/Phone.png", 24),
-                    getRowWithPicker(
-                        "assets/images/line_xlarge.png", phonePosition, 2)
-                  ]),
-                ),
-
+              child: SingleChildScrollView(
+                child: Column(children: [
+                  getRow('Al detectar alerta', "assets/images/Warning.png", 24),
+                  const SizedBox(height: 5),
+                  getLine("assets/images/line_small.png"),
+                  const SizedBox(height: 5),
+                  getRow("Enviarme notificación pasados",
+                      "assets/images/Email.png", 28),
+                  getRowWithPicker(
+                      "assets/images/line_xlarge.png", emailPosition, 0),
+                  getRow("Enviar SMS a mis contactos pasados",
+                      "assets/images/Whatsapp.png", 24),
+                  getRowWithPicker(
+                      "assets/images/line_xlarge.png", whatsappPosition, 1),
+                  getRow("Enviar llamada a mis contactos pasados",
+                      "assets/images/Phone.png", 24),
+                  getRowWithPicker(
+                      "assets/images/line_xlarge.png", phonePosition, 2)
+                ]),
+              ),
             ),
             Positioned(
               bottom: 20,
@@ -152,8 +148,9 @@ class _ChangeNotificationTimePageState
               child: Container(
                 decoration: BoxDecoration(
                   color: Colors.transparent,
-                  border: Border.all(color: Color.fromRGBO(219, 177, 42, 1)),
-                  borderRadius: BorderRadius.all(Radius.circular(8)),
+                  border:
+                      Border.all(color: const Color.fromRGBO(219, 177, 42, 1)),
+                  borderRadius: const BorderRadius.all(Radius.circular(8)),
                 ),
                 width: 138,
                 height: 42,
@@ -245,8 +242,7 @@ class _ChangeNotificationTimePageState
                     ] else ...[
                       GestureDetector(
                         child: AbsorbPointer(
-                            absorbing:
-                                !_prefs.getUserPremium,
+                            absorbing: !_prefs.getUserPremium,
                             child:
                                 _getCupertinoPicker(initialPosition, pickerId)),
                         onVerticalDragEnd: (drag) {

@@ -44,9 +44,7 @@ class _SelectTimerCallSendSMSState extends State<SelectTimerCallSendSMS> {
       }
     }
 
-    setState(() {
-
-    });
+    setState(() {});
 
     super.initState();
   }
@@ -54,8 +52,12 @@ class _SelectTimerCallSendSMSState extends State<SelectTimerCallSendSMS> {
   @override
   Widget build(BuildContext context) {
     return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      mainAxisSize: MainAxisSize.max,
       children: [
         Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
           children: [
             SizedBox(
               width: 130,
@@ -81,15 +83,17 @@ class _SelectTimerCallSendSMSState extends State<SelectTimerCallSendSMS> {
                   timer.sendSMS = sendSMS;
                   widget.onChanged(timer);
                 },
-                scrollController: FixedExtentScrollController(initialItem: initialSMSValue),
-                itemExtent: 56.0,
+                scrollController:
+                    FixedExtentScrollController(initialItem: initialSMSValue),
+                itemExtent: 70.0,
                 children: [
                   for (var i = 0; i <= Constant.timeDic.length; i++)
-                    Container(
+                    SizedBox(
                       height: 64,
-                      width: 125,
-                      color: Colors.transparent,
+                      width: 175,
                       child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
                             Constant.timeDic[i.toString()].toString(),
@@ -119,8 +123,10 @@ class _SelectTimerCallSendSMSState extends State<SelectTimerCallSendSMS> {
           height: 30,
         ),
         Row(
+          mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Container(
+            SizedBox(
               width: 130,
               child: Text(
                 'Llamar por teléfono transcuridos:',
@@ -134,7 +140,7 @@ class _SelectTimerCallSendSMSState extends State<SelectTimerCallSendSMS> {
                 ),
               ),
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             SizedBox(
               width: 200,
               height: 90,
@@ -145,15 +151,17 @@ class _SelectTimerCallSendSMSState extends State<SelectTimerCallSendSMS> {
                   timer.call = call;
                   widget.onChanged(timer);
                 },
-                scrollController: FixedExtentScrollController(initialItem: initialCallValue),
-                itemExtent: 56.0,
+                scrollController:
+                    FixedExtentScrollController(initialItem: initialCallValue),
+                itemExtent: 70.0,
                 children: [
                   for (var i = 0; i <= Constant.timeDic.length; i++)
-                    Container(
+                    SizedBox(
                       height: 64,
-                      width: 125,
-                      color: Colors.transparent,
+                      width: 175,
                       child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        mainAxisSize: MainAxisSize.min,
                         children: [
                           Text(
                             Constant.timeDic[i.toString()].toString(),

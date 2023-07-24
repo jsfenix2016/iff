@@ -29,12 +29,19 @@ class EditContactController extends GetxController {
     try {
       final MainController mainController = Get.put(MainController());
       var user = await mainController.getUserData();
-      var response = await contactServ.saveContact(convertToApi(contact, user.telephone));
+      var response =
+          await contactServ.saveContact(convertToApi(contact, user.telephone));
 
       if (response) {
         var contactBD = await const HiveData().getContactBD(contact.phones);
         if (contactBD == null) {
-          var url = await contactServ.getUrlPhoto(user.telephone.replaceAll("+34", ""), contact.phones.replaceAll("+34", ""));
+          var url = await contactServ.getUrlPhoto(
+              user.telephone.contains('+34')
+                  ? user.telephone.replaceAll("+34", "")
+                  : user.telephone,
+              user.telephone.contains('+34')
+                  ? contact.phones.replaceAll("+34", "")
+                  : contact.phones);
           if (contact.photo != null && url != null) {
             contactServ.updateImage(url, contact.photo!);
           }
@@ -45,7 +52,6 @@ class EditContactController extends GetxController {
           showAlertController(Constant.contactEditCorrectly);
         }
         return true;
-
       } else {
         showAlertController(Constant.conexionFail);
         return false;

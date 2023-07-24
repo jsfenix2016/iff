@@ -72,7 +72,7 @@ class _AlternativePagePageState extends State<AlternativePage> {
                       );
                     },
                     child: FractionallySizedBox(
-                      widthFactor: 0.6,
+                      widthFactor: 0.7,
                       child: Container(
                         decoration: BoxDecoration(
                           gradient: linerGradientButtonFilling(),
@@ -80,9 +80,10 @@ class _AlternativePagePageState extends State<AlternativePage> {
                               const BorderRadius.all(Radius.circular(100)),
                         ),
                         height: 42,
-                        width: 200,
+                        width: 205,
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
+                          mainAxisSize: MainAxisSize.min,
                           children: [
                             RichText(
                               textAlign: TextAlign.center,

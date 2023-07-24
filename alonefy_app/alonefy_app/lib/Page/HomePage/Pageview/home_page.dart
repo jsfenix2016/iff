@@ -28,6 +28,7 @@ import 'package:flutter/material.dart';
 import 'dart:io' show Directory, File, Platform;
 
 import 'package:avatar_glow/avatar_glow.dart';
+import 'package:ifeelefine/main.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:notification_center/notification_center.dart';
 import 'package:ifeelefine/Common/decoration_custom.dart';
@@ -77,7 +78,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     _prefs.saveLastScreenRoute("home");
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    serviceBackgroundPause();
+    // serviceBackgroundPause();
     NotificationCenter().subscribe('getAlerts', getAlerts);
     NotificationCenter().subscribe('getUserData', getUserData);
   }
@@ -91,12 +92,11 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   }
 
   Future serviceBackgroundPlay() async {
-    final service = FlutterBackgroundService();
-
     if (_prefs.getAcceptedNotification == PreferencePermission.allow ||
         _prefs.getDetectedFall ||
         _prefs.getAcceptedSendLocation == PreferencePermission.allow) {
-      service.startService();
+      _prefs.setProtected = "AlertFriends está activado";
+      activateService();
     }
   }
 

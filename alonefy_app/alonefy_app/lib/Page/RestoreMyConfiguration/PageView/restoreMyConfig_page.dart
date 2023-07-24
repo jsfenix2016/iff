@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:ifeelefine/Page/HomePage/Pageview/home_page.dart';
 
 import 'package:ifeelefine/Page/RestoreMyConfiguration/Controller/restoreController.dart';
 
@@ -198,9 +199,7 @@ class _RestoreMyConfigPageState extends State<RestoreMyConfigPage> {
 
                           if (result) {
                             setState(() {
-                              Navigator.of(context)
-                                ..pop()
-                                ..pop();
+                              Get.off(const HomePage());
                             });
                           }
                           setState(() {

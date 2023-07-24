@@ -45,6 +45,14 @@ class PreferenceUser {
     _prefs.setBool('notConfig', value);
   }
 
+  get getProtected {
+    return _prefs.getString('protected') ?? "";
+  }
+
+  set setProtected(String value) {
+    _prefs.setString('protected', value);
+  }
+
   get getHabitsTime {
     return _prefs.getString('habitsTime') ?? "";
   }

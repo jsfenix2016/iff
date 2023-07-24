@@ -50,8 +50,12 @@ class ContactUserController extends GetxController {
             .saveContact(convertToApi(contactBD, user.telephone));
 
         var url = await contactServ.getUrlPhoto(
-            user.telephone.replaceAll("+34", ""),
-            contactBD.phones.replaceAll("+34", ""));
+            user.telephone.contains('+34')
+                ? user.telephone.replaceAll("+34", "")
+                : user.telephone,
+            contactBD.phones.contains('+34')
+                ? contactBD.phones.replaceAll("+34", "")
+                : contactBD.phones);
         if (contactBD.photo != null && url != null) {
           contactServ.updateImage(url, contactBD.photo!);
         }
@@ -130,8 +134,12 @@ class ContactUserController extends GetxController {
     var user = await mainController.getUserData();
 
     var response = await contactServ.deleteContact(
-        user.telephone.replaceAll("+34", ""),
-        contact.phones.replaceAll("+34", ""));
+        user.telephone.contains('+34')
+            ? user.telephone.replaceAll("+34", "")
+            : user.telephone,
+        contact.phones.contains('+34')
+            ? contact.phones.replaceAll("+34", "")
+            : contact.phones);
 
     return response;
   }

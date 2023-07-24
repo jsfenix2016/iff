@@ -136,9 +136,10 @@ class PremiumController extends GetxController {
     final MainController mainController = Get.put(MainController());
     var user = await mainController.getUserData();
     PremiumApi premiumApi = PremiumApi(
-        phoneNumber: user.telephone.replaceAll("+34", ""),
-        premium: _prefs.getUserPremium
-    );
+        phoneNumber: user.telephone.contains('+34')
+            ? user.telephone.replaceAll("+34", "")
+            : user.telephone,
+        premium: _prefs.getUserPremium);
     PremiumService().saveData(premiumApi);
   }
 }

@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ifeelefine/Common/Constant.dart';
+import 'package:ifeelefine/Common/Firebase/firebaseManager.dart';
 import 'package:ifeelefine/Common/manager_alerts.dart';
 import 'package:ifeelefine/Common/utils.dart';
 import 'package:ifeelefine/Controllers/contactUserController.dart';
+import 'package:ifeelefine/Controllers/mainController.dart';
 import 'package:ifeelefine/Data/hiveRisk_data.dart';
 import 'package:ifeelefine/Model/ApiRest/ContactRiskApi.dart';
 import 'package:ifeelefine/Model/ApiRest/UseMobilApi.dart';
@@ -39,6 +41,7 @@ class RestoreController extends GetxController {
     final userApi = await restServ.getUser(number);
 
     if (userApi != null) {
+      await _saveNotifications(userApi);
       await _saveUserFromAPI(userApi);
       await _saveTimeUseMobile(userApi.inactivityTimes);
       await _saveRestDays(userApi.sleepHours);
@@ -51,7 +54,7 @@ class RestoreController extends GetxController {
       await _saveTermsAndConditions(userApi);
       await _saveFall(userApi);
       await _saveContactPermission(userApi);
-      await _saveNotifications(userApi);
+
       await _saveScheduleExactAlarm(userApi);
       await _saveCameraPermission(userApi);
 
@@ -88,7 +91,7 @@ class RestoreController extends GetxController {
 
       var userBD = GetUserController().userApiToUserBD(userApi, pathImage);
 
-      var existsUser = await HiveData().getuserbd;
+      var existsUser = await const HiveData().getuserbd;
       if (existsUser.idUser == "-1") {
         await const HiveData().saveUserBD(userBD);
       } else {
@@ -163,10 +166,14 @@ class RestoreController extends GetxController {
   }
 
   Future<void> _saveNotifications(UserApi? userApi) async {
-    if (userApi != null) {
-      _prefs.setAcceptedNotification = userApi.activateNotifications
-          ? PreferencePermission.allow
-          : PreferencePermission.noAccepted;
+    if (userApi != null && userApi.activateNotifications) {
+      var isAccepted = await requestPermission(Permission.notification);
+      if (isAccepted) {
+        updateFirebaseToken();
+        _prefs.setAcceptedNotification = userApi.activateNotifications
+            ? PreferencePermission.allow
+            : PreferencePermission.noAccepted;
+      }
     }
   }
 
