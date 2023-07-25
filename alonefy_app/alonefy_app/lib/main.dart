@@ -118,7 +118,9 @@ Future<void> main() async {
 
   runApp(
     GetMaterialApp(
-      home: AddContactPage(),
+      home: MyApp(
+        initApp: initApp!,
+      ),
       debugShowCheckedModeBanner: false,
     ),
   );
