@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:ifeelefine/Common/Constant.dart';
+import 'package:ifeelefine/Common/manager_alerts.dart';
+import 'package:ifeelefine/Common/text_style_font.dart';
+import 'package:ifeelefine/Common/utils.dart';
 import 'package:ifeelefine/Page/HomePage/Pageview/home_page.dart';
 
 import 'package:ifeelefine/Page/RestoreMyConfiguration/Controller/restoreController.dart';
@@ -56,114 +60,113 @@ class _RestoreMyConfigPageState extends State<RestoreMyConfigPage> {
                   ),
                 )
               ] else ...[
-                Column(children: [
-                  const SizedBox(height: 32),
-                  Center(
-                    child: Text('Restaurar mi configuración',
-                        textAlign: TextAlign.center,
-                        style: GoogleFonts.barlow(
-                          fontSize: 22.0,
-                          wordSpacing: 1,
-                          letterSpacing: 1.2,
-                          fontWeight: FontWeight.w500,
-                          color: Colors.white,
-                        )),
-                  ),
-                  const SizedBox(height: 32),
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: Container(
-                      padding: const EdgeInsets.fromLTRB(32, 0, 0, 0),
-                      child: Text('Teléfono',
-                          textAlign: TextAlign.left,
+                Column(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    const SizedBox(height: 32),
+                    Center(
+                      child: Text('Restaurar mi configuración',
+                          textAlign: TextAlign.center,
                           style: GoogleFonts.barlow(
-                            fontSize: 20.0,
+                            fontSize: 22.0,
                             wordSpacing: 1,
                             letterSpacing: 1.2,
-                            fontWeight: FontWeight.w700,
+                            fontWeight: FontWeight.w500,
                             color: Colors.white,
                           )),
                     ),
-                  ),
-                  const SizedBox(height: 16),
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(32.0, 0.0, 32.0, 0.0),
-                    child: TextField(
-                      cursorColor: Colors.white,
-                      decoration: const InputDecoration(
-                        contentPadding: EdgeInsets.fromLTRB(8.0, 0.0, 8.0, 0.0),
-                        focusedBorder: OutlineInputBorder(
-                          borderSide: BorderSide(color: ColorPalette.principal),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderSide: BorderSide(
-                              width: 1, color: ColorPalette.principal),
-                        ),
-                      ),
-                      keyboardType: TextInputType.number,
-                      style: GoogleFonts.barlow(
-                        fontSize: 16.0,
-                        wordSpacing: 1,
-                        letterSpacing: 0.001,
-                        fontWeight: FontWeight.normal,
-                        color: Colors.white,
-                      ),
-                      onChanged: (valor) {
-                        if (valor.length == 9) {
-                          // Solicita el siguiente enfoque solo si la longitud del valor es 1
-                          // y el cuadro de texto actual no es el último en la lista
-                          phone = valor;
-                        }
-                      },
-                    ),
-                  ),
-                  const SizedBox(height: 56),
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: Container(
-                      padding: const EdgeInsets.fromLTRB(32, 0, 0, 0),
-                      child: Text('Email',
-                          textAlign: TextAlign.left,
-                          style: GoogleFonts.barlow(
-                            fontSize: 20.0,
-                            wordSpacing: 1,
-                            letterSpacing: 1.2,
-                            fontWeight: FontWeight.w700,
-                            color: Colors.white,
-                          )),
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(32.0, 0.0, 32.0, 0.0),
-                    child: TextField(
-                      cursorColor: Colors.white,
-                      decoration: const InputDecoration(
-                        contentPadding: EdgeInsets.fromLTRB(8.0, 0.0, 8.0, 0.0),
-                        focusedBorder: OutlineInputBorder(
-                          borderSide: BorderSide(color: ColorPalette.principal),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderSide: BorderSide(
-                              width: 1, color: ColorPalette.principal),
-                        ),
-                      ),
-                      onChanged: (valor) {
-                        email = valor;
-                      },
-                      style: GoogleFonts.barlow(
-                        fontSize: 16.0,
-                        wordSpacing: 1,
-                        letterSpacing: 0.001,
-                        fontWeight: FontWeight.normal,
-                        color: Colors.white,
+                    const SizedBox(height: 32),
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: Container(
+                        padding: const EdgeInsets.fromLTRB(32, 0, 0, 0),
+                        child: Text('Teléfono',
+                            textAlign: TextAlign.left,
+                            style: GoogleFonts.barlow(
+                              fontSize: 20.0,
+                              wordSpacing: 1,
+                              letterSpacing: 1.2,
+                              fontWeight: FontWeight.w700,
+                              color: Colors.white,
+                            )),
                       ),
                     ),
-                  ),
-                  const SizedBox(height: 80),
-                ]),
+                    const SizedBox(height: 16),
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(32.0, 0.0, 32.0, 0.0),
+                      child: TextField(
+                        cursorColor: Colors.white,
+                        decoration: InputDecoration(
+                          prefix: Text(
+                            '+34',
+                            style: textNormal16White(),
+                          ),
+                          contentPadding:
+                              const EdgeInsets.fromLTRB(8.0, 0.0, 8.0, 0.0),
+                          focusedBorder: const OutlineInputBorder(
+                            borderSide:
+                                BorderSide(color: ColorPalette.principal),
+                          ),
+                          enabledBorder: const OutlineInputBorder(
+                            borderSide: BorderSide(
+                                width: 1, color: ColorPalette.principal),
+                          ),
+                        ),
+                        keyboardType: TextInputType.number,
+                        style: textNormal16White(),
+                        onChanged: (valor) {
+                          if (valor.length == 9) {
+                            // Solicita el siguiente enfoque solo si la longitud del valor es 1
+                            // y el cuadro de texto actual no es el último en la lista
+                            phone = valor;
+                          }
+                        },
+                      ),
+                    ),
+                    const SizedBox(height: 56),
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: Container(
+                        padding: const EdgeInsets.fromLTRB(32, 0, 0, 0),
+                        child: Text('Email',
+                            textAlign: TextAlign.left,
+                            style: GoogleFonts.barlow(
+                              fontSize: 20.0,
+                              wordSpacing: 1,
+                              letterSpacing: 1.2,
+                              fontWeight: FontWeight.w700,
+                              color: Colors.white,
+                            )),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(32.0, 0.0, 32.0, 0.0),
+                      child: TextField(
+                        cursorColor: Colors.white,
+                        decoration: const InputDecoration(
+                          contentPadding:
+                              EdgeInsets.fromLTRB(8.0, 0.0, 8.0, 0.0),
+                          focusedBorder: OutlineInputBorder(
+                            borderSide:
+                                BorderSide(color: ColorPalette.principal),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(
+                                width: 1, color: ColorPalette.principal),
+                          ),
+                        ),
+                        onChanged: (valor) {
+                          email = valor;
+                        },
+                        style: textNormal16White(),
+                      ),
+                    ),
+                  ],
+                ),
                 Positioned(
-                  bottom: 20,
+                  bottom: 50,
                   right: 32,
                   child: Container(
                     decoration: const BoxDecoration(
@@ -176,18 +179,21 @@ class _RestoreMyConfigPageState extends State<RestoreMyConfigPage> {
                       child: TextButton(
                         child: Text('Restaurar',
                             textAlign: TextAlign.center,
-                            style: GoogleFonts.barlow(
-                              fontSize: 16.0,
-                              wordSpacing: 1,
-                              letterSpacing: 1.2,
-                              fontWeight: FontWeight.w700,
-                              color: Colors.black,
-                            )),
+                            style: textNormal16White()),
                         onPressed: () async {
                           if (phone.length < 8 || phone.isEmpty) {
+                            showSaveAlert(context, Constant.info,
+                                Constant.validatePhoneNumber);
+
                             return;
                           }
                           if (email.isEmpty) {
+                            return;
+                          }
+                          if (!validateEmail(email)) {
+                            // El correo electrónico no es válido
+                            showSaveAlert(
+                                context, Constant.info, Constant.validateEmail);
                             return;
                           }
 
@@ -211,7 +217,7 @@ class _RestoreMyConfigPageState extends State<RestoreMyConfigPage> {
                   ),
                 ),
                 Positioned(
-                  bottom: 20,
+                  bottom: 50,
                   left: 32,
                   child: Container(
                     decoration: BoxDecoration(
@@ -226,13 +232,7 @@ class _RestoreMyConfigPageState extends State<RestoreMyConfigPage> {
                       child: TextButton(
                         child: Text('Cancelar',
                             textAlign: TextAlign.center,
-                            style: GoogleFonts.barlow(
-                              fontSize: 16.0,
-                              wordSpacing: 1,
-                              letterSpacing: 1.2,
-                              fontWeight: FontWeight.w700,
-                              color: Colors.white,
-                            )),
+                            style: textNormal16White()),
                         onPressed: () => Navigator.of(context).pop(),
                       ),
                     ),
