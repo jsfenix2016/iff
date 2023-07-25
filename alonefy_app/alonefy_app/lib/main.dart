@@ -5,6 +5,7 @@ import 'dart:ui';
 // import 'package:all_sensors2/all_sensors2.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
+import 'package:ifeelefine/Page/Contact/PageView/addContact_page.dart';
 
 import 'package:sensors_plus/sensors_plus.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -69,12 +70,12 @@ final LogActivityController logActivityController =
 
 final MainController mainController = Get.put(MainController());
 int _logActivityTimer = 60;
-int _logRudeMovementTimer = 60;
+int _logRudeMovementTimer = 20;
 const int _logActivityTimerRefresh = 60;
-const int _logRudeMovementTimerRefresh = 60;
+const int _logRudeMovementTimerRefresh = 20;
 
 final _locationController = Get.put(ConfigGeolocatorController());
-
+FlutterBackgroundService service = FlutterBackgroundService();
 String? device;
 String? initApp;
 UserBD? user;
@@ -117,9 +118,7 @@ Future<void> main() async {
 
   runApp(
     GetMaterialApp(
-      home: MyApp(
-        initApp: initApp!,
-      ),
+      home: AddContactPage(),
       debugShowCheckedModeBanner: false,
     ),
   );
@@ -131,8 +130,6 @@ Future<void> main() async {
 ///getAceptedSendLocation:  indica que el usuario acepto el envio de la ubicacion actual a su contacto
 ///getDetectedFall:  indica que el usuario acepto la funcionalidad del acelerometro para poder detectar movimientos bruscos
 Future activateService() async {
-  final service = FlutterBackgroundService();
-
   /// OPTIONAL, using custom notification channel id
   const AndroidNotificationChannel channel = AndroidNotificationChannel(
     'my_foreground', // id
@@ -141,6 +138,11 @@ Future activateService() async {
     importance: Importance.high, // importance must be at low or higher level
   );
 
+  var textDescrip = _prefs.isConfig
+      ? 'AlertFriends está activado.'
+      : 'AlertFriends no está activado.';
+  print(textDescrip);
+  service.invoke('update');
   await flutterLocalNotificationsPlugin
       .resolvePlatformSpecificImplementation<
           AndroidFlutterLocalNotificationsPlugin>()
@@ -156,9 +158,7 @@ Future activateService() async {
 
       notificationChannelId: 'my_foreground',
       initialNotificationTitle: 'AlertFriends – PERSONAL PROTECTION',
-      initialNotificationContent: _prefs.isFirstConfig
-          ? 'AlertFriends está activado.'
-          : 'AlertFriends no está activado.',
+      initialNotificationContent: textDescrip,
       foregroundServiceNotificationId: 888,
     ),
     iosConfiguration: IosConfiguration(
@@ -227,6 +227,14 @@ Future activateService() async {
       switch (notificationResponse.notificationResponseType) {
         case NotificationResponseType.selectedNotification:
           // selectNotificationStream.add(notificationResponse.payload);
+          if (notificationResponse.payload!.contains("Inactived_")) {
+            ismove = false;
+            timerActive = true;
+            String taskIds =
+                notificationResponse.payload!.replaceAll("Inactived_", "");
+            var taskIdList = getTaskIdList(taskIds);
+            MainService().cancelAllNotifications(taskIdList);
+          }
           if (notificationResponse.actionId == "Inactived") {
             ismove = false;
             timerActive = true;

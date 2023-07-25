@@ -38,7 +38,9 @@ class ContactUserController extends GetxController {
 
       for (var element in listContact) {
         contactBD.displayName = element.displayName;
-        contactBD.phones = element.phones.first.number.replaceAll("+34", "");
+        contactBD.phones = element.phones.first.number
+            .replaceAll("+34", "")
+            .replaceAll(" ", "");
         contactBD.photo = element.photo;
         contactBD.timeSendSMS = timeSendSMS;
         contactBD.timeCall = timeCall;
@@ -51,11 +53,11 @@ class ContactUserController extends GetxController {
 
         var url = await contactServ.getUrlPhoto(
             user.telephone.contains('+34')
-                ? user.telephone.replaceAll("+34", "")
-                : user.telephone,
+                ? user.telephone.replaceAll("+34", "").replaceAll(" ", "")
+                : user.telephone.replaceAll(" ", ""),
             contactBD.phones.contains('+34')
-                ? contactBD.phones.replaceAll("+34", "")
-                : contactBD.phones);
+                ? contactBD.phones.replaceAll("+34", "").replaceAll(" ", "")
+                : contactBD.phones.replaceAll(" ", ""));
         if (contactBD.photo != null && url != null) {
           contactServ.updateImage(url, contactBD.photo!);
         }
@@ -135,11 +137,11 @@ class ContactUserController extends GetxController {
 
     var response = await contactServ.deleteContact(
         user.telephone.contains('+34')
-            ? user.telephone.replaceAll("+34", "")
-            : user.telephone,
+            ? user.telephone.replaceAll("+34", "").replaceAll(" ", "")
+            : user.telephone.replaceAll(" ", ""),
         contact.phones.contains('+34')
-            ? contact.phones.replaceAll("+34", "")
-            : contact.phones);
+            ? contact.phones.replaceAll("+34", "").replaceAll(" ", "")
+            : contact.phones.replaceAll(" ", ""));
 
     return response;
   }

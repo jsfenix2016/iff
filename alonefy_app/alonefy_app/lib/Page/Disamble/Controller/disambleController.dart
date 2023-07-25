@@ -13,9 +13,6 @@ final _prefs = PreferenceUser();
 
 class DisambleController extends GetxController {
   Future<void> saveDisamble(BuildContext context, String deactivateTime) async {
-    _prefs.setDisambleIFF = deactivateTime;
-    _prefs.setEnableIFF = false;
-
     await Jiffy.locale('es');
     var datetime = Jiffy(DateTime.now()).format(getDefaultPattern());
     _prefs.setStartDateTimeDisambleIFF = datetime;
@@ -25,8 +22,8 @@ class DisambleController extends GetxController {
 
     var response = await DeactivateService().saveData(
         user.telephone.contains('+34')
-            ? user.telephone.replaceAll("+34", "")
-            : user.telephone,
+            ? user.telephone.replaceAll("+34", "").replaceAll(" ", "")
+            : user.telephone.replaceAll(" ", ""),
         deactivateTimeToMinutes(deactivateTime));
 
     if (response) {

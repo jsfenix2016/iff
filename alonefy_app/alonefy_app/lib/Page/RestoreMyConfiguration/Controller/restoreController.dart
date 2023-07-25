@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:get/get.dart';
 import 'package:ifeelefine/Common/Constant.dart';
 import 'package:ifeelefine/Common/Firebase/firebaseManager.dart';
@@ -41,6 +42,11 @@ class RestoreController extends GetxController {
     final userApi = await restServ.getUser(number);
 
     if (userApi != null) {
+      final service = FlutterBackgroundService();
+      var isRunning = await service.isRunning();
+      if (isRunning) {
+        service.invoke("stopService");
+      }
       await _saveNotifications(userApi);
       await _saveUserFromAPI(userApi);
       await _saveTimeUseMobile(userApi.inactivityTimes);

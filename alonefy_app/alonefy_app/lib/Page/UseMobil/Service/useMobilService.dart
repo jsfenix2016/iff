@@ -7,18 +7,20 @@ import 'dart:convert';
 import 'package:ifeelefine/Model/userbd.dart';
 
 class UseMobilService {
-
   Future<bool> saveUseMobil(List<UseMobilApi> listuse) async {
-
     try {
       var json = jsonEncode(listuse);
 
       var response = await http.post(
-              Uri.parse("${Constant.baseApi}/v1/inactivityTime"),
-              headers: Constant.headers,
-              body: json);
+          Uri.parse("${Constant.baseApi}/v1/inactivityTime"),
+          headers: Constant.headers,
+          body: json);
 
-      return response.statusCode == 200;
+      if (response.statusCode == 200) {
+        return true;
+      } else {
+        return false;
+      }
     } catch (e) {
       return false;
     }

@@ -10,8 +10,8 @@ class UserService {
   Future<bool> saveData(UserBD user) async {
     final authData = {
       "phoneNumber": user.telephone.contains('+34')
-          ? user.telephone.replaceAll("+34", "")
-          : user.telephone,
+          ? user.telephone.replaceAll("+34", "").replaceAll(" ", "")
+          : user.telephone.replaceAll(" ", ""),
       "idUser": (user.idUser),
       "name": (user.name),
       "lastname": (user.lastname),

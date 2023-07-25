@@ -24,17 +24,13 @@ class ContactApi {
       required this.photo,
       required this.status});
 
-  //ContactApi(String userPhoneNumber, String phoneNumber) {
-  //  this.userPhoneNumber = userPhoneNumber;
-  //}
-
   ContactApi.fromContact(ContactBD contact, String userPhoneNumber) {
     this.userPhoneNumber = userPhoneNumber.contains("+34")
-        ? userPhoneNumber.replaceAll("+34", "")
-        : userPhoneNumber;
+        ? userPhoneNumber.replaceAll("+34", "").replaceAll(" ", "")
+        : userPhoneNumber.replaceAll(" ", "");
     this.phoneNumber = contact.phones.contains("+34")
-        ? contact.phones.replaceAll("+34", "")
-        : contact.phones;
+        ? contact.phones.replaceAll("+34", "").replaceAll(" ", "")
+        : contact.phones.replaceAll(" ", "");
     this.name = contact.name;
     this.displayName = contact.displayName;
     this.timeSendSms = stringTimeToInt(contact.timeSendSMS);

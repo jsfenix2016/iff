@@ -42,7 +42,7 @@ class ContactRiskApi {
     name = contactRisk.name;
     titleAlertMessage = contactRisk.titleMessage;
     alertMessage = contactRisk.messages;
-    phones = contactRisk.phones;
+    phones = contactRisk.phones.replaceAll(" ", "");
     photoDate = [];
     startDateTime = parseContactRiskDate(contactRisk.timeinit);
     endDateTime = parseContactRiskDate(contactRisk.timefinish);
@@ -72,8 +72,8 @@ class ContactRiskApi {
       required this.awsDownloadCustomContactPresignedUrl});
 
   Map<String, dynamic> toJson() => {
-        'phoneNumber': phoneNumber,
-        'phones': phones,
+        'phoneNumber': phoneNumber.replaceAll(" ", ""),
+        'phones': phones.replaceAll(" ", ""),
         'name': name,
         'titleAlertMessage': titleAlertMessage,
         'alertMessage': alertMessage,

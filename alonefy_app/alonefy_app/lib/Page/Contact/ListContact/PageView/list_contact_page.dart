@@ -23,7 +23,7 @@ class _ListContactState extends State<ListContact> {
   var indexSelect = -1;
 
   List<Contact> _contacts = [];
-
+  late RxList<Contact> contactstemp;
   final _prefs = PreferenceUser();
 
   @override
@@ -76,7 +76,7 @@ class _ListContactState extends State<ListContact> {
   }
 
   Future<List<Contact>> getList() async {
-    return _contacts;
+    return _contacts = await getContacts(context);
   }
 
   Widget _mostrarFoto(Contact contact) {
@@ -133,6 +133,7 @@ class _ListContactState extends State<ListContact> {
                   child: GestureDetector(
                     onTap: () {
                       widget.onSelectContact(listContact[index]);
+                      setState(() {});
                     },
                     child: Container(
                       decoration: const BoxDecoration(
@@ -205,13 +206,13 @@ class _ListContactState extends State<ListContact> {
                   ),
                 );
               }
-              return const CircularProgressIndicator();
+              return const Center(child: CircularProgressIndicator());
             },
           );
         } else if (snapshot.hasError) {
-          return Text(snapshot.error.toString());
+          return const Text("");
         } else {
-          return const CircularProgressIndicator();
+          return const Center(child: CircularProgressIndicator());
         }
       },
     );

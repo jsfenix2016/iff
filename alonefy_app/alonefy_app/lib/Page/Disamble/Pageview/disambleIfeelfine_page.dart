@@ -142,13 +142,21 @@ class _DesactivePageState extends State<DesactivePage> {
                                 onChanged: (bool? value) {
                                   setState(() {
                                     desactiveIFeelFine = listDisamble[index];
+                                    if (value!) {
+                                      _prefs.setDisambleIFF =
+                                          desactiveIFeelFine;
+                                    } else {
+                                      _prefs.setDisambleIFF = "0 hora";
+                                      desactiveIFeelFine = "0 hora";
+                                    }
                                     var count = 0;
                                     for (var disambleEnabled
                                         in listDisambleEnabled) {
                                       listDisambleEnabled[count] = false;
+
                                       count++;
                                     }
-                                    listDisambleEnabled[index] = value!;
+                                    listDisambleEnabled[index] = value;
                                   });
                                 },
                               ),

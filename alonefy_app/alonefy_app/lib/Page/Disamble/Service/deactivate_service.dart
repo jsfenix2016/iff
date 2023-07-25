@@ -13,7 +13,11 @@ class DeactivateService {
           headers: Constant.headers,
           body: jsonEncode(json));
 
-      return response.statusCode == 200;
+      if (response.statusCode == 200) {
+        return true;
+      } else {
+        return false;
+      }
     } catch (e) {
       return false;
     }

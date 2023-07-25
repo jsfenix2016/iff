@@ -12,30 +12,29 @@ import 'package:ifeelefine/Model/contact.dart';
 import '../../../Utils/MimeType/mime_type.dart';
 
 class ContactService {
-
   Future<bool> saveContact(ContactApi contact) async {
-
     var json = jsonEncode(contact);
 
     try {
       final resp = await http.post(Uri.parse("${Constant.baseApi}/v1/contact"),
-          headers: Constant.headers,
-          body: json);
+          headers: Constant.headers, body: json);
 
-      return resp.statusCode == 200;
+      if (resp.statusCode == 200) {
+        return true;
+      } else {
+        return false;
+      }
     } catch (error) {
       return false;
     }
   }
 
   Future<bool> updateContact(ContactApi contact) async {
-
     var json = jsonEncode(contact);
 
     try {
       final resp = await http.put(Uri.parse("${Constant.baseApi}/v1/contact"),
-          headers: Constant.headers,
-          body: json);
+          headers: Constant.headers, body: json);
 
       return resp.statusCode == 200;
     } catch (error) {
@@ -45,9 +44,10 @@ class ContactService {
 
   Future<bool> deleteContact(String userPhoneNumber, String phoneNumber) async {
     try {
-      var response = await http.delete(Uri.parse(
-          "${Constant.baseApi}/v1/contact/user/$userPhoneNumber/contact/$phoneNumber"),
-        headers: Constant.headers);
+      var response = await http.delete(
+          Uri.parse(
+              "${Constant.baseApi}/v1/contact/user/$userPhoneNumber/contact/$phoneNumber"),
+          headers: Constant.headers);
 
       return response.statusCode == 200;
     } catch (error) {
@@ -59,7 +59,7 @@ class ContactService {
     try {
       var response = await http.get(
           Uri.parse("${Constant.baseApi}/v1/contact/user/$userPhoneNumber"),
-        headers: Constant.headers);
+          headers: Constant.headers);
 
       Iterable responseBody = jsonDecode(response.body);
 
@@ -77,9 +77,13 @@ class ContactService {
     }
   }
 
-  Future<String?> getUrlPhoto(String userPhoneNumber, String phoneNumber) async {
+  Future<String?> getUrlPhoto(
+      String userPhoneNumber, String phoneNumber) async {
     try {
-      var json = { "userPhoneNumber": userPhoneNumber, "phoneNumber": phoneNumber };
+      var json = {
+        "userPhoneNumber": userPhoneNumber,
+        "phoneNumber": phoneNumber
+      };
 
       final resp = await http.put(
           Uri.parse("${Constant.baseApi}/v1/contact/photo"),
@@ -102,18 +106,14 @@ class ContactService {
         extension = extensionFromMime(mime);
       }
 
-      final resp = await http.put(
-          postUri,
-          headers: {'Content-Type': mime ?? 'image/jpeg'},
-          body: bytes);
-
+      final resp = await http.put(postUri,
+          headers: {'Content-Type': mime ?? 'image/jpeg'}, body: bytes);
     } catch (e) {
       print(e);
     }
   }
 
   Future<Uint8List?> getContactImage(String url) async {
-
     final resp = await http.get(Uri.parse(url));
 
     if (resp.statusCode == 200) {

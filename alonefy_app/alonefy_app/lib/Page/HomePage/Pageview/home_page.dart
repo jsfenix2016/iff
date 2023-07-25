@@ -78,17 +78,9 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     _prefs.saveLastScreenRoute("home");
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    // serviceBackgroundPause();
+
     NotificationCenter().subscribe('getAlerts', getAlerts);
     NotificationCenter().subscribe('getUserData', getUserData);
-  }
-
-  Future serviceBackgroundPause() async {
-    final service = FlutterBackgroundService();
-    var isRunning = await service.isRunning();
-    if (isRunning) {
-      service.invoke("stopService");
-    }
   }
 
   Future serviceBackgroundPlay() async {
@@ -108,9 +100,11 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) async {
-    serviceBackgroundPlay();
     setState(() {
       _appLifecycleState = state;
+      if (state.name.contains("paused")) {
+        serviceBackgroundPlay();
+      }
     });
     print(_appLifecycleState);
   }

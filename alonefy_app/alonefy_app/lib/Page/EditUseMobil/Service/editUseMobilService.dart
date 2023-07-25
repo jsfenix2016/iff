@@ -21,7 +21,11 @@ class EditUseMobilService {
           headers: Constant.headers,
           body: json);
 
-      return response.statusCode == 200;
+      if (response.statusCode == 200) {
+        return true;
+      } else {
+        return false;
+      }
     } catch (e) {
       return false;
     }

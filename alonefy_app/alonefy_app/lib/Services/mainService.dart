@@ -13,7 +13,11 @@ class MainService {
           headers: Constant.headers,
           body: jsonEncode(taskIds));
 
-      return response.statusCode == 200;
+      if (response.statusCode == 200) {
+        return true;
+      } else {
+        return false;
+      }
     } catch (e) {
       return false;
     }
@@ -28,7 +32,11 @@ class MainService {
           headers: Constant.headers,
           body: jsonEncode(taskIds));
 
-      return response.statusCode == 200;
+      if (response.statusCode == 200) {
+        return true;
+      } else {
+        return false;
+      }
     } catch (e) {
       return false;
     }
@@ -36,12 +44,18 @@ class MainService {
 
   Future<bool> saveDrop(UserBD user) async {
     try {
+      var cell = user.telephone.contains('+34')
+          ? user.telephone.replaceAll("+34", "")
+          : user.telephone;
       final resp = await http.post(
           Uri.parse(
-              "${Constant.baseApi}/v1/notifications/create/user/${user.telephone.contains('+34') ? user.telephone.replaceAll("+34", "") : user.telephone}/type/DROP"),
+              "${Constant.baseApi}/v1/notifications/create/user/$cell/type/DROP"),
           headers: Constant.headers);
-
-      return resp.statusCode == 200;
+      if (resp.statusCode == 200) {
+        return true;
+      } else {
+        return false;
+      }
     } catch (error) {
       return false;
     }

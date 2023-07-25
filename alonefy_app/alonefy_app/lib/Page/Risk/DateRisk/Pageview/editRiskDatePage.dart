@@ -115,6 +115,9 @@ class _EditRiskPageState extends State<EditRiskPage> {
   }
 
   Future getContact() async {
+    setState(() {
+      isLoading = true;
+    });
     contactlist = await getContacts(context);
 
     for (var element in contactlist) {
@@ -123,7 +126,9 @@ class _EditRiskPageState extends State<EditRiskPage> {
         contactSelect = contactlist[index];
       }
     }
-    setState(() {});
+    setState(() {
+      isLoading = false;
+    });
   }
 
   // Función para solicitar permiso de acceso a la galería
@@ -778,38 +783,8 @@ class _EditRiskPageState extends State<EditRiskPage> {
                             child: Container(
                               color: Colors.transparent,
                               child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Container(
-                                      width: 35,
-                                      height: 25,
-                                      color: Colors.transparent,
-                                      child: IconButton(
-                                        iconSize: 25,
-                                        onPressed: () async {
-                                          foto = await procesarImagen(
-                                              ImageSource.gallery);
-                                        },
-                                        icon: Column(
-                                          children: [
-                                            Container(
-                                              height: 7.5,
-                                              width: 14,
-                                              decoration: const BoxDecoration(
-                                                image: DecorationImage(
-                                                  image: AssetImage(
-                                                      'assets/images/clip.png'),
-                                                  fit: BoxFit.fill,
-                                                ),
-                                                color: Colors.transparent,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                  ),
                                   Container(
                                     width: 100,
                                     color: Colors.transparent,
@@ -930,6 +905,7 @@ class _EditRiskPageState extends State<EditRiskPage> {
                                     onChanged: (value) {
                                       saveConfig = value;
                                       widget.contactRisk.saveContact = value;
+                                      (context as Element).markNeedsBuild();
                                     },
                                     value: saveConfig,
                                   ),
