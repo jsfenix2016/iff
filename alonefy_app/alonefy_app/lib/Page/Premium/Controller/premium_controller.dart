@@ -27,8 +27,15 @@ class PremiumController extends GetxController {
 
   Future<void> initPlatformState() async {
     // prepare
-    var result = await FlutterInappPurchase.instance.initialize();
-    print('result: $result');
+
+    try {
+      var result = await FlutterInappPurchase.instance.initialize();
+      print('result: $result');
+      // Resto de tu lógica...
+    } catch (e) {
+      print('Error al inicializar el paquete flutter_inapp_purchase: $e');
+      // Mostrar un mensaje de error o realizar una acción específica...
+    }
 
     _connectionSubscription =
         FlutterInappPurchase.connectionUpdated.listen((connected) async {
