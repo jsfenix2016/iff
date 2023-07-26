@@ -102,10 +102,11 @@ Future<void> main() async {
     }
   }
 
-  var premiumController = Get.put(PremiumController());
+  // var premiumController = Get.put(PremiumController());
   _prefs.setDemoActive = false;
 
-  premiumController.initPlatformState();
+  // premiumController.initPlatformState();
+  Future.sync(() => {Get.put(PremiumController()).initPlatformState()});
 // Recupera la última ruta de pantalla visitada
   final lastRoute = await _prefs.getLastScreenRoute();
   initApp = _prefs.isFirstConfig == false ? 'onboarding' : lastRoute;

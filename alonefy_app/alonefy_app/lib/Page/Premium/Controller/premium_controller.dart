@@ -87,7 +87,7 @@ class PremiumController extends GetxController {
         await FlutterInappPurchase.instance.getSubscriptions(_productLists);
     for (var item in items) {
       print('${item.toString()}');
-      this._items.add(item);
+      _items.add(item);
 
       if (item.productId == subscriptionId ||
           item.productId == subscriptionFreeTrialId) {
