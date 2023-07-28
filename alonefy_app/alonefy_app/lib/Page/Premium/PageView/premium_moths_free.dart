@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_inapp_purchase/flutter_inapp_purchase.dart';
@@ -16,24 +18,22 @@ import '../../../Model/UserComment.dart';
 
 import 'package:ifeelefine/Common/decoration_custom.dart';
 
-class PremiumPage extends StatefulWidget {
-  const PremiumPage(
+class PremiumMothFree extends StatefulWidget {
+  const PremiumMothFree(
       {super.key,
-      required this.isFreeTrial,
       required this.img,
       required this.title,
       required this.subtitle});
 
-  final bool isFreeTrial;
   final String img;
   final String title;
   final String subtitle;
 
   @override
-  State<StatefulWidget> createState() => _PremiumPageState();
+  State<StatefulWidget> createState() => _PremiumMothFreeState();
 }
 
-class _PremiumPageState extends State<PremiumPage> {
+class _PremiumMothFreeState extends State<PremiumMothFree> {
   var premiumController = Get.put(PremiumController());
   final _prefs = PreferenceUser();
 
@@ -46,7 +46,7 @@ class _PremiumPageState extends State<PremiumPage> {
   @override
   void initState() {
     super.initState();
-    initPlatformState();
+    // initPlatformState();
   }
 
   Future<void> initPlatformState() async {
@@ -140,7 +140,7 @@ class _PremiumPageState extends State<PremiumPage> {
                     children: [
                       Container(
                         width: 180,
-                        height: 165,
+                        height: 125,
                         decoration: const BoxDecoration(
                             borderRadius: BorderRadius.all(Radius.circular(20)),
                             color: ColorPalette.backgroundDarkGrey2),
@@ -149,7 +149,7 @@ class _PremiumPageState extends State<PremiumPage> {
                             Padding(
                               padding: EdgeInsets.fromLTRB(16, 12, 16, 0),
                               child: Text(
-                                'Seguridad ilimitada',
+                                'Seguridad ilimitada 30 diás',
                                 textAlign: TextAlign.center,
                                 style: GoogleFonts.barlow(
                                   fontSize: 22.0,
@@ -160,20 +160,20 @@ class _PremiumPageState extends State<PremiumPage> {
                                 ),
                               ),
                             ),
-                            Padding(
-                              padding: EdgeInsets.fromLTRB(16, 8, 16, 0),
-                              child: Text(
-                                _prefs.getPremiumPrice,
-                                textAlign: TextAlign.center,
-                                style: GoogleFonts.barlow(
-                                  fontSize: 24.0,
-                                  wordSpacing: 1,
-                                  letterSpacing: 1.2,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.white,
-                                ),
-                              ),
-                            )
+                            // Padding(
+                            //   padding: EdgeInsets.fromLTRB(16, 8, 16, 0),
+                            //   child: Text(
+                            //     _prefs.getPremiumPrice,
+                            //     textAlign: TextAlign.center,
+                            //     style: GoogleFonts.barlow(
+                            //       fontSize: 24.0,
+                            //       wordSpacing: 1,
+                            //       letterSpacing: 1.2,
+                            //       fontWeight: FontWeight.bold,
+                            //       color: Colors.white,
+                            //     ),
+                            //   ),
+                            // )
                           ],
                         ),
                       ),
@@ -301,15 +301,22 @@ class _PremiumPageState extends State<PremiumPage> {
       ),
       onChanged: (SlidableButtonPosition value) async {
         if (value == SlidableButtonPosition.end) {
-          if (widget.isFreeTrial) {
-            premiumController.requestPurchaseByProductId(
-                PremiumController.subscriptionFreeTrialId,
-                responseSubscription());
-          } else {
-            premiumController.requestPurchaseByProductId(
-                PremiumController.subscriptionFreeTrialId,
-                responseSubscription());
+          if (!_prefs.getUserFree) {
+            var premiumController = Get.put(PremiumController());
+            premiumController.updatePremiumAPIFree();
+
+            Navigator.of(context).pop();
           }
+
+          // if (widget.isFreeTrial) {
+          //   premiumController.requestPurchaseByProductId(
+          //       PremiumController.subscriptionFreeTrialId,
+          //       responseSubscription());
+          // } else {
+          //   premiumController.requestPurchaseByProductId(
+          //       PremiumController.subscriptionFreeTrialId,
+          //       responseSubscription());
+          // }
         }
       },
       child: Padding(

@@ -203,6 +203,7 @@ class _UseMobilePageState extends State<UseMobilePage> {
                           ).then((value) {
                             if (value != null && value) {
                               _prefs.setUserFree = false;
+                              _prefs.setUserPremium = true;
                               _prefs.setHabitsEnable = true;
                               _prefs.setHabitsRefresh = strDatetime;
                             }

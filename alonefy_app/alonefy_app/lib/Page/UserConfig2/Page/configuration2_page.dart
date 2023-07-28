@@ -357,14 +357,6 @@ class _UserConfigPageState2 extends State<UserConfigPage2> {
   void _submit(bool isFreeTrial) async {
     if (await updateUser()) {
       updateFirebaseToken();
-      if (isFreeTrial && _prefs.getUserFree) {
-        var premiumController = Get.put(PremiumController());
-        premiumController.updatePremiumAPIFree();
-        Get.off(
-          UseMobilePage(userbd: userbd!),
-        );
-        return;
-      }
 
       !_prefs.getUserPremium
           ? await Navigator.push(

@@ -5,6 +5,8 @@ import 'dart:ui';
 // import 'package:all_sensors2/all_sensors2.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
+import 'package:ifeelefine/Page/Premium/PageView/premium_moths_free.dart';
+import 'package:notification_center/notification_center.dart';
 
 import 'package:sensors_plus/sensors_plus.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -229,6 +231,9 @@ Future activateService() async {
       switch (notificationResponse.notificationResponseType) {
         case NotificationResponseType.selectedNotification:
           // selectNotificationStream.add(notificationResponse.payload);
+          if (notificationResponse.payload!.contains("free")) {
+            RedirectViewNotifier.onTapFreeNotification(notificationResponse);
+          }
           if (notificationResponse.payload!.contains("Inactived_")) {
             ismove = false;
             timerActive = true;
@@ -254,7 +259,7 @@ Future activateService() async {
                 notificationResponse.actionId!.indexOf('id='),
                 notificationResponse.actionId!.length);
             id = id.replaceAll("id=", "");
-
+            NotificationCenter().notify('getContactRisk');
             var taskIdList = getTaskIdList(taskIds);
             RedirectViewNotifier.onTapNotification(
                 notificationResponse, taskIdList, int.parse(id));
@@ -282,7 +287,11 @@ Future activateService() async {
             String taskIds =
                 notificationResponse.actionId!.replaceAll("dateHelp_", "");
             var taskIdList = getTaskIdList(taskIds);
+            NotificationCenter().notify('getContactRisk');
             MainService().sendAlertToContactImmediately(taskIdList);
+          }
+          if (notificationResponse.actionId!.contains("ok")) {
+            RedirectViewNotifier.onTapFreeNotification(notificationResponse);
           }
           if (notificationResponse.actionId != null &&
               notificationResponse.actionId!.contains("dateImgood")) {
@@ -293,7 +302,7 @@ Future activateService() async {
                 notificationResponse.actionId!.indexOf('id='),
                 notificationResponse.actionId!.length);
             id = id.replaceAll("id=", "");
-
+            NotificationCenter().notify('getContactRisk');
             var taskIdList = getTaskIdList(taskIds);
             RedirectViewNotifier.onTapNotification(
                 notificationResponse, taskIdList, int.parse(id));
@@ -308,6 +317,25 @@ Future activateService() async {
     alert: true,
     badge: true,
     sound: true,
+  );
+}
+
+// Método para mostrar la notificación local
+Future<void> showNotification() async {
+  const AndroidNotificationDetails androidPlatformChannelSpecifics =
+      AndroidNotificationDetails('channel_id', '',
+          importance: Importance.max, priority: Priority.high);
+
+  const NotificationDetails platformChannelSpecifics =
+      NotificationDetails(android: androidPlatformChannelSpecifics);
+
+  await flutterLocalNotificationsPlugin.show(
+    12,
+    'Notificación local',
+    'Toca para ir a otra pantalla',
+    platformChannelSpecifics,
+    payload:
+        'free', // Puedes agregar un payload para identificar la notificación
   );
 }
 
@@ -361,11 +389,12 @@ void onStart(ServiceInstance service) async {
     }
 
     if (_prefs.getDayFree != "0") {
+      DateTime dateTime = DateTime.parse(_prefs.getDayFree);
       DateTime fechaInicio = parseContactRiskDate(_prefs.getDayFree);
       DateTime fechaActual = DateTime.now();
 
       // Calcular la diferencia entre las fechas en días
-      int diferenciaEnDias = fechaActual.difference(fechaInicio).inDays;
+      int diferenciaEnDias = fechaActual.difference(dateTime).inDays;
 
       // Verificar si han pasado 30 días
       bool hanPasado30Dias = diferenciaEnDias >= 30;
@@ -378,7 +407,7 @@ void onStart(ServiceInstance service) async {
 
     increaceTime += 5;
     increaceTimeUpdate += 5;
-    if (_prefs.getUserFree) {
+    if (_prefs.getUserFree && !_prefs.getUserPremium) {
       if (time == increaceTime) {
         RedirectViewNotifier.showFreeeNotification();
       }
@@ -495,7 +524,7 @@ class _MyAppState extends State<MyApp> {
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
     ]).then((_) {
-      // Iniciar la grabación de video
+      DeviceOrientation.portraitUp;
     });
     super.initState();
   }

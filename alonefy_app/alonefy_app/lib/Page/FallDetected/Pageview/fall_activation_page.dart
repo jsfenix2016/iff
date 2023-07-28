@@ -110,6 +110,7 @@ class _FallActivationPageState extends State<FallActivationPage> {
                               ).then((value) {
                                 if (value != null && value) {
                                   _prefs.setUserFree = false;
+                                  _prefs.setUserPremium = true;
                                 }
                               });
 

@@ -57,7 +57,7 @@ class PremiumController extends GetxController {
       if (_response != null) {
         _response!(true);
 
-        if (_prefs.getUserFree) {
+        if (!_prefs.getUserFree) {
           _prefs.setUserPremium = true;
           _prefs.setUserFree = false;
           _updatePremiumAPI();

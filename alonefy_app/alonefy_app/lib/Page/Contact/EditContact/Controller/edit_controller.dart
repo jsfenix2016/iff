@@ -8,6 +8,7 @@ import 'package:ifeelefine/Data/hive_data.dart';
 import 'package:ifeelefine/Model/ApiRest/ContactApi.dart';
 import 'package:ifeelefine/Model/contact.dart';
 import 'package:ifeelefine/Page/Contact/Service/contactService.dart';
+import 'package:notification_center/notification_center.dart';
 
 class EditContactController extends GetxController {
   final ContactService contactServ = Get.put(ContactService());
@@ -46,9 +47,11 @@ class EditContactController extends GetxController {
             contactServ.updateImage(url, contact.photo!);
           }
           await const HiveData().saveUserContact(contact);
+          NotificationCenter().notify('getContact');
           // showAlertController(Constant.contactSaveCorrectly);
         } else {
           await const HiveData().updateContact(contact);
+          NotificationCenter().notify('getContact');
           // showAlertController(Constant.contactEditCorrectly);
         }
         return true;

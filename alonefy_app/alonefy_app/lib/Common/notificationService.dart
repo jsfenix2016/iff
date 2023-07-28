@@ -14,6 +14,7 @@ import 'package:ifeelefine/Controllers/mainController.dart';
 import 'package:ifeelefine/Data/hiveRisk_data.dart';
 import 'package:ifeelefine/Data/hive_constant_adapterInit.dart';
 import 'package:ifeelefine/Model/contactRiskBD.dart';
+import 'package:ifeelefine/Page/Premium/PageView/premium_moths_free.dart';
 import 'package:ifeelefine/Page/Risk/DateRisk/Controller/editRiskController.dart';
 import 'package:ifeelefine/Page/Risk/DateRisk/Pageview/cancelDatePage.dart';
 import 'package:ifeelefine/main.dart';
@@ -46,6 +47,27 @@ class RedirectViewNotifier with ChangeNotifier {
         ),
       ),
     );
+  }
+
+  static Future<void> onTapFreeNotification(
+      NotificationResponse? response) async {
+    if (RedirectViewNotifier.context == null || response?.payload == null)
+      return;
+
+    await Navigator.push(
+      RedirectViewNotifier.context!,
+      MaterialPageRoute(
+        builder: (context) => const PremiumMothFree(
+            img: 'pantalla3.png',
+            title: "Prueba la versión gratuita por 30 días",
+            subtitle: ''),
+      ),
+    ).then((value) {
+      if (value != null && value) {
+        Navigator.of(context!).pop();
+      }
+    });
+    //
   }
 
   static Future<void> manageNotifications(RemoteMessage message) async {
@@ -316,21 +338,33 @@ class RedirectViewNotifier with ChangeNotifier {
     await flutterLocalNotificationsPlugin.show(
       11,
       "No estas protegido",
-      "Activa la versión premium",
+      "Prueba la versión completa por 30 días",
       const NotificationDetails(
         android: AndroidNotificationDetails(
           '10',
           'MY FOREGROUND SERVICE',
           icon: '@mipmap/logo_alertfriends',
           color: ColorPalette.principal,
-          importance: Importance.high,
+
+          importance: Importance.max,
           ongoing: false,
           enableLights: true,
           playSound: true,
           enableVibration: true,
           channelShowBadge: false,
           priority: Priority.high,
+
           largeIcon: DrawableResourceAndroidBitmap('@mipmap/logo_alertfriends'),
+          actions: <AndroidNotificationAction>[
+            AndroidNotificationAction(
+              "ok",
+              "Probar",
+              icon: const DrawableResourceAndroidBitmap(
+                  '@mipmap/logo_alertfriends'),
+              showsUserInterface: true,
+              cancelNotification: true,
+            ),
+          ],
           // sound: RawResourceAndroidNotificationSound(
           //     "content://media/internal/audio/media/26.wav"),
         ),

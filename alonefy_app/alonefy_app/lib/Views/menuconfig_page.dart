@@ -93,7 +93,7 @@ class _MenuConfigurationPageState extends State<MenuConfigurationPage> {
 
     switch (index) {
       case 0:
-        if (!prefs.isConfig) {
+        if (!prefs.isConfig && !_prefs.getUserFree) {
           redirectToConfigUser();
           return;
         }
@@ -103,7 +103,7 @@ class _MenuConfigurationPageState extends State<MenuConfigurationPage> {
         );
         break;
       case 1:
-        if (!prefs.isConfig) {
+        if (!prefs.isConfig && !_prefs.getUserFree) {
           redirectToConfigUser();
           return;
         }
@@ -118,7 +118,7 @@ class _MenuConfigurationPageState extends State<MenuConfigurationPage> {
         break;
 
       case 2:
-        if (!prefs.isConfig) {
+        if (!prefs.isConfig && !_prefs.getUserFree) {
           redirectToConfigUser();
           return;
         }
@@ -130,7 +130,7 @@ class _MenuConfigurationPageState extends State<MenuConfigurationPage> {
         );
         break;
       case 3:
-        if (!prefs.isConfig) {
+        if (!prefs.isConfig && !_prefs.getUserFree) {
           redirectToConfigUser();
           return;
         }
@@ -142,7 +142,7 @@ class _MenuConfigurationPageState extends State<MenuConfigurationPage> {
         );
         break;
       case 4:
-        if (!prefs.isConfig) {
+        if (!prefs.isConfig && !_prefs.getUserFree) {
           redirectToConfigUser();
           return;
         }
@@ -154,7 +154,7 @@ class _MenuConfigurationPageState extends State<MenuConfigurationPage> {
         );
         break;
       case 5:
-        if (!prefs.isConfig) {
+        if (!prefs.isConfig && !_prefs.getUserFree) {
           redirectToConfigUser();
           return;
         }
@@ -166,7 +166,7 @@ class _MenuConfigurationPageState extends State<MenuConfigurationPage> {
         );
         break;
       case 6:
-        if (!prefs.isConfig) {
+        if (!prefs.isConfig && !_prefs.getUserFree) {
           redirectToConfigUser();
           return;
         }
@@ -178,7 +178,7 @@ class _MenuConfigurationPageState extends State<MenuConfigurationPage> {
         );
         break;
       case 7:
-        if (!prefs.isConfig) {
+        if (!prefs.isConfig && !_prefs.getUserFree) {
           redirectToConfigUser();
           return;
         }
@@ -190,7 +190,7 @@ class _MenuConfigurationPageState extends State<MenuConfigurationPage> {
         );
         break;
       case 8:
-        if (!prefs.isConfig) {
+        if (!prefs.isConfig && !_prefs.getUserFree) {
           redirectToConfigUser();
           return;
         }
@@ -202,7 +202,7 @@ class _MenuConfigurationPageState extends State<MenuConfigurationPage> {
         );
         break;
       case 9:
-        if (!prefs.isConfig) {
+        if (!prefs.isConfig && !_prefs.getUserFree) {
           redirectToConfigUser();
           return;
         }

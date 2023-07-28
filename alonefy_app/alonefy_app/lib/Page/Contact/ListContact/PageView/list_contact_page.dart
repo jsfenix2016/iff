@@ -8,6 +8,7 @@ import 'package:ifeelefine/Common/manager_alerts.dart';
 import 'package:ifeelefine/Common/utils.dart';
 import 'package:ifeelefine/Page/Contact/ListContact/Controller/list_contact_controller.dart';
 import 'package:ifeelefine/Provider/prefencesUser.dart';
+import 'package:notification_center/notification_center.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 class ListContact extends StatefulWidget {
@@ -29,6 +30,7 @@ class _ListContactState extends State<ListContact> {
   @override
   void initState() {
     super.initState();
+    NotificationCenter().subscribe('getContact', _getContacts);
     // Get the list of contacts from the device
     _checkPermissionIsEnabled();
   }

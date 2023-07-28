@@ -502,214 +502,196 @@ class _PreviewActivitiesByDateState extends State<PreviewActivitiesByDate>
                   ),
                   Expanded(
                     child: Padding(
-                        padding: EdgeInsets.fromLTRB(
-                            16, 24, 16, widget.isMenu ? 100 : 150),
-                        child: ListView.builder(
-                            shrinkWrap: true,
-                            itemCount: _days.length,
-                            itemBuilder: (BuildContext context, int index) {
-                              return Column(
-                                children: [
-                                  Padding(
-                                      padding: const EdgeInsets.fromLTRB(
-                                          16, 8, 0, 0),
-                                      child: Align(
-                                        alignment: Alignment.centerLeft,
-                                        child: Text(
-                                          Jiffy(_days[index])
-                                              .format(getShortPattern())
-                                              .capitalizeFirst!,
-                                          textAlign: TextAlign.left,
-                                          style: GoogleFonts.barlow(
-                                            fontSize: 16.0,
-                                            wordSpacing: 1,
-                                            letterSpacing: 1.2,
-                                            fontWeight: FontWeight.w600,
-                                            color: Colors.white,
-                                          ),
-                                        ),
-                                      )),
-                                  Padding(
-                                      padding:
-                                          const EdgeInsets.fromLTRB(0, 4, 0, 0),
-                                      child: Container(
-                                        height: 2,
-                                        decoration: const BoxDecoration(
-                                            color: ColorPalette.secondView),
-                                      )),
-                                  Padding(
-                                      padding:
-                                          const EdgeInsets.fromLTRB(0, 0, 0, 0),
-                                      child: ListView.builder(
-                                          physics:
-                                              const NeverScrollableScrollPhysics(),
-                                          shrinkWrap: true,
-                                          itemCount:
-                                              _activitiesByDay[index]!.length,
-                                          itemBuilder: (BuildContext context,
-                                              int indexActivity) {
-                                            return Container(
-                                              height: 80,
-                                              margin: const EdgeInsets.fromLTRB(
-                                                  0, 8, 0, 0),
-                                              decoration: BoxDecoration(
-                                                  color:
-                                                      ColorPalette.itemActivity,
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          20)),
-                                              child: Stack(
-                                                children: [
-                                                  Positioned(
-                                                      top: 16,
-                                                      left: 16,
-                                                      child: Text(
-                                                        rangeTimeToString(
-                                                            _activitiesByDay[
-                                                                        index]![
-                                                                    indexActivity]
-                                                                .timeStart,
-                                                            _activitiesByDay[
-                                                                        index]![
-                                                                    indexActivity]
-                                                                .timeFinish),
-                                                        //_activitiesByDay[index]![indexActivity].activity,
-                                                        textAlign:
-                                                            TextAlign.left,
-                                                        style:
-                                                            GoogleFonts.barlow(
-                                                          fontSize: 16.0,
-                                                          wordSpacing: 1,
-                                                          letterSpacing: 1.2,
-                                                          fontWeight:
-                                                              FontWeight.w400,
-                                                          color: Colors.white,
-                                                        ),
-                                                      )),
-                                                  Positioned(
-                                                      top: 36,
-                                                      bottom: 16,
-                                                      left: 16,
-                                                      child: Text(
-                                                        _activitiesByDay[
-                                                                    index]![
-                                                                indexActivity]
-                                                            .activity,
-                                                        textAlign:
-                                                            TextAlign.left,
-                                                        style:
-                                                            GoogleFonts.barlow(
-                                                          fontSize: 16.0,
-                                                          wordSpacing: 1,
-                                                          letterSpacing: 1.2,
-                                                          fontWeight:
-                                                              FontWeight.w600,
-                                                          color: Colors.white,
-                                                        ),
-                                                      )),
-                                                  Positioned(
-                                                    top: 0,
-                                                    right: 4,
-                                                    child: IconButton(
-                                                      padding: EdgeInsets.zero,
-                                                      icon: Container(
-                                                        width: 15,
-                                                        height: 20,
-                                                        decoration:
-                                                            const BoxDecoration(
-                                                          image:
-                                                              DecorationImage(
-                                                            image: AssetImage(
-                                                                'assets/images/trash.png'),
-                                                            fit: BoxFit.fill,
-                                                          ),
-                                                        ),
-                                                      ),
-                                                      onPressed: () {
-                                                        addIsRemoved(
-                                                            _activitiesByDay[
-                                                                    index]![
-                                                                indexActivity],
-                                                            _days[index]);
-                                                        controller.updateActivity(
-                                                            _activitiesByDay[
-                                                                    index]![
-                                                                indexActivity]);
-                                                        controller.updateActivityApi(
-                                                            _activitiesByDay[
-                                                                    index]![
-                                                                indexActivity]);
-                                                        _activitiesByDay[index]!
-                                                            .removeAt(
-                                                                indexActivity);
-                                                        setState(() {});
-                                                        filterActivitiesByRangeDate();
-                                                        updateActivitiesName();
-                                                      },
-                                                    ),
+                      padding: EdgeInsets.fromLTRB(
+                          16, 24, 16, widget.isMenu ? 100 : 150),
+                      child: ListView.builder(
+                        shrinkWrap: true,
+                        itemCount: _days.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          return Column(
+                            children: [
+                              Padding(
+                                  padding:
+                                      const EdgeInsets.fromLTRB(16, 8, 0, 0),
+                                  child: Align(
+                                    alignment: Alignment.centerLeft,
+                                    child: Text(
+                                      Jiffy(_days[index])
+                                          .format(getShortPattern())
+                                          .capitalizeFirst!,
+                                      textAlign: TextAlign.left,
+                                      style: GoogleFonts.barlow(
+                                        fontSize: 16.0,
+                                        wordSpacing: 1,
+                                        letterSpacing: 1.2,
+                                        fontWeight: FontWeight.w600,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  )),
+                              Padding(
+                                  padding:
+                                      const EdgeInsets.fromLTRB(0, 4, 0, 0),
+                                  child: Container(
+                                    height: 2,
+                                    decoration: const BoxDecoration(
+                                        color: ColorPalette.secondView),
+                                  )),
+                              Padding(
+                                padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
+                                child: ListView.builder(
+                                  physics: const NeverScrollableScrollPhysics(),
+                                  shrinkWrap: true,
+                                  itemCount: _activitiesByDay[index]!.length,
+                                  itemBuilder: (BuildContext context,
+                                      int indexActivity) {
+                                    return Container(
+                                      height: 80,
+                                      margin:
+                                          const EdgeInsets.fromLTRB(0, 8, 0, 0),
+                                      decoration: BoxDecoration(
+                                          color: ColorPalette.itemActivity,
+                                          borderRadius:
+                                              BorderRadius.circular(20)),
+                                      child: Stack(
+                                        children: [
+                                          Positioned(
+                                              top: 16,
+                                              left: 16,
+                                              child: Text(
+                                                rangeTimeToString(
+                                                    _activitiesByDay[index]![
+                                                            indexActivity]
+                                                        .timeStart,
+                                                    _activitiesByDay[index]![
+                                                            indexActivity]
+                                                        .timeFinish),
+                                                //_activitiesByDay[index]![indexActivity].activity,
+                                                textAlign: TextAlign.left,
+                                                style: GoogleFonts.barlow(
+                                                  fontSize: 16.0,
+                                                  wordSpacing: 1,
+                                                  letterSpacing: 1.2,
+                                                  fontWeight: FontWeight.w400,
+                                                  color: Colors.white,
+                                                ),
+                                              )),
+                                          Positioned(
+                                              top: 36,
+                                              bottom: 16,
+                                              left: 16,
+                                              child: Text(
+                                                _activitiesByDay[index]![
+                                                        indexActivity]
+                                                    .activity,
+                                                textAlign: TextAlign.left,
+                                                style: GoogleFonts.barlow(
+                                                  fontSize: 16.0,
+                                                  wordSpacing: 1,
+                                                  letterSpacing: 1.2,
+                                                  fontWeight: FontWeight.w600,
+                                                  color: Colors.white,
+                                                ),
+                                              )),
+                                          Positioned(
+                                            top: 0,
+                                            right: 4,
+                                            child: IconButton(
+                                              padding: EdgeInsets.zero,
+                                              icon: Container(
+                                                width: 15,
+                                                height: 20,
+                                                decoration: const BoxDecoration(
+                                                  image: DecorationImage(
+                                                    image: AssetImage(
+                                                        'assets/images/trash.png'),
+                                                    fit: BoxFit.fill,
                                                   ),
-                                                  Positioned(
-                                                      top: 36,
-                                                      right: 4,
-                                                      child: Transform.scale(
-                                                          scale: 0.7,
-                                                          child: FutureBuilder<
-                                                                  bool>(
-                                                              future: isDeactivated(
+                                                ),
+                                              ),
+                                              onPressed: () {
+                                                addIsRemoved(
+                                                    _activitiesByDay[index]![
+                                                        indexActivity],
+                                                    _days[index]);
+                                                controller.updateActivity(
+                                                    _activitiesByDay[index]![
+                                                        indexActivity]);
+                                                controller.updateActivityApi(
+                                                    _activitiesByDay[index]![
+                                                        indexActivity]);
+                                                _activitiesByDay[index]!
+                                                    .removeAt(indexActivity);
+                                                setState(() {});
+                                                filterActivitiesByRangeDate();
+                                                updateActivitiesName();
+                                              },
+                                            ),
+                                          ),
+                                          Positioned(
+                                              top: 36,
+                                              right: 4,
+                                              child: Transform.scale(
+                                                  scale: 0.7,
+                                                  child: FutureBuilder<bool>(
+                                                      future: isDeactivated(
+                                                          _activitiesByDay[
+                                                                  index]![
+                                                              indexActivity],
+                                                          _days[index]),
+                                                      builder: (BuildContext
+                                                              context,
+                                                          AsyncSnapshot<bool>
+                                                              snapshot) {
+                                                        return CupertinoSwitch(
+                                                          value: snapshot
+                                                                  .hasData
+                                                              ? snapshot.data!
+                                                              : false,
+                                                          activeColor:
+                                                              ColorPalette
+                                                                  .activeSwitch,
+                                                          trackColor:
+                                                              CupertinoColors
+                                                                  .inactiveGray,
+                                                          onChanged:
+                                                              (bool value) {
+                                                            if (value) {
+                                                              addIsDeactivated(
                                                                   _activitiesByDay[
                                                                           index]![
                                                                       indexActivity],
-                                                                  _days[index]),
-                                                              builder: (BuildContext
-                                                                      context,
-                                                                  AsyncSnapshot<
-                                                                          bool>
-                                                                      snapshot) {
-                                                                return CupertinoSwitch(
-                                                                  value: snapshot
-                                                                          .hasData
-                                                                      ? snapshot
-                                                                          .data!
-                                                                      : false,
-                                                                  activeColor:
-                                                                      ColorPalette
-                                                                          .activeSwitch,
-                                                                  trackColor:
-                                                                      CupertinoColors
-                                                                          .inactiveGray,
-                                                                  onChanged: (bool
-                                                                      value) {
-                                                                    if (value) {
-                                                                      addIsDeactivated(
-                                                                          _activitiesByDay[index]![
-                                                                              indexActivity],
-                                                                          _days[
-                                                                              index]);
-                                                                    } else {
-                                                                      removeIsDeactivated(
-                                                                          _activitiesByDay[index]![
-                                                                              indexActivity],
-                                                                          _days[
-                                                                              index]);
-                                                                    }
-                                                                    controller.updateActivity(
-                                                                        _activitiesByDay[index]![
-                                                                            indexActivity]);
-                                                                    controller.updateActivityApi(
-                                                                        _activitiesByDay[index]![
-                                                                            indexActivity]);
-                                                                    setState(
-                                                                        () {});
-                                                                  },
-                                                                );
-                                                              })))
-                                                ],
-                                              ),
-                                            );
-                                          })),
-                                ],
-                              );
-                            })),
+                                                                  _days[index]);
+                                                            } else {
+                                                              removeIsDeactivated(
+                                                                  _activitiesByDay[
+                                                                          index]![
+                                                                      indexActivity],
+                                                                  _days[index]);
+                                                            }
+                                                            controller.updateActivity(
+                                                                _activitiesByDay[
+                                                                        index]![
+                                                                    indexActivity]);
+                                                            controller.updateActivityApi(
+                                                                _activitiesByDay[
+                                                                        index]![
+                                                                    indexActivity]);
+                                                            setState(() {});
+                                                          },
+                                                        );
+                                                      })))
+                                        ],
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ),
+                            ],
+                          );
+                        },
+                      ),
+                    ),
                   ),
                 ],
               ),
