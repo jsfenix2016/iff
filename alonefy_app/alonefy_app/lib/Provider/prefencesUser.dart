@@ -180,6 +180,22 @@ class PreferenceUser {
     return _prefs.getBool('userPremium') ?? false;
   }
 
+  get getUserFree {
+    return _prefs.getBool('userFree') ?? false;
+  }
+
+  get getDayFree {
+    return _prefs.getString('DayFree') ?? "0";
+  }
+
+  set setDayFree(String value) {
+    _prefs.setString('DayFree', value);
+  }
+
+  set setUserFree(bool value) {
+    _prefs.setBool('userFree', value);
+  }
+
   set setUserPremium(bool value) {
     _prefs.setBool('userPremium', value);
   }

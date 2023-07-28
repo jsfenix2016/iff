@@ -1,14 +1,14 @@
 class Constant {
   static const baseApi = 'https://dev.alertfriends.app';
   static const baseApiMessageBird = 'https://rest.messagebird.com/';
-  static const codeMessageBird = '';
+  static const codeMessageBird = 'Oyc2K3GX31JOyQmtsoerHXqX0';
   static const urlTerms = 'https://alertfriends.app/politica_privacidad/';
   static const personalInformation = 'Datos personales';
   static const selectGender = 'Selecciona el género';
   static const selectCity = 'Selecciona la ciudad';
   static const maritalStatus = 'Estado civil';
   static const styleLive = 'Estilo de vida';
-  static const telephone = 'Telefono';
+  static const telephone = 'Teléfono';
   static const telephonePlaceholder = 'Ingresa un teléfono';
   static const nameUser = 'Nombre';
   static const namePlaceholder = 'Ingresa un nombre';
@@ -51,7 +51,7 @@ class Constant {
   static const alternativePageButtonPersonalizar = 'Personalizar ajustes';
   static const alternativePageButtonInit = 'Comenzar a usar';
 
-  static const userConfigPageButtonFree = 'Gratuito 30 dias';
+  static const userConfigPageButtonFree = 'Gratuito 30 días';
   static const userConfigPageButtonProtection = 'Protección 360';
   static const userConfigPageButtonConfig = 'Configurar';
 
@@ -373,7 +373,7 @@ class Constant {
   static const String codeError = 'El código no coincide';
   static const String deletectGeneric = "Eliminado correctamente";
   static const String codeValid = "Código válido";
-  static const String codeInvalid = "Código válido";
+  static const String codeInvalid = "Código inválido";
   static const String saveData = "Datos guardados";
   static const String ok = "Ok";
 

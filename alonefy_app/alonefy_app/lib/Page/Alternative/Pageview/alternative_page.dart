@@ -46,7 +46,7 @@ class _AlternativePagePageState extends State<AlternativePage> {
                     ),
                   ),
                   Text(
-                    "AlertFriend",
+                    "AlertFriends",
                     textAlign: TextAlign.center,
                     style: GoogleFonts.barlow(
                       fontSize: 44.5,
@@ -98,7 +98,7 @@ class _AlternativePagePageState extends State<AlternativePage> {
                                 ),
                                 children: <TextSpan>[
                                   TextSpan(
-                                    text: " AlertFriend",
+                                    text: " AlertFriends",
                                     style: textNormal16Black(),
                                   ),
                                 ],

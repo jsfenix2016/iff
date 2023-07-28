@@ -11,6 +11,7 @@ import 'package:ifeelefine/Common/utils.dart';
 
 import 'package:ifeelefine/Model/user.dart';
 import 'package:ifeelefine/Model/userbd.dart';
+import 'package:ifeelefine/Page/Premium/Controller/premium_controller.dart';
 import 'package:ifeelefine/Page/Premium/PageView/premium_page.dart';
 import 'package:ifeelefine/Page/UseMobil/PageView/configurationUseMobile_page.dart';
 
@@ -30,7 +31,6 @@ import 'package:country_state_city_picker/model/select_status_model.dart'
 
 import 'package:ifeelefine/Common/decoration_custom.dart';
 
-// ignore: use_key_in_widget_constructors
 class UserConfigPage2 extends StatefulWidget {
   const UserConfigPage2({super.key, required this.userbd});
   final UserBD userbd;
@@ -273,12 +273,17 @@ class _UserConfigPageState2 extends State<UserConfigPage2> {
                     ),
                   ),
                 ),
+                ElevateButtonCustomBorder(
+                    onChanged: ((value) {
+                      free(true);
+                    }),
+                    mensaje: "Gratuito"),
                 const SizedBox(height: 20),
                 ElevateButtonCustomBorder(
                     onChanged: ((value) {
-                      _submit(true);
+                      free(false);
                     }),
-                    mensaje: "Gratuito 30 dias"),
+                    mensaje: "Gratuito 30 días"),
                 const SizedBox(height: 20),
                 _createButtonPremium(),
                 const SizedBox(height: 20),
@@ -319,7 +324,25 @@ class _UserConfigPageState2 extends State<UserConfigPage2> {
     );
   }
 
-  void _submit(bool isFreeTrial) async {
+  void free(bool isFree) async {
+    if (await updateUser()) {
+      updateFirebaseToken();
+
+      var premiumController = Get.put(PremiumController());
+      premiumController.updatePremiumAPIFree();
+      _prefs.setUserFree = isFree;
+      if (!isFree) {
+        _prefs.setUserPremium = true;
+        _prefs.setDayFree = DateTime.now().toString();
+      }
+
+      Get.off(
+        UseMobilePage(userbd: userbd!),
+      );
+    }
+  }
+
+  Future<bool> updateUser() async {
     userbd!.age = user!.age;
     userbd!.city = user!.city;
     userbd!.styleLife = user!.styleLife;
@@ -327,8 +350,21 @@ class _UserConfigPageState2 extends State<UserConfigPage2> {
     userbd!.gender = user!.gender;
     userbd!.country = user!.country;
     bool isupdate = await userConfigVC.updateUserDate(userbd!);
-    if (isupdate) {
+
+    return isupdate;
+  }
+
+  void _submit(bool isFreeTrial) async {
+    if (await updateUser()) {
       updateFirebaseToken();
+      if (isFreeTrial && _prefs.getUserFree) {
+        var premiumController = Get.put(PremiumController());
+        premiumController.updatePremiumAPIFree();
+        Get.off(
+          UseMobilePage(userbd: userbd!),
+        );
+        return;
+      }
 
       !_prefs.getUserPremium
           ? await Navigator.push(

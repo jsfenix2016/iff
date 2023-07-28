@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
 import 'package:ifeelefine/Common/Constant.dart';
+import 'package:ifeelefine/Common/manager_alerts.dart';
 import 'package:ifeelefine/Model/contact.dart';
 import 'package:ifeelefine/Page/Contact/EditContact/Controller/edit_controller.dart';
 import 'package:ifeelefine/Utils/Widgets/elevateButtonCustomBorder.dart';
@@ -24,9 +25,9 @@ class _EditContactState extends State<EditContact> {
   var indexSelect = -1;
 
   bool isPremium = true;
-  late String timeSMS = "5 min";
-  late String timeCall = "10 min";
-
+  late String timeSMS = "10 min";
+  late String timeCall = "20 min";
+  bool isAutorice = false;
   @override
   void initState() {
     // userVC.g
@@ -95,15 +96,45 @@ class _EditContactState extends State<EditContact> {
                         height: 10,
                       ),
                       Container(
-                        height: 230,
+                        height: 290,
                         color: Colors.transparent,
-                        child: SelectTimerCallSendSMS(
-                          onChanged: (TimerCallSendSmsModel value) {
-                            timeSMS = value.sendSMS;
-                            timeCall = value.call;
-                          },
-                          sendSm: widget.contact.timeSendSMS,
-                          timeCall: widget.contact.timeCall,
+                        child: Column(
+                          children: [
+                            SelectTimerCallSendSMS(
+                              onChanged: (TimerCallSendSmsModel value) {
+                                timeSMS = value.sendSMS;
+                                timeCall = value.call;
+                              },
+                              sendSm: widget.contact.timeSendSMS,
+                              timeCall: widget.contact.timeCall,
+                            ),
+                            Container(
+                              height: 20,
+                            ),
+                            ElevateButtonCustomBorder(
+                              onChanged: (value) async {
+                                ContactBD contactBD = ContactBD(
+                                    "", null, "", "", "", "", "", "Pendiente");
+
+                                contactBD.displayName =
+                                    widget.contact.displayName;
+                                contactBD.name = widget.contact.displayName;
+                                contactBD.phones = widget.contact.phones;
+                                contactBD.photo = widget.contact.photo;
+                                contactBD.timeSendSMS = timeSMS;
+                                contactBD.timeCall = timeCall;
+                                contactBD.timeWhatsapp =
+                                    widget.contact.timeWhatsapp;
+                                bool save = await contactVC.saveContact(
+                                    context, contactBD);
+                                if (save) {
+                                  isAutorice = true;
+                                  contactVC.authoritationContact(context);
+                                }
+                              },
+                              mensaje: "Solicitar autorización",
+                            ),
+                          ],
                         ),
                       ),
                     ],
@@ -114,17 +145,13 @@ class _EditContactState extends State<EditContact> {
             ElevateButtonCustomBorder(
               onChanged: (value) async {
                 if (value) {
-                  ContactBD contactBD =
-                      ContactBD("", null, "", "", "", "", "", "Pendiente");
-
-                  contactBD.displayName = widget.contact.displayName;
-                  contactBD.name = widget.contact.displayName;
-                  contactBD.phones = widget.contact.phones;
-                  contactBD.photo = widget.contact.photo;
-                  contactBD.timeSendSMS = timeSMS;
-                  contactBD.timeCall = timeCall;
-                  contactBD.timeWhatsapp = widget.contact.timeWhatsapp;
-                  await contactVC.saveContact(context, contactBD);
+                  if (!isAutorice) {
+                    showSaveAlert(context, Constant.info,
+                        "Antes de continuar debe solicitar la autorización del contacto");
+                    return;
+                  }
+                  showSaveAlert(
+                      context, Constant.info, Constant.contactSaveCorrectly);
 
                   NotificationCenter().notify('getContact');
                 }

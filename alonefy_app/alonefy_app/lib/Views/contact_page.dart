@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ifeelefine/Common/Constant.dart';
 import 'package:ifeelefine/Common/colorsPalette.dart';
+import 'package:ifeelefine/Common/manager_alerts.dart';
 
 import 'package:ifeelefine/Common/utils.dart';
 import 'package:ifeelefine/Controllers/contactUserController.dart';
@@ -36,9 +37,9 @@ class _ContactListState extends State<ContactList> {
 
   bool isPremium = true;
   bool isDeleteContact = false;
-  late String timeSMS = "00:00 AM";
-  late String timeCall = "00:00 AM";
-
+  late String timeSMS = "20 min";
+  late String timeCall = "20 min";
+  bool isAutorice = false;
   @override
   void initState() {
     if (!widget.isMenu) _prefs.saveLastScreenRoute("contact");
@@ -65,8 +66,7 @@ class _ContactListState extends State<ContactList> {
       ),
       onChanged: (SlidableButtonPosition value) async {
         if (value == SlidableButtonPosition.end) {
-          if (_prefs.getUserPremium ||
-              _selectedContacts.isEmpty) {
+          if (_prefs.getUserPremium || _selectedContacts.isEmpty) {
             await showDialog(
               context: context,
               builder: (BuildContext context) => AlertDialog(
@@ -106,7 +106,9 @@ class _ContactListState extends State<ContactList> {
                 child: Text(
                   (_prefs.getUserPremium)
                       ? 'Agregar mas contactos'
-                      : "Obtener Premium",
+                      : _prefs.getUserFree && _selectedContacts.isNotEmpty
+                          ? "Obtener Premium"
+                          : "Agregar contato",
                   textAlign: TextAlign.center,
                   style: GoogleFonts.barlow(
                     fontSize: 16.0,
@@ -151,7 +153,7 @@ class _ContactListState extends State<ContactList> {
             Padding(
               padding: const EdgeInsets.only(top: 20.0, left: 8.0, right: 8.0),
               child: Text(
-                "Selecciona un contacto para solicitarle autorización de envio de sms y de llamadas.",
+                "Selecciona un contacto para solicitarle autorización de envío de sms y de llamadas.",
                 textAlign: TextAlign.center,
                 style: GoogleFonts.barlow(
                   fontSize: 16.0,
@@ -245,13 +247,22 @@ class _ContactListState extends State<ContactList> {
                                       timeSMS = value.sendSMS;
                                       timeCall = value.call;
                                     },
-                                    sendSm: '5 min',
-                                    timeCall: '10 min',
+                                    sendSm: '20 min',
+                                    timeCall: '20 min',
                                   ),
                                 ),
                                 ElevateButtonCustomBorder(
                                   onChanged: (value) async {
-                                    contactVC.authoritationContact(context);
+                                    var save = await contactVC.saveListContact(
+                                        context,
+                                        _selectedContacts,
+                                        timeSMS,
+                                        timeCall,
+                                        "5 min");
+                                    if (save) {
+                                      isAutorice = true;
+                                      contactVC.authoritationContact(context);
+                                    }
                                   },
                                   mensaje: "Solicitar autorización",
                                 ),
@@ -272,11 +283,13 @@ class _ContactListState extends State<ContactList> {
             ElevateButtonCustomBorder(
               onChanged: (value) async {
                 if (value) {
-                  // ignore: use_build_context_synchronously
-                  await contactVC.saveListContact(
-                      context, _selectedContacts, timeSMS, timeCall, "5 min");
+                  if (!isAutorice) {
+                    showSaveAlert(context, Constant.info,
+                        "Antes de continuar debe solicitar la autorización del contacto");
+                    return;
+                  }
+
                   if (widget.isMenu == false) {
-                    // ignore: use_build_context_synchronously
                     Navigator.push(
                       context,
                       MaterialPageRoute(

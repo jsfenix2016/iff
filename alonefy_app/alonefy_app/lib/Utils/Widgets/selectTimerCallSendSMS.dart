@@ -2,6 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ifeelefine/Common/Constant.dart';
+import 'package:ifeelefine/Page/Premium/PageView/premium_page.dart';
+import 'package:ifeelefine/Provider/prefencesUser.dart';
 
 class TimerCallSendSmsModel {
   late String call;
@@ -26,8 +28,8 @@ class SelectTimerCallSendSMS extends StatefulWidget {
 
 class _SelectTimerCallSendSMSState extends State<SelectTimerCallSendSMS> {
   late TimerCallSendSmsModel timer = TimerCallSendSmsModel("", "");
-
-  var initialSMSValue = 0;
+  final PreferenceUser prefs = PreferenceUser();
+  var initialSMSValue = 1;
   var initialCallValue = 0;
 
   @override
@@ -76,45 +78,62 @@ class _SelectTimerCallSendSMSState extends State<SelectTimerCallSendSMS> {
             SizedBox(
               width: 200,
               height: 90,
-              child: CupertinoPicker(
-                backgroundColor: Colors.transparent,
-                onSelectedItemChanged: (int value) {
-                  var sendSMS = Constant.timeDic[value.toString()].toString();
-                  timer.sendSMS = sendSMS;
-                  widget.onChanged(timer);
+              child: GestureDetector(
+                onVerticalDragEnd: (drag) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const PremiumPage(
+                            isFreeTrial: false,
+                            img: 'Pantalla5.jpg',
+                            title: Constant.premiumChangeTimeTitle,
+                            subtitle: '')),
+                  );
                 },
-                scrollController:
-                    FixedExtentScrollController(initialItem: initialSMSValue),
-                itemExtent: 70.0,
-                children: [
-                  for (var i = 0; i <= Constant.timeDic.length; i++)
-                    SizedBox(
-                      height: 64,
-                      width: 175,
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            Constant.timeDic[i.toString()].toString(),
-                            textAlign: TextAlign.center,
-                            style: GoogleFonts.barlow(
-                              fontSize: 36.0,
-                              wordSpacing: 1,
-                              letterSpacing: 0.001,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
-                            ),
+                child: AbsorbPointer(
+                  absorbing: prefs.getUserFree,
+                  child: CupertinoPicker(
+                    backgroundColor: Colors.transparent,
+                    onSelectedItemChanged: (int value) {
+                      var sendSMS =
+                          Constant.timeDic[value.toString()].toString();
+                      timer.sendSMS = sendSMS;
+                      widget.onChanged(timer);
+                    },
+                    scrollController: FixedExtentScrollController(
+                        initialItem: initialSMSValue),
+                    itemExtent: 70.0,
+                    children: [
+                      for (var i = 0; i <= Constant.timeDic.length; i++)
+                        SizedBox(
+                          height: 64,
+                          width: 175,
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                Constant.timeDic[i.toString()].toString(),
+                                textAlign: TextAlign.center,
+                                style: GoogleFonts.barlow(
+                                  fontSize: 36.0,
+                                  wordSpacing: 1,
+                                  letterSpacing: 0.001,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                ),
+                              ),
+                              Container(
+                                height: 2,
+                                width: 100,
+                                color: Colors.white,
+                              ),
+                            ],
                           ),
-                          Container(
-                            height: 2,
-                            width: 100,
-                            color: Colors.white,
-                          ),
-                        ],
-                      ),
-                    ),
-                ],
+                        ),
+                    ],
+                  ),
+                ),
               ),
             ),
           ],
@@ -141,50 +160,66 @@ class _SelectTimerCallSendSMSState extends State<SelectTimerCallSendSMS> {
               ),
             ),
             const SizedBox(height: 10),
-            SizedBox(
-              width: 200,
-              height: 90,
-              child: CupertinoPicker(
-                backgroundColor: Colors.transparent,
-                onSelectedItemChanged: (int value) {
-                  var call = Constant.timeDic[value.toString()].toString();
-                  timer.call = call;
-                  widget.onChanged(timer);
-                },
-                scrollController:
-                    FixedExtentScrollController(initialItem: initialCallValue),
-                itemExtent: 70.0,
-                children: [
-                  for (var i = 0; i <= Constant.timeDic.length; i++)
-                    SizedBox(
-                      height: 64,
-                      width: 175,
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(
-                            Constant.timeDic[i.toString()].toString(),
-                            textAlign: TextAlign.center,
-                            style: GoogleFonts.barlow(
-                              fontSize: 36.0,
-                              wordSpacing: 1,
-                              letterSpacing: 0.001,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
-                            ),
+            GestureDetector(
+              child: AbsorbPointer(
+                absorbing: prefs.getUserFree,
+                child: SizedBox(
+                  width: 200,
+                  height: 90,
+                  child: CupertinoPicker(
+                    backgroundColor: Colors.transparent,
+                    onSelectedItemChanged: (int value) async {
+                      var call = Constant.timeDic[value.toString()].toString();
+                      timer.call = call;
+                      widget.onChanged(timer);
+                    },
+                    scrollController: FixedExtentScrollController(
+                        initialItem: initialCallValue),
+                    itemExtent: 70.0,
+                    children: [
+                      for (var i = 0; i <= Constant.timeDic.length; i++)
+                        SizedBox(
+                          height: 64,
+                          width: 175,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                Constant.timeDic[i.toString()].toString(),
+                                textAlign: TextAlign.center,
+                                style: GoogleFonts.barlow(
+                                  fontSize: 36.0,
+                                  wordSpacing: 1,
+                                  letterSpacing: 0.001,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                ),
+                              ),
+                              Container(
+                                height: 2,
+                                width: 100,
+                                color: Colors.white,
+                              ),
+                            ],
                           ),
-                          Container(
-                            height: 2,
-                            width: 100,
-                            color: Colors.white,
-                          ),
-                        ],
-                      ),
-                    ),
-                ],
+                        ),
+                    ],
+                  ),
+                ),
               ),
-            ),
+              onVerticalDragEnd: (drag) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const PremiumPage(
+                          isFreeTrial: false,
+                          img: 'Pantalla5.jpg',
+                          title: Constant.premiumChangeTimeTitle,
+                          subtitle: '')),
+                );
+              },
+            )
           ],
         ),
       ],

@@ -107,7 +107,7 @@ class _ConditionGeneralPageState extends State<ConditionGeneralPage> {
                                   child: Align(
                                     alignment: Alignment.centerRight,
                                     child: Text(
-                                      'Acepto envío de SMS y llamadas en caso de interpretar I’m Fine que pueda estar en riesgo ',
+                                      'Acepto envío de SMS y llamadas en caso de interpretar AlertFriends que pueda estar en riesgo ',
                                       textAlign: TextAlign.right,
                                       style: textNomral18White(),
                                     ),
@@ -225,7 +225,7 @@ class _ConditionGeneralPageState extends State<ConditionGeneralPage> {
                                             aceptedSendMessage);
                                       } else {
                                         showSaveAlert(context, Constant.info,
-                                            'Para continuar debe aceptar las condiciones y el permiso de envio de mesnajes y llamadas.');
+                                            'Para continuar debe aceptar las condiciones y el permiso de envío de mensajes y llamadas.');
                                       }
                                     },
                                   ),

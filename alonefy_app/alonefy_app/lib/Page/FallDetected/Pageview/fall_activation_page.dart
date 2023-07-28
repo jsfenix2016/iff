@@ -2,16 +2,18 @@ import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:ifeelefine/Common/Constant.dart';
 
 import 'package:ifeelefine/Common/colorsPalette.dart';
 import 'package:ifeelefine/Page/Contact/PageView/addContact_page.dart';
 
 import 'package:ifeelefine/Page/FallDetected/Controller/fall_detectedController.dart';
+import 'package:ifeelefine/Page/Premium/PageView/premium_page.dart';
+import 'package:ifeelefine/Provider/prefencesUser.dart';
 
 import 'package:ifeelefine/Utils/Widgets/elevatedButtonFilling.dart';
 import 'package:ifeelefine/Utils/Widgets/widgetLogo.dart';
 
-import '../../../Views/contact_page.dart';
 import 'package:ifeelefine/Common/decoration_custom.dart';
 
 class FallActivationPage extends StatefulWidget {
@@ -26,7 +28,7 @@ class FallActivationPage extends StatefulWidget {
 
 class _FallActivationPageState extends State<FallActivationPage> {
   final FallDetectedController fallVC = Get.put(FallDetectedController());
-
+  final PreferenceUser _prefs = PreferenceUser();
   bool isActive = false;
 
   /// Determine the current position of the device.
@@ -60,69 +62,87 @@ class _FallActivationPageState extends State<FallActivationPage> {
         body: Container(
           decoration: decorationCustom(),
           height: size.height,
-            child: SingleChildScrollView(
-              child: Column(
-                mainAxisSize: MainAxisSize.max,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Center(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.max,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const WidgetLogoApp(),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 30.0),
-                          child: Text(
-                            'Detectar caidas.',
-                            textAlign: TextAlign.center,
-                            style: GoogleFonts.barlow(
-                              fontSize: 24.0,
-                              wordSpacing: 1,
-                              letterSpacing: 1.2,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
-                            ),
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.max,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Center(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.max,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const WidgetLogoApp(),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 30.0),
+                        child: Text(
+                          'Detectar caidas.',
+                          textAlign: TextAlign.center,
+                          style: GoogleFonts.barlow(
+                            fontSize: 24.0,
+                            wordSpacing: 1,
+                            letterSpacing: 1.2,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
                           ),
                         ),
-                        SizedBox(
-                          height: 360,
-                          child: Image.asset(
-                            fit: BoxFit.contain,
-                            'assets/images/Group 1006.png',
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.fromLTRB(0, 16, 0, 0),
-                          child: ElevateButtonFilling(
-                            onChanged: (value) {
-                              isActive = !isActive;
-                              fallVC.setDetectedFall(isActive);
-                              setState(() {});
-                            },
-                            mensaje: isActive ? 'Desactivar' : 'Activar',
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: ElevateButtonFilling(
-                        onChanged: (value) {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const AddContactPage(),
-                            ),
-                          );
-                        },
-                        mensaje: 'Continuar',
                       ),
-                    ),
-                ],
-              ),
+                      SizedBox(
+                        height: 360,
+                        child: Image.asset(
+                          fit: BoxFit.contain,
+                          'assets/images/Group 1006.png',
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(0, 16, 0, 0),
+                        child: ElevateButtonFilling(
+                          onChanged: (value) async {
+                            if (_prefs.getUserFree) {
+                              await Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => const PremiumPage(
+                                        isFreeTrial: false,
+                                        img: 'pantalla3.png',
+                                        title: Constant.premiumFallTitle,
+                                        subtitle: '')),
+                              ).then((value) {
+                                if (value != null && value) {
+                                  _prefs.setUserFree = false;
+                                }
+                              });
+
+                              return;
+                            }
+
+                            isActive = !isActive;
+                            fallVC.setDetectedFall(isActive);
+                            setState(() {});
+                          },
+                          mensaje: isActive ? 'Desactivar' : 'Activar',
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: ElevateButtonFilling(
+                    onChanged: (value) {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const AddContactPage(),
+                        ),
+                      );
+                    },
+                    mensaje: 'Continuar',
+                  ),
+                ),
+              ],
             ),
+          ),
         ),
       ),
     );

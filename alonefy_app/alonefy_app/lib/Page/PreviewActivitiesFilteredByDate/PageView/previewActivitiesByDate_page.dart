@@ -10,6 +10,7 @@ import 'package:ifeelefine/Page/Calendar/calendarPopup.dart';
 import 'package:ifeelefine/Page/FallDetected/Pageview/fall_activation_page.dart';
 import 'package:ifeelefine/Utils/Widgets/widgetLogo.dart';
 import 'package:jiffy/jiffy.dart';
+import 'package:notification_center/notification_center.dart';
 
 import '../../../Model/activityDay.dart';
 import '../../AddActivityPage/Controller/addActivityController.dart';
@@ -62,7 +63,16 @@ class _PreviewActivitiesByDateState extends State<PreviewActivitiesByDate>
     _to = DateTime(_to!.year, _to!.month, _to!.day);
     init();
     updateRangeDateTextSelected();
+    NotificationCenter()
+        .subscribe('refreshPreviewActivities', refreshPreviewActivities);
+
     setState(() {});
+  }
+
+  Future refreshPreviewActivities() async {
+    setState(() {
+      init();
+    });
   }
 
   void init() async {
@@ -761,7 +771,7 @@ class _PreviewActivitiesByDateState extends State<PreviewActivitiesByDate>
                           await Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => FallActivationPage(),
+                              builder: (context) => const FallActivationPage(),
                             ),
                           );
                         },
@@ -779,7 +789,8 @@ class _PreviewActivitiesByDateState extends State<PreviewActivitiesByDate>
     await Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => AddActivityPage(isMenu: widget.isMenu, from: _from!, to: _to!),
+        builder: (context) =>
+            AddActivityPage(isMenu: widget.isMenu, from: _from!, to: _to!),
       ),
     );
 

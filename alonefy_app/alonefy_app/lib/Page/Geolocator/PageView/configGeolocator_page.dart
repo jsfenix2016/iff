@@ -291,7 +291,7 @@ class _ConfigGeolocatorState extends State<ConfigGeolocator> {
                           color: Colors.black,
                         )),
                     onPressed: () async {
-                      savePermission();
+                      saveGeo();
                     },
                   ),
                 ),
@@ -328,5 +328,27 @@ class _ConfigGeolocatorState extends State<ConfigGeolocator> {
         ),
       ),
     );
+  }
+
+  void saveGeo() async {
+    if (_prefs.getUserFree) {
+      await Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const PremiumPage(
+              isFreeTrial: false,
+              img: 'pantalla3.png',
+              title: Constant.premiumMapTitle,
+              subtitle: ''),
+        ),
+      ).then((value) {
+        if (value != null && value) {
+          _prefs.setUserFree = false;
+          savePermission();
+        }
+      });
+    } else {
+      savePermission();
+    }
   }
 }

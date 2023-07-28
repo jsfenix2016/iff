@@ -10,11 +10,10 @@ import 'package:ifeelefine/Provider/prefencesUser.dart';
 import 'package:ifeelefine/Utils/Widgets/ImageGradient.dart';
 import 'package:slidable_button/slidable_button.dart';
 
-import '../../../Common/Constant.dart';
 import '../../../Common/colorsPalette.dart';
-import '../../../Common/utils.dart';
+
 import '../../../Model/UserComment.dart';
-import '../../Onboarding/Widget/widgetColumnOnboarding.dart';
+
 import 'package:ifeelefine/Common/decoration_custom.dart';
 
 class PremiumPage extends StatefulWidget {
@@ -76,112 +75,118 @@ class _PremiumPageState extends State<PremiumPage> {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: ColorPalette.backgroundAppBar,
+        title: const Text("Suscripciones"),
+      ),
       body: Container(
         decoration: decorationCustom(),
-        child: Stack(
-          children: [
-            Container(
-              height: size.height,
-              width: size.width,
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: const Alignment(0, 1),
-                  colors: <Color>[
-                    Colors.black,
-                    Colors.black.withAlpha(450),
-                    Colors.transparent,
-                  ],
-                  tileMode: TileMode.mirror,
-                ),
-              ),
-            ),
-            Positioned(
-                top: 0,
-                left: 0,
-                right: 0,
-                //child: SizedBox(
-                //  child: Image.asset(
-                //    fit: BoxFit.fitWidth,
-                //    'assets/images/${widget.img}',
-                //    height: 360,
-                //  ),
-                //),
-                child: getPremiumImageGradient(widget.img)),
-            Positioned(
-              top: 24,
-              left: 32,
-              right: 32,
-              child: Center(
-                child: Text(
-                  widget.title,
-                  textAlign: TextAlign.center,
-                  style: GoogleFonts.barlow(
-                    fontSize: 22.0,
-                    wordSpacing: 1,
-                    letterSpacing: 1.2,
-                    fontWeight: FontWeight.bold,
-                    color: ColorPalette.principal,
+        child: SingleChildScrollView(
+          child: Stack(
+            children: [
+              Container(
+                height: size.height,
+                width: size.width,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: const Alignment(0, 1),
+                    colors: <Color>[
+                      Colors.black,
+                      Colors.black.withAlpha(450),
+                      Colors.transparent,
+                    ],
+                    tileMode: TileMode.mirror,
                   ),
                 ),
               ),
-            ),
-            Positioned(
-                top: 330,
-                left: 0,
-                right: 0,
-                child: Align(
-                    alignment: Alignment.center,
-                    child: Stack(
-                      children: [
-                        Container(
-                          width: 180,
-                          height: 127,
-                          decoration: const BoxDecoration(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(20)),
-                              color: ColorPalette.backgroundDarkGrey2),
-                          child: Column(
-                            children: [
-                              Padding(
-                                padding: EdgeInsets.fromLTRB(16, 12, 16, 0),
-                                child: Text(
-                                  'Seguridad ilimitada',
-                                  textAlign: TextAlign.center,
-                                  style: GoogleFonts.barlow(
-                                    fontSize: 22.0,
-                                    wordSpacing: 1,
-                                    letterSpacing: 1.2,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.black,
+              Positioned(
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  //child: SizedBox(
+                  //  child: Image.asset(
+                  //    fit: BoxFit.fitWidth,
+                  //    'assets/images/${widget.img}',
+                  //    height: 360,
+                  //  ),
+                  //),
+                  child: getPremiumImageGradient(widget.img)),
+              Positioned(
+                top: 24,
+                left: 32,
+                right: 32,
+                child: Center(
+                  child: Text(
+                    widget.title,
+                    textAlign: TextAlign.center,
+                    style: GoogleFonts.barlow(
+                      fontSize: 22.0,
+                      wordSpacing: 1,
+                      letterSpacing: 1.2,
+                      fontWeight: FontWeight.bold,
+                      color: ColorPalette.principal,
+                    ),
+                  ),
+                ),
+              ),
+              Positioned(
+                  top: 200,
+                  left: 0,
+                  right: 0,
+                  child: Align(
+                      alignment: Alignment.center,
+                      child: Stack(
+                        children: [
+                          Container(
+                            width: 180,
+                            height: 165,
+                            decoration: const BoxDecoration(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(20)),
+                                color: ColorPalette.backgroundDarkGrey2),
+                            child: Column(
+                              children: [
+                                Padding(
+                                  padding: EdgeInsets.fromLTRB(16, 12, 16, 0),
+                                  child: Text(
+                                    'Seguridad ilimitada',
+                                    textAlign: TextAlign.center,
+                                    style: GoogleFonts.barlow(
+                                      fontSize: 22.0,
+                                      wordSpacing: 1,
+                                      letterSpacing: 1.2,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.black,
+                                    ),
                                   ),
                                 ),
-                              ),
-                              Padding(
-                                padding: EdgeInsets.fromLTRB(16, 8, 16, 0),
-                                child: Text(
-                                  _prefs.getPremiumPrice,
-                                  textAlign: TextAlign.center,
-                                  style: GoogleFonts.barlow(
-                                    fontSize: 24.0,
-                                    wordSpacing: 1,
-                                    letterSpacing: 1.2,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.white,
+                                Padding(
+                                  padding: EdgeInsets.fromLTRB(16, 8, 16, 0),
+                                  child: Text(
+                                    _prefs.getPremiumPrice,
+                                    textAlign: TextAlign.center,
+                                    style: GoogleFonts.barlow(
+                                      fontSize: 24.0,
+                                      wordSpacing: 1,
+                                      letterSpacing: 1.2,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.white,
+                                    ),
                                   ),
-                                ),
-                              )
-                            ],
+                                )
+                              ],
+                            ),
                           ),
-                        ),
-                      ],
-                    ))),
-            //getListOfComments(),
-            Positioned(
-                bottom: 100, left: 32, right: 32, child: getListOfComments()),
-            Positioned(
-                bottom: 32, left: 32, right: 32, child: getHorizontalSlide())
-          ],
+                        ],
+                      ))),
+              //getListOfComments(),
+              Positioned(
+                  bottom: 150, left: 32, right: 32, child: getListOfComments()),
+              Positioned(
+                  bottom: 82, left: 32, right: 32, child: getHorizontalSlide())
+            ],
+          ),
         ),
       ),
     );
@@ -189,7 +194,7 @@ class _PremiumPageState extends State<PremiumPage> {
 
   Widget getListOfComments() {
     return Container(
-        height: 90,
+        height: 115,
         child: ListView.builder(
             shrinkWrap: true,
             scrollDirection: Axis.horizontal,
@@ -201,77 +206,79 @@ class _PremiumPageState extends State<PremiumPage> {
 
   Widget getItemOfComment(int index) {
     return Padding(
-        padding: EdgeInsets.fromLTRB(12, 0, 12, 0),
-        child: Container(
-          width: 300,
-          height: 90,
-          decoration: const BoxDecoration(
-              borderRadius: BorderRadius.all(Radius.circular(18)),
-              color: ColorPalette.secondView),
-          child: Column(
-            children: [
-              Padding(
-                  padding: EdgeInsets.fromLTRB(12, 12, 12, 0),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: Align(
-                          alignment: Alignment.centerLeft,
-                          child: Text(
-                            comments[index].name,
-                            textAlign: TextAlign.center,
-                            style: GoogleFonts.barlow(
-                              fontSize: 15.0,
-                              wordSpacing: 1,
-                              letterSpacing: 1.2,
-                              fontWeight: FontWeight.w700,
-                              color: Colors.white,
-                            ),
+      padding: EdgeInsets.fromLTRB(12, 0, 12, 0),
+      child: Container(
+        width: 300,
+        height: 115,
+        decoration: const BoxDecoration(
+            borderRadius: BorderRadius.all(Radius.circular(18)),
+            color: ColorPalette.secondView),
+        child: Column(
+          children: [
+            Padding(
+                padding: const EdgeInsets.fromLTRB(12, 12, 12, 0),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          comments[index].name,
+                          textAlign: TextAlign.center,
+                          style: GoogleFonts.barlow(
+                            fontSize: 15.0,
+                            wordSpacing: 1,
+                            letterSpacing: 1.2,
+                            fontWeight: FontWeight.w700,
+                            color: Colors.white,
                           ),
                         ),
                       ),
-                      Expanded(
-                          child: Align(
-                              alignment: Alignment.centerRight,
-                              child: RatingBar.builder(
-                                initialRating: comments[index].rating,
-                                minRating: 1,
-                                itemSize: 20,
-                                ignoreGestures: true,
-                                direction: Axis.horizontal,
-                                allowHalfRating: true,
-                                itemCount: 5,
-                                itemPadding:
-                                    const EdgeInsets.symmetric(horizontal: 1.0),
-                                itemBuilder: (context, _) => const Icon(
-                                  Icons.star,
-                                  color: Colors.amber,
-                                ),
-                                onRatingUpdate: (rating) {
-                                  print(rating);
-                                },
-                              )))
-                    ],
-                  )),
-              Padding(
-                  padding: EdgeInsets.fromLTRB(16, 8, 16, 0),
-                  child: Align(
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      comments[index].description,
-                      textAlign: TextAlign.left,
-                      style: GoogleFonts.barlow(
-                        fontSize: 15.0,
-                        wordSpacing: 1,
-                        letterSpacing: 1.2,
-                        fontWeight: FontWeight.w400,
-                        color: Colors.white,
-                      ),
                     ),
-                  ))
-            ],
-          ),
-        ));
+                    Expanded(
+                        child: Align(
+                            alignment: Alignment.centerRight,
+                            child: RatingBar.builder(
+                              initialRating: comments[index].rating,
+                              minRating: 1,
+                              itemSize: 20,
+                              ignoreGestures: true,
+                              direction: Axis.horizontal,
+                              allowHalfRating: true,
+                              itemCount: 5,
+                              itemPadding:
+                                  const EdgeInsets.symmetric(horizontal: 1.0),
+                              itemBuilder: (context, _) => const Icon(
+                                Icons.star,
+                                color: Colors.amber,
+                              ),
+                              onRatingUpdate: (rating) {
+                                print(rating);
+                              },
+                            )))
+                  ],
+                )),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  comments[index].description,
+                  textAlign: TextAlign.left,
+                  style: GoogleFonts.barlow(
+                    fontSize: 15.0,
+                    wordSpacing: 1,
+                    letterSpacing: 1.2,
+                    fontWeight: FontWeight.w400,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   Widget getHorizontalSlide() {
@@ -299,7 +306,8 @@ class _PremiumPageState extends State<PremiumPage> {
                 responseSubscription());
           } else {
             premiumController.requestPurchaseByProductId(
-                PremiumController.subscriptionId, responseSubscription());
+                PremiumController.subscriptionFreeTrialId,
+                responseSubscription());
           }
         }
       },

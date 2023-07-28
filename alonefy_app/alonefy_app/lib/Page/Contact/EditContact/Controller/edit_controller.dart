@@ -16,7 +16,7 @@ class EditContactController extends GetxController {
     try {
       // Map info
       contextTemp = context;
-      await Future.delayed(const Duration(seconds: 2));
+
       showAlertController("Se ha realizado la solicitud correctamente");
       return true;
     } catch (error) {
@@ -46,10 +46,10 @@ class EditContactController extends GetxController {
             contactServ.updateImage(url, contact.photo!);
           }
           await const HiveData().saveUserContact(contact);
-          showAlertController(Constant.contactSaveCorrectly);
+          // showAlertController(Constant.contactSaveCorrectly);
         } else {
           await const HiveData().updateContact(contact);
-          showAlertController(Constant.contactEditCorrectly);
+          // showAlertController(Constant.contactEditCorrectly);
         }
         return true;
       } else {

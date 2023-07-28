@@ -20,7 +20,7 @@ class LogicDateRisk {
       if (contact.sendWhatsapp) {
         IdleLogic().notifyContact();
       }
-      mainController.saveUserLog("Envio de SMS a contacto cita", now);
+      mainController.saveUserLog("Envío de SMS a contacto cita", now);
     });
   }
 }

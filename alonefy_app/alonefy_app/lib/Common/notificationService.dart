@@ -309,4 +309,33 @@ class RedirectViewNotifier with ChangeNotifier {
       payload: 'ContactResponse',
     );
   }
+
+  static Future<void> showFreeeNotification() async {
+    // RemoteNotification? notification = message.notification;
+
+    await flutterLocalNotificationsPlugin.show(
+      11,
+      "No estas protegido",
+      "Activa la versión premium",
+      const NotificationDetails(
+        android: AndroidNotificationDetails(
+          '10',
+          'MY FOREGROUND SERVICE',
+          icon: '@mipmap/logo_alertfriends',
+          color: ColorPalette.principal,
+          importance: Importance.high,
+          ongoing: false,
+          enableLights: true,
+          playSound: true,
+          enableVibration: true,
+          channelShowBadge: false,
+          priority: Priority.high,
+          largeIcon: DrawableResourceAndroidBitmap('@mipmap/logo_alertfriends'),
+          // sound: RawResourceAndroidNotificationSound(
+          //     "content://media/internal/audio/media/26.wav"),
+        ),
+      ),
+      payload: 'free',
+    );
+  }
 }

@@ -287,7 +287,7 @@ class _PreviewRestTimePageState extends State<PreviewRestTimePage> {
                         onChanged: (value) async {
                           if (await validateAllDaySelect()) {
                             showSaveAlert(context, Constant.info,
-                                "Debes seleccionar los dias restantes antes de continuar");
+                                "Debes seleccionar los días restantes antes de continuar");
                             return;
                           } else {
                             await processSelectedInfo();

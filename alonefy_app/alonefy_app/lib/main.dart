@@ -5,7 +5,6 @@ import 'dart:ui';
 // import 'package:all_sensors2/all_sensors2.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
-import 'package:ifeelefine/Page/Contact/PageView/addContact_page.dart';
 
 import 'package:sensors_plus/sensors_plus.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -79,6 +78,8 @@ FlutterBackgroundService service = FlutterBackgroundService();
 String? device;
 String? initApp;
 UserBD? user;
+int time = 120;
+int timeUpdateFirebase = 36000;
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -119,9 +120,7 @@ Future<void> main() async {
 
   runApp(
     GetMaterialApp(
-      home: MyApp(
-        initApp: initApp!,
-      ),
+      home: MyApp(initApp: initApp!),
       debugShowCheckedModeBanner: false,
     ),
   );
@@ -345,6 +344,10 @@ void onStart(ServiceInstance service) async {
     service.stopSelf();
   });
   accelerometer();
+
+  int increaceTime = 0;
+  int increaceTimeUpdate = 0;
+
   // bring to foreground
   Timer.periodic(const Duration(seconds: 5), (timer) async {
     if (Platform.isAndroid) {
@@ -357,19 +360,45 @@ void onStart(ServiceInstance service) async {
       }
     }
 
+    if (_prefs.getDayFree != "0") {
+      DateTime fechaInicio = parseContactRiskDate(_prefs.getDayFree);
+      DateTime fechaActual = DateTime.now();
+
+      // Calcular la diferencia entre las fechas en días
+      int diferenciaEnDias = fechaActual.difference(fechaInicio).inDays;
+
+      // Verificar si han pasado 30 días
+      bool hanPasado30Dias = diferenciaEnDias >= 30;
+
+      if (hanPasado30Dias) {
+        _prefs.setUserFree = true;
+        _prefs.setUserPremium = false;
+      }
+    }
+
+    increaceTime += 5;
+    increaceTimeUpdate += 5;
+    if (_prefs.getUserFree) {
+      if (time == increaceTime) {
+        RedirectViewNotifier.showFreeeNotification();
+      }
+    }
+
+    if (time == increaceTime) {
+      sendLocation();
+
+      increaceTime = 0;
+    }
+
+    if (timeUpdateFirebase == increaceTimeUpdate) {
+      updateFirebaseToken();
+    }
+
     _logActivityTimer += 5;
     _logRudeMovementTimer += 5;
     //getDateRisk();
 
     service.invoke('update');
-  });
-
-  Timer.periodic(const Duration(minutes: 2), (timer) async {
-    sendLocation();
-  });
-
-  Timer.periodic(const Duration(hours: 6), (timer) async {
-    updateFirebaseToken();
   });
 }
 
@@ -408,12 +437,14 @@ Future accelerometer() async {
 
   var enableIFF = await getEnableIFF();
 
-  if (!enableIFF && !_prefs.getDetectedFall && !_prefs.getUserPremium) return;
-
   _streamSubscriptions.add(
     accelerometerEvents.listen((AccelerometerEvent event) {
       double accelerationMagnitude =
           sqrt(event.x * event.x + event.y * event.y + event.z * event.z);
+      if (_prefs.getUserFree) return;
+      if (!enableIFF && !_prefs.getDetectedFall && !_prefs.getUserPremium)
+        return;
+
       if (accelerationMagnitude > 21) {
         isMovRude = true;
         print("movimiento rudo $accelerationMagnitude");
@@ -445,7 +476,7 @@ void sendMessageContact() async {
     timerActive = false;
 
     IdleLogic().notifyContact();
-    mainController.saveUserLog("Envio de SMS a contacto ", now);
+    mainController.saveUserLog("Envío de SMS a contacto ", now);
   });
 }
 

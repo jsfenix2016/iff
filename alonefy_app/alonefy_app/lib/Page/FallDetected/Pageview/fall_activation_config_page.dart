@@ -279,7 +279,29 @@ class _FallActivationConfigPageState extends State<FallActivationConfigPage> {
     );
   }
 
-  void saveFall() {
+  void saveFall() async {
+    if (_prefs.getUserFree) {
+      await Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const PremiumPage(
+              isFreeTrial: false,
+              img: 'pantalla3.png',
+              title: Constant.premiumFallTitle,
+              subtitle: ''),
+        ),
+      ).then((value) {
+        if (value != null && value) {
+          _prefs.setUserFree = false;
+          saveChange();
+        }
+      });
+    } else {
+      saveChange();
+    }
+  }
+
+  Future<void> saveChange() async {
     _fallController.setDetectedFall(isActive);
     //_prefs.setDetectedFall = isActive;
     _fallController.setFallTime(fallTime);

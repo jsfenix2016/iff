@@ -5,11 +5,13 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:ifeelefine/Common/Constant.dart';
 import 'package:ifeelefine/Common/manager_alerts.dart';
 import 'package:ifeelefine/Model/contactZoneRiskBD.dart';
+import 'package:ifeelefine/Page/Premium/PageView/premium_page.dart';
 
 import 'package:ifeelefine/Page/Risk/ZoneRisk/CancelAlert/PageView/cancelAlert.dart';
 import 'package:ifeelefine/Page/Risk/ZoneRisk/PushAlert/Controller/push_alert_controller.dart';
 import 'package:camera/camera.dart';
 import 'package:ifeelefine/Common/decoration_custom.dart';
+import 'package:ifeelefine/Provider/prefencesUser.dart';
 import 'package:ifeelefine/Utils/Widgets/loading_page.dart';
 
 class PushAlertPage extends StatefulWidget {
@@ -24,6 +26,7 @@ class PushAlertPage extends StatefulWidget {
 
 class _PushAlertPageState extends State<PushAlertPage> {
   final PushAlertController pushVC = Get.put(PushAlertController());
+  final _prefs = PreferenceUser();
   bool _isRecording = false;
   late CameraController _cameraController;
   late bool isActive = false;
@@ -32,7 +35,7 @@ class _PushAlertPageState extends State<PushAlertPage> {
 
   @override
   void initState() {
-    _initCamera();
+    checkpremium();
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
     ]).then((_) {
@@ -44,7 +47,9 @@ class _PushAlertPageState extends State<PushAlertPage> {
 
   @override
   void dispose() {
-    _cameraController.dispose();
+    if (_prefs.getUserFree == false) {
+      _cameraController.dispose();
+    }
     super.dispose();
   }
 
@@ -58,6 +63,14 @@ class _PushAlertPageState extends State<PushAlertPage> {
     setState(() => _isLoading = false);
   }
 
+  void checkpremium() async {
+    if (_prefs.getUserFree == false) {
+      _initCamera();
+    } else {
+      setState(() => _isLoading = false);
+    }
+  }
+
   _recordVideo() async {
     if (_isRecording) {
       stopRecording();
@@ -66,6 +79,26 @@ class _PushAlertPageState extends State<PushAlertPage> {
 
       setState(() => _isRecording = true);
     }
+  }
+
+  Future<void> saveFree() async {
+    setState(() {
+      _isLoading = true;
+      _isRecording = false;
+    });
+
+    var taskIds = await pushVC.updateVideo(widget.contactZone, "");
+    if (taskIds.isNotEmpty) {
+      Route route = MaterialPageRoute(
+        builder: (context) =>
+            CancelAlertPage(contactRisk: widget.contactZone, taskdIds: taskIds),
+      );
+      Navigator.pushReplacement(context, route);
+    } else {
+      Future.sync(() =>
+          {showSaveAlert(context, Constant.info, Constant.changeGeneric)});
+    }
+    setState(() => _isLoading = false);
   }
 
   void stopRecording() async {
@@ -111,13 +144,25 @@ class _PushAlertPageState extends State<PushAlertPage> {
             : null,
         body: GestureDetector(
           onTapDown: (details) {
-            _recordVideo();
+            if (_prefs.getUserFree == false) {
+              _recordVideo();
+            }
           },
           onTapUp: (details) {
-            _recordVideo();
+            if (_prefs.getUserFree == false) {
+              _recordVideo();
+            } else {
+              saveFree();
+              setState(() => _isLoading = false);
+            }
           },
           onPanEnd: (details) {
-            _recordVideo();
+            if (_prefs.getUserFree == false) {
+              _recordVideo();
+            } else {
+              saveFree();
+              setState(() => _isLoading = false);
+            }
           },
           child: Container(
             decoration: decorationCustom(),
@@ -134,7 +179,9 @@ class _PushAlertPageState extends State<PushAlertPage> {
                         width: 100,
                         child: _isLoading
                             ? const SizedBox.shrink()
-                            : CameraPreview(_cameraController)),
+                            : _prefs.getUserPremium
+                                ? CameraPreview(_cameraController)
+                                : const SizedBox.shrink()),
                   ),
                 ),
                 Positioned(

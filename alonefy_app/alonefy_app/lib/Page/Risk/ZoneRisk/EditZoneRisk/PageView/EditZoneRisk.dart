@@ -3,6 +3,7 @@ import 'package:ifeelefine/Common/Constant.dart';
 import 'package:ifeelefine/Common/manager_alerts.dart';
 import 'package:ifeelefine/Common/utils.dart';
 import 'package:ifeelefine/Model/contactZoneRiskBD.dart';
+import 'package:ifeelefine/Page/Premium/PageView/premium_page.dart';
 import 'package:ifeelefine/Page/Risk/DateRisk/Widgets/cardContact.dart';
 import 'package:ifeelefine/Page/Risk/DateRisk/Widgets/contentCode.dart';
 
@@ -12,6 +13,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:ifeelefine/Page/Risk/DateRisk/Widgets/popUpContact.dart';
 import 'package:ifeelefine/Page/Risk/ZoneRisk/EditZoneRisk/Controller/EditZoneController.dart';
 import 'package:ifeelefine/Page/Risk/ZoneRisk/PushAlert/PageView/pushAlert.dart';
+import 'package:ifeelefine/Provider/prefencesUser.dart';
 import 'package:ifeelefine/Utils/Widgets/elevateButtonCustomBorder.dart';
 import 'package:ifeelefine/Common/decoration_custom.dart';
 import 'package:ifeelefine/Utils/Widgets/loading_page.dart';
@@ -29,7 +31,7 @@ class EditZoneRiskPage extends StatefulWidget {
 
 class _EditZoneRiskPageState extends State<EditZoneRiskPage> {
   EditZoneController editZoneVC = EditZoneController();
-
+  final PreferenceUser _prefs = PreferenceUser();
   var sendWhatsappSMS = false;
   var sendLocation = false;
   var saveConfig = false;
@@ -282,7 +284,26 @@ class _EditZoneRiskPageState extends State<EditZoneRiskPage> {
                                     SizedBox(
                                       width: size.width / 6,
                                       child: Switch(
-                                        onChanged: (value) {
+                                        onChanged: (value) async {
+                                          if (_prefs.getUserFree) {
+                                            await Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      const PremiumPage(
+                                                          isFreeTrial: false,
+                                                          img: 'pantalla3.png',
+                                                          title: Constant
+                                                              .premiumFallTitle,
+                                                          subtitle: '')),
+                                            ).then((value) {
+                                              if (value != null && value) {
+                                                _prefs.setUserFree = false;
+                                              }
+                                            });
+
+                                            return;
+                                          }
                                           callme = value;
                                           widget.contactRisk.callme = value;
                                           setState(() {});
@@ -422,7 +443,27 @@ class _EditZoneRiskPageState extends State<EditZoneRiskPage> {
                                 SizedBox(
                                   width: size.width / 6,
                                   child: Switch(
-                                    onChanged: (value) {
+                                    onChanged: (value) async {
+                                      if (_prefs.getUserFree) {
+                                        await Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                const PremiumPage(
+                                                    isFreeTrial: false,
+                                                    img: 'pantalla3.png',
+                                                    title: Constant
+                                                        .premiumFallTitle,
+                                                    subtitle: ''),
+                                          ),
+                                        ).then((value) {
+                                          if (value != null && value) {
+                                            _prefs.setUserFree = false;
+                                          }
+                                        });
+                                        ;
+                                        return;
+                                      }
                                       sendLocation = value;
                                       widget.contactRisk.sendLocation = value;
                                       setState(() {});
@@ -497,7 +538,26 @@ class _EditZoneRiskPageState extends State<EditZoneRiskPage> {
                                 SizedBox(
                                   width: size.width / 6,
                                   child: Switch(
-                                    onChanged: (value) {
+                                    onChanged: (value) async {
+                                      if (_prefs.getUserFree) {
+                                        await Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  const PremiumPage(
+                                                      isFreeTrial: false,
+                                                      img: 'pantalla3.png',
+                                                      title: Constant
+                                                          .premiumFallTitle,
+                                                      subtitle: '')),
+                                        ).then((value) {
+                                          if (value != null && value) {
+                                            _prefs.setUserFree = false;
+                                          }
+                                        });
+                                        ;
+                                        return;
+                                      }
                                       saveConfig = value;
                                       widget.contactRisk.save = value;
                                       setState(() {});

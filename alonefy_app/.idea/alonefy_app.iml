@@ -343,6 +343,12 @@
       <excludeFolder url="file://$MODULE_DIR$/alonefy_app/ios/.symlinks/plugins/video_player_avfoundation/build" />
       <excludeFolder url="file://$MODULE_DIR$/alonefy_app/ios/.symlinks/plugins/video_player_avfoundation/.pub" />
       <excludeFolder url="file://$MODULE_DIR$/alonefy_app/ios/.symlinks/plugins/video_player_avfoundation/.dart_tool" />
+      <excludeFolder url="file://$MODULE_DIR$/alonefy_app/ios/.symlinks/plugins/sensors_plus/example/build" />
+      <excludeFolder url="file://$MODULE_DIR$/alonefy_app/ios/.symlinks/plugins/sensors_plus/example/.pub" />
+      <excludeFolder url="file://$MODULE_DIR$/alonefy_app/ios/.symlinks/plugins/sensors_plus/example/.dart_tool" />
+      <excludeFolder url="file://$MODULE_DIR$/alonefy_app/ios/.symlinks/plugins/sensors_plus/.pub" />
+      <excludeFolder url="file://$MODULE_DIR$/alonefy_app/ios/.symlinks/plugins/sensors_plus/.dart_tool" />
+      <excludeFolder url="file://$MODULE_DIR$/alonefy_app/ios/.symlinks/plugins/sensors_plus/build" />
     </content>
     <orderEntry type="jdk" jdkName="Android API 32 Platform" jdkType="Android SDK" />
     <orderEntry type="sourceFolder" forTests="false" />

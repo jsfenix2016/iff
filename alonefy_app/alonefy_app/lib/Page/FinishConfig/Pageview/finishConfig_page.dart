@@ -79,7 +79,7 @@ class _FinishConfigPageState extends State<FinishConfigPage> {
                                 RichText(
                                   textAlign: TextAlign.center,
                                   text: TextSpan(
-                                    text: "AlertFriend ",
+                                    text: "AlertFriends ",
                                     style: GoogleFonts.barlow(
                                       fontSize: 22.0,
                                       wordSpacing: 1,
@@ -131,7 +131,12 @@ class _FinishConfigPageState extends State<FinishConfigPage> {
                                         "AlertFriends está activado";
                                     service.startService();
                                   }
-                                  _prefs.config = true;
+                                  if (_prefs.getUserFree) {
+                                    _prefs.config = false;
+                                  } else {
+                                    _prefs.config = true;
+                                  }
+
                                   Get.off(const HomePage());
                                 }),
                                 mensaje: 'Acceder'),

@@ -44,8 +44,9 @@ class PremiumController extends GetxController {
       } else {
         _prefs.setUserPremium = false;
       }
-
-      _updatePremiumAPI();
+      if (_prefs.getUserFree) {
+        _updatePremiumAPI();
+      }
 
       _getProducts();
       print('connected: $connected');
@@ -55,8 +56,12 @@ class PremiumController extends GetxController {
         FlutterInappPurchase.purchaseUpdated.listen((productItem) {
       if (_response != null) {
         _response!(true);
-        _prefs.setUserPremium = true;
-        _updatePremiumAPI();
+
+        if (_prefs.getUserFree) {
+          _prefs.setUserPremium = true;
+          _prefs.setUserFree = false;
+          _updatePremiumAPI();
+        }
         print('purchase-updated: $productItem');
       }
     });
@@ -83,7 +88,8 @@ class PremiumController extends GetxController {
     _response = response;
     //FlutterInappPurchase.instance.requestPurchase(productId);
     try {
-      FlutterInappPurchase.instance.requestSubscription(productId);
+      var a = FlutterInappPurchase.instance.requestSubscription(productId);
+      print(a);
     } catch (e) {
       print(e);
     }
@@ -139,13 +145,24 @@ class PremiumController extends GetxController {
     }
   }
 
+  void updatePremiumAPIFree() async {
+    final MainController mainController = Get.put(MainController());
+    var user = await mainController.getUserData();
+    PremiumApi premiumApi = PremiumApi(
+        phoneNumber: user.telephone.contains('+34')
+            ? user.telephone.replaceAll("+34", "").replaceAll(" ", "")
+            : user.telephone.replaceAll(" ", ""),
+        premium: false);
+    PremiumService().saveData(premiumApi);
+  }
+
   void _updatePremiumAPI() async {
     final MainController mainController = Get.put(MainController());
     var user = await mainController.getUserData();
     PremiumApi premiumApi = PremiumApi(
         phoneNumber: user.telephone.contains('+34')
-            ? user.telephone.replaceAll("+34", "")
-            : user.telephone,
+            ? user.telephone.replaceAll("+34", "").replaceAll(" ", "")
+            : user.telephone.replaceAll(" ", ""),
         premium: _prefs.getUserPremium);
     PremiumService().saveData(premiumApi);
   }

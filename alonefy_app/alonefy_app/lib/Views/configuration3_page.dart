@@ -135,7 +135,7 @@
 //   Widget _createButtonFree() {
 //     return ElevatedButton.icon(
 //       style: styleColorPrincipal(),
-//       label: const Text("Gratuito 30 dias"),
+//       label: const Text("Gratuito 30 días"),
 //       icon: const Icon(
 //         Icons.security,
 //       ),

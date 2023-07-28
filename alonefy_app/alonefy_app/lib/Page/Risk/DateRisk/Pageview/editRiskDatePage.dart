@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:ifeelefine/Common/manager_alerts.dart';
 import 'package:ifeelefine/Common/text_style_font.dart';
 import 'package:ifeelefine/Page/Calendar/calendarPopup.dart';
+import 'package:ifeelefine/Page/Premium/PageView/premium_page.dart';
 import 'package:ifeelefine/Page/Risk/DateRisk/ListDateRisk/Controller/riskPageController.dart';
 import 'package:ifeelefine/Utils/Widgets/loading_page.dart';
 import 'package:ifeelefine/Views/space_heidht_custom.dart';
@@ -52,7 +53,7 @@ class _EditRiskPageState extends State<EditRiskPage> {
   var isTimeFinish = false;
   var sendWhatsappSMS = false;
   var sendLocation = false;
-  var saveConfig = true;
+  var saveConfig = false;
   var isActived = false;
   var isprogrammed = false;
   String timeinit = "00:00";
@@ -190,8 +191,9 @@ class _EditRiskPageState extends State<EditRiskPage> {
         name: contactSelect!.displayName,
         timeinit: initTime,
         timefinish: finishTime,
-        phones:
-            contactSelect!.phones.first.normalizedNumber.replaceAll("+34", ""),
+        phones: contactSelect!.phones.first.normalizedNumber
+            .replaceAll("+34", "")
+            .replaceAll(" ", ""),
         titleMessage: titleMessage,
         messages: message,
         sendLocation: widget.contactRisk.sendLocation,
@@ -902,7 +904,25 @@ class _EditRiskPageState extends State<EditRiskPage> {
                                 SizedBox(
                                   width: size.width / 6,
                                   child: Switch(
-                                    onChanged: (value) {
+                                    onChanged: (value) async {
+                                      if (_prefs.getUserFree) {
+                                        await Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  const PremiumPage(
+                                                      isFreeTrial: false,
+                                                      img: 'pantalla3.png',
+                                                      title: Constant
+                                                          .premiumFallTitle,
+                                                      subtitle: '')),
+                                        ).then((value) {
+                                          if (value != null && value) {
+                                            _prefs.setUserFree = false;
+                                          }
+                                        });
+                                        return;
+                                      }
                                       saveConfig = value;
                                       widget.contactRisk.saveContact = value;
                                       (context as Element).markNeedsBuild();

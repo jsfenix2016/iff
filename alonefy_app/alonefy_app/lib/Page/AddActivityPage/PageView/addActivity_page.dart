@@ -9,6 +9,7 @@ import 'package:ifeelefine/Model/activityDay.dart';
 import 'package:ifeelefine/Model/activitydaybd.dart';
 import 'package:ifeelefine/Page/AddActivityPage/Controller/addActivityController.dart';
 import 'package:ifeelefine/Page/Calendar/calendarPopup.dart';
+import 'package:ifeelefine/Page/Premium/PageView/premium_page.dart';
 import 'package:ifeelefine/Provider/prefencesUser.dart';
 import 'package:jiffy/jiffy.dart';
 
@@ -17,8 +18,9 @@ import 'package:ifeelefine/Common/decoration_custom.dart';
 
 class AddActivityPage extends StatefulWidget {
   /// Creates a new GeolocatorWidget.
-  const AddActivityPage({Key? key, required this.isMenu,
-    required this.from, required this.to}) : super(key: key);
+  const AddActivityPage(
+      {Key? key, required this.isMenu, required this.from, required this.to})
+      : super(key: key);
 
   final bool isMenu;
   final DateTime from;
@@ -82,7 +84,7 @@ class _AddActivityPageState extends State<AddActivityPage>
 
   bool allDay = false;
 
-  static const int _maxActivitiesNoPremium = 3;
+  static const int _maxActivitiesNoPremium = 2;
 
   Future<Widget> calculate(BuildContext context, Size size) {
     return Future<Widget>.delayed(
@@ -166,150 +168,150 @@ class _AddActivityPageState extends State<AddActivityPage>
         ),
         Padding(
           padding: const EdgeInsets.fromLTRB(0, 70, 0, 100),
-            child: SingleChildScrollView(
-              child: Column(children: [
-                Padding(
-                    padding: const EdgeInsets.fromLTRB(32.0, 0.0, 32.0, 0.0),
-                    child: getTextField()),
-                const SizedBox(height: 40),
-                Row(
-                  children: [
-                    Expanded(
-                      child: Text(
-                        "Todo el día",
-                        textAlign: TextAlign.right,
-                        style: GoogleFonts.barlow(
-                            fontSize: 20.0,
-                            wordSpacing: 1,
-                            letterSpacing: 0.001,
-                            fontWeight: FontWeight.w500,
-                            color: Colors.white),
-                      ),
-                      flex: 1,
-                    ),SizedBox(
-                            width: 120,
-                            child: StatefulBuilder(
-                              builder:
-                                  (BuildContext context, StateSetter setState) {
-                                return CupertinoSwitch(
-                                  value: allDay,
-                                  activeColor: ColorPalette.activeSwitch,
-                                  trackColor: CupertinoColors.inactiveGray,
-                                  onChanged: (bool? value) {
-                                    allDay = value!;
-                                    setState(() {});
-                                  },
-                                );
-                              },
-                            ))
-                  ],
-                ),
-                const SizedBox(height: 40),
-                getDateSelected("De"),
-                const SizedBox(height: 8),
-                getDateSelected("A"),
-                const SizedBox(height: 24),
-                Row(
-                  children: [
-                    Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.fromLTRB(12, 0, 0, 0),
-                        child: getHourTitle("Hora Inicio"),
-                      ),
-                      flex: 1,
+          child: SingleChildScrollView(
+            child: Column(children: [
+              Padding(
+                  padding: const EdgeInsets.fromLTRB(32.0, 0.0, 32.0, 0.0),
+                  child: getTextField()),
+              const SizedBox(height: 40),
+              Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      "Todo el día",
+                      textAlign: TextAlign.right,
+                      style: GoogleFonts.barlow(
+                          fontSize: 20.0,
+                          wordSpacing: 1,
+                          letterSpacing: 0.001,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.white),
                     ),
-                    Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.fromLTRB(0, 0, 56, 0),
-                        child: getHourTitle("Hora Fin"),
-                      ),
-                      flex: 1,
+                    flex: 1,
+                  ),
+                  SizedBox(
+                      width: 120,
+                      child: StatefulBuilder(
+                        builder: (BuildContext context, StateSetter setState) {
+                          return CupertinoSwitch(
+                            value: allDay,
+                            activeColor: ColorPalette.activeSwitch,
+                            trackColor: CupertinoColors.inactiveGray,
+                            onChanged: (bool? value) {
+                              allDay = value!;
+                              setState(() {});
+                            },
+                          );
+                        },
+                      ))
+                ],
+              ),
+              const SizedBox(height: 40),
+              getDateSelected("De"),
+              const SizedBox(height: 8),
+              getDateSelected("A"),
+              const SizedBox(height: 24),
+              Row(
+                children: [
+                  Expanded(
+                    flex: 1,
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(12, 0, 0, 0),
+                      child: getHourTitle("Hora Inicio"),
                     ),
-                  ],
-                ),
-                const SizedBox(height: 16),
-                Row(
-                  children: [
-                    Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.fromLTRB(32, 0, 0, 0),
-                        child: getFutureColumnPicker(
-                            hoursPositionPicker1, minutesPositionPicker1, 0),
-                      ),
-                      flex: 1,
+                  ),
+                  Expanded(
+                    flex: 1,
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(0, 0, 56, 0),
+                      child: getHourTitle("Hora Fin"),
                     ),
-                    Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.fromLTRB(0, 0, 32, 0),
-                        child: getFutureColumnPicker(
-                            hoursPositionPicker2, minutesPositionPicker2, 1),
-                      ),
-                      flex: 1,
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+              Row(
+                children: [
+                  Expanded(
+                    flex: 1,
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(32, 0, 0, 0),
+                      child: getFutureColumnPicker(
+                          hoursPositionPicker1, minutesPositionPicker1, 0),
                     ),
-                  ],
-                ),
-                const SizedBox(height: 50),
-                Row(
-                  children: [
-                    SizedBox(
-                        width: 120,
-                        child: Padding(
-                            padding: const EdgeInsets.fromLTRB(32, 0, 0, 0),
+                  ),
+                  Expanded(
+                    flex: 1,
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(0, 0, 32, 0),
+                      child: getFutureColumnPicker(
+                          hoursPositionPicker2, minutesPositionPicker2, 1),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 50),
+              Row(
+                children: [
+                  SizedBox(
+                      width: 120,
+                      child: Padding(
+                          padding: const EdgeInsets.fromLTRB(32, 0, 0, 0),
+                          child: Text(
+                            "Repetir",
+                            style: GoogleFonts.barlow(
+                                fontSize: 20.0,
+                                wordSpacing: 1,
+                                letterSpacing: 0.001,
+                                fontWeight: FontWeight.w500,
+                                color:
+                                    const Color.fromARGB(255, 222, 222, 222)),
+                          ))),
+                  if (isDropDownVisible) ...[
+                    Expanded(
+                      flex: 1,
+                      child: Padding(
+                          padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
+                          child: TextButton(
+                            onPressed: () {
+                              setState(() {
+                                isDropDownVisible = false;
+                              });
+                            },
                             child: Text(
-                              "Repetir",
+                              getItemSelected(),
                               style: GoogleFonts.barlow(
-                                  fontSize: 20.0,
+                                  fontSize: 14.0,
                                   wordSpacing: 1,
                                   letterSpacing: 0.001,
                                   fontWeight: FontWeight.w500,
-                                  color:
-                                      const Color.fromARGB(255, 222, 222, 222)),
-                            ))),
-                    if (isDropDownVisible) ...[
-                      Expanded(
-                          child: Padding(
-                              padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
-                              child: TextButton(
-                                onPressed: () {
-                                  setState(() {
-                                    isDropDownVisible = false;
-                                  });
-                                },
-                                child: Text(
-                                  getItemSelected(),
-                                  style: GoogleFonts.barlow(
-                                      fontSize: 14.0,
-                                      wordSpacing: 1,
-                                      letterSpacing: 0.001,
-                                      fontWeight: FontWeight.w500,
-                                      color: Colors.white),
-                                ),
-                              )),
-                        flex: 1,
-                      ),
-                      SizedBox(
-                          width: 60,
-                          child: Padding(
-                            padding: const EdgeInsets.only(right: 26),
-                            child: IconButton(
-                              icon: const ImageIcon(
-                                AssetImage('assets/images/drop_down.png'),
-                                color: Colors.white,
-                              ),
-                              onPressed: () {
-                                setState(() {
-                                  isDropDownVisible = false;
-                                });
-                              },
+                                  color: Colors.white),
                             ),
-                          ))
-                    ]
-                  ],
-                ),
-                const SizedBox(height: 12),
-                getSwitches(size),
-                const SizedBox(height: 32)
-              ]),
+                          )),
+                    ),
+                    SizedBox(
+                        width: 60,
+                        child: Padding(
+                          padding: const EdgeInsets.only(right: 26),
+                          child: IconButton(
+                            icon: const ImageIcon(
+                              AssetImage('assets/images/drop_down.png'),
+                              color: Colors.white,
+                            ),
+                            onPressed: () {
+                              setState(() {
+                                isDropDownVisible = false;
+                              });
+                            },
+                          ),
+                        ))
+                  ]
+                ],
+              ),
+              const SizedBox(height: 12),
+              getSwitches(size),
+              const SizedBox(height: 32)
+            ]),
           ),
         ),
         Positioned(
@@ -340,14 +342,26 @@ class _AddActivityPageState extends State<AddActivityPage>
                     var activities = await controller.getActivities();
                     if (activities.length > _maxActivitiesNoPremium &&
                         !_prefs.getUserPremium) {
-                      showSaveAlert(context, Constant.info,
-                          Constant.timeMaxReachedInactivity);
+                      await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const PremiumPage(
+                                isFreeTrial: false,
+                                img: 'pantalla3.png',
+                                title: Constant.premiumFallTitle,
+                                subtitle: '')),
+                      ).then((value) {
+                        if (value != null && value) {
+                          _prefs.setUserFree = false;
+                          _prefs.setUserPremium = true;
+                        }
+                      });
                     } else {
-                      if (controller.startTimeIsBeforeEndTime(hoursPicker1, hoursPicker2,
-                          minutesPicker1, minutesPicker2)) {
+                      if (controller.startTimeIsBeforeEndTime(hoursPicker1,
+                          hoursPicker2, minutesPicker1, minutesPicker2)) {
                         var activity = createActivity();
                         var activityApiResponse =
-                        await controller.saveActivityApi(activity);
+                            await controller.saveActivityApi(activity);
                         if (activityApiResponse != null) {
                           activity.id = activityApiResponse.id;
                           await controller.saveActivity(context, activity);
@@ -433,48 +447,51 @@ class _AddActivityPageState extends State<AddActivityPage>
 
   Widget getDateSelected(String dateType) {
     return Row(
-      mainAxisSize: MainAxisSize.max,
+      mainAxisSize: MainAxisSize.min,
       children: [
         SizedBox(
-            width: 100,
-            child: Padding(
-                padding: const EdgeInsets.fromLTRB(32, 0, 0, 0),
-                child: Text(
-                  dateType,
-                  style: GoogleFonts.barlow(
-                      fontSize: 18.0,
-                      wordSpacing: 1,
-                      letterSpacing: 0.001,
-                      fontWeight: FontWeight.w500,
-                      color: Colors.white),
-                ))),
-    Padding(
-                padding: const EdgeInsets.fromLTRB(0, 0, 4, 0),
-                child: TextButton(
-                    style: const ButtonStyle(alignment: Alignment.centerRight),
-                    onPressed: () async {
-                      var rangeDateTime = await showCalendar(context);
+          width: 70,
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(32, 0, 0, 0),
+            child: Text(
+              dateType,
+              style: GoogleFonts.barlow(
+                  fontSize: 18.0,
+                  wordSpacing: 1,
+                  letterSpacing: 0.001,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.white),
+            ),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(0, 0, 4, 0),
+          child: TextButton(
+            style: const ButtonStyle(alignment: Alignment.centerRight),
+            onPressed: () async {
+              var rangeDateTime = await showCalendar(context);
 
-                      if (rangeDateTime != null) {
-                        if (rangeDateTime.from != null &&
-                            rangeDateTime.to != null) {
-                          updateDate('De', rangeDateTime.from!);
-                          updateDate('A', rangeDateTime.to!);
-                        } else if (rangeDateTime.from != null) {
-                          updateDate(dateType, rangeDateTime.from!);
-                        }
-                      }
-                    },
-                    child: Text(
-                      dateType == "De" ? from : to,
-                      textAlign: TextAlign.right,
-                      style: GoogleFonts.barlow(
-                          fontSize: 18.0,
-                          wordSpacing: 1,
-                          letterSpacing: 0.001,
-                          fontWeight: FontWeight.w500,
-                          color: Colors.white),
-                    ),),),
+              if (rangeDateTime != null) {
+                if (rangeDateTime.from != null && rangeDateTime.to != null) {
+                  updateDate('De', rangeDateTime.from!);
+                  updateDate('A', rangeDateTime.to!);
+                } else if (rangeDateTime.from != null) {
+                  updateDate(dateType, rangeDateTime.from!);
+                }
+              }
+            },
+            child: Text(
+              dateType == "De" ? from : to,
+              textAlign: TextAlign.right,
+              style: GoogleFonts.barlow(
+                  fontSize: 18.0,
+                  wordSpacing: 1,
+                  letterSpacing: 0.001,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.white),
+            ),
+          ),
+        ),
       ],
     );
   }
@@ -750,25 +767,26 @@ class _AddActivityPageState extends State<AddActivityPage>
                   color: const Color.fromARGB(255, 222, 222, 222)),
             ),
             flex: 1,
-          ),SizedBox(
-                width: 120,
-                child: CupertinoSwitch(
-                  value: itemsDropDown[getIndexOfItemsDropDown(text)],
-                  activeColor: ColorPalette.activeSwitch,
-                  trackColor: CupertinoColors.inactiveGray,
-                  onChanged: (bool? value) {
-                    var count = 0;
-                    for (var itemText in itemsDropDownText) {
-                      itemsDropDown[count] = false;
-                      if (itemText == text) {
-                        itemsDropDown[count] = value!;
-                      }
-                      count++;
-                    }
-                    setState(() {});
-                  },
-                ),
-              )
+          ),
+          SizedBox(
+            width: 120,
+            child: CupertinoSwitch(
+              value: itemsDropDown[getIndexOfItemsDropDown(text)],
+              activeColor: ColorPalette.activeSwitch,
+              trackColor: CupertinoColors.inactiveGray,
+              onChanged: (bool? value) {
+                var count = 0;
+                for (var itemText in itemsDropDownText) {
+                  itemsDropDown[count] = false;
+                  if (itemText == text) {
+                    itemsDropDown[count] = value!;
+                  }
+                  count++;
+                }
+                setState(() {});
+              },
+            ),
+          )
         ]
       ],
     );

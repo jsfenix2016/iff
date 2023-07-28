@@ -6,6 +6,7 @@ import 'package:ifeelefine/Common/colorsPalette.dart';
 import 'package:ifeelefine/Common/text_style_font.dart';
 import 'package:ifeelefine/Common/utils.dart';
 import 'package:ifeelefine/Model/userbd.dart';
+import 'package:ifeelefine/Page/Premium/PageView/premium_page.dart';
 import 'package:ifeelefine/Page/UseMobil/Controller/useMobileController.dart';
 
 import 'package:ifeelefine/Page/UserRest/PageView/configurationUserRest_page.dart';
@@ -27,7 +28,6 @@ class _UseMobilePageState extends State<UseMobilePage> {
   final UseMobilController useMobilVC = Get.put(UseMobilController());
   var indexSelect = 0;
   UserBD? userbd;
-  PreferenceUser prefs = PreferenceUser();
 
   final _prefs = PreferenceUser();
 
@@ -38,7 +38,7 @@ class _UseMobilePageState extends State<UseMobilePage> {
     } else {
       userbd = widget.userbd;
     }
-    prefs.saveLastScreenRoute("useMobil");
+    _prefs.saveLastScreenRoute("useMobil");
 
     super.initState();
   }
@@ -95,34 +95,52 @@ class _UseMobilePageState extends State<UseMobilePage> {
               SizedBox(
                 height: 150,
                 width: size.width,
-                child: CupertinoPicker(
-                  backgroundColor: Colors.transparent,
-                  onSelectedItemChanged: (int value) {
-                    indexSelect = value;
+                child: GestureDetector(
+                  child: AbsorbPointer(
+                    absorbing: _prefs.getUserFree,
+                    child: CupertinoPicker(
+                      scrollController:
+                          FixedExtentScrollController(initialItem: 1),
+                      backgroundColor: Colors.transparent,
+                      onSelectedItemChanged: (int value) {
+                        indexSelect = value;
+                      },
+                      itemExtent: 60.0,
+                      children: [
+                        for (var i = 0; i <= Constant.timeDic.length; i++)
+                          Container(
+                            height: 24,
+                            width: 150,
+                            color: Colors.transparent,
+                            child: Column(
+                              children: [
+                                Text(
+                                  Constant.timeDic[i.toString()].toString(),
+                                  textAlign: TextAlign.center,
+                                  style: textBold36White(),
+                                ),
+                                Container(
+                                  height: 2,
+                                  width: 100,
+                                  color: Colors.white,
+                                ),
+                              ],
+                            ),
+                          ),
+                      ],
+                    ),
+                  ),
+                  onVerticalDragEnd: (drag) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const PremiumPage(
+                              isFreeTrial: false,
+                              img: 'Pantalla5.jpg',
+                              title: Constant.premiumChangeTimeTitle,
+                              subtitle: '')),
+                    );
                   },
-                  itemExtent: 60.0,
-                  children: [
-                    for (var i = 0; i <= Constant.timeDic.length; i++)
-                      Container(
-                        height: 24,
-                        width: 120,
-                        color: Colors.transparent,
-                        child: Column(
-                          children: [
-                            Text(
-                              Constant.timeDic[i.toString()].toString(),
-                              textAlign: TextAlign.center,
-                              style: textBold36White(),
-                            ),
-                            Container(
-                              height: 2,
-                              width: 100,
-                              color: Colors.white,
-                            ),
-                          ],
-                        ),
-                      ),
-                  ],
                 ),
               ),
               const SizedBox(
@@ -170,10 +188,27 @@ class _UseMobilePageState extends State<UseMobilePage> {
                     var strDatetime =
                         Jiffy(datetime).format(getDefaultPattern());
 
-                    setState(() {
+                    setState(() async {
                       if (position == SlidableButtonPosition.end) {
-                        _prefs.setHabitsEnable = true;
-                        _prefs.setHabitsRefresh = strDatetime;
+                        if (_prefs.getUserFree) {
+                          await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const PremiumPage(
+                                  isFreeTrial: false,
+                                  img: 'pantalla3.png',
+                                  title: Constant.premiumFallTitle,
+                                  subtitle: ''),
+                            ),
+                          ).then((value) {
+                            if (value != null && value) {
+                              _prefs.setUserFree = false;
+                              _prefs.setHabitsEnable = true;
+                              _prefs.setHabitsRefresh = strDatetime;
+                            }
+                          });
+                        }
+
                         // result = 'Button is on the right';
                         // makePayment();
                         //GooglePayButton(

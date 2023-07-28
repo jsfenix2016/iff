@@ -200,7 +200,7 @@ class _UserRestPageState extends State<UserRestPage> {
       noSelectDay++;
       await processSelectedInfo();
 
-      showSaveAlert(context, Constant.info, "Faltan dias por seleccionar.");
+      showSaveAlert(context, Constant.info, "Faltan días por seleccionar.");
     } else {
       showSaveAlert(context, Constant.info, "Puede continuar.");
       isVisibleBtn = true;
@@ -222,7 +222,7 @@ class _UserRestPageState extends State<UserRestPage> {
       await processSelectedInfo();
 
       showSaveAlert(context, Constant.info,
-          "Todos los dias ya fueron asignados puedes continuar con la configuración");
+          "Todos los días ya fueron asignados puedes continuar con la configuración");
       setState(() {});
       return;
     }
@@ -235,7 +235,7 @@ class _UserRestPageState extends State<UserRestPage> {
       }
       // ignore: use_build_context_synchronously
       showSaveAlert(context, Constant.info,
-          "debes seleccionar los dias restantes antes de continuar");
+          "debes seleccionar los días restantes antes de continuar");
 
       setState(() {});
     }

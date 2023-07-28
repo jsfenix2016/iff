@@ -19,7 +19,6 @@ class ContactUserController extends GetxController {
     contextTemp = context;
     try {
       // Map info
-      await Future.delayed(const Duration(seconds: 2));
 
       showAlertTemp("Se ha realizado la solicitud correctamente");
 
@@ -66,8 +65,6 @@ class ContactUserController extends GetxController {
           await const HiveData().saveUserContact(contactBD);
         }
       }
-      showAlertTemp(
-          "Contacto guardado correctamente, se ha realizado la solicitud de autorización correctamente");
       return true;
     } catch (error) {
       showAlertTemp(Constant.conexionFail);

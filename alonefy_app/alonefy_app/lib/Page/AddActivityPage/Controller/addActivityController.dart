@@ -5,6 +5,7 @@ import 'package:get/get_state_manager/src/simple/get_controllers.dart';
 import 'package:ifeelefine/Model/ApiRest/activityDayApi.dart';
 import 'package:ifeelefine/Page/AddActivityPage/Service/activityService.dart';
 import 'package:jiffy/jiffy.dart';
+import 'package:notification_center/notification_center.dart';
 import '../../../Common/Constant.dart';
 import '../../../Common/utils.dart';
 import '../../../Controllers/mainController.dart';
@@ -30,7 +31,8 @@ class AddActivityController extends GetxController {
     }
   }
 
-  bool startTimeIsBeforeEndTime(String hour1, String hour2, String minutes1, String minutes2) {
+  bool startTimeIsBeforeEndTime(
+      String hour1, String hour2, String minutes1, String minutes2) {
     if (int.parse(hour1) < int.parse(hour2)) {
       return true;
     } else if (int.parse(hour1) == int.parse(hour2)) {
@@ -44,8 +46,9 @@ class AddActivityController extends GetxController {
 
   Future<int> saveActivity(BuildContext context, ActivityDay activity) async {
     ActivityDayBD activitybd = await convertActivityDayToBD(activity);
-
-    return await const HiveData().saveActivity(activitybd);
+    int id = await const HiveData().saveActivity(activitybd);
+    NotificationCenter().notify('refreshPreviewActivities');
+    return id;
   }
 
   Future<void> saveFromApi(List<ActivityDayApiResponse> activitiesApi) async {
@@ -108,12 +111,15 @@ class AddActivityController extends GetxController {
 
     var activityApiResponse = await ActivityService().saveData(activityApi);
     if (activityApiResponse != null) {
-      if (activityApiResponse.days != null && activityApiResponse.days!.isNotEmpty) {
-        activityApiResponse.days = _convertRepeatTypeDaysApi(activityApiResponse.days!);
+      if (activityApiResponse.days != null &&
+          activityApiResponse.days!.isNotEmpty) {
+        activityApiResponse.days =
+            _convertRepeatTypeDaysApi(activityApiResponse.days!);
       }
-      activityApiResponse.repeatType = Constant.daysFromApi[activityApiResponse.repeatType]!;
+      activityApiResponse.repeatType =
+          Constant.daysFromApi[activityApiResponse.repeatType]!;
     }
-
+    NotificationCenter().notify('refreshPreviewActivities');
     return activityApiResponse;
   }
 
@@ -121,35 +127,37 @@ class AddActivityController extends GetxController {
     final MainController mainController = Get.put(MainController());
     var user = await mainController.getUserData();
     var activityApi = await _convertToApi(activity, user.telephone);
-    ActivityService().updateData(ActivityDayApiResponse.fromActivityDayApi(activityApi, activity.id));
+    ActivityService().updateData(
+        ActivityDayApiResponse.fromActivityDayApi(activityApi, activity.id));
   }
 
-  Future<ActivityDayApi> _convertToApi(ActivityDay activity, String phoneNumber) async {
-
+  Future<ActivityDayApi> _convertToApi(
+      ActivityDay activity, String phoneNumber) async {
     var startDate = await _convertDayToApi(activity.day);
     var startTime = await _convertTimeToApi(activity.timeStart);
     var endTime = await _convertTimeToApi(activity.timeFinish);
     var endDate = await _convertDayToApi(activity.dayFinish);
-    var disabledDates = await _convertSpecificDaysToList(activity.specificDaysDeactivated);
-    var removedDates = await _convertSpecificDaysToList(activity.specificDaysRemoved);
+    var disabledDates =
+        await _convertSpecificDaysToList(activity.specificDaysDeactivated);
+    var removedDates =
+        await _convertSpecificDaysToList(activity.specificDaysRemoved);
 
     var days = _convertDaysToList(activity.days!);
     days = _convertRepeatTypeDays(days);
 
     ActivityDayApi activityDayApi = ActivityDayApi(
-      phoneNumber.replaceAll("+34", ""),
-      startDate,
-      endDate,
-      startTime,
-      activity.activity,
-      activity.allDay,
-      endTime,
-      days,
-      Constant.daysToApi[activity.repeatType]!,
-      activity.isDeactivate,
-      disabledDates,
-      removedDates
-    );
+        phoneNumber.replaceAll("+34", "").replaceAll(" ", ""),
+        startDate,
+        endDate,
+        startTime,
+        activity.activity,
+        activity.allDay,
+        endTime,
+        days,
+        Constant.daysToApi[activity.repeatType]!,
+        activity.isDeactivate,
+        disabledDates,
+        removedDates);
 
     return activityDayApi;
   }

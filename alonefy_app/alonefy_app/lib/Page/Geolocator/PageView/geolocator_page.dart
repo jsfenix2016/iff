@@ -6,6 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:ifeelefine/Common/Constant.dart';
 import 'package:ifeelefine/Common/manager_alerts.dart';
 import 'package:ifeelefine/Page/Geolocator/Controller/configGeolocatorController.dart';
+import 'package:ifeelefine/Page/Premium/PageView/premium_page.dart';
 import 'package:ifeelefine/Page/TermsAndConditions/PageView/conditionGeneral_page.dart';
 import 'package:ifeelefine/Utils/Widgets/ImageGradient.dart';
 import 'package:ifeelefine/Utils/Widgets/elevatedButtonFilling.dart';
@@ -236,6 +237,22 @@ class _InitGeolocatorState extends State<InitGeolocator> {
                         activeColor: ColorPalette.activeSwitch,
                         trackColor: CupertinoColors.inactiveGray,
                         onChanged: ((value) async {
+                          if (_prefs.getUserFree) {
+                            await Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => const PremiumPage(
+                                      isFreeTrial: false,
+                                      img: 'pantalla3.png',
+                                      title: Constant.premiumFallTitle,
+                                      subtitle: '')),
+                            ).then((value) {
+                              if (value != null && value) {
+                                _prefs.setUserFree = false;
+                              }
+                            });
+                            return;
+                          }
                           setState(() {
                             isActive = value;
                           });

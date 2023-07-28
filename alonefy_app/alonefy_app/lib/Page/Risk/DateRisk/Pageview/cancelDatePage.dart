@@ -68,13 +68,18 @@ class _CancelDatePageState extends State<CancelDatePage> {
       contactRiskTemp.code = "";
       // contactRiskTemp.timefinish = '00:00';
       // contactRiskTemp.timeinit = '00:00';
-      var res = await editVC.updateContactRisk(context, contactRiskTemp);
 
+      bool res = false;
       if (contactRiskTemp.taskIds != null &&
           contactRiskTemp.taskIds!.isNotEmpty) {
         MainService().cancelAllNotifications(contactRiskTemp.taskIds!);
       } else if (widget.taskIds.isNotEmpty) {
         MainService().cancelAllNotifications(widget.taskIds);
+      }
+      if (contactRiskTemp.saveContact == false) {
+        res = await editVC.deleteContactRisk(context, contactRiskTemp);
+      } else {
+        res = await editVC.updateContactRisk(context, contactRiskTemp);
       }
 
       if (res) {

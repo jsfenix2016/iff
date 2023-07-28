@@ -15,9 +15,10 @@ import '../../../../../Controllers/mainController.dart';
 class PushAlertController extends GetxController {
   Future<List<String>> updateVideo(
       ContactZoneRiskBD contact, String path) async {
-    await GallerySaver.saveVideo(path);
-    contact.video = await convertImageData(path);
-
+    if (path.isNotEmpty) {
+      await GallerySaver.saveVideo(path);
+      contact.video = await convertImageData(path);
+    }
     final MainController mainController = Get.put(MainController());
     var user = await mainController.getUserData();
 

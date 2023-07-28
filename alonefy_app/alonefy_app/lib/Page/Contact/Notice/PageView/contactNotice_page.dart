@@ -2,12 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:ifeelefine/Common/Constant.dart';
 import 'package:ifeelefine/Common/utils.dart';
 import 'package:ifeelefine/Model/contact.dart';
 import 'package:ifeelefine/Page/Contact/EditContact/PageView/editContact.dart';
 import 'package:ifeelefine/Page/Contact/ListContact/PageView/list_contact_page.dart';
 import 'package:ifeelefine/Page/Contact/Notice/Controller/contactNoticeController.dart';
 import 'package:ifeelefine/Page/Contact/Widget/cellContactStatus.dart';
+import 'package:ifeelefine/Page/Premium/PageView/premium_page.dart';
+import 'package:ifeelefine/Provider/prefencesUser.dart';
 import 'package:ifeelefine/Utils/Widgets/elevatedButtonFilling.dart';
 
 import 'package:notification_center/notification_center.dart';
@@ -22,7 +25,7 @@ class ContactNoticePage extends StatefulWidget {
 
 class _ContactNoticePageState extends State<ContactNoticePage> {
   final ContactNoticeController controller = Get.put(ContactNoticeController());
-
+  final PreferenceUser _prefs = PreferenceUser();
   late List<ContactBD> listContact = [];
   @override
   void initState() {
@@ -124,6 +127,18 @@ class _ContactNoticePageState extends State<ContactNoticePage> {
                   Center(
                     child: ElevateButtonFilling(
                         onChanged: ((value) async {
+                          if (_prefs.getUserFree && listContact.length > 1) {
+                            await Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => const PremiumPage(
+                                      isFreeTrial: false,
+                                      img: 'pantalla3.png',
+                                      title: Constant.premiumFallTitle,
+                                      subtitle: '')),
+                            );
+                            return;
+                          }
                           await showDialog(
                             context: context,
                             builder: (BuildContext context) => AlertDialog(
@@ -134,10 +149,12 @@ class _ContactNoticePageState extends State<ContactNoticePage> {
                                       value.displayName,
                                       value.photo == null ? null : value.photo,
                                       value.displayName,
+                                      "20 min",
+                                      "20 min",
                                       "5 min",
-                                      "10 min",
-                                      "5 min",
-                                      value.phones.first.normalizedNumber.replaceAll("+34", ""),
+                                      value.phones.first.normalizedNumber
+                                          .replaceAll("+34", "")
+                                          .replaceAll(" ", ""),
                                       "Pendiente");
                                   Navigator.pushReplacement(
                                     context,
@@ -151,14 +168,6 @@ class _ContactNoticePageState extends State<ContactNoticePage> {
                               ),
                             ),
                           );
-                          // Navigator.push(
-                          //   context,
-                          //   MaterialPageRoute(
-                          //     builder: (context) => const ContactList(
-                          //       isMenu: true,
-                          //     ),
-                          //   ),
-                          // );
                         }),
                         mensaje: 'Añadir contacto'),
                   ),

@@ -62,11 +62,11 @@ class _EditUseMobilPageState extends State<EditUseMobilPage> {
     var habits = _prefs.getHabitsTime;
     timeDic = editUseMobilVC.getMapWithHabitsTime(habits);
     getListUseMobilForDay();
-    scrollController = FixedExtentScrollController(initialItem: 0);
+    scrollController = FixedExtentScrollController(initialItem: 1);
     if (tempUseMobilBDDays.isEmpty) {
       for (var element in Constant.tempListShortDay) {
         var useMobilBD = UseMobilBD(
-            day: element, time: '5 min', selection: 0, isSelect: true);
+            day: element, time: '10 min', selection: 0, isSelect: true);
 
         tempUseMobilBDDays.add(useMobilBD);
       }
@@ -177,14 +177,38 @@ class _EditUseMobilPageState extends State<EditUseMobilPage> {
       }
       var a = {"${noSelectDay - 1}": sortWeekdays(newRestDays)};
       groupedProducts.addAll(a);
-
-      showSaveAlert(context, Constant.info, "Faltan días por seleccionar");
+      Future.sync(() => {
+            showSaveAlert(context, Constant.info, "Faltan días por seleccionar")
+          });
     } else {
-      var save = await editUseMobilVC
-          .saveTimeUseMobil(sortWeekdays(selecListUseMobilDays));
-      if (save) {
-        showSaveAlert(context, Constant.info, Constant.saveCorrectly);
+      if (_prefs.getUserFree) {
+        await Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const PremiumPage(
+                isFreeTrial: false,
+                img: 'pantalla3.png',
+                title: Constant.premiumFallTitle,
+                subtitle: ''),
+          ),
+        ).then((value) {
+          if (value != null && value) {
+            _prefs.setUserFree = false;
+            saveChange();
+          }
+        });
+      } else {
+        saveChange();
       }
+    }
+  }
+
+  Future<void> saveChange() async {
+    var save = await editUseMobilVC
+        .saveTimeUseMobil(sortWeekdays(selecListUseMobilDays));
+    if (save) {
+      Future.sync(() =>
+          {showSaveAlert(context, Constant.info, Constant.saveCorrectly)});
     }
     setState(() {});
   }
@@ -212,124 +236,126 @@ class _EditUseMobilPageState extends State<EditUseMobilPage> {
                 indexGroup <= groupedProducts.length - 1;
                 indexGroup++)
               Container(
+                key: Key(indexGroup.toString()),
+                color: Colors.transparent,
+                width: size.width,
+                height: 210,
+                child: ListView.builder(
                   key: Key(indexGroup.toString()),
-                  color: Colors.transparent,
-                  width: size.width,
-                  height: 210,
-                  child: ListView.builder(
-                    key: Key(indexGroup.toString()),
-                    shrinkWrap: true,
-                    scrollDirection: Axis.vertical,
-                    physics: const NeverScrollableScrollPhysics(),
-                    itemCount: 1,
-                    itemBuilder: (context, indexList) {
-                      final scrollController = FixedExtentScrollController(
-                        initialItem: timeDic.values.toList().indexOf(
-                              groupedProducts.entries
-                                  .toList()[indexGroup]
-                                  .value
-                                  .first
-                                  .time,
-                            ),
-                      );
+                  shrinkWrap: true,
+                  scrollDirection: Axis.vertical,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: 1,
+                  itemBuilder: (context, indexList) {
+                    final scrollController = FixedExtentScrollController(
+                      initialItem: timeDic.values.toList().indexOf(
+                            groupedProducts.entries
+                                .toList()[indexGroup]
+                                .value
+                                .first
+                                .time,
+                          ),
+                    );
 
-                      return Column(
-                        mainAxisSize: MainAxisSize.max,
-                        key: Key(indexList.toString()),
-                        children: [
-                          ListWeekDayCustom(
-                            listRest: selecListUseMobilDays,
-                            newIndex: indexGroup,
-                            onChanged: (value) async {
-                              indexFile = value;
-                              var temp = selecListUseMobilDays[value];
-                              temp.isSelect =
-                                  (selecListUseMobilDays[value].isSelect ==
-                                          true)
-                                      ? false
-                                      : true;
-                              temp.selection = indexGroup;
-                              indexSelect = indexGroup;
-                              selecListUseMobilDays.removeAt(value);
-                              selecListUseMobilDays.insert(value, temp);
-                            },
-                            model: selecListUseMobilDays[indexList],
-                          ),
-                          Container(
-                            height: 200,
-                            color: Colors.transparent,
-                            child: SizedBox(
-                              width: 200,
-                              height: 90,
-                              child: Stack(
-                                children: [
-                                  if (_prefs.getUserPremium) ...[
-                                    _getCupertinoPicker(indexList, indexGroup,
-                                        scrollController),
-                                  ] else ...[
-                                    GestureDetector(
-                                      child: AbsorbPointer(
-                                          absorbing: !_prefs.getUserPremium,
-                                          child: _getCupertinoPicker(indexList,
-                                              indexGroup, scrollController)),
-                                      onVerticalDragEnd: (drag) {
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  const PremiumPage(
-                                                      isFreeTrial: false,
-                                                      img: 'pantalla3.png',
-                                                      title: Constant
-                                                          .premiumUseTimeTitle,
-                                                      subtitle: '')),
-                                        );
-                                      },
-                                    ),
-                                  ],
+                    return Column(
+                      mainAxisSize: MainAxisSize.max,
+                      key: Key(indexList.toString()),
+                      children: [
+                        ListWeekDayCustom(
+                          listRest: selecListUseMobilDays,
+                          newIndex: indexGroup,
+                          onChanged: (value) async {
+                            indexFile = value;
+                            var temp = selecListUseMobilDays[value];
+                            temp.isSelect =
+                                (selecListUseMobilDays[value].isSelect == true)
+                                    ? false
+                                    : true;
+                            temp.selection = indexGroup;
+                            indexSelect = indexGroup;
+                            selecListUseMobilDays.removeAt(value);
+                            selecListUseMobilDays.insert(value, temp);
+                          },
+                          model: selecListUseMobilDays[indexList],
+                        ),
+                        Container(
+                          height: 200,
+                          color: Colors.transparent,
+                          child: SizedBox(
+                            width: 200,
+                            height: 90,
+                            child: Stack(
+                              children: [
+                                if (_prefs.getUserPremium) ...[
+                                  _getCupertinoPicker(
+                                      indexList, indexGroup, scrollController),
+                                ] else ...[
+                                  GestureDetector(
+                                    child: AbsorbPointer(
+                                        absorbing: !_prefs.getUserPremium,
+                                        child: _getCupertinoPicker(
+                                            indexList,
+                                            indexGroup,
+                                            FixedExtentScrollController(
+                                                initialItem: 1))),
+                                    onVerticalDragEnd: (drag) {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                const PremiumPage(
+                                                    isFreeTrial: false,
+                                                    img: 'pantalla3.png',
+                                                    title: Constant
+                                                        .premiumUseTimeTitle,
+                                                    subtitle: '')),
+                                      );
+                                    },
+                                  ),
                                 ],
-                              ),
+                              ],
                             ),
                           ),
-                        ],
-                      );
-                    },
-                  ),
+                        ),
+                      ],
+                    );
+                  },
                 ),
+              ),
             Row(
               children: [
                 Container(
                   color: Colors.transparent,
                   height: 50,
                   width: size.width / 2,
-                    child: SizedBox(
-                      width: size.width,
-                      child: Center(
-                        child: ElevateButtonCustomBorder(
-                          onChanged: (value) async {
-                            //btnCancel();
-                          },
-                          mensaje: "Cancelar",
-                        ),
+                  child: SizedBox(
+                    width: size.width,
+                    child: Center(
+                      child: ElevateButtonCustomBorder(
+                        onChanged: (value) async {
+                          //btnCancel();
+                        },
+                        mensaje: "Cancelar",
                       ),
                     ),
                   ),
+                ),
                 Container(
                   color: Colors.transparent,
                   height: 50,
                   width: size.width / 2,
-                    child: SizedBox(
-                      width: size.width,
-                      child: Center(
-                        child: ElevateButtonCustomBorder(
-                          onChanged: (value) {
-                            btnAdd();
-                          },
-                          mensaje: Constant.saveBtn,
-                        ),
+                  child: SizedBox(
+                    width: size.width,
+                    child: Center(
+                      child: ElevateButtonCustomBorder(
+                        onChanged: (value) {
+                          btnAdd();
+                        },
+                        mensaje: Constant.saveBtn,
                       ),
                     ),
                   ),
+                ),
               ],
             )
           ],
