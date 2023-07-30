@@ -1,5 +1,7 @@
+import 'package:get/get.dart';
 import 'package:ifeelefine/Common/colorsPalette.dart';
-import 'package:ifeelefine/Common/utils.dart';
+
+import 'package:ifeelefine/Controllers/mainController.dart';
 
 import 'package:ifeelefine/Model/contactZoneRiskBD.dart';
 
@@ -11,7 +13,6 @@ import 'package:flutter/material.dart';
 
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ifeelefine/Page/UserConfig/PageView/userconfig_page.dart';
-import 'package:ifeelefine/Provider/prefencesUser.dart';
 
 import 'package:ifeelefine/Utils/Widgets/elevatedButtonFilling.dart';
 import 'package:notification_center/notification_center.dart';
@@ -25,7 +26,7 @@ class ZoneRiskPage extends StatefulWidget {
 
 class _ZoneRiskPageState extends State<ZoneRiskPage> {
   ListContactZoneController riskVC = ListContactZoneController();
-  static const String routeName = '/listado';
+
   final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
   List<ContactZoneRiskBD> listContact = [];
@@ -327,25 +328,28 @@ class _ZoneRiskPageState extends State<ZoneRiskPage> {
               bottom: 10,
               left: (size.width / 2) - 100,
               child: ElevateButtonFilling(
-                onChanged: (value) {
+                onChanged: (value) async {
                   initContact();
-                  final prefs = PreferenceUser();
-                  if (!prefs.isConfig) {
+                  MainController mainController = Get.put(MainController());
+                  var user = await mainController.getUserData();
+
+                  if (user.idUser == "-1") {
                     Route route = MaterialPageRoute(
                       builder: (context) => const UserConfigPage(),
                     );
-                    Navigator.pushReplacement(context, route);
+                    Future.sync(
+                        () => Navigator.pushReplacement(context, route));
                     return;
                   }
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => EditZoneRiskPage(
-                        contactRisk: contactTemp,
-                        index: listContact.length,
-                      ),
-                    ),
-                  );
+                  Future.sync(() => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => EditZoneRiskPage(
+                            contactRisk: contactTemp,
+                            index: listContact.length,
+                          ),
+                        ),
+                      ));
                 },
                 mensaje: "Crear nuevo",
               ),

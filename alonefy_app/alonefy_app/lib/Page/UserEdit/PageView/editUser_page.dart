@@ -578,7 +578,10 @@ class _UserEditPageState extends State<UserEditPage> {
                                               if (delete) {
                                                 setState(() {
                                                   isloading = false;
-                                                  Get.off(OnboardingPage());
+
+                                                  Get.off(
+                                                    () => OnboardingPage(),
+                                                  );
                                                 });
                                               }
                                             }),

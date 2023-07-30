@@ -329,16 +329,15 @@ class _UserConfigPageState2 extends State<UserConfigPage2> {
       updateFirebaseToken();
 
       var premiumController = Get.put(PremiumController());
-      premiumController.updatePremiumAPIFree();
-      _prefs.setUserFree = isFree;
+      premiumController.updatePremiumAPIFree(!isFree);
+      _prefs.setUserFree = true;
+      _prefs.setUserPremium = false;
       if (!isFree) {
         _prefs.setUserPremium = true;
         _prefs.setDayFree = DateTime.now().toString();
       }
 
-      Get.off(
-        UseMobilePage(userbd: userbd!),
-      );
+      Get.off(() => UseMobilePage(userbd: userbd!));
     }
   }
 
@@ -370,12 +369,12 @@ class _UserConfigPageState2 extends State<UserConfigPage2> {
             ).then((value) {
               if (value != null && value) {
                 Get.off(
-                  UseMobilePage(userbd: userbd!),
+                  () => UseMobilePage(userbd: userbd!),
                 );
               }
             })
           : Get.off(
-              UseMobilePage(userbd: userbd!),
+              () => UseMobilePage(userbd: userbd!),
             );
     }
   }

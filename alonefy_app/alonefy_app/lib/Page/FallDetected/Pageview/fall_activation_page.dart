@@ -98,7 +98,7 @@ class _FallActivationPageState extends State<FallActivationPage> {
                         padding: const EdgeInsets.fromLTRB(0, 16, 0, 0),
                         child: ElevateButtonFilling(
                           onChanged: (value) async {
-                            if (_prefs.getUserFree) {
+                            if (_prefs.getUserFree && !_prefs.getUserPremium) {
                               await Navigator.push(
                                 context,
                                 MaterialPageRoute(

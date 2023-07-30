@@ -205,7 +205,7 @@ class _RestoreMyConfigPageState extends State<RestoreMyConfigPage> {
 
                           if (result) {
                             setState(() {
-                              Get.off(const HomePage());
+                              Get.off(() => const HomePage());
                             });
                           }
                           setState(() {

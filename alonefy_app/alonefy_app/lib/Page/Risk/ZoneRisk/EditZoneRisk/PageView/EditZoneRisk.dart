@@ -285,7 +285,8 @@ class _EditZoneRiskPageState extends State<EditZoneRiskPage> {
                                       width: size.width / 6,
                                       child: Switch(
                                         onChanged: (value) async {
-                                          if (_prefs.getUserFree) {
+                                          if (_prefs.getUserFree &&
+                                              !_prefs.getUserPremium) {
                                             await Navigator.push(
                                               context,
                                               MaterialPageRoute(
@@ -444,7 +445,8 @@ class _EditZoneRiskPageState extends State<EditZoneRiskPage> {
                                   width: size.width / 6,
                                   child: Switch(
                                     onChanged: (value) async {
-                                      if (_prefs.getUserFree) {
+                                      if (_prefs.getUserFree &&
+                                          !_prefs.getUserPremium) {
                                         await Navigator.push(
                                           context,
                                           MaterialPageRoute(
@@ -539,7 +541,8 @@ class _EditZoneRiskPageState extends State<EditZoneRiskPage> {
                                   width: size.width / 6,
                                   child: Switch(
                                     onChanged: (value) async {
-                                      if (_prefs.getUserFree) {
+                                      if (_prefs.getUserFree &&
+                                          !_prefs.getUserPremium) {
                                         await Navigator.push(
                                           context,
                                           MaterialPageRoute(

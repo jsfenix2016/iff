@@ -89,7 +89,7 @@ class OnboardingPage extends StatelessWidget {
                 child: Center(
                   child: ElevateButtonFilling(
                     onChanged: (value) {
-                      Get.off(const AlternativePage());
+                      Get.off(() => const AlternativePage());
                     },
                     mensaje: Constant.continueTxt,
                   ),

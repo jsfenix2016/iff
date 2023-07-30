@@ -2,6 +2,7 @@ import 'package:get/get.dart';
 import 'package:ifeelefine/Common/Constant.dart';
 import 'package:ifeelefine/Common/initialize_models_bd.dart';
 import 'package:ifeelefine/Common/text_style_font.dart';
+import 'package:ifeelefine/Controllers/mainController.dart';
 import 'package:ifeelefine/Model/contactRiskBD.dart';
 import 'package:ifeelefine/Page/Risk/DateRisk/ListDateRisk/Controller/riskPageController.dart';
 import 'package:ifeelefine/Page/Risk/DateRisk/ListDateRisk/Widget/list_contact_risk.dart';
@@ -86,24 +87,29 @@ class _RiskPageState extends State<RiskPage> {
                 width: size.width,
                 color: Colors.transparent,
                 child: ElevateButtonFilling(
-                  onChanged: (value) {
+                  onChanged: (value) async {
                     initContact();
-                    final prefs = PreferenceUser();
-                    if (!prefs.isConfig) {
+
+                    MainController mainController = Get.put(MainController());
+                    var user = await mainController.getUserData();
+
+                    if (user.idUser == "-1") {
                       Route route = MaterialPageRoute(
                         builder: (context) => const UserConfigPage(),
                       );
-                      Navigator.pushReplacement(context, route);
+                      Future.sync(
+                          () => Navigator.pushReplacement(context, route));
                       return;
                     }
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => EditRiskPage(
-                                contactRisk: contactTemp,
-                                index: riskVC.contactList.obs.value.length,
-                              )),
-                    );
+                    Future.sync(() => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => EditRiskPage(
+                              contactRisk: contactTemp,
+                              index: riskVC.contactList.obs.value.length,
+                            ),
+                          ),
+                        ));
                   },
                   mensaje: Constant.newDate,
                 ),

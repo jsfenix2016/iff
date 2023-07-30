@@ -905,7 +905,8 @@ class _EditRiskPageState extends State<EditRiskPage> {
                                   width: size.width / 6,
                                   child: Switch(
                                     onChanged: (value) async {
-                                      if (_prefs.getUserFree) {
+                                      if (_prefs.getUserFree &&
+                                          !_prefs.getUserPremium) {
                                         await Navigator.push(
                                           context,
                                           MaterialPageRoute(

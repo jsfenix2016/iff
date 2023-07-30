@@ -91,7 +91,7 @@ class _SelectTimerCallSendSMSState extends State<SelectTimerCallSendSMS> {
                   );
                 },
                 child: AbsorbPointer(
-                  absorbing: prefs.getUserFree,
+                  absorbing: prefs.getUserFree && !prefs.getUserPremium,
                   child: CupertinoPicker(
                     backgroundColor: Colors.transparent,
                     onSelectedItemChanged: (int value) {
@@ -162,7 +162,7 @@ class _SelectTimerCallSendSMSState extends State<SelectTimerCallSendSMS> {
             const SizedBox(height: 10),
             GestureDetector(
               child: AbsorbPointer(
-                absorbing: prefs.getUserFree,
+                absorbing: prefs.getUserFree && !prefs.getUserPremium,
                 child: SizedBox(
                   width: 200,
                   height: 90,

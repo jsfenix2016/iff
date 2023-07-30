@@ -303,7 +303,7 @@ class _PremiumMothFreeState extends State<PremiumMothFree> {
         if (value == SlidableButtonPosition.end) {
           if (!_prefs.getUserFree) {
             var premiumController = Get.put(PremiumController());
-            premiumController.updatePremiumAPIFree();
+            premiumController.updatePremiumAPIFree(true);
 
             Navigator.of(context).pop();
           }

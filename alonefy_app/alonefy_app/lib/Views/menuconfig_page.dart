@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ifeelefine/Common/colorsPalette.dart';
 import 'package:ifeelefine/Common/habits.dart';
 import 'package:ifeelefine/Common/text_style_font.dart';
+import 'package:ifeelefine/Controllers/mainController.dart';
 
 import 'package:ifeelefine/Page/ChangeNotificationTime/PageView/changeNotificationTime_page.dart';
 import 'package:ifeelefine/Page/Contact/Notice/PageView/contactNotice_page.dart';
@@ -88,130 +90,142 @@ class _MenuConfigurationPageState extends State<MenuConfigurationPage> {
     Navigator.pushReplacement(context, route);
   }
 
-  void routeIndexSelect(int index) {
-    final prefs = PreferenceUser();
+  void routeIndexSelect(int index) async {
+    MainController mainController = Get.put(MainController());
+    var user = await mainController.getUserData();
 
     switch (index) {
       case 0:
-        if (!prefs.isConfig && !_prefs.getUserFree) {
+        if ((user.idUser == "-1") && !_prefs.getUserFree) {
           redirectToConfigUser();
           return;
         }
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => const UserEditPage()),
-        );
+
+        Future.sync(() => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const UserEditPage()),
+            ));
         break;
       case 1:
-        if (!prefs.isConfig && !_prefs.getUserFree) {
+        if ((user.idUser == "-1") && !_prefs.getUserFree) {
           redirectToConfigUser();
           return;
         }
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => const PreviewRestTimePage(
-              isMenu: true,
-            ),
-          ),
-        );
+
+        Future.sync(() => Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const PreviewRestTimePage(
+                  isMenu: true,
+                ),
+              ),
+            ));
         break;
 
       case 2:
-        if (!prefs.isConfig && !_prefs.getUserFree) {
+        if ((user.idUser == "-1") && !_prefs.getUserFree) {
           redirectToConfigUser();
           return;
         }
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => const EditUseMobilPage(),
-          ),
-        );
+
+        Future.sync(() => Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const EditUseMobilPage(),
+              ),
+            ));
         break;
       case 3:
-        if (!prefs.isConfig && !_prefs.getUserFree) {
+        if ((user.idUser == "-1") && !_prefs.getUserFree) {
           redirectToConfigUser();
           return;
         }
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => const PreviewActivitiesByDate(isMenu: true),
-          ),
-        );
+
+        Future.sync(() => Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) =>
+                    const PreviewActivitiesByDate(isMenu: true),
+              ),
+            ));
         break;
       case 4:
-        if (!prefs.isConfig && !_prefs.getUserFree) {
+        if ((user.idUser == "-1") && !_prefs.getUserFree) {
           redirectToConfigUser();
           return;
         }
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => const ContactNoticePage(),
-          ),
-        );
+
+        Future.sync(() => Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const ContactNoticePage(),
+              ),
+            ));
         break;
       case 5:
-        if (!prefs.isConfig && !_prefs.getUserFree) {
+        if ((user.idUser == "-1") && !_prefs.getUserFree) {
           redirectToConfigUser();
           return;
         }
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => const FallActivationConfigPage(),
-          ),
-        );
+        Future.sync(() => Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const FallActivationConfigPage(),
+              ),
+            ));
         break;
       case 6:
-        if (!prefs.isConfig && !_prefs.getUserFree) {
+        if ((user.idUser == "-1") && !_prefs.getUserFree) {
           redirectToConfigUser();
           return;
         }
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => const ConfigGeolocator(isMenu: true),
-          ),
-        );
+
+        Future.sync(() => Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const ConfigGeolocator(isMenu: true),
+              ),
+            ));
         break;
       case 7:
-        if (!prefs.isConfig && !_prefs.getUserFree) {
+        if ((user.idUser == "-1") && !_prefs.getUserFree) {
           redirectToConfigUser();
           return;
         }
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => const ChangeNotificationTimePage(),
-          ),
-        );
+
+        Future.sync(() => Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const ChangeNotificationTimePage(),
+              ),
+            ));
+
         break;
       case 8:
-        if (!prefs.isConfig && !_prefs.getUserFree) {
+        if ((user.idUser == "-1") && !_prefs.getUserFree) {
           redirectToConfigUser();
           return;
         }
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => const RingTonePage(),
-          ),
-        );
+
+        Future.sync(() => Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const RingTonePage(),
+              ),
+            ));
         break;
       case 9:
-        if (!prefs.isConfig && !_prefs.getUserFree) {
+        if ((user.idUser == "-1") && !_prefs.getUserFree) {
           redirectToConfigUser();
           return;
         }
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => const PermitionUserPage(),
-          ),
-        );
+
+        Future.sync(() => Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const PermitionUserPage(),
+              ),
+            ));
         break;
       case 10:
         //if (!prefs.isConfig) {
@@ -220,37 +234,38 @@ class _MenuConfigurationPageState extends State<MenuConfigurationPage> {
         //}
 
         if (_prefs.getUserPremium) {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => const RestoreMyConfigPage(),
-            ),
-          );
+          Future.sync(() => Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const RestoreMyConfigPage(),
+                ),
+              ));
         } else {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => const PremiumPage(
-                    isFreeTrial: false,
-                    img: 'Pantalla5.jpg',
-                    title: Constant.premiumRestoreTitle,
-                    subtitle: '')),
-          );
+          Future.sync(() => Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => const PremiumPage(
+                        isFreeTrial: false,
+                        img: 'Pantalla5.jpg',
+                        title: Constant.premiumRestoreTitle,
+                        subtitle: '')),
+              ));
         }
         break;
       case 11:
-        if (!prefs.isConfig) {
+        if ((user.idUser == "-1")) {
           redirectToConfigUser();
           return;
         }
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => const DesactivePage(
-              isMenu: true,
-            ),
-          ),
-        );
+        Future.sync(() => Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const DesactivePage(
+                  isMenu: true,
+                ),
+              ),
+            ));
+
         break;
       default:
     }
@@ -425,7 +440,7 @@ class _MenuConfigurationPageState extends State<MenuConfigurationPage> {
       await habits.fillRestDays();
       await habits.fillActivityDays();
       await habits.average();
-      habits.updateUseTime(context);
+      Future.sync(() => habits.updateUseTime(context));
     }
   }
 }

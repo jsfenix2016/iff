@@ -5,7 +5,10 @@ import 'dart:ui';
 // import 'package:all_sensors2/all_sensors2.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
+import 'package:ifeelefine/Common/initialize_models_bd.dart';
+import 'package:ifeelefine/Page/HomePage/Pageview/home_page.dart';
 import 'package:ifeelefine/Page/Premium/PageView/premium_moths_free.dart';
+import 'package:ifeelefine/Page/UserConfig2/Page/configuration2_page.dart';
 import 'package:notification_center/notification_center.dart';
 
 import 'package:sensors_plus/sensors_plus.dart';
@@ -134,6 +137,8 @@ Future<void> main() async {
 ///getAceptedSendLocation:  indica que el usuario acepto el envio de la ubicacion actual a su contacto
 ///getDetectedFall:  indica que el usuario acepto la funcionalidad del acelerometro para poder detectar movimientos bruscos
 Future activateService() async {
+  await inicializeHiveBD();
+
   /// OPTIONAL, using custom notification channel id
   const AndroidNotificationChannel channel = AndroidNotificationChannel(
     'my_foreground', // id
@@ -142,7 +147,7 @@ Future activateService() async {
     importance: Importance.high, // importance must be at low or higher level
   );
 
-  var textDescrip = _prefs.isConfig
+  var textDescrip = _prefs.getUserPremium
       ? 'AlertFriends está activado.'
       : 'AlertFriends no está activado.';
   print(textDescrip);
@@ -234,6 +239,9 @@ Future activateService() async {
           if (notificationResponse.payload!.contains("free")) {
             RedirectViewNotifier.onTapFreeNotification(notificationResponse);
           }
+          if (notificationResponse.payload!.contains("premium")) {
+            RedirectViewNotifier.onTapPremiumNotification(notificationResponse);
+          }
           if (notificationResponse.payload!.contains("Inactived_")) {
             ismove = false;
             timerActive = true;
@@ -290,6 +298,9 @@ Future activateService() async {
             NotificationCenter().notify('getContactRisk');
             MainService().sendAlertToContactImmediately(taskIdList);
           }
+          if (notificationResponse.actionId!.contains("premium")) {
+            RedirectViewNotifier.onTapPremiumNotification(notificationResponse);
+          }
           if (notificationResponse.actionId!.contains("ok")) {
             RedirectViewNotifier.onTapFreeNotification(notificationResponse);
           }
@@ -317,25 +328,6 @@ Future activateService() async {
     alert: true,
     badge: true,
     sound: true,
-  );
-}
-
-// Método para mostrar la notificación local
-Future<void> showNotification() async {
-  const AndroidNotificationDetails androidPlatformChannelSpecifics =
-      AndroidNotificationDetails('channel_id', '',
-          importance: Importance.max, priority: Priority.high);
-
-  const NotificationDetails platformChannelSpecifics =
-      NotificationDetails(android: androidPlatformChannelSpecifics);
-
-  await flutterLocalNotificationsPlugin.show(
-    12,
-    'Notificación local',
-    'Toca para ir a otra pantalla',
-    platformChannelSpecifics,
-    payload:
-        'free', // Puedes agregar un payload para identificar la notificación
   );
 }
 
@@ -388,9 +380,9 @@ void onStart(ServiceInstance service) async {
       }
     }
 
-    if (_prefs.getDayFree != "0") {
+    if (!_prefs.getUsedFreeDays) {
       DateTime dateTime = DateTime.parse(_prefs.getDayFree);
-      DateTime fechaInicio = parseContactRiskDate(_prefs.getDayFree);
+
       DateTime fechaActual = DateTime.now();
 
       // Calcular la diferencia entre las fechas en días
@@ -400,8 +392,12 @@ void onStart(ServiceInstance service) async {
       bool hanPasado30Dias = diferenciaEnDias >= 30;
 
       if (hanPasado30Dias) {
+        _prefs.setUsedFreeDays = true;
         _prefs.setUserFree = true;
         _prefs.setUserPremium = false;
+        _prefs.setDayFree = "0";
+        var premiumController = Get.put(PremiumController());
+        premiumController.updatePremiumAPIFree(false);
       }
     }
 
@@ -409,7 +405,11 @@ void onStart(ServiceInstance service) async {
     increaceTimeUpdate += 5;
     if (_prefs.getUserFree && !_prefs.getUserPremium) {
       if (time == increaceTime) {
-        RedirectViewNotifier.showFreeeNotification();
+        if (_prefs.getUsedFreeDays) {
+          RedirectViewNotifier.showPremiumNotification();
+        } else {
+          RedirectViewNotifier.showFreeeNotification();
+        }
       }
     }
 

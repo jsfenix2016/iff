@@ -9,6 +9,7 @@ import 'package:ifeelefine/Common/Constant.dart';
 import 'package:ifeelefine/Common/colorsPalette.dart';
 import 'package:ifeelefine/Common/manager_alerts.dart';
 import 'package:ifeelefine/Common/notificationService.dart';
+import 'package:ifeelefine/Common/text_style_font.dart';
 import 'package:ifeelefine/Common/utils.dart';
 import 'package:ifeelefine/Page/HomePage/Controller/homeController.dart';
 import 'package:ifeelefine/Page/HomePage/Widget/customNavbar.dart';
@@ -119,8 +120,6 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     user = await userVC.getUserDate();
     if (user != null) {
       user = user;
-
-      print(user);
     }
 
     setState(() {});
@@ -140,8 +139,8 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
 
     if (foto != null) {
       await homeVC.changeImage(foto, user!);
-
-      showSaveAlert(context, Constant.info, Constant.saveImageAvatar.tr);
+      Future.sync(() =>
+          showSaveAlert(context, Constant.info, Constant.saveImageAvatar.tr));
     }
   }
 
@@ -195,112 +194,114 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
         decoration: decorationCustom(),
         width: size.width,
         height: size.height,
-        child: Stack(
-          children: <Widget>[
-            Positioned(
-              top: 44,
-              left: 16,
-              child: IconButton(
-                iconSize: 40,
-                color: ColorPalette.principal,
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const MenuConfigurationPage()),
-                  );
-                },
-                icon: Container(
-                  height: 32,
-                  width: 28,
-                  decoration: const BoxDecoration(
-                    image: DecorationImage(
-                      image: AssetImage('assets/images/ajustes.png'),
-                      fit: BoxFit.fill,
+        child: SafeArea(
+          child: Stack(
+            children: <Widget>[
+              Positioned(
+                top: 44,
+                left: 16,
+                child: IconButton(
+                  iconSize: 40,
+                  color: ColorPalette.principal,
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const MenuConfigurationPage()),
+                    );
+                  },
+                  icon: Container(
+                    height: 32,
+                    width: 28,
+                    decoration: const BoxDecoration(
+                      image: DecorationImage(
+                        image: AssetImage('assets/images/ajustes.png'),
+                        fit: BoxFit.fill,
+                      ),
+                      color: Colors.transparent,
                     ),
-                    color: Colors.transparent,
                   ),
                 ),
               ),
-            ),
-            Positioned(
-              left: 57,
-              top: 55,
-              child: Visibility(
-                visible: !_prefs.isConfig,
+              Positioned(
+                left: 57,
+                top: 55,
+                child: Visibility(
+                  visible: _prefs.getUserFree && !_prefs.getUserPremium,
+                  child: Container(
+                    decoration: const BoxDecoration(
+                        borderRadius: BorderRadius.all(Radius.circular(
+                                20.0) //                 <--- border radius here
+                            ),
+                        color: Colors.red),
+                    height: 8,
+                    width: 8,
+                  ),
+                ),
+              ),
+              Positioned(
+                top: 44,
+                right: 16,
+                child: IconButton(
+                  iconSize: 40,
+                  color: ColorPalette.principal,
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => AlertsPage()),
+                    );
+                  },
+                  icon: Container(
+                    height: 32,
+                    width: 28,
+                    decoration: const BoxDecoration(
+                      image: DecorationImage(
+                        image: AssetImage('assets/images/Vector.png'),
+                        fit: BoxFit.fill,
+                      ),
+                      color: Colors.transparent,
+                    ),
+                  ),
+                ),
+              ),
+              Positioned(
+                top: 90,
                 child: Container(
-                  decoration: const BoxDecoration(
-                      borderRadius: BorderRadius.all(Radius.circular(
-                              20.0) //                 <--- border radius here
-                          ),
-                      color: Colors.red),
-                  height: 8,
-                  width: 8,
-                ),
-              ),
-            ),
-            Positioned(
-              top: 44,
-              right: 16,
-              child: IconButton(
-                iconSize: 40,
-                color: ColorPalette.principal,
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => AlertsPage()),
-                  );
-                },
-                icon: Container(
-                  height: 32,
-                  width: 28,
-                  decoration: const BoxDecoration(
-                    image: DecorationImage(
-                      image: AssetImage('assets/images/Vector.png'),
-                      fit: BoxFit.fill,
+                  width: size.width,
+                  color: Colors.transparent,
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 8.0, right: 8.0),
+                    child: Text(
+                      "Bienvenido $nameComplete",
+                      style: textBold20White(),
+                      textAlign: TextAlign.center,
                     ),
-                    color: Colors.transparent,
                   ),
                 ),
               ),
-            ),
-            Positioned(
-              top: 90,
-              child: Container(
-                width: size.width,
-                color: Colors.transparent,
-                child: Text(
-                  "Bienvenido $nameComplete",
-                  style: const TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 20),
-                  textAlign: TextAlign.center,
+              Positioned(
+                top: 120,
+                left: (size.width / 3) - 30,
+                child: AvatarGlow(
+                  glowColor: Colors.white,
+                  endRadius: 90.0,
+                  duration: const Duration(milliseconds: 2000),
+                  repeat: true,
+                  showTwoGlows: true,
+                  repeatPauseDuration: const Duration(milliseconds: 100),
+                  child: Material(
+                    elevation: 8.0,
+                    shape: const CircleBorder(),
+                    child: _mostrarFoto(),
+                  ),
                 ),
               ),
-            ),
-            Positioned(
-              top: 120,
-              left: (size.width / 3) - 30,
-              child: AvatarGlow(
-                glowColor: Colors.white,
-                endRadius: 90.0,
-                duration: const Duration(milliseconds: 2000),
-                repeat: true,
-                showTwoGlows: true,
-                repeatPauseDuration: const Duration(milliseconds: 100),
-                child: Material(
-                  elevation: 8.0,
-                  shape: const CircleBorder(),
-                  child: _mostrarFoto(),
-                ),
+              SwipeableContainer(
+                temp: temp,
               ),
-            ),
-            SwipeableContainer(
-              temp: temp,
-            ),
-            const CustomNavbar(),
-          ],
+              const CustomNavbar(),
+            ],
+          ),
         ),
       ),
     );

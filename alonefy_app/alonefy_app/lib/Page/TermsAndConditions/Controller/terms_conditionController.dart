@@ -42,7 +42,7 @@ class TermsAndConditionsController extends GetxController {
   }
 
   void goTO() {
-    Get.off(const FinishConfigPage());
+    Get.off(() => const FinishConfigPage());
   }
 
   void showAlertTemp(BuildContext context, String text) {

@@ -97,7 +97,7 @@ class _UseMobilePageState extends State<UseMobilePage> {
                 width: size.width,
                 child: GestureDetector(
                   child: AbsorbPointer(
-                    absorbing: _prefs.getUserFree,
+                    absorbing: _prefs.getUserFree && !_prefs.getUserPremium,
                     child: CupertinoPicker(
                       scrollController:
                           FixedExtentScrollController(initialItem: 1),
@@ -190,7 +190,7 @@ class _UseMobilePageState extends State<UseMobilePage> {
 
                     setState(() async {
                       if (position == SlidableButtonPosition.end) {
-                        if (_prefs.getUserFree) {
+                        if (_prefs.getUserFree && !_prefs.getUserPremium) {
                           await Navigator.push(
                             context,
                             MaterialPageRoute(
@@ -244,9 +244,7 @@ class _UseMobilePageState extends State<UseMobilePage> {
                           userbd!);
 
                       if (result) {
-                        Get.off(
-                          const UserRestPage(),
-                        );
+                        Get.off(() => const UserRestPage());
                       }
                     },
                     mensaje: 'Continuar',

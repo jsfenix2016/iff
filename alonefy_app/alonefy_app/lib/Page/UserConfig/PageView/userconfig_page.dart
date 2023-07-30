@@ -281,7 +281,7 @@ class _UserConfigPageState extends State<UserConfigPage> {
                       child: const Text(Constant.ok),
                       onPressed: () {
                         Get.off(
-                          UserConfigPage2(
+                          () => UserConfigPage2(
                             userbd: resp,
                           ),
                         );

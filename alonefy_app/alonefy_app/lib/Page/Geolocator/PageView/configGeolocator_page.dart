@@ -331,7 +331,7 @@ class _ConfigGeolocatorState extends State<ConfigGeolocator> {
   }
 
   void saveGeo() async {
-    if (_prefs.getUserFree) {
+    if (_prefs.getUserFree && !_prefs.getUserPremium) {
       await Navigator.push(
         context,
         MaterialPageRoute(

@@ -29,67 +29,74 @@ class PremiumController extends GetxController {
     // prepare
 
     try {
-      var result = await FlutterInappPurchase.instance.initialize();
+      Future.sync(() async => await FlutterInappPurchase.instance.initialize());
+      var result = "";
       print('result: $result');
       // Resto de tu lógica...
     } catch (e) {
       print('Error al inicializar el paquete flutter_inapp_purchase: $e');
       // Mostrar un mensaje de error o realizar una acción específica...
     }
+    Future.sync(() => _connectionSubscription =
+            FlutterInappPurchase.connectionUpdated.listen((connected) async {
+          if (await isSubscribed()) {
+            _prefs.setUserPremium = true;
+          } else {
+            if (_prefs.getUserFree && !_prefs.getUserPremium) {
+              _prefs.setUserPremium = false;
+            }
+          }
+          if (_prefs.getUserFree && !_prefs.getUserPremium) {
+            _updatePremiumAPI();
+          }
 
-    _connectionSubscription =
-        FlutterInappPurchase.connectionUpdated.listen((connected) async {
-      if (await isSubscribed()) {
-        _prefs.setUserPremium = true;
-      } else {
-        _prefs.setUserPremium = false;
-      }
-      if (_prefs.getUserFree) {
-        _updatePremiumAPI();
-      }
+          _getProducts();
+          print('connected: $connected');
+        }));
 
-      _getProducts();
-      print('connected: $connected');
-    });
+    Future.sync(() => _purchaseUpdatedSubscription =
+            FlutterInappPurchase.purchaseUpdated.listen((productItem) {
+          if (_response != null) {
+            _response!(true);
 
-    _purchaseUpdatedSubscription =
-        FlutterInappPurchase.purchaseUpdated.listen((productItem) {
-      if (_response != null) {
-        _response!(true);
+            if (!_prefs.getUserFree) {
+              _prefs.setUserPremium = true;
+              _prefs.setUserFree = false;
+              _updatePremiumAPI();
+            }
+            print('purchase-updated: $productItem');
+          }
+        }));
 
-        if (!_prefs.getUserFree) {
-          _prefs.setUserPremium = true;
-          _prefs.setUserFree = false;
-          _updatePremiumAPI();
-        }
-        print('purchase-updated: $productItem');
-      }
-    });
-
-    _purchaseErrorSubscription =
-        FlutterInappPurchase.purchaseError.listen((purchaseError) {
-      if (_response != null) _response!(false);
-      print('purchase-error: $purchaseError');
-    });
+    Future.sync(() => _purchaseErrorSubscription =
+            FlutterInappPurchase.purchaseError.listen((purchaseError) {
+          if (_response != null) _response!(false);
+          print('purchase-error: $purchaseError');
+        }));
 
     _getProducts();
-    if (await isSubscribed()) {
+    if (await Future.sync(() async => await isSubscribed())) {
       _prefs.setUserPremium = true;
     } else {
-      _prefs.setUserPremium = false;
+      if (!_prefs.getUsedFreeDays &&
+          _prefs.getUserFree &&
+          !_prefs.getUserPremium) {
+        _prefs.setUserPremium = false;
+      }
     }
   }
 
   void requestPurchase(IAPItem item) {
-    FlutterInappPurchase.instance.requestSubscription(item.productId!);
+    Future.sync(() =>
+        FlutterInappPurchase.instance.requestSubscription(item.productId!));
   }
 
   void requestPurchaseByProductId(String productId, Function response) {
     _response = response;
     //FlutterInappPurchase.instance.requestPurchase(productId);
     try {
-      var a = FlutterInappPurchase.instance.requestSubscription(productId);
-      print(a);
+      Future.sync(
+          () => FlutterInappPurchase.instance.requestSubscription(productId));
     } catch (e) {
       print(e);
     }
@@ -145,14 +152,14 @@ class PremiumController extends GetxController {
     }
   }
 
-  void updatePremiumAPIFree() async {
+  void updatePremiumAPIFree(bool ispremium) async {
     final MainController mainController = Get.put(MainController());
     var user = await mainController.getUserData();
     PremiumApi premiumApi = PremiumApi(
         phoneNumber: user.telephone.contains('+34')
             ? user.telephone.replaceAll("+34", "").replaceAll(" ", "")
             : user.telephone.replaceAll(" ", ""),
-        premium: false);
+        premium: ispremium);
     PremiumService().saveData(premiumApi);
   }
 

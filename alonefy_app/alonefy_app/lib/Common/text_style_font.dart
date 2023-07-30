@@ -68,7 +68,7 @@ TextStyle textBold20White() {
   return GoogleFonts.barlow(
     fontSize: 20.0,
     wordSpacing: 1,
-    letterSpacing: 1,
+    letterSpacing: 0.001,
     fontWeight: FontWeight.bold,
     color: Colors.white,
   );
@@ -89,7 +89,7 @@ TextStyle textNormal24White() {
   return GoogleFonts.barlow(
     fontSize: 24.0,
     wordSpacing: 1,
-    letterSpacing: 1,
+    letterSpacing: 0.001,
     fontWeight: FontWeight.normal,
     color: Colors.white,
   );
@@ -109,7 +109,7 @@ TextStyle textBold16Black() {
   return GoogleFonts.barlow(
     fontSize: 16.0,
     wordSpacing: 1,
-    letterSpacing: 1,
+    letterSpacing: 0.001,
     fontWeight: FontWeight.bold,
     color: Colors.black,
   );

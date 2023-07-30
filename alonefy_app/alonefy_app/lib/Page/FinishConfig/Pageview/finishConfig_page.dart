@@ -136,8 +136,7 @@ class _FinishConfigPageState extends State<FinishConfigPage> {
                                   } else {
                                     _prefs.config = true;
                                   }
-
-                                  Get.off(const HomePage());
+                                  Get.off(() => const HomePage());
                                 }),
                                 mensaje: 'Acceder'),
                           ),

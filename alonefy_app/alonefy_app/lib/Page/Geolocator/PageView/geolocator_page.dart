@@ -237,7 +237,7 @@ class _InitGeolocatorState extends State<InitGeolocator> {
                         activeColor: ColorPalette.activeSwitch,
                         trackColor: CupertinoColors.inactiveGray,
                         onChanged: ((value) async {
-                          if (_prefs.getUserFree) {
+                          if (_prefs.getUserFree && !_prefs.getUserPremium) {
                             await Navigator.push(
                               context,
                               MaterialPageRoute(
@@ -274,12 +274,7 @@ class _InitGeolocatorState extends State<InitGeolocator> {
                   padding: const EdgeInsets.all(8.0),
                   child: ElevateButtonFilling(
                     onChanged: (value) {
-                      // Navigator.push(
-                      //   context,
-                      //   MaterialPageRoute(
-                      //       builder: (context) => const ConditionGeneralPage()),
-                      // );
-                      Get.off(const ConditionGeneralPage());
+                      Get.off(() => const ConditionGeneralPage());
                     },
                     mensaje: Constant.continueTxt,
                   ),

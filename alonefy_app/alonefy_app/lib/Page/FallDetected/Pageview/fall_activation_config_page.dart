@@ -280,7 +280,7 @@ class _FallActivationConfigPageState extends State<FallActivationConfigPage> {
   }
 
   void saveFall() async {
-    if (_prefs.getUserFree) {
+    if (_prefs.getUserFree && !_prefs.getUserPremium) {
       await Navigator.push(
         context,
         MaterialPageRoute(

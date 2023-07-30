@@ -15,6 +15,7 @@ import 'package:ifeelefine/Data/hiveRisk_data.dart';
 import 'package:ifeelefine/Data/hive_constant_adapterInit.dart';
 import 'package:ifeelefine/Model/contactRiskBD.dart';
 import 'package:ifeelefine/Page/Premium/PageView/premium_moths_free.dart';
+import 'package:ifeelefine/Page/Premium/PageView/premium_page.dart';
 import 'package:ifeelefine/Page/Risk/DateRisk/Controller/editRiskController.dart';
 import 'package:ifeelefine/Page/Risk/DateRisk/Pageview/cancelDatePage.dart';
 import 'package:ifeelefine/main.dart';
@@ -49,11 +50,35 @@ class RedirectViewNotifier with ChangeNotifier {
     );
   }
 
+  static Future<void> onTapPremiumNotification(
+      NotificationResponse? response) async {
+    if (RedirectViewNotifier.context == null || response?.payload == null)
+      return;
+
+    await inicializeHiveBD();
+    await Navigator.push(
+      RedirectViewNotifier.context!,
+      MaterialPageRoute(
+        builder: (context) => const PremiumPage(
+            isFreeTrial: false,
+            img: 'pantalla3.png',
+            title: "Prueba la versión gratuita por 30 días",
+            subtitle: ''),
+      ),
+    ).then((value) {
+      if (value != null && value) {
+        Navigator.of(context!).pop();
+      }
+    });
+    //
+  }
+
   static Future<void> onTapFreeNotification(
       NotificationResponse? response) async {
     if (RedirectViewNotifier.context == null || response?.payload == null)
       return;
 
+    await inicializeHiveBD();
     await Navigator.push(
       RedirectViewNotifier.context!,
       MaterialPageRoute(
@@ -72,7 +97,7 @@ class RedirectViewNotifier with ChangeNotifier {
 
   static Future<void> manageNotifications(RemoteMessage message) async {
     var data = message.data;
-
+    await inicializeHiveBD();
     if (data.containsValue(Constant.inactive) ||
         data.containsValue(Constant.drop)) {
       final mainController = Get.put(MainController());
@@ -341,7 +366,7 @@ class RedirectViewNotifier with ChangeNotifier {
       "Prueba la versión completa por 30 días",
       const NotificationDetails(
         android: AndroidNotificationDetails(
-          '10',
+          '11',
           'MY FOREGROUND SERVICE',
           icon: '@mipmap/logo_alertfriends',
           color: ColorPalette.principal,
@@ -359,8 +384,7 @@ class RedirectViewNotifier with ChangeNotifier {
             AndroidNotificationAction(
               "ok",
               "Probar",
-              icon: const DrawableResourceAndroidBitmap(
-                  '@mipmap/logo_alertfriends'),
+              icon: DrawableResourceAndroidBitmap('@mipmap/logo_alertfriends'),
               showsUserInterface: true,
               cancelNotification: true,
             ),
@@ -370,6 +394,46 @@ class RedirectViewNotifier with ChangeNotifier {
         ),
       ),
       payload: 'free',
+    );
+  }
+
+  static Future<void> showPremiumNotification() async {
+    // RemoteNotification? notification = message.notification;
+
+    await flutterLocalNotificationsPlugin.show(
+      12,
+      "No estas protegido",
+      "Utilize la versión premium",
+      const NotificationDetails(
+        android: AndroidNotificationDetails(
+          '12',
+          'MY FOREGROUND SERVICE',
+          icon: '@mipmap/logo_alertfriends',
+          color: ColorPalette.principal,
+
+          importance: Importance.max,
+          ongoing: false,
+          enableLights: true,
+          playSound: true,
+          enableVibration: true,
+          channelShowBadge: false,
+          priority: Priority.high,
+
+          largeIcon: DrawableResourceAndroidBitmap('@mipmap/logo_alertfriends'),
+          actions: <AndroidNotificationAction>[
+            AndroidNotificationAction(
+              "premium",
+              "Prmium",
+              icon: DrawableResourceAndroidBitmap('@mipmap/logo_alertfriends'),
+              showsUserInterface: true,
+              cancelNotification: true,
+            ),
+          ],
+          // sound: RawResourceAndroidNotificationSound(
+          //     "content://media/internal/audio/media/26.wav"),
+        ),
+      ),
+      payload: 'premium',
     );
   }
 }
