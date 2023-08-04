@@ -30,7 +30,7 @@ class Constant {
       'Si vives feliz solo o sola además, quieres sentirte protegido/a';
 
   static const onBoardingPageTwoTitle =
-      'Ante una situación de riesgo cuando estas solo/a';
+      'Ante una situación de riesgo cuando estás solo/a';
   static const onBoardingPageTwoSubtitle =
       'Si AlertFriends no detecta actividad o movimiento en tu smartphone, avisa al amigo o familiar que desees';
 
@@ -93,22 +93,23 @@ class Constant {
   static const Map<String, String> gender = {
     '0': 'Hombre',
     '1': 'Mujer',
-    '2': 'Otro/a',
+    '2': 'Otro',
   };
 
   static const Map<String, String> maritalState = {
-    '0': 'Soltero',
-    '1': 'Casado',
-    '2': 'Divorciado',
-    '3': 'Solo',
-    '4': 'En pareja',
+    '0': 'Soltera/o',
+    '1': 'Casada/o',
+    '2': 'Divorciada/o',
+    '3': 'Separada/o',
+    '4': 'Viuda/o',
     '5': 'Otros',
   };
 
   static const Map<String, String> lifeStyle = {
-    '0': 'Sedentario',
-    '1': 'Aventurero',
-    '2': 'Otros',
+    '0': 'Viviendo sola/o',
+    '1': 'Viviendo con compañera/o',
+    '2': 'Viviendo con familiar',
+    '3': 'Otro',
   };
 
   static const Map<String, String> timeDic = {
@@ -353,14 +354,14 @@ class Constant {
       "Ha habido un error al deshabilitar la protección";
 
   static const String cancelChange = "Se ha cancelado los cambios";
-  static const String saveCorrectly = "Se guardo correctamente";
+  static const String saveCorrectly = "Se guardó correctamente";
   static const String contactSaveCorrectly =
       "Contacto guardado correctamente, se ha realizado la solicitud de autorización correctamente";
   static const String contactEditCorrectly = "Contacto editado correctamente";
   static const String timeMaxReachedInactivity =
       "Se ha alcanzado el máximo de tiempos de inactividad. Para poder programar más, hazte Premium.";
 
-  static const String saveImageAvatar = "Se guardo la imagen correctamente";
+  static const String saveImageAvatar = "Se guardó la imagen correctamente";
 
   static const String errorGeneric = "Hubo un error, intente mas tarde";
   static const String restoredCorrectly = "Se restauro correctamente";

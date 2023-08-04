@@ -1,7 +1,9 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -33,6 +35,7 @@ import 'package:ifeelefine/main.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:notification_center/notification_center.dart';
 import 'package:ifeelefine/Common/decoration_custom.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 final _prefs = PreferenceUser();
 
@@ -76,6 +79,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   void initState() {
     getUserData();
     getAlerts();
+    getpermission();
     _prefs.saveLastScreenRoute("home");
     super.initState();
     WidgetsBinding.instance.addObserver(this);
@@ -123,6 +127,16 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     }
 
     setState(() {});
+  }
+
+  Future<void> getpermission() async {
+    final androidInfo = await DeviceInfoPlugin().androidInfo;
+    await Permission.notification.isDenied.then((value) {
+      if (value) {
+        Permission.notification.request();
+      }
+    });
+    if (androidInfo.version.sdkInt >= 33) {}
   }
 
 //capturar imagen de la galeria de fotos

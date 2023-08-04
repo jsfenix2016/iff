@@ -56,7 +56,7 @@ class _FallActivationPageState extends State<FallActivationPage> {
         appBar: isMenu
             ? AppBar(
                 backgroundColor: ColorPalette.secondView,
-                title: const Text('Detectar caidas'),
+                title: const Text('Detectar caídas'),
               )
             : null,
         body: Container(
@@ -76,7 +76,7 @@ class _FallActivationPageState extends State<FallActivationPage> {
                       Padding(
                         padding: const EdgeInsets.only(top: 30.0),
                         child: Text(
-                          'Detectar caidas.',
+                          'Detectar caídas.',
                           textAlign: TextAlign.center,
                           style: GoogleFonts.barlow(
                             fontSize: 24.0,

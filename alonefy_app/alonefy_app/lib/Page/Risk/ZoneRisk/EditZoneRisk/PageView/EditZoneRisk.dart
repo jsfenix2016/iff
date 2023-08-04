@@ -3,6 +3,7 @@ import 'package:ifeelefine/Common/Constant.dart';
 import 'package:ifeelefine/Common/manager_alerts.dart';
 import 'package:ifeelefine/Common/utils.dart';
 import 'package:ifeelefine/Model/contactZoneRiskBD.dart';
+import 'package:ifeelefine/Page/Contact/Widget/filter_contact.dart';
 import 'package:ifeelefine/Page/Premium/PageView/premium_page.dart';
 import 'package:ifeelefine/Page/Risk/DateRisk/Widgets/cardContact.dart';
 import 'package:ifeelefine/Page/Risk/DateRisk/Widgets/contentCode.dart';
@@ -177,6 +178,32 @@ class _EditZoneRiskPageState extends State<EditZoneRiskPage> {
     );
   }
 
+  void _showContactListScreen(BuildContext context) async {
+    Contact? cont;
+    await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) =>
+            FilterContactListScreen(onCountrySelected: (contact) {
+          setState(() {
+            cont = contact;
+          });
+        }),
+      ),
+    );
+
+    if (cont!.name.first.isNotEmpty) {
+      setState(() {
+        contactSelect = cont!;
+        widget.contactRisk.name = contactSelect.displayName;
+
+        indexSelect =
+            contactlist.indexWhere((item) => item.id == contactSelect.id);
+        print(indexSelect);
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
@@ -300,6 +327,7 @@ class _EditZoneRiskPageState extends State<EditZoneRiskPage> {
                                             ).then((value) {
                                               if (value != null && value) {
                                                 _prefs.setUserFree = false;
+                                                _prefs.setUserPremium = true;
                                               }
                                             });
 
@@ -344,28 +372,29 @@ class _EditZoneRiskPageState extends State<EditZoneRiskPage> {
                                   : contactlist[indexSelect].displayName
                               : name,
                           onChanged: (value) {
-                            showDialog(
-                              context: context,
-                              builder: (BuildContext context) => Container(
-                                width: size.width,
-                                height: size.height,
-                                color: const Color.fromRGBO(169, 146, 125, 1),
-                                child: Padding(
-                                  padding: const EdgeInsets.only(
-                                      top: 28.0, left: 8, right: 8),
-                                  child: PopUpContact(
-                                    listcontact: contactlist,
-                                    onChanged: (int value) {
-                                      indexSelect = value;
-                                      contactSelect = contactlist[value];
-                                      widget.contactRisk.name =
-                                          contactSelect.displayName;
-                                      setState(() {});
-                                    },
-                                  ),
-                                ),
-                              ),
-                            );
+                            _showContactListScreen(context);
+                            // showDialog(
+                            //   context: context,
+                            //   builder: (BuildContext context) => Container(
+                            //     width: size.width,
+                            //     height: size.height,
+                            //     color: const Color.fromRGBO(169, 146, 125, 1),
+                            //     child: Padding(
+                            //       padding: const EdgeInsets.only(
+                            //           top: 28.0, left: 8, right: 8),
+                            //       child: PopUpContact(
+                            //         listcontact: contactlist,
+                            //         onChanged: (int value) {
+                            //           indexSelect = value;
+                            //           contactSelect = contactlist[value];
+                            //           widget.contactRisk.name =
+                            //               contactSelect.displayName;
+                            //           setState(() {});
+                            //         },
+                            //       ),
+                            //     ),
+                            //   ),
+                            // );
                           },
                         ),
                       ],
@@ -461,6 +490,7 @@ class _EditZoneRiskPageState extends State<EditZoneRiskPage> {
                                         ).then((value) {
                                           if (value != null && value) {
                                             _prefs.setUserFree = false;
+                                            _prefs.setUserPremium = true;
                                           }
                                         });
                                         ;
@@ -526,7 +556,7 @@ class _EditZoneRiskPageState extends State<EditZoneRiskPage> {
                                 SizedBox(
                                   width: 270,
                                   child: Text(
-                                    "Guardar esta configuración",
+                                    "Guardar está configuración",
                                     textAlign: TextAlign.right,
                                     style: GoogleFonts.barlow(
                                       fontSize: 14.0,
@@ -556,6 +586,7 @@ class _EditZoneRiskPageState extends State<EditZoneRiskPage> {
                                         ).then((value) {
                                           if (value != null && value) {
                                             _prefs.setUserFree = false;
+                                            _prefs.setUserPremium = true;
                                           }
                                         });
                                         ;

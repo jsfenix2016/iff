@@ -86,9 +86,10 @@ class _EditContactState extends State<EditContact> {
                         child: Stack(
                           children: [
                             WidgetContact(
-                              displayName: widget.contact.displayName,
-                              img: widget.contact.photo,
-                            ),
+                                displayName: widget.contact.displayName,
+                                img: widget.contact.photo,
+                                delete: false,
+                                onDelete: (bool) {}),
                           ],
                         ),
                       ),
@@ -129,7 +130,9 @@ class _EditContactState extends State<EditContact> {
                                     context, contactBD);
                                 if (save) {
                                   isAutorice = true;
-                                  contactVC.authoritationContact(context);
+                                  Future.sync(() =>
+                                      contactVC.authoritationContact(context));
+                                  NotificationCenter().notify('getContact');
                                 }
                               },
                               mensaje: "Solicitar autorización",

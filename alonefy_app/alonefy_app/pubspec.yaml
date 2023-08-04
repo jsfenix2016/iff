@@ -37,10 +37,7 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.5
   onboarding: ^2.1.0
-
   numberpicker: ^2.1.1
-
-  
   http: ^0.13.4
   get: ^4.6.5
   
@@ -77,12 +74,13 @@ dependencies:
   avatar_glow: ^2.0.2 #Animacion tipo radar
   grouped_list: ^5.1.2
   google_sign_in: ^5.2.1
+  flutter_countries: ^1.0.2
   
   country_state_city_picker: ^1.2.8
   google_fonts: ^4.0.4
   notification_center: ^0.0.2
   camera: ^0.10.3+2
-
+  geocoding: ^2.1.0
   gallery_saver: ^2.3.2
   
   video_player: ^2.5.1

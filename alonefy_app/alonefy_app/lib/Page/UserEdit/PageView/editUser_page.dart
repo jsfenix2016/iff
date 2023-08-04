@@ -9,8 +9,11 @@ import 'package:ifeelefine/Common/button_style_custom.dart';
 import 'package:ifeelefine/Common/colorsPalette.dart';
 import 'package:ifeelefine/Common/initialize_models_bd.dart';
 import 'package:ifeelefine/Common/text_style_font.dart';
+import 'package:ifeelefine/Common/utils.dart';
 import 'package:ifeelefine/Model/user.dart';
 import 'package:ifeelefine/Page/Onboarding/PageView/onboarding_page.dart';
+import 'package:ifeelefine/Page/UserConfig2/Widgets/country_select.dart';
+import 'package:ifeelefine/Page/UserConfig2/Widgets/stated_select.dart';
 import 'package:ifeelefine/Page/UserEdit/Controller/editController.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -35,7 +38,7 @@ class _UserEditPageState extends State<UserEditPage> {
   bool isCheck = false;
   late bool selectImage = false;
   User? user;
-  List<String> _states = ["Seleccionar estado"];
+
   List<String> _country = ["Seleccionar pais"];
   Map<String, String> ages = {};
 
@@ -71,76 +74,116 @@ class _UserEditPageState extends State<UserEditPage> {
     user = await editVC.getUserDate();
     ages = await editVC.getAgeVC();
     _country = await getCounty();
-    _states.addAll(await editVC.getState());
+    // await getAllState();
+    // _states.addAll(await editVC.getState());
 
     indexCountry = _country.indexWhere((item) => item == user!.country);
     selectCountry = user!.country;
     selectState = user!.city;
-    selectDropState();
+
+    getTraslateState(countryres.isEmpty ? [] : countryres[indexCountry - 1]);
   }
 
   Future getCounty() async {
-    countryres = await getResponse() as List;
+    // countryres = await getResponse() as List;
+    countryres = await getTraslateCountry();
+
     for (var data in countryres) {
       var model = StatusModel.StatusModel();
-      model.name = data['name'];
-      model.emoji = data['emoji'];
+      print(data.translations!.es == null ? data.name : data.translations!.es);
+      model.name =
+          data.translations!.es == null ? data.name : data.translations!.es;
+      model.emoji = data.emoji;
       if (!mounted) continue;
-      if (user!.country.contains(("${model.emoji!}  ${model.name!}"))) {
-        stateTemp.add(data['state']);
-      }
       setState(() {
         _country.add("${model.emoji!}  ${model.name!}");
       });
     }
-    filterState();
 
-    setState(() {});
+    setState(() {
+      isloading = false;
+    });
     return _country;
   }
 
-  Future filterState() async {
-    _states.clear();
-    _states.add('Seleccionar estado');
-    for (var f in stateTemp) {
-      if (!mounted) continue;
-      f.forEach((data) {
-        _states.add("${data['name']}");
-      });
-    }
-    return _states;
-  }
-
-  Future updateStates() async {
-    stateTemp.clear();
-    for (var data in countryres) {
-      var model = StatusModel.StatusModel();
-      model.name = data['name'];
-      model.emoji = data['emoji'];
-      if (!mounted) continue;
-      if (user!.country.contains(("${model.emoji!}  ${model.name!}"))) {
-        stateTemp.add(data['state']);
-      }
-    }
-    await filterState();
-    selectDropState();
-    setState(() {});
-  }
-
-  Future getResponse() async {
-    var res = await rootBundle.loadString(
-        'packages/country_state_city_picker/lib/assets/country.json');
-
-    return jsonDecode(res);
-  }
-
-  void selectDropState() {
-    indexState = _states.indexWhere((item) => item == user?.city);
+  void selectDropState() async {
+    indexState = liststate.value.indexWhere((item) => item == user?.city);
     if (indexState < 0) indexState = 0;
 
-    selectState = (indexState < 0) ? _states[0] : _states[indexState];
-    isloading = false;
-    setState(() {});
+    selectState =
+        (indexState < 0) ? liststate.value[0] : liststate.value[indexState];
+    getTraslateState(countryres.isEmpty ? [] : countryres[indexCountry - 1]);
+    setState(() {
+      isloading = false;
+    });
+  }
+
+  void _showCountryListScreen(BuildContext context) async {
+    String? selectedCountry = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => CountryListScreen(
+          countries: _country,
+          onCountrySelected: (country) {
+            setState(() {
+              selectCountry = country;
+              // Opcional: También puedes actualizar la variable user?.country aquí
+              user?.country = selectCountry;
+              for (var element in countryres) {
+                var model = StatusModel.StatusModel();
+                model.name = element.translations!.es ?? element.name;
+                model.emoji = element.emoji;
+                if (!mounted) return;
+
+                if (selectCountry
+                    .contains(("${model.emoji!}  ${model.name!}"))) {
+                  setState(() {
+                    stateTemp.clear();
+                    selectState = "";
+                    getTraslateState(element);
+                  });
+                }
+              }
+            });
+          },
+        ),
+      ),
+    );
+
+    if (selectedCountry != null) {
+      setState(() {
+        selectCountry = selectedCountry;
+        // Opcional: También puedes actualizar la variable user?.country aquí
+      });
+    }
+  }
+
+  void _showStateListScreen(BuildContext context) async {
+    String? selectedStateTemp = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => StatesListScreen(
+          states: liststate.value.obs,
+          onStatesSelected: (country) {
+            setState(() {
+              selectState = country;
+
+              // Opcional: También puedes actualizar la variable user?.country aquí
+              user?.city = selectState;
+            });
+          },
+        ),
+      ),
+    );
+
+    if (selectedStateTemp != null) {
+      setState(() {
+        selectState = selectedStateTemp;
+        user?.city = selectState;
+
+        // Opcional: También puedes actualizar la variable user?.country aquí
+      });
+    }
   }
 
   @override
@@ -207,8 +250,9 @@ class _UserEditPageState extends State<UserEditPage> {
                                       ? user!.gender
                                       : Constant.selectGender,
                                   style: const TextStyle(
-                                      fontSize: 18,
-                                      color: ColorPalette.principal),
+                                    fontSize: 18,
+                                    color: Colors.white,
+                                  ),
                                 ),
                               ),
                               iconEnabledColor: ColorPalette.principal, //Ico
@@ -258,8 +302,9 @@ class _UserEditPageState extends State<UserEditPage> {
                                       ? user!.maritalStatus
                                       : Constant.maritalStatus,
                                   style: const TextStyle(
-                                      fontSize: 18,
-                                      color: ColorPalette.principal),
+                                    fontSize: 18,
+                                    color: Colors.white,
+                                  ),
                                 ),
                               ),
                               iconEnabledColor: ColorPalette.principal, //Ico
@@ -312,8 +357,9 @@ class _UserEditPageState extends State<UserEditPage> {
                                       ? user!.styleLife
                                       : Constant.styleLive,
                                   style: const TextStyle(
-                                      fontSize: 18,
-                                      color: ColorPalette.principal),
+                                    fontSize: 18,
+                                    color: Colors.white,
+                                  ),
                                 ),
                               ),
                               iconEnabledColor: ColorPalette.principal, //Ico
@@ -366,8 +412,9 @@ class _UserEditPageState extends State<UserEditPage> {
                                       ? user!.age
                                       : Constant.age,
                                   style: const TextStyle(
-                                      fontSize: 18,
-                                      color: ColorPalette.principal),
+                                    fontSize: 18,
+                                    color: Colors.white,
+                                  ),
                                 ),
                               ),
                               dropdownColor: Colors.brown,
@@ -399,129 +446,202 @@ class _UserEditPageState extends State<UserEditPage> {
                           ),
                         ),
                       ),
+                      // Padding(
+                      //   padding: const EdgeInsets.all(8.0),
+                      //   child: DecoratedBox(
+                      //     decoration: BoxDecoration(
+                      //       border: Border.all(
+                      //           color: ColorPalette.principal,
+                      //           width: 1,
+                      //           style: BorderStyle.none),
+                      //     ),
+                      //     child: SizedBox(
+                      //       height: 52,
+                      //       child: DropdownButton<String?>(
+                      //         key: const Key("country"),
+                      //         underline: Container(
+                      //           height: 1,
+                      //           color: ColorPalette.principal,
+                      //         ),
+                      //         dropdownColor: Colors.brown,
+                      //         hint: Padding(
+                      //           padding: const EdgeInsets.all(8.0),
+                      //           child: Text(
+                      //             selectCountry,
+                      //             style: const TextStyle(
+                      //                 fontSize: 18,
+                      //                 color: ColorPalette.principal),
+                      //           ),
+                      //         ),
+                      //         iconEnabledColor: ColorPalette.principal, //Ico
+                      //         value: _country[indexCountry],
+                      //         isExpanded: true,
+
+                      //         items: _country
+                      //             .map(
+                      //               (e) => DropdownMenuItem<String>(
+                      //                 value: e,
+                      //                 child: Padding(
+                      //                   padding: const EdgeInsets.all(8.0),
+                      //                   child: Text(
+                      //                     e,
+                      //                     style: const TextStyle(
+                      //                         fontSize: 18,
+                      //                         color: ColorPalette.principal),
+                      //                   ),
+                      //                 ),
+                      //               ),
+                      //             )
+                      //             .toList(),
+                      //         onChanged: (v) async {
+                      //           selectCountry = v!;
+
+                      //           user!.country = v;
+                      //           //await editVC.refreshContry();
+                      //           final int index2 = _country.indexWhere(
+                      //               (country) =>
+                      //                   country.contains(v.toString()));
+                      //           indexCountry = index2;
+                      //           //_states = await editVC.filterState();
+                      //           updateStates();
+                      //           setState(() {});
+                      //         },
+                      //       ),
+                      //     ),
+                      //   ),
+                      // ),
+                      // Padding(
+                      //   padding: const EdgeInsets.all(8.0),
+                      //   child: DecoratedBox(
+                      //     decoration: BoxDecoration(
+                      //       border: Border.all(
+                      //           color: ColorPalette.principal,
+                      //           width: 1,
+                      //           style: BorderStyle.none),
+                      //     ),
+                      //     child: SizedBox(
+                      //       height: 52,
+                      //       child: DropdownButton<String?>(
+                      //         key: const Key("city"),
+                      //         underline: Container(
+                      //           height: 1,
+                      //           color: ColorPalette.principal,
+                      //         ),
+                      //         dropdownColor: Colors.brown,
+                      //         hint: Padding(
+                      //           padding: const EdgeInsets.all(8.0),
+                      //           child: Padding(
+                      //             padding: const EdgeInsets.all(8.0),
+                      //             child: Padding(
+                      //               padding: const EdgeInsets.all(8.0),
+                      //               child: Text(
+                      //                 selectState,
+                      //                 style: const TextStyle(
+                      //                     fontSize: 18,
+                      //                     color: ColorPalette.principal),
+                      //               ),
+                      //             ),
+                      //           ),
+                      //         ),
+                      //         iconEnabledColor: ColorPalette.principal, //Ico
+                      //         value: _states[indexState],
+                      //         isExpanded: true,
+
+                      //         items: _states
+                      //             .map(
+                      //               (e) => DropdownMenuItem<String>(
+                      //                 value: e,
+                      //                 child: Padding(
+                      //                   padding: const EdgeInsets.all(8.0),
+                      //                   child: Text(
+                      //                     e,
+                      //                     style: const TextStyle(
+                      //                         fontSize: 18,
+                      //                         color: ColorPalette.principal),
+                      //                   ),
+                      //                 ),
+                      //               ),
+                      //             )
+                      //             .toList(),
+                      //         onChanged: (v) {
+                      //           user?.city = v.toString();
+                      //           selectState = v!;
+                      //           selectDropState();
+                      //           setState(() {});
+                      //         },
+                      //       ),
+                      //     ),
+                      //   ),
+                      // ),
                       Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: DecoratedBox(
-                          decoration: BoxDecoration(
-                            border: Border.all(
+                          decoration: const BoxDecoration(
+                            border: Border(
+                              bottom: BorderSide(
                                 color: ColorPalette.principal,
-                                width: 1,
-                                style: BorderStyle.none),
-                          ),
-                          child: SizedBox(
-                            height: 52,
-                            child: DropdownButton<String?>(
-                              key: const Key("country"),
-                              underline: Container(
-                                height: 1,
-                                color: ColorPalette.principal,
+                                width: 1.0, // Grosor de la línea
                               ),
-                              dropdownColor: Colors.brown,
-                              hint: Padding(
-                                padding: const EdgeInsets.all(8.0),
+                            ),
+                          ),
+                          child: GestureDetector(
+                            onTap: () => _showCountryListScreen(context),
+                            child: SizedBox(
+                              width: 350,
+                              height: 52,
+                              child: Padding(
+                                padding: const EdgeInsets.only(
+                                    left: 16.0, right: 16, top: 12),
                                 child: Text(
-                                  selectCountry,
-                                  style: const TextStyle(
-                                      fontSize: 18,
-                                      color: ColorPalette.principal),
+                                  selectCountry.isEmpty
+                                      ? "Selecciona el país"
+                                      : selectCountry.tr,
+                                  style: GoogleFonts.barlow(
+                                    fontSize: 18.0,
+                                    wordSpacing: 1,
+                                    letterSpacing: 1.2,
+                                    fontWeight: FontWeight.normal,
+                                    color: Colors.white,
+                                  ),
                                 ),
                               ),
-                              iconEnabledColor: ColorPalette.principal, //Ico
-                              value: _country[indexCountry],
-                              isExpanded: true,
-
-                              items: _country
-                                  .map(
-                                    (e) => DropdownMenuItem<String>(
-                                      value: e,
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: Text(
-                                          e,
-                                          style: const TextStyle(
-                                              fontSize: 18,
-                                              color: ColorPalette.principal),
-                                        ),
-                                      ),
-                                    ),
-                                  )
-                                  .toList(),
-                              onChanged: (v) async {
-                                selectCountry = v!;
-
-                                user!.country = v;
-                                //await editVC.refreshContry();
-                                final int index2 = _country.indexWhere(
-                                    (country) =>
-                                        country.contains(v.toString()));
-                                indexCountry = index2;
-                                //_states = await editVC.filterState();
-                                updateStates();
-                                setState(() {});
-                              },
                             ),
                           ),
                         ),
                       ),
+                      const SizedBox(height: 10),
                       Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: DecoratedBox(
-                          decoration: BoxDecoration(
-                            border: Border.all(
+                          decoration: const BoxDecoration(
+                            border: Border(
+                              bottom: BorderSide(
                                 color: ColorPalette.principal,
-                                width: 1,
-                                style: BorderStyle.none),
-                          ),
-                          child: SizedBox(
-                            height: 52,
-                            child: DropdownButton<String?>(
-                              key: const Key("city"),
-                              underline: Container(
-                                height: 1,
-                                color: ColorPalette.principal,
+                                width: 1.0, // Grosor de la línea
                               ),
-                              dropdownColor: Colors.brown,
-                              hint: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Text(
-                                      selectState,
-                                      style: const TextStyle(
-                                          fontSize: 18,
-                                          color: ColorPalette.principal),
-                                    ),
+                            ),
+                          ),
+                          child: GestureDetector(
+                            onTap: () => _showStateListScreen(context),
+                            child: SizedBox(
+                              width: 350,
+                              height: 52,
+                              child: Padding(
+                                padding: const EdgeInsets.only(
+                                    left: 16.0, right: 16, top: 12),
+                                child: Text(
+                                  selectState.isEmpty
+                                      ? "Selecciona la ciudad"
+                                      : selectState,
+                                  style: GoogleFonts.barlow(
+                                    fontSize: 18.0,
+                                    wordSpacing: 1,
+                                    letterSpacing: 1.2,
+                                    fontWeight: FontWeight.normal,
+                                    color: Colors.white,
                                   ),
                                 ),
                               ),
-                              iconEnabledColor: ColorPalette.principal, //Ico
-                              value: _states[indexState],
-                              isExpanded: true,
-
-                              items: _states
-                                  .map(
-                                    (e) => DropdownMenuItem<String>(
-                                      value: e,
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: Text(
-                                          e,
-                                          style: const TextStyle(
-                                              fontSize: 18,
-                                              color: ColorPalette.principal),
-                                        ),
-                                      ),
-                                    ),
-                                  )
-                                  .toList(),
-                              onChanged: (v) {
-                                user?.city = v.toString();
-                                selectState = v!;
-                                selectDropState();
-                                setState(() {});
-                              },
                             ),
                           ),
                         ),
@@ -610,7 +730,7 @@ class _UserEditPageState extends State<UserEditPage> {
                                 child: Text(
                                   'Guardar',
                                   style: TextStyle(
-                                      color: Colors.white,
+                                      color: Colors.black,
                                       fontWeight: FontWeight.bold,
                                       fontSize: 18),
                                 ),
@@ -654,11 +774,17 @@ class _UserEditPageState extends State<UserEditPage> {
             borderSide: BorderSide(
                 width: 1, color: ColorPalette.principal), //<-- SEE HERE
           ),
-          hintStyle: const TextStyle(color: ColorPalette.principal),
+          hintStyle: const TextStyle(
+            color: Colors.white,
+          ),
           filled: true,
-          labelStyle: const TextStyle(color: ColorPalette.principal),
+          labelStyle: const TextStyle(
+            color: Colors.white,
+          ),
         ),
-        style: const TextStyle(color: ColorPalette.principal),
+        style: const TextStyle(
+          color: Colors.white,
+        ),
         onSaved: (value) => {
           onChanged(value!),
         },
@@ -691,11 +817,17 @@ class _UserEditPageState extends State<UserEditPage> {
             borderSide: BorderSide(
                 width: 1, color: ColorPalette.principal), //<-- SEE HERE
           ),
-          hintStyle: const TextStyle(color: ColorPalette.principal),
+          hintStyle: const TextStyle(
+            color: Colors.white,
+          ),
           filled: true,
-          labelStyle: const TextStyle(color: ColorPalette.principal),
+          labelStyle: const TextStyle(
+            color: Colors.white,
+          ),
         ),
-        style: const TextStyle(color: ColorPalette.principal),
+        style: const TextStyle(
+          color: Colors.white,
+        ),
         onSaved: (value) => {
           user?.telephone = value!,
         },

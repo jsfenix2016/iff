@@ -362,7 +362,7 @@ class RedirectViewNotifier with ChangeNotifier {
 
     await flutterLocalNotificationsPlugin.show(
       11,
-      "No estas protegido",
+      "No estás protegido",
       "Prueba la versión completa por 30 días",
       const NotificationDetails(
         android: AndroidNotificationDetails(
@@ -402,7 +402,7 @@ class RedirectViewNotifier with ChangeNotifier {
 
     await flutterLocalNotificationsPlugin.show(
       12,
-      "No estas protegido",
+      "No estás protegido",
       "Utilize la versión premium",
       const NotificationDetails(
         android: AndroidNotificationDetails(

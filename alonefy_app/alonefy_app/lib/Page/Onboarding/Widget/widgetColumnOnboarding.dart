@@ -39,7 +39,6 @@ class _WidgetColumnOnboardingState extends State<WidgetColumnOnboarding> {
             width: double.infinity,
           ),
         ),
-
         LayoutBuilder(
           builder: (BuildContext context, BoxConstraints constraints) {
             // Utiliza constraints para obtener el tamaño disponible
@@ -87,7 +86,7 @@ class _WidgetColumnOnboardingState extends State<WidgetColumnOnboarding> {
                         begin: Alignment.topCenter,
                         end: const Alignment(0, 1),
                         colors: <Color>[
-                          ColorPalette.secondView.withAlpha(600),
+                          ColorPalette.secondView.withAlpha(300),
                           ColorPalette.secondView,
                           Colors.black,
                         ],
@@ -116,43 +115,6 @@ class _WidgetColumnOnboardingState extends State<WidgetColumnOnboarding> {
             );
           },
         ),
-
-        // Positioned(
-        //   left: 0.0,
-        //   right: 0,
-        //   bottom: 00,
-        //   child: Container(
-        //     decoration: BoxDecoration(
-        //       gradient: LinearGradient(
-        //         begin: Alignment.topCenter,
-        //         end: const Alignment(0, 1),
-        //         colors: <Color>[
-        //           Colors.transparent,
-        //           Colors.black.withAlpha(700),
-        //         ],
-        //         tileMode: TileMode.mirror,
-        //       ),
-        //     ),
-        //     height: 400,
-        //     width: double.infinity,
-        //     child: Center(
-        //       child: Padding(
-        //         padding: const EdgeInsets.all(38.0),
-        //         child: Text(
-        //           widget.subtitle,
-        //           textAlign: TextAlign.center,
-        //           style: GoogleFonts.barlow(
-        //             fontSize: 26.0,
-        //             wordSpacing: 1,
-        //             letterSpacing: 1,
-        //             fontWeight: FontWeight.normal,
-        //             color: Colors.white,
-        //           ),
-        //         ),
-        //       ),
-        //     ),
-        //   ),
-        // ),
       ],
     );
   }

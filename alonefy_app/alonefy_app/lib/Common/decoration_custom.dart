@@ -7,12 +7,12 @@ BoxDecoration decorationCustom() {
   return const BoxDecoration(
     gradient: LinearGradient(
       begin: Alignment.topCenter,
-      end: Alignment(0, 2),
-      colors: <Color>[
-        ColorPalette.principalView,
-        ColorPalette.secondView,
+      end: Alignment.bottomCenter,
+      colors: [
+        Color(0xFF150E03),
+        Color.fromARGB(255, 91, 59, 21),
       ],
-      tileMode: TileMode.mirror,
+      stops: [0.11, 1.0],
     ),
   );
 }
@@ -37,8 +37,8 @@ LinearGradient linerGradientButtonFilling() {
     begin: Alignment.centerLeft,
     end: Alignment(1, 0),
     colors: <Color>[
-      ColorPalette.linerGradientText,
-      ColorPalette.principal,
+      Color.fromRGBO(202, 157, 11, 1.0),
+      Color.fromRGBO(219, 177, 42, 1.0),
     ],
     tileMode: TileMode.mirror,
   );

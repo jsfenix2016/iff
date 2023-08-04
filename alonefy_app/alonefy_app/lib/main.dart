@@ -7,9 +7,16 @@ import 'package:flutter/services.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:ifeelefine/Common/initialize_models_bd.dart';
 import 'package:ifeelefine/Page/HomePage/Pageview/home_page.dart';
+import 'package:ifeelefine/Page/Onboarding/PageView/onboarding_page.dart';
 import 'package:ifeelefine/Page/Premium/PageView/premium_moths_free.dart';
+import 'package:ifeelefine/Page/PreviewActivitiesFilteredByDate/PageView/previewActivitiesByDate_page.dart';
+import 'package:ifeelefine/Page/Risk/ZoneRisk/ListContactZoneRisk/PageView/zoneRisk.dart';
+import 'package:ifeelefine/Page/UserConfig/PageView/userconfig_page.dart';
 import 'package:ifeelefine/Page/UserConfig2/Page/configuration2_page.dart';
+import 'package:ifeelefine/Page/UserEdit/PageView/editUser_page.dart';
+import 'package:ifeelefine/Views/contact_page.dart';
 import 'package:notification_center/notification_center.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 import 'package:sensors_plus/sensors_plus.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -73,9 +80,9 @@ final LogActivityController logActivityController =
     Get.put(LogActivityController());
 
 final MainController mainController = Get.put(MainController());
-int _logActivityTimer = 60;
+int _logActivityTimer = 30;
 int _logRudeMovementTimer = 20;
-const int _logActivityTimerRefresh = 60;
+const int _logActivityTimerRefresh = 30;
 const int _logRudeMovementTimerRefresh = 20;
 
 final _locationController = Get.put(ConfigGeolocatorController());
@@ -91,7 +98,7 @@ Future<void> main() async {
   userMov = LogAlerts(mov: [], time: now);
 
   await _prefs.initPrefs();
-  _prefs.setProtected = "AlertFriends no está activado";
+  _prefs.setProtected = 'AlertFriends no estás totalmente protegido.';
   await inicializeHiveBD();
   await initializeFirebase();
   await initializeService();
@@ -123,9 +130,13 @@ Future<void> main() async {
     device = androidInfo.model;
   }
 
+  await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+
   runApp(
     GetMaterialApp(
-      home: MyApp(initApp: initApp!),
+      home: UserConfigPage2(
+        userbd: initUserBD(),
+      ),
       debugShowCheckedModeBanner: false,
     ),
   );
@@ -149,7 +160,7 @@ Future activateService() async {
 
   var textDescrip = _prefs.getUserPremium
       ? 'AlertFriends está activado.'
-      : 'AlertFriends no está activado.';
+      : 'AlertFriends no estás totalmente protegido.';
   print(textDescrip);
   service.invoke('update');
   await flutterLocalNotificationsPlugin
@@ -369,7 +380,7 @@ void onStart(ServiceInstance service) async {
   int increaceTimeUpdate = 0;
 
   // bring to foreground
-  Timer.periodic(const Duration(seconds: 5), (timer) async {
+  Timer.periodic(const Duration(seconds: 1), (timer) async {
     if (Platform.isAndroid) {
       if (service is AndroidServiceInstance) {
         if (await service.isForegroundService()) {
@@ -380,7 +391,7 @@ void onStart(ServiceInstance service) async {
       }
     }
 
-    if (!_prefs.getUsedFreeDays) {
+    if (!_prefs.getUsedFreeDays && _prefs.getDayFree != "0") {
       DateTime dateTime = DateTime.parse(_prefs.getDayFree);
 
       DateTime fechaActual = DateTime.now();
@@ -401,8 +412,8 @@ void onStart(ServiceInstance service) async {
       }
     }
 
-    increaceTime += 5;
-    increaceTimeUpdate += 5;
+    increaceTime += 1;
+    increaceTimeUpdate += 1;
     if (_prefs.getUserFree && !_prefs.getUserPremium) {
       if (time == increaceTime) {
         if (_prefs.getUsedFreeDays) {
@@ -423,8 +434,8 @@ void onStart(ServiceInstance service) async {
       updateFirebaseToken();
     }
 
-    _logActivityTimer += 5;
-    _logRudeMovementTimer += 5;
+    _logActivityTimer += 1;
+    _logRudeMovementTimer += 1;
     //getDateRisk();
 
     service.invoke('update');
@@ -470,11 +481,11 @@ Future accelerometer() async {
     accelerometerEvents.listen((AccelerometerEvent event) {
       double accelerationMagnitude =
           sqrt(event.x * event.x + event.y * event.y + event.z * event.z);
-      if (_prefs.getUserFree) return;
-      if (!enableIFF && !_prefs.getDetectedFall && !_prefs.getUserPremium)
-        return;
 
-      if (accelerationMagnitude > 21) {
+      if (accelerationMagnitude > 24) {
+        if (_prefs.getUserFree) return;
+        if (!enableIFF && !_prefs.getDetectedFall && !_prefs.getUserPremium)
+          return;
         isMovRude = true;
         print("movimiento rudo $accelerationMagnitude");
         if (_logRudeMovementTimer >= _logRudeMovementTimerRefresh) {
@@ -483,8 +494,7 @@ Future accelerometer() async {
         }
       } else {
         isMovRude = false;
-        if (accelerationMagnitude < 21 && accelerationMagnitude > 10) {
-          print("me movi");
+        if (accelerationMagnitude < 24 && accelerationMagnitude > 10) {
           if (_logActivityTimer >= _logActivityTimerRefresh) {
             print("Movimiento normal");
             mainController.saveActivityLog(DateTime.now(), "Movimiento normal");

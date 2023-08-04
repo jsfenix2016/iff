@@ -46,9 +46,7 @@ class PremiumController extends GetxController {
               _prefs.setUserPremium = false;
             }
           }
-          if (_prefs.getUserFree && !_prefs.getUserPremium) {
-            _updatePremiumAPI();
-          }
+          _updatePremiumAPI();
 
           _getProducts();
           print('connected: $connected');

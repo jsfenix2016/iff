@@ -3,7 +3,9 @@ import 'package:flutter_contacts/contact.dart';
 import 'package:get/get.dart';
 
 import 'package:google_fonts/google_fonts.dart';
+import 'package:ifeelefine/Model/contact.dart';
 import 'package:ifeelefine/Page/Contact/ListContact/PageView/list_contact_page.dart';
+import 'package:ifeelefine/Page/Contact/Widget/filter_contact.dart';
 import 'package:ifeelefine/Provider/prefencesUser.dart';
 import 'package:ifeelefine/Utils/Widgets/widgetLogo.dart';
 import 'package:ifeelefine/Views/contact_page.dart';
@@ -27,6 +29,48 @@ class _AddContactPageState extends State<AddContactPage> {
     _prefs.saveLastScreenRoute("addContact");
     // TODO: implement initState
     super.initState();
+  }
+
+  void _showContactListScreen(BuildContext context) async {
+    ContactBD contactBD = ContactBD("", null, "", "", "", "", "", "Pendiente");
+    Contact? cont;
+    await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) =>
+            FilterContactListScreen(onCountrySelected: (contact) {
+          setState(() {
+            cont = contact;
+            contactBD = ContactBD(
+                contact.displayName,
+                contact.photo == null ? null : contact.photo,
+                contact.displayName,
+                "20 min",
+                "20 min",
+                "20 min",
+                contact.phones.first.normalizedNumber
+                    .replaceAll("+34", "")
+                    .replaceAll(" ", ""),
+                "Pendiente");
+          });
+        }),
+      ),
+    );
+
+    if (cont!.name.first.isNotEmpty) {
+      setState(() {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            settings: RouteSettings(arguments: cont),
+            builder: (context) => const ContactList(
+              isMenu: false,
+            ),
+          ),
+        );
+        // Opcional: También puedes actualizar la variable user?.country aquí
+      });
+    }
   }
 
   @override
@@ -94,26 +138,27 @@ class _AddContactPageState extends State<AddContactPage> {
                     Center(
                       child: ElevateButtonFilling(
                           onChanged: ((value) async {
-                            await showDialog(
-                              context: context,
-                              builder: (BuildContext context) => AlertDialog(
-                                contentPadding: const EdgeInsets.all(0),
-                                content: ListContact(
-                                  onSelectContact: (Contact value) {
-                                    Navigator.pushReplacement(
-                                      context,
-                                      MaterialPageRoute(
-                                        settings:
-                                            RouteSettings(arguments: value),
-                                        builder: (context) => const ContactList(
-                                          isMenu: false,
-                                        ),
-                                      ),
-                                    );
-                                  },
-                                ),
-                              ),
-                            );
+                            _showContactListScreen(context);
+                            // await showDialog(
+                            //   context: context,
+                            //   builder: (BuildContext context) => AlertDialog(
+                            //     contentPadding: const EdgeInsets.all(0),
+                            //     content: ListContact(
+                            //       onSelectContact: (Contact value) {
+                            //         Navigator.pushReplacement(
+                            //           context,
+                            //           MaterialPageRoute(
+                            //             settings:
+                            //                 RouteSettings(arguments: value),
+                            //             builder: (context) => const ContactList(
+                            //               isMenu: false,
+                            //             ),
+                            //           ),
+                            //         );
+                            //       },
+                            //     ),
+                            //   ),
+                            // );
                           }),
                           mensaje: 'Añadir contacto'),
                     ),

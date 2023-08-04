@@ -75,7 +75,7 @@ class _WebViewTermsConditionsState extends State<WebViewTermsConditions> {
           context: context,
           builder: (BuildContext context) => AlertDialog(
             title: const Text('Confirmar'),
-            content: const Text('¿Se han leido los terminos y condiciones?'),
+            content: const Text('¿Se han leido los términos y condiciones?'),
             actions: <Widget>[
               IconButton(
                   icon: const Icon(
@@ -103,7 +103,7 @@ class _WebViewTermsConditionsState extends State<WebViewTermsConditions> {
       child: Scaffold(
         appBar: AppBar(
           title: const Text(
-            'Terminos y condiciones',
+            'Términos y condiciones',
           ),
           backgroundColor: const Color.fromARGB(255, 76, 52, 22),
         ),

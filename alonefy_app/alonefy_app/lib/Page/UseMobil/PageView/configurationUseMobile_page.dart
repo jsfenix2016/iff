@@ -1,3 +1,4 @@
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -14,6 +15,7 @@ import 'package:flutter/material.dart';
 import 'package:ifeelefine/Provider/prefencesUser.dart';
 import 'package:ifeelefine/Utils/Widgets/elevatedButtonFilling.dart';
 import 'package:jiffy/jiffy.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:slidable_button/slidable_button.dart';
 import 'package:ifeelefine/Common/decoration_custom.dart';
 
@@ -39,13 +41,24 @@ class _UseMobilePageState extends State<UseMobilePage> {
       userbd = widget.userbd;
     }
     _prefs.saveLastScreenRoute("useMobil");
-
+    getpermission();
     super.initState();
   }
 
   Future<UserBD> _getUserData() async {
     userbd = await useMobilVC.getUserData();
     return userbd!;
+  }
+
+  Future<void> getpermission() async {
+    final androidInfo = await DeviceInfoPlugin().androidInfo;
+
+    await Permission.notification.isDenied.then((value) {
+      if (value) {
+        Permission.notification.request();
+      }
+    });
+    if (androidInfo.version.sdkInt >= 33) {}
   }
 
   @override
@@ -238,6 +251,9 @@ class _UseMobilePageState extends State<UseMobilePage> {
                 child: Center(
                   child: ElevateButtonFilling(
                     onChanged: (value) async {
+                      if (_prefs.getUserFree && !_prefs.getUserPremium) {
+                        indexSelect = 1;
+                      }
                       var result = await useMobilVC.saveTimeUseMobil(
                           context,
                           Constant.timeDic[indexSelect.toString()].toString(),

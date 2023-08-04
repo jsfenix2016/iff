@@ -64,7 +64,7 @@ class _PushAlertPageState extends State<PushAlertPage> {
   }
 
   void checkpremium() async {
-    if (_prefs.getUserFree == false) {
+    if (_prefs.getUserFree == false || _prefs.getUserPremium) {
       _initCamera();
     } else {
       setState(() => _isLoading = false);

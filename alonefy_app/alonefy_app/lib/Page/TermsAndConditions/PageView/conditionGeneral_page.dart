@@ -64,7 +64,7 @@ class _ConditionGeneralPageState extends State<ConditionGeneralPage> {
                                 child: Align(
                                   alignment: Alignment.centerRight,
                                   child: Text(
-                                    'Acepto las condiciones generales *',
+                                    'Acepto las condiciones generales',
                                     textAlign: TextAlign.right,
                                     style: textNomral18White(),
                                   ),
@@ -163,7 +163,7 @@ class _ConditionGeneralPageState extends State<ConditionGeneralPage> {
                                           TextSpan(
                                             onEnter: (event) {},
                                             text:
-                                                'Antes de continuar lee los terminos y condiciones: https://alertfriends.app/politica_privacidad/',
+                                                'Antes de continuar lee los términos y condiciones: https://alertfriends.app/politica_privacidad/',
                                             style: GoogleFonts.barlow(
                                               fontSize: 16.0,
                                               wordSpacing: 1,

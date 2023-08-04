@@ -239,6 +239,13 @@ class _ConfigGeolocatorState extends State<ConfigGeolocator> {
                                 img: 'pantalla3.png',
                                 title: Constant.premiumMapTitle,
                                 subtitle: '')),
+                      ).then(
+                        (value) {
+                          if (value != null && value) {
+                            _prefs.setUserPremium = true;
+                            _prefs.setUserFree = false;
+                          }
+                        },
                       );
                     }
                   }
@@ -344,6 +351,7 @@ class _ConfigGeolocatorState extends State<ConfigGeolocator> {
       ).then((value) {
         if (value != null && value) {
           _prefs.setUserFree = false;
+          _prefs.setUserPremium = true;
           savePermission();
         }
       });

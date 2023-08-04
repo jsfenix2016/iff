@@ -24,6 +24,7 @@ import '../Model/ApiRest/ContactRiskApi.dart';
 import '../Model/ApiRest/UseMobilApi.dart';
 import '../Model/ApiRest/UserRestApi.dart';
 import '../Model/ApiRest/activityDayApiResponse.dart';
+import 'package:flutter_countries/flutter_countries.dart';
 
 final _prefs = PreferenceUser();
 final _locationController = Get.put(ConfigGeolocatorController());
@@ -378,6 +379,133 @@ Future getResponse() async {
       .loadString('packages/country_state_city_picker/lib/assets/country.json');
 
   return jsonDecode(res);
+}
+
+Future getProvince() async {
+  var res = await rootBundle.loadString('assets/json/province_spain.json');
+
+  return jsonDecode(res);
+}
+
+RxList<String> liststate = <String>[].obs;
+
+// Función para remover las diacríticas de un texto (tildes, diéresis, etc.)
+String removeDiacritics(String text) {
+  return text.replaceAllMapped(
+      RegExp(r'[ÀÁÂÃÄÅÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖØÙÚÛÜÝàáâãäåçèéêëìíîïðñòóôõöøùúûüýÿ]'),
+      (match) {
+    switch (match.group(0)) {
+      case 'À':
+      case 'Á':
+      case 'Â':
+      case 'Ã':
+      case 'Ä':
+      case 'Å':
+        return 'A';
+      case 'Ç':
+        return 'C';
+      case 'È':
+      case 'É':
+      case 'Ê':
+      case 'Ë':
+        return 'E';
+      case 'Ì':
+      case 'Í':
+      case 'Î':
+      case 'Ï':
+        return 'I';
+      case 'Ð':
+        return 'D';
+      case 'Ñ':
+        return 'N';
+      case 'Ò':
+      case 'Ó':
+      case 'Ô':
+      case 'Õ':
+      case 'Ö':
+      case 'Ø':
+        return 'O';
+      case 'Ù':
+      case 'Ú':
+      case 'Û':
+      case 'Ü':
+        return 'U';
+      case 'Ý':
+        return 'Y';
+      case 'à':
+      case 'á':
+      case 'â':
+      case 'ã':
+      case 'ä':
+      case 'å':
+        return 'a';
+      case 'ç':
+        return 'c';
+      case 'è':
+      case 'é':
+      case 'ê':
+      case 'ë':
+        return 'e';
+      case 'ì':
+      case 'í':
+      case 'î':
+      case 'ï':
+        return 'i';
+      case 'ð':
+        return 'd';
+      case 'ñ':
+        return 'n';
+      case 'ò':
+      case 'ó':
+      case 'ô':
+      case 'õ':
+      case 'ö':
+      case 'ø':
+        return 'o';
+      case 'ù':
+      case 'ú':
+      case 'û':
+      case 'ü':
+        return 'u';
+      case 'ý':
+      case 'ÿ':
+        return 'y';
+    }
+    return '';
+  });
+}
+
+Future<List<String>> getTraslateState(Country countryId) async {
+  List<String> states = [];
+
+  var province = await getProvince() as List;
+  List<Map<String, dynamic>> jsonList = province.cast<Map<String, dynamic>>();
+
+  // Ordenar la lista alfabéticamente por el campo "name"
+  // jsonList.sort((a, b) => a['name'].compareTo(b['name']));
+
+  jsonList.sort((a, b) =>
+      removeDiacritics(a['name']).compareTo(removeDiacritics(b['name'])));
+
+  var list = await States.byCountryId(countryId.id.toString());
+  if (countryId.name!.contains("Spain")) {
+    for (var f in jsonList) {
+      states.add(f["name"].toString());
+    }
+    liststate.value = states;
+    return liststate.value;
+  }
+  for (var f in list) {
+    states.add(f.name.toString());
+  }
+  liststate.value = states;
+  return liststate.value;
+}
+
+Future<List<Country>> getTraslateCountry() async {
+  var list = await Countries.all;
+
+  return list;
 }
 
 Container searchImageForIcon(String typeAction) {

@@ -14,6 +14,7 @@ import 'package:ifeelefine/Page/EditUseMobil/Page/editUseMobil.dart';
 import 'package:ifeelefine/Page/FallDetected/Pageview/fall_activation_config_page.dart';
 
 import 'package:ifeelefine/Page/Geolocator/PageView/configGeolocator_page.dart';
+import 'package:ifeelefine/Page/Premium/Controller/premium_controller.dart';
 
 import 'package:ifeelefine/Page/PreviewActivitiesFilteredByDate/PageView/previewActivitiesByDate_page.dart';
 import 'package:ifeelefine/Page/RestoreMyConfiguration/PageView/restoreMyConfig_page.dart';
@@ -96,7 +97,7 @@ class _MenuConfigurationPageState extends State<MenuConfigurationPage> {
 
     switch (index) {
       case 0:
-        if ((user.idUser == "-1") && !_prefs.getUserFree) {
+        if ((user.idUser == "-1") && _prefs.getUserFree) {
           redirectToConfigUser();
           return;
         }
@@ -107,7 +108,7 @@ class _MenuConfigurationPageState extends State<MenuConfigurationPage> {
             ));
         break;
       case 1:
-        if ((user.idUser == "-1") && !_prefs.getUserFree) {
+        if ((user.idUser == "-1") && _prefs.getUserFree) {
           redirectToConfigUser();
           return;
         }
@@ -123,7 +124,7 @@ class _MenuConfigurationPageState extends State<MenuConfigurationPage> {
         break;
 
       case 2:
-        if ((user.idUser == "-1") && !_prefs.getUserFree) {
+        if ((user.idUser == "-1") && _prefs.getUserFree) {
           redirectToConfigUser();
           return;
         }
@@ -136,7 +137,7 @@ class _MenuConfigurationPageState extends State<MenuConfigurationPage> {
             ));
         break;
       case 3:
-        if ((user.idUser == "-1") && !_prefs.getUserFree) {
+        if ((user.idUser == "-1") && _prefs.getUserFree) {
           redirectToConfigUser();
           return;
         }
@@ -150,7 +151,7 @@ class _MenuConfigurationPageState extends State<MenuConfigurationPage> {
             ));
         break;
       case 4:
-        if ((user.idUser == "-1") && !_prefs.getUserFree) {
+        if ((user.idUser == "-1") && _prefs.getUserFree) {
           redirectToConfigUser();
           return;
         }
@@ -163,7 +164,7 @@ class _MenuConfigurationPageState extends State<MenuConfigurationPage> {
             ));
         break;
       case 5:
-        if ((user.idUser == "-1") && !_prefs.getUserFree) {
+        if ((user.idUser == "-1") && _prefs.getUserFree) {
           redirectToConfigUser();
           return;
         }
@@ -175,7 +176,7 @@ class _MenuConfigurationPageState extends State<MenuConfigurationPage> {
             ));
         break;
       case 6:
-        if ((user.idUser == "-1") && !_prefs.getUserFree) {
+        if ((user.idUser == "-1") && _prefs.getUserFree) {
           redirectToConfigUser();
           return;
         }
@@ -188,7 +189,7 @@ class _MenuConfigurationPageState extends State<MenuConfigurationPage> {
             ));
         break;
       case 7:
-        if ((user.idUser == "-1") && !_prefs.getUserFree) {
+        if ((user.idUser == "-1") && _prefs.getUserFree) {
           redirectToConfigUser();
           return;
         }
@@ -202,7 +203,7 @@ class _MenuConfigurationPageState extends State<MenuConfigurationPage> {
 
         break;
       case 8:
-        if ((user.idUser == "-1") && !_prefs.getUserFree) {
+        if ((user.idUser == "-1") && _prefs.getUserFree) {
           redirectToConfigUser();
           return;
         }
@@ -215,7 +216,7 @@ class _MenuConfigurationPageState extends State<MenuConfigurationPage> {
             ));
         break;
       case 9:
-        if ((user.idUser == "-1") && !_prefs.getUserFree) {
+        if ((user.idUser == "-1") && _prefs.getUserFree) {
           redirectToConfigUser();
           return;
         }
@@ -249,11 +250,26 @@ class _MenuConfigurationPageState extends State<MenuConfigurationPage> {
                         img: 'Pantalla5.jpg',
                         title: Constant.premiumRestoreTitle,
                         subtitle: '')),
+              ).then(
+                (value) {
+                  if (value != null && value) {
+                    _prefs.setUserPremium = true;
+                    _prefs.setUserFree = false;
+                    var premiumController = Get.put(PremiumController());
+                    premiumController.updatePremiumAPIFree(true);
+                    Future.sync(() => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const RestoreMyConfigPage(),
+                          ),
+                        ));
+                  }
+                },
               ));
         }
         break;
       case 11:
-        if ((user.idUser == "-1")) {
+        if ((user.idUser == "-1") && _prefs.getUserFree) {
           redirectToConfigUser();
           return;
         }

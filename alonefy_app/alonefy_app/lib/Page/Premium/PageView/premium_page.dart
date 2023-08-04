@@ -194,7 +194,7 @@ class _PremiumPageState extends State<PremiumPage> {
   }
 
   Widget getListOfComments() {
-    return Container(
+    return SizedBox(
         height: 115,
         child: ListView.builder(
             shrinkWrap: true,
@@ -207,7 +207,7 @@ class _PremiumPageState extends State<PremiumPage> {
 
   Widget getItemOfComment(int index) {
     return Padding(
-      padding: EdgeInsets.fromLTRB(12, 0, 12, 0),
+      padding: const EdgeInsets.fromLTRB(12, 0, 12, 0),
       child: Container(
         width: 300,
         height: 115,
@@ -324,11 +324,11 @@ class _PremiumPageState extends State<PremiumPage> {
                   "Obtener Premium",
                   textAlign: TextAlign.center,
                   style: GoogleFonts.barlow(
-                    fontSize: 16.0,
+                    fontSize: 18.0,
                     wordSpacing: 1,
                     letterSpacing: 1,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
+                    fontWeight: FontWeight.w700,
+                    color: Colors.black,
                   ),
                 ),
               ),

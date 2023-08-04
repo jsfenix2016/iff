@@ -1,4 +1,5 @@
 import 'package:ifeelefine/Common/colorsPalette.dart';
+import 'package:ifeelefine/Common/text_style_font.dart';
 import 'package:ifeelefine/Model/restday.dart';
 import 'package:flutter/material.dart';
 
@@ -59,7 +60,7 @@ class _CustomDropdownMaritalStateState
               padding: const EdgeInsets.all(8.0),
               child: Text(
                 widget.mensaje,
-                style: const TextStyle(color: Colors.white, fontSize: 18),
+                style: textNormal16White(),
               ),
             ),
             dropdownColor: Colors.brown,
@@ -77,8 +78,7 @@ class _CustomDropdownMaritalStateState
                       padding: const EdgeInsets.all(8.0),
                       child: Text(
                         widget.instance[e] ?? "",
-                        style:
-                            const TextStyle(color: Colors.white, fontSize: 18),
+                        style: textNomral18White(),
                       ),
                     ),
                   ),

@@ -79,9 +79,6 @@ class _TextValidateTokenState extends State<TextValidateToken> {
                 },
                 style: textNormal14White(),
                 onChanged: (value) async {
-                  if (value.length < 6) {
-                    return;
-                  }
                   widget.onChanged(value);
                 },
               ),

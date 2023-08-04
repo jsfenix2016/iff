@@ -29,7 +29,6 @@ class UseMobilController extends GetxController {
 
   Future<bool> saveTimeUseMobil(
       BuildContext context, String time, UserBD userbd) async {
-
     final List<UseMobilBD> selectedDays = [];
     for (var element in Constant.tempListShortDay) {
       UseMobilBD useDay =
@@ -76,7 +75,7 @@ class UseMobilController extends GetxController {
   //Future<void> saveHabitsMobil(BuildContext context, String time) async {
   //  _prefs.setHabitsTime = time;
 //
-  //  showAlert(context, "Se guardo correctamente");
+  //  showAlert(context, "Se guardó correctamente");
   //}
 
   //Future<String> getTimeUseMobil() async {

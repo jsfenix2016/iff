@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ifeelefine/Common/colorsPalette.dart';
+import 'package:ifeelefine/Common/text_style_font.dart';
 
 class CustomDropdownStylelive extends StatefulWidget {
   const CustomDropdownStylelive(
@@ -58,13 +59,7 @@ class _CustomDropdownyStyleliveState extends State<CustomDropdownStylelive> {
             padding: const EdgeInsets.all(8.0),
             child: Text(
               widget.mensaje,
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 18.0,
-                wordSpacing: 1,
-                letterSpacing: 0.001,
-                fontWeight: FontWeight.normal,
-              ),
+              style: textNormal16White(),
             ),
           ),
           value: _selectedLocation.isEmpty
@@ -80,13 +75,7 @@ class _CustomDropdownyStyleliveState extends State<CustomDropdownStylelive> {
                     padding: const EdgeInsets.all(8.0),
                     child: Text(
                       widget.instance[e] ?? "",
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 18.0,
-                        wordSpacing: 1,
-                        letterSpacing: 0.001,
-                        fontWeight: FontWeight.normal,
-                      ),
+                      style: textNomral18White(),
                     ),
                   ),
                 ),

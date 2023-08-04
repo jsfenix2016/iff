@@ -23,7 +23,7 @@ class ConfigGeolocatorController extends GetxController {
             : user.telephone,
         _prefs.getAcceptedSendLocation == PreferencePermission.allow);
 
-    //showAlert(context, "Se guardo correctamente");
+    //showAlert(context, "Se guardó correctamente");
   }
 
   Future<void> sendLocation(String latitude, String longitude) async {

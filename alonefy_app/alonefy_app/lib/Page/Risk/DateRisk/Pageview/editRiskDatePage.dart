@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:ifeelefine/Common/manager_alerts.dart';
 import 'package:ifeelefine/Common/text_style_font.dart';
 import 'package:ifeelefine/Page/Calendar/calendarPopup.dart';
+import 'package:ifeelefine/Page/Contact/Widget/filter_contact.dart';
 import 'package:ifeelefine/Page/Premium/PageView/premium_page.dart';
 import 'package:ifeelefine/Page/Risk/DateRisk/ListDateRisk/Controller/riskPageController.dart';
 import 'package:ifeelefine/Utils/Widgets/loading_page.dart';
@@ -56,8 +57,8 @@ class _EditRiskPageState extends State<EditRiskPage> {
   var saveConfig = false;
   var isActived = false;
   var isprogrammed = false;
-  String timeinit = "00:00";
-  String timefinish = "00:00";
+  String timeinit = "";
+  String timefinish = "";
   List<Contact> contactlist = [];
   Contact? contactSelect;
   var indexSelect = -1;
@@ -82,6 +83,12 @@ class _EditRiskPageState extends State<EditRiskPage> {
   late DateTime dateTimeTempIncrease = DateTime.now();
   @override
   void initState() {
+    // Agregar un día a la fecha actual
+    String temp =
+        '${dateTimeTemp.day}-${dateTimeTemp.month}-${dateTimeTemp.year} ';
+
+    timeinit = "${temp}00:00";
+    timefinish = "${temp}00:00";
     getContact();
     requestGalleryPermission();
     initDates();
@@ -155,19 +162,29 @@ class _EditRiskPageState extends State<EditRiskPage> {
     String temp2 =
         '${fechaMasUnDia.day}-${fechaMasUnDia.month}-${fechaMasUnDia.year} ';
 
-    var initTime = "";
-    var finishTime = "";
-    List<String> partesdate = widget.contactRisk.timeinit.split(' ');
-    List<String> partesInit = partesdate[1].split(':');
+    var initTimeTemp = "";
+    var finishTimeTemp = "";
+    List<String> partesdate = [];
+    List<String> partesInit = [];
+    int horasInit = 0;
+    int minutosInit = 0;
+    int totalMinutosInit = 0;
+    if (widget.contactRisk.timeinit == "00:00") {
+      widget.contactRisk.timeinit = "${temp}00:00";
+    }
+    if (widget.contactRisk.timefinish == "00:00") {
+      widget.contactRisk.timefinish = "${temp}00:00";
+    }
+
+    partesdate = widget.contactRisk.timeinit.split(' ');
+    partesInit = partesdate[1].split(':');
+    horasInit = int.parse(partesInit[0]);
+    minutosInit = int.parse(partesInit[1]);
+    totalMinutosInit = horasInit * 60 + minutosInit;
+    print("Total de minutos: $totalMinutosInit");
+
     List<String> partesDate = widget.contactRisk.timefinish.split(' ');
     List<String> partesFinish = partesDate[1].split(':');
-
-    int horasInit = int.parse(partesInit[0]);
-    int minutosInit = int.parse(partesInit[1]);
-
-    int totalMinutosInit = horasInit * 60 + minutosInit;
-
-    print("Total de minutos: $totalMinutosInit");
 
     int horasFinish = int.parse(partesFinish[0]);
     int minutosFinish = int.parse(partesFinish[1]);
@@ -177,11 +194,11 @@ class _EditRiskPageState extends State<EditRiskPage> {
     print("Total de minutos: $totalMinutosFinish");
 
     if (totalMinutosInit > totalMinutosFinish) {
-      initTime = temp + widget.contactRisk.timeinit.split(' ').last;
-      finishTime = temp2 + widget.contactRisk.timefinish.split(' ').last;
+      initTimeTemp = temp + widget.contactRisk.timeinit.split(' ').last;
+      finishTimeTemp = temp2 + widget.contactRisk.timefinish.split(' ').last;
     } else {
-      initTime = temp + widget.contactRisk.timeinit.split(' ').last;
-      finishTime = temp + widget.contactRisk.timefinish.split(' ').last;
+      initTimeTemp = temp + widget.contactRisk.timeinit.split(' ').last;
+      finishTimeTemp = temp + widget.contactRisk.timefinish.split(' ').last;
     }
 
     var list = await convertImageData();
@@ -189,8 +206,8 @@ class _EditRiskPageState extends State<EditRiskPage> {
         id: widget.contactRisk.id,
         photo: contactSelect!.photo,
         name: contactSelect!.displayName,
-        timeinit: initTime,
-        timefinish: finishTime,
+        timeinit: initTimeTemp,
+        timefinish: finishTimeTemp,
         phones: contactSelect!.phones.first.normalizedNumber
             .replaceAll("+34", "")
             .replaceAll(" ", ""),
@@ -383,6 +400,32 @@ class _EditRiskPageState extends State<EditRiskPage> {
     }
 
     (context as Element).markNeedsBuild();
+  }
+
+  void _showContactListScreen(BuildContext context) async {
+    Contact? cont;
+    await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) =>
+            FilterContactListScreen(onCountrySelected: (contact) {
+          setState(() {
+            cont = contact;
+          });
+        }),
+      ),
+    );
+
+    if (cont!.name.first.isNotEmpty) {
+      setState(() {
+        contactSelect = cont!;
+        widget.contactRisk.name = contactSelect!.displayName;
+
+        indexSelect =
+            contactlist.indexWhere((item) => item.id == contactSelect!.id);
+        print(indexSelect);
+      });
+    }
   }
 
   @override
@@ -608,28 +651,29 @@ class _EditRiskPageState extends State<EditRiskPage> {
                                   : contactlist[indexSelect].displayName
                               : name,
                           onChanged: (value) {
-                            showDialog(
-                              context: context,
-                              builder: (BuildContext context) => Container(
-                                width: size.width,
-                                height: size.height,
-                                color: const Color.fromRGBO(169, 146, 125, 1),
-                                child: Padding(
-                                  padding: const EdgeInsets.only(
-                                      top: 28.0, left: 8, right: 8),
-                                  child: PopUpContact(
-                                    listcontact: contactlist,
-                                    onChanged: (int value) {
-                                      indexSelect = value;
-                                      contactSelect = contactlist[value];
-                                      widget.contactRisk.name =
-                                          contactSelect!.displayName;
-                                      setState(() {});
-                                    },
-                                  ),
-                                ),
-                              ),
-                            );
+                            _showContactListScreen(context);
+                            // showDialog(
+                            //   context: context,
+                            //   builder: (BuildContext context) => Container(
+                            //     width: size.width,
+                            //     height: size.height,
+                            //     color: const Color.fromRGBO(169, 146, 125, 1),
+                            //     child: Padding(
+                            //       padding: const EdgeInsets.only(
+                            //           top: 28.0, left: 8, right: 8),
+                            //       child: PopUpContact(
+                            //         listcontact: contactlist,
+                            //         onChanged: (int value) {
+                            //           indexSelect = value;
+                            //           contactSelect = contactlist[value];
+                            //           widget.contactRisk.name =
+                            //               contactSelect!.displayName;
+                            //           setState(() {});
+                            //         },
+                            //       ),
+                            //     ),
+                            //   ),
+                            // );
                           },
                         ),
                       ],
@@ -896,7 +940,7 @@ class _EditRiskPageState extends State<EditRiskPage> {
                                 SizedBox(
                                   width: 280,
                                   child: Text(
-                                    "Guardar esta configuración",
+                                    "Guardar está configuración",
                                     textAlign: TextAlign.right,
                                     style: textNormal14White(),
                                   ),
@@ -920,6 +964,7 @@ class _EditRiskPageState extends State<EditRiskPage> {
                                         ).then((value) {
                                           if (value != null && value) {
                                             _prefs.setUserFree = false;
+                                            _prefs.setUserPremium = true;
                                           }
                                         });
                                         return;

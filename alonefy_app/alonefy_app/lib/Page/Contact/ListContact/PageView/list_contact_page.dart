@@ -6,6 +6,7 @@ import 'package:ifeelefine/Common/Constant.dart';
 import 'package:ifeelefine/Common/colorsPalette.dart';
 import 'package:ifeelefine/Common/manager_alerts.dart';
 import 'package:ifeelefine/Common/utils.dart';
+import 'package:ifeelefine/Model/contact.dart';
 import 'package:ifeelefine/Page/Contact/ListContact/Controller/list_contact_controller.dart';
 import 'package:ifeelefine/Provider/prefencesUser.dart';
 import 'package:notification_center/notification_center.dart';
@@ -20,11 +21,11 @@ class ListContact extends StatefulWidget {
 
 class _ListContactState extends State<ListContact> {
   final ListContactController controller = Get.put(ListContactController());
-
+  List<ContactBD> listContactBD = [];
   var indexSelect = -1;
 
   List<Contact> _contacts = [];
-  late RxList<Contact> contactstemp;
+
   final _prefs = PreferenceUser();
 
   @override
@@ -223,8 +224,11 @@ class _ListContactState extends State<ListContact> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: ColorPalette.secondView,
-        body: Container(
-            color: ColorPalette.secondView, child: listviewContactRisk()));
+      backgroundColor: ColorPalette.secondView,
+      body: Container(
+        color: ColorPalette.secondView,
+        child: listviewContactRisk(),
+      ),
+    );
   }
 }

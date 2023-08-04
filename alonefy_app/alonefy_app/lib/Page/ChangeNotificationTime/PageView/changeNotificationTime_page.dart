@@ -228,38 +228,47 @@ class _ChangeNotificationTimePageState
 
   Widget getPicker(int initialPosition, int pickerId) {
     return Expanded(
-        child: SizedBox(
-            height: 120,
-            child: CupertinoApp(
-                debugShowCheckedModeBanner: false,
-                theme: const CupertinoThemeData(
-                  brightness: Brightness.light,
+      child: SizedBox(
+        height: 120,
+        child: CupertinoApp(
+          debugShowCheckedModeBanner: false,
+          theme: const CupertinoThemeData(
+            brightness: Brightness.light,
+          ),
+          home: Stack(
+            children: [
+              if (_prefs.getUserPremium) ...[
+                _getCupertinoPicker(initialPosition, pickerId)
+              ] else ...[
+                GestureDetector(
+                  child: AbsorbPointer(
+                      absorbing: !_prefs.getUserPremium,
+                      child: _getCupertinoPicker(initialPosition, pickerId)),
+                  onVerticalDragEnd: (drag) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const PremiumPage(
+                              isFreeTrial: false,
+                              img: 'Pantalla5.jpg',
+                              title: Constant.premiumChangeTimeTitle,
+                              subtitle: '')),
+                    ).then(
+                      (value) {
+                        if (value != null && value) {
+                          _prefs.setUserPremium = true;
+                          _prefs.setUserFree = false;
+                        }
+                      },
+                    );
+                  },
                 ),
-                home: Stack(
-                  children: [
-                    if (_prefs.getUserPremium) ...[
-                      _getCupertinoPicker(initialPosition, pickerId)
-                    ] else ...[
-                      GestureDetector(
-                        child: AbsorbPointer(
-                            absorbing: !_prefs.getUserPremium,
-                            child:
-                                _getCupertinoPicker(initialPosition, pickerId)),
-                        onVerticalDragEnd: (drag) {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => const PremiumPage(
-                                    isFreeTrial: false,
-                                    img: 'Pantalla5.jpg',
-                                    title: Constant.premiumChangeTimeTitle,
-                                    subtitle: '')),
-                          );
-                        },
-                      )
-                    ]
-                  ],
-                ))));
+              ],
+            ],
+          ),
+        ),
+      ),
+    );
   }
 
   Widget _getCupertinoPicker(int initialPosition, int pickerId) {
@@ -277,9 +286,6 @@ class _ChangeNotificationTimePageState
             phoneTime = Constant.timeDic[value.toString()]!;
             break;
         }
-
-//useMobilVC.saveTimeUseMobil(
-// context, Constant.timeDic[value.toString()].toString());
       },
       scrollController:
           FixedExtentScrollController(initialItem: initialPosition),

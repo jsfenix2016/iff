@@ -1,11 +1,13 @@
 import 'dart:async';
 
+import 'package:flutter_countries/models/country.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ifeelefine/Common/Constant.dart';
 import 'package:ifeelefine/Common/button_style_custom.dart';
 import 'package:ifeelefine/Common/Firebase/firebaseManager.dart';
 import 'package:ifeelefine/Common/colorsPalette.dart';
 import 'package:ifeelefine/Common/initialize_models_bd.dart';
+import 'package:ifeelefine/Common/location_custom.dart';
 import 'package:ifeelefine/Common/text_style_font.dart';
 import 'package:ifeelefine/Common/utils.dart';
 
@@ -16,6 +18,8 @@ import 'package:ifeelefine/Page/Premium/PageView/premium_page.dart';
 import 'package:ifeelefine/Page/UseMobil/PageView/configurationUseMobile_page.dart';
 
 import 'package:ifeelefine/Page/UserConfig2/Controller/userConfig2Controller.dart';
+import 'package:ifeelefine/Page/UserConfig2/Widgets/country_select.dart';
+import 'package:ifeelefine/Page/UserConfig2/Widgets/stated_select.dart';
 import 'package:ifeelefine/Provider/prefencesUser.dart';
 import 'package:ifeelefine/Utils/Widgets/CustomDropdownMaritalState.dart';
 import 'package:ifeelefine/Utils/Widgets/CustomDropdownStylelive.dart';
@@ -86,11 +90,13 @@ class _UserConfigPageState2 extends State<UserConfigPage2> {
   }
 
   Future getCounty() async {
-    countryres = await getResponse() as List;
+    countryres = await getTraslateCountry();
+
     for (var data in countryres) {
       var model = StatusModel.StatusModel();
-      model.name = data['name'];
-      model.emoji = data['emoji'];
+
+      model.name = data.translations!.es ?? data.name;
+      model.emoji = data.emoji;
       if (!mounted) continue;
       setState(() {
         _country.add("${model.emoji!}  ${model.name!}");
@@ -100,18 +106,69 @@ class _UserConfigPageState2 extends State<UserConfigPage2> {
     return _country;
   }
 
-  Future filterState() async {
-    _states.clear();
-    _states.add('Seleccionar estado');
-    selectState = "";
-    for (var f in stateTemp) {
-      if (!mounted) continue;
-      f.forEach((data) {
-        _states.add("${data['name']}");
+  void _showCountryListScreen(BuildContext context) async {
+    String? selectedCountry = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => CountryListScreen(
+          countries: _country,
+          onCountrySelected: (country) {
+            setState(() {
+              selectCountry = country;
+              // Opcional: También puedes actualizar la variable user?.country aquí
+              user?.country = selectCountry;
+              for (var element in countryres) {
+                var model = StatusModel.StatusModel();
+                model.name = element.translations!.es ?? element.name;
+                model.emoji = element.emoji;
+                if (!mounted) return;
+
+                if (selectCountry
+                    .contains(("${model.emoji!}  ${model.name!}"))) {
+                  stateTemp.clear();
+                  getTraslateState(element);
+                }
+              }
+            });
+          },
+        ),
+      ),
+    );
+
+    if (selectedCountry != null) {
+      setState(() {
+        selectCountry = selectedCountry;
+        // Opcional: También puedes actualizar la variable user?.country aquí
       });
     }
-    setState(() {});
-    return _states;
+  }
+
+  void _showStateListScreen(BuildContext context) async {
+    String? selectedStateTemp = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => StatesListScreen(
+          states: liststate.value.obs,
+          onStatesSelected: (country) {
+            setState(() {
+              selectState = country;
+
+              // Opcional: También puedes actualizar la variable user?.country aquí
+              user?.city = selectState;
+            });
+          },
+        ),
+      ),
+    );
+
+    if (selectedStateTemp != null) {
+      setState(() {
+        selectState = selectedStateTemp;
+        user?.city = selectState;
+
+        // Opcional: También puedes actualizar la variable user?.country aquí
+      });
+    }
   }
 
   @override
@@ -151,6 +208,7 @@ class _UserConfigPageState2 extends State<UserConfigPage2> {
                     user?.styleLife = value;
                   },
                 ),
+
                 const SizedBox(height: 10),
                 CustomDropdownMaritalState(
                   instance: ages,
@@ -160,6 +218,15 @@ class _UserConfigPageState2 extends State<UserConfigPage2> {
                     user?.age = value;
                   },
                 ),
+                // LocationCustom(
+                //   title: "Coloca tu dirección",
+                //   isVisible: true,
+                //   onChange: (String value) {
+                //     print(value);
+                //     user?.country = value != '' ? value : '';
+                //     // userModel.localizacion = value != '' ? value : '';
+                //   },
+                // ),
                 const SizedBox(height: 10),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
@@ -171,122 +238,101 @@ class _UserConfigPageState2 extends State<UserConfigPage2> {
                       ),
                       borderRadius: BorderRadius.circular(100),
                     ),
-                    child: SizedBox(
-                      height: 52,
-                      child: DropdownButton<String?>(
-                        underline: Container(),
-                        dropdownColor: Colors.brown,
-                        hint: Padding(
-                          padding: const EdgeInsets.all(8.0),
+                    child: GestureDetector(
+                      onTap: () => _showCountryListScreen(context),
+                      child: SizedBox(
+                        width: 350,
+                        height: 52,
+                        child: Padding(
+                          padding: const EdgeInsets.only(
+                              left: 16.0, right: 16, top: 12),
                           child: Text(
-                            "Selecciona el pais",
-                            style: textNomral18White(),
-                          ),
-                        ),
-                        iconEnabledColor: ColorPalette.principal, //Ico
-                        value:
-                            selectCountry.isEmpty ? _country[0] : selectCountry,
-                        isExpanded: true,
-
-                        items: _country
-                            .map(
-                              (e) => DropdownMenuItem<String>(
-                                value: e,
-                                child: Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Text(
-                                    e,
-                                    style: textNomral18White(),
-                                  ),
-                                ),
-                              ),
-                            )
-                            .toList(),
-                        onChanged: (v) {
-                          selectCountry = v!;
-                          user?.country = v;
-                          for (var element in countryres) {
-                            var model = StatusModel.StatusModel();
-                            model.name = element['name'];
-                            model.emoji = element['emoji'];
-                            if (!mounted) return;
-
-                            if (v.contains(
-                                ("${model.emoji!}  ${model.name!}"))) {
-                              stateTemp.clear();
-                              stateTemp.add(element['state']);
-                            }
-                          }
-                          filterState();
-                        },
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 10),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: DecoratedBox(
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                        color: ColorPalette.principal,
-                        width: 1,
-                      ),
-                      borderRadius: BorderRadius.circular(100),
-                    ),
-                    child: SizedBox(
-                      height: 52,
-                      child: DropdownButton<String?>(
-                        underline: Container(),
-                        dropdownColor: Colors.brown,
-                        hint: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Text(
-                            "Selecciona la ciudad",
+                            selectCountry.isEmpty
+                                ? "Selecciona el país"
+                                : selectCountry.obs.value,
                             style: textNormal16White(),
                           ),
                         ),
-                        iconEnabledColor: ColorPalette.principal, //Ico
-                        value: selectState.isEmpty ? _states[0] : selectState,
-                        isExpanded: true,
-
-                        items: _states
-                            .map(
-                              (e) => DropdownMenuItem<String>(
-                                value: e,
-                                child: Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Text(
-                                    e,
-                                    style: textNormal16White(),
-                                  ),
-                                ),
-                              ),
-                            )
-                            .toList(),
-                        onChanged: (v) {
-                          user?.city = v.toString();
-                          selectState = v!;
-                          setState(() {});
-                        },
                       ),
                     ),
                   ),
                 ),
+                const SizedBox(height: 10),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: DecoratedBox(
+                    decoration: BoxDecoration(
+                      border: Border.all(
+                        color: ColorPalette.principal,
+                        width: 1,
+                      ),
+                      borderRadius: BorderRadius.circular(100),
+                    ),
+                    child: GestureDetector(
+                      onTap: () => _showStateListScreen(context),
+                      child: SizedBox(
+                        width: 350,
+                        height: 52,
+                        child: Padding(
+                          padding: const EdgeInsets.only(
+                              left: 16.0, right: 16, top: 12),
+                          child: Text(
+                            selectState.isEmpty
+                                ? "Selecciona la ciudad"
+                                : selectState,
+                            style: textNormal16White(),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+
+                const SizedBox(height: 10),
+
+                const SizedBox(height: 20),
+                // ElevateButtonCustomBorder(
+                //     onChanged: ((value) {
+                //       // free(false);
+
+                //     }),
+                //     mensaje: "Gratuito 30 días"),
+                // const SizedBox(height: 20),
+                // _createButtonPremium(),
+                ElevatedButton(
+                  style: styleColorClear(),
+                  onPressed: (() {
+                    _submit(false);
+                  }),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.transparent,
+                      borderRadius:
+                          const BorderRadius.all(Radius.circular(100)),
+                      border: Border.all(color: ColorPalette.principal),
+                    ),
+                    height: 42,
+                    width: 200,
+                    child: Center(
+                      child: Text(
+                        "Gratuito 30 días",
+                        style: GoogleFonts.barlow(
+                          fontSize: 16.0,
+                          wordSpacing: 1,
+                          letterSpacing: 0.005,
+                          fontWeight: FontWeight.normal,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 20),
                 ElevateButtonCustomBorder(
                     onChanged: ((value) {
                       free(true);
                     }),
-                    mensaje: "Gratuito"),
-                const SizedBox(height: 20),
-                ElevateButtonCustomBorder(
-                    onChanged: ((value) {
-                      free(false);
-                    }),
-                    mensaje: "Gratuito 30 días"),
-                const SizedBox(height: 20),
-                _createButtonPremium(),
-                const SizedBox(height: 20),
+                    mensaje: "Continuar"),
               ],
             ),
           ],
@@ -310,14 +356,8 @@ class _UserConfigPageState2 extends State<UserConfigPage2> {
         width: 200,
         child: Center(
           child: Text(
-            "Protección 360º",
-            style: GoogleFonts.barlow(
-              fontSize: 16.0,
-              wordSpacing: 1,
-              letterSpacing: 1,
-              fontWeight: FontWeight.bold,
-              color: Colors.black,
-            ),
+            "Gratuito 30 días",
+            style: textBold16White(),
           ),
         ),
       ),
@@ -356,26 +396,31 @@ class _UserConfigPageState2 extends State<UserConfigPage2> {
   void _submit(bool isFreeTrial) async {
     if (await updateUser()) {
       updateFirebaseToken();
-
-      !_prefs.getUserPremium
-          ? await Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => PremiumPage(
-                      isFreeTrial: isFreeTrial,
-                      img: 'pantalla3.png',
-                      title: Constant.premiumFallTitle,
-                      subtitle: '')),
-            ).then((value) {
-              if (value != null && value) {
-                Get.off(
-                  () => UseMobilePage(userbd: userbd!),
-                );
-              }
-            })
-          : Get.off(
-              () => UseMobilePage(userbd: userbd!),
-            );
+      _prefs.setUserPremium = true;
+      Future.sync(
+        () async => await Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const PremiumPage(
+                isFreeTrial: false,
+                img: 'pantalla3.png',
+                title: Constant.premiumFallTitle,
+                subtitle: ''),
+          ),
+        ).then(
+          (value) {
+            if (value != null && value) {
+              _prefs.setUserPremium = true;
+              _prefs.setUserFree = false;
+              var premiumController = Get.put(PremiumController());
+              premiumController.updatePremiumAPIFree(true);
+              Get.off(
+                () => UseMobilePage(userbd: userbd!),
+              );
+            }
+          },
+        ),
+      );
     }
   }
 }

@@ -193,6 +193,7 @@ class _EditUseMobilPageState extends State<EditUseMobilPage> {
           ),
         ).then((value) {
           if (value != null && value) {
+            _prefs.setUserPremium = true;
             _prefs.setUserFree = false;
             saveChange();
           }
@@ -309,6 +310,13 @@ class _EditUseMobilPageState extends State<EditUseMobilPage> {
                                                     title: Constant
                                                         .premiumUseTimeTitle,
                                                     subtitle: '')),
+                                      ).then(
+                                        (value) {
+                                          if (value != null && value) {
+                                            _prefs.setUserPremium = true;
+                                            _prefs.setUserFree = false;
+                                          }
+                                        },
                                       );
                                     },
                                   ),

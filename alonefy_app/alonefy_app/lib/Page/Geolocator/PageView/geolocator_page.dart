@@ -249,6 +249,7 @@ class _InitGeolocatorState extends State<InitGeolocator> {
                             ).then((value) {
                               if (value != null && value) {
                                 _prefs.setUserFree = false;
+                                _prefs.setUserPremium = true;
                               }
                             });
                             return;

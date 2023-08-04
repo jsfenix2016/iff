@@ -9,6 +9,7 @@ import 'package:ifeelefine/Page/Contact/EditContact/PageView/editContact.dart';
 import 'package:ifeelefine/Page/Contact/ListContact/PageView/list_contact_page.dart';
 import 'package:ifeelefine/Page/Contact/Notice/Controller/contactNoticeController.dart';
 import 'package:ifeelefine/Page/Contact/Widget/cellContactStatus.dart';
+import 'package:ifeelefine/Page/Contact/Widget/filter_contact.dart';
 import 'package:ifeelefine/Page/Premium/PageView/premium_page.dart';
 import 'package:ifeelefine/Provider/prefencesUser.dart';
 import 'package:ifeelefine/Utils/Widgets/elevatedButtonFilling.dart';
@@ -42,6 +43,45 @@ class _ContactNoticePageState extends State<ContactNoticePage> {
   Future getContact() async {
     listContact = await controller.getAllContact();
     setState(() {});
+  }
+
+  void _showCountryListScreen(BuildContext context) async {
+    ContactBD contactBD = ContactBD("", null, "", "", "", "", "", "Pendiente");
+    ContactBD? selectedCountry = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) =>
+            FilterContactListScreen(onCountrySelected: (contact) {
+          setState(() {
+            contactBD = ContactBD(
+                contact.displayName,
+                contact.photo == null ? null : contact.photo,
+                contact.displayName,
+                "20 min",
+                "20 min",
+                "20 min",
+                contact.phones.first.normalizedNumber
+                    .replaceAll("+34", "")
+                    .replaceAll(" ", ""),
+                "Pendiente");
+          });
+        }),
+      ),
+    );
+
+    if (contactBD.phones.isNotEmpty) {
+      setState(() {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => EditContact(
+              contact: contactBD,
+            ),
+          ),
+        );
+        // Opcional: También puedes actualizar la variable user?.country aquí
+      });
+    }
   }
 
   @override
@@ -127,47 +167,28 @@ class _ContactNoticePageState extends State<ContactNoticePage> {
                   Center(
                     child: ElevateButtonFilling(
                         onChanged: ((value) async {
-                          if (_prefs.getUserFree && listContact.length > 1) {
+                          if (_prefs.getUserFree && listContact.isNotEmpty) {
+                            NotificationCenter().notify('getContact');
                             await Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => const PremiumPage(
-                                      isFreeTrial: false,
-                                      img: 'pantalla3.png',
-                                      title: Constant.premiumFallTitle,
-                                      subtitle: '')),
+                                builder: (context) => const PremiumPage(
+                                    isFreeTrial: false,
+                                    img: 'pantalla3.png',
+                                    title: Constant.premiumFallTitle,
+                                    subtitle: ''),
+                              ),
+                            ).then(
+                              (value) {
+                                if (value != null && value) {
+                                  _prefs.setUserPremium = true;
+                                  _prefs.setUserFree = false;
+                                }
+                              },
                             );
                             return;
                           }
-                          await showDialog(
-                            context: context,
-                            builder: (BuildContext context) => AlertDialog(
-                              contentPadding: const EdgeInsets.all(0),
-                              content: ListContact(
-                                onSelectContact: (Contact value) async {
-                                  var contactBD = ContactBD(
-                                      value.displayName,
-                                      value.photo == null ? null : value.photo,
-                                      value.displayName,
-                                      "20 min",
-                                      "20 min",
-                                      "5 min",
-                                      value.phones.first.normalizedNumber
-                                          .replaceAll("+34", "")
-                                          .replaceAll(" ", ""),
-                                      "Pendiente");
-                                  Navigator.pushReplacement(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => EditContact(
-                                        contact: contactBD,
-                                      ),
-                                    ),
-                                  );
-                                },
-                              ),
-                            ),
-                          );
+                          _showCountryListScreen(context);
                         }),
                         mensaje: 'Añadir contacto'),
                   ),

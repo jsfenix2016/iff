@@ -7,9 +7,15 @@ import 'package:ifeelefine/Common/colorsPalette.dart';
 
 class WidgetContact extends StatelessWidget {
   const WidgetContact(
-      {super.key, required this.displayName, required this.img});
+      {super.key,
+      required this.displayName,
+      required this.img,
+      required this.delete,
+      required this.onDelete});
   final String displayName;
   final Uint8List? img;
+  final bool delete;
+  final void Function(bool) onDelete;
   Widget _mostrarFoto() {
     return GestureDetector(
       onTap: () {},
@@ -105,13 +111,20 @@ class WidgetContact extends StatelessWidget {
                     child: IconButton(
                       iconSize: 30,
                       color: ColorPalette.principal,
-                      onPressed: () {},
+                      onPressed: () {
+                        if (delete) {
+                          onDelete(delete);
+                        }
+                      },
                       icon: Container(
                         height: 28,
                         width: 28,
-                        decoration: const BoxDecoration(
+                        decoration: BoxDecoration(
                           image: DecorationImage(
-                            image: AssetImage('assets/images/plussWhite.png'),
+                            image: delete
+                                ? const AssetImage('assets/images/Error.png')
+                                : const AssetImage(
+                                    'assets/images/plussWhite.png'),
                             fit: BoxFit.cover,
                           ),
                           color: Colors.transparent,

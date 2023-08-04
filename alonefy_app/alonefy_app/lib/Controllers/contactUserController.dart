@@ -29,42 +29,85 @@ class ContactUserController extends GetxController {
     }
   }
 
-  Future<bool> saveListContact(BuildContext context, List<Contact> listContact,
-      String timeSendSMS, String timeCall, String timeWhatsapp) async {
-    contextTemp = context;
+  RxList<ContactBD> listContactDb = <ContactBD>[].obs;
+  Future<List<ContactBD>> getAllContact() async {
+    final listContact = await const HiveData().listUserContactbd;
+    if (listContact.isNotEmpty) {
+      listContactDb.value = listContact;
+      return listContact;
+    } else {
+      return [];
+    }
+  }
+
+  Future<bool> saveBDListContact(
+      BuildContext context,
+      List<Contact> listContact,
+      String timeSendSMS,
+      String timeCall,
+      String timeWhatsapp) async {
     try {
       var contactBD = ContactBD("", null, "", "", "", "", "", "Pendiente");
 
       for (var element in listContact) {
         contactBD.displayName = element.displayName;
-        contactBD.phones = element.phones.first.number
-            .replaceAll("+34", "")
-            .replaceAll(" ", "");
+        contactBD.phones = element.phones.first.number.contains("+34")
+            ? element.phones.first.number
+                .replaceAll("+34", "")
+                .replaceAll(" ", "")
+            : element.phones.first.number;
         contactBD.photo = element.photo;
         contactBD.timeSendSMS = timeSendSMS;
         contactBD.timeCall = timeCall;
         contactBD.timeWhatsapp = timeWhatsapp;
 
-        final MainController mainController = Get.put(MainController());
-        var user = await mainController.getUserData();
-        var response = await contactServ
-            .saveContact(convertToApi(contactBD, user.telephone));
-
-        var url = await contactServ.getUrlPhoto(
-            user.telephone.contains('+34')
-                ? user.telephone.replaceAll("+34", "").replaceAll(" ", "")
-                : user.telephone.replaceAll(" ", ""),
-            contactBD.phones.contains('+34')
-                ? contactBD.phones.replaceAll("+34", "").replaceAll(" ", "")
-                : contactBD.phones.replaceAll(" ", ""));
-        if (contactBD.photo != null && url != null) {
-          contactServ.updateImage(url, contactBD.photo!);
-        }
-
-        if (response) {
-          await const HiveData().saveUserContact(contactBD);
-        }
+        await const HiveData().saveUserContact(contactBD);
       }
+      return true;
+    } catch (error) {
+      showAlertTemp(Constant.conexionFail);
+      return false;
+    }
+  }
+
+  Future<bool> saveListContact(BuildContext context, ContactBD contactBD,
+      String timeSendSMS, String timeCall, String timeWhatsapp) async {
+    contextTemp = context;
+    try {
+      // var contactBD = ContactBD("", null, "", "", "", "", "", "Pendiente");
+
+      // // for (var element in listContact) {
+      // contactBD.displayName = element.displayName;
+      // contactBD.phones = element.phones.first.number.contains("+34")
+      //     ? element.phones.first.number
+      //         .replaceAll("+34", "")
+      //         .replaceAll(" ", "")
+      //     : element.phones.first.number;
+      // contactBD.photo = element.photo;
+      // contactBD.timeSendSMS = timeSendSMS;
+      // contactBD.timeCall = timeCall;
+      // contactBD.timeWhatsapp = timeWhatsapp;
+
+      final MainController mainController = Get.put(MainController());
+      var user = await mainController.getUserData();
+      var response = await contactServ
+          .saveContact(convertToApi(contactBD, user.telephone));
+
+      var url = await contactServ.getUrlPhoto(
+          user.telephone.contains('+34')
+              ? user.telephone.replaceAll("+34", "").replaceAll(" ", "")
+              : user.telephone.replaceAll(" ", ""),
+          contactBD.phones.contains('+34')
+              ? contactBD.phones.replaceAll("+34", "").replaceAll(" ", "")
+              : contactBD.phones.replaceAll(" ", ""));
+      if (contactBD.photo != null && url != null) {
+        contactServ.updateImage(url, contactBD.photo!);
+      }
+
+      if (response) {
+        await const HiveData().updateContact(contactBD);
+      }
+      // }
       return true;
     } catch (error) {
       showAlertTemp(Constant.conexionFail);
@@ -129,18 +172,20 @@ class ContactUserController extends GetxController {
   }
 
   Future<bool> deleteContact(ContactBD contact) async {
-    final MainController mainController = Get.put(MainController());
-    var user = await mainController.getUserData();
+    await const HiveData().deleteUserContact(contact);
 
-    var response = await contactServ.deleteContact(
-        user.telephone.contains('+34')
-            ? user.telephone.replaceAll("+34", "").replaceAll(" ", "")
-            : user.telephone.replaceAll(" ", ""),
-        contact.phones.contains('+34')
-            ? contact.phones.replaceAll("+34", "").replaceAll(" ", "")
-            : contact.phones.replaceAll(" ", ""));
+    // final MainController mainController = Get.put(MainController());
+    // var user = await mainController.getUserData();
 
-    return response;
+    // var response = await contactServ.deleteContact(
+    //     user.telephone.contains('+34')
+    //         ? user.telephone.replaceAll("+34", "").replaceAll(" ", "")
+    //         : user.telephone.replaceAll(" ", ""),
+    //     contact.phones.contains('+34')
+    //         ? contact.phones.replaceAll("+34", "").replaceAll(" ", "")
+    //         : contact.phones.replaceAll(" ", ""));
+
+    return true;
   }
 
   Future<List<ContactBD>> getContacts() async {

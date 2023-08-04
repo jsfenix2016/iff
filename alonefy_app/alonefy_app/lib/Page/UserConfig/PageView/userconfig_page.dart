@@ -44,7 +44,6 @@ class _UserConfigPageState extends State<UserConfigPage> {
   @override
   void initState() {
     user = initUser();
-    _prefs.saveLastScreenRoute("userConfig");
     super.initState();
   }
 
@@ -161,6 +160,30 @@ class _UserConfigPageState extends State<UserConfigPage> {
                         ),
                       ),
                       const SizedBox(height: 20),
+                      TextValidateToken(
+                        type: "Sms",
+                        code: "",
+                        message: Constant.validateCodeSms,
+                        onChanged: (String value) async {
+                          if (!validatePhoneNumber(user!.telephone)) {
+                            showSaveAlert(context, Constant.info,
+                                Constant.validatePhoneNumber);
+                            isValidSms = false;
+                            (context as Element).markNeedsBuild();
+                            return;
+                          }
+                          if (value.length < 6 || value.length > 7) {
+                            isValidSms = false;
+                          } else {
+                            isValidSms =
+                                await userVC.validateCodeSMS(context, value);
+                          }
+
+                          (context as Element).markNeedsBuild();
+                        },
+                        isValid: isValidSms,
+                      ),
+                      const SizedBox(height: 20),
                       Visibility(
                         visible: true,
                         child: TextValidateToken(
@@ -175,34 +198,18 @@ class _UserConfigPageState extends State<UserConfigPage> {
                                   Constant.validateEmail);
                               return;
                             }
+                            if (value.length < 6 || value.length > 7) {
+                              isValidEmail = false;
+                            } else {
+                              isValidEmail = await userVC.validateCodeEmail(
+                                  context, value);
+                            }
 
-                            isValidEmail =
-                                await userVC.validateCodeEmail(context, value);
                             (context as Element).markNeedsBuild();
                             print(isValidEmail);
                           },
                           isValid: isValidEmail,
                         ),
-                      ),
-                      const SizedBox(height: 20),
-                      TextValidateToken(
-                        type: "Sms",
-                        code: "",
-                        message: Constant.validateCodeSms,
-                        onChanged: (String value) async {
-                          if (!validatePhoneNumber(user!.telephone)) {
-                            showSaveAlert(context, Constant.info,
-                                Constant.validatePhoneNumber);
-                            isValidSms = false;
-                            (context as Element).markNeedsBuild();
-                            return;
-                          }
-
-                          isValidSms =
-                              await userVC.validateCodeSMS(context, value);
-                          (context as Element).markNeedsBuild();
-                        },
-                        isValid: isValidSms,
                       ),
                       const SizedBox(height: 20),
                       SizedBox(

@@ -249,6 +249,13 @@ class _FallActivationConfigPageState extends State<FallActivationConfigPage> {
                     img: 'pantalla2.png',
                     title: Constant.premiumFallTitle,
                     subtitle: '')),
+          ).then(
+            (value) {
+              if (value != null && value) {
+                _prefs.setUserPremium = true;
+                _prefs.setUserFree = false;
+              }
+            },
           );
         }
       },
