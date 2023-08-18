@@ -10,15 +10,12 @@ import 'package:ifeelefine/Provider/prefencesUser.dart';
 import 'package:intl/intl.dart';
 import 'package:collection/collection.dart';
 
-final _prefs = PreferenceUser();
-
 class HistorialController extends GetxController {
   List<LogActivity> _activities = [];
   List<String> datetimes = [];
 
-  Future<int> deleteAlerts(
-      BuildContext context, List<LogAlertsBD> listAlerts) async {
-    return await const HiveData().deleteListAlerts(listAlerts);
+  Future<int> deleteAlerts(BuildContext context, List<LogAlertsBD> time) async {
+    return await const HiveData().deleteListLogHistorial(time);
   }
 
   Future<Map<String, List<LogAlertsBD>>> getAllMov() async {
@@ -78,12 +75,30 @@ class HistorialController extends GetxController {
 
     var dateRisk = await const HiveDataRisk().getcontactRiskbd;
     var zoneRisk = await const HiveDataRisk().getcontactZoneRiskbd;
+
+    var format = DateFormat('dd-MM-yyyy');
     if (dateRisk.isNotEmpty) {
-      for (var date in dateRisk) {
-        convertDateTimeToString(date.createDate);
-        // tempDynamic.add(_activity);
+      for (var dateTem in dateRisk) {
+        var formatter = DateFormat('yMd');
+
+        // var datetime = formatter.parse(date.createDate.toIso8601String());
+
+        // var dateNew = DateTime(datetime.year, datetime.month,
+        //     datetime.day); // Reordenar año, mes y día
+
+        DateTime originalDateTime = DateTime(dateTem.createDate.year,
+            dateTem.createDate.month, dateTem.createDate.day);
+        // CustomDateTime customDateTime = CustomDateTime(originalDateTime);
+
+        // print(originalDateTime); // Imprime: 2023-08-10 00:00:00.000
+        // print(customDateTime); // Imprime: 10-08-2023
+
+        var formattedDate = DateFormat('yMd').format(dateTem.createDate);
+        print(formattedDate); // Imprimirá: 10-08-2023
+
+        DateTime fss = DateFormat('yMd').parse(formattedDate);
         var tempAct = LogAlertsBD(
-            id: 0, time: date.createDate, type: "Cita", photoDate: date.photoDate);
+            id: 0, time: fss, type: "Cita", photoDate: dateTem.photoDate);
         tempDynamic.add(tempAct);
       }
     }
@@ -91,8 +106,11 @@ class HistorialController extends GetxController {
       for (var date in zoneRisk) {
         convertDateTimeToString(date.createDate);
 
-        var tempAct =
-            LogAlertsBD(id: 0, time: date.createDate, type: "Zona", video: date.video);
+        var tempAct = LogAlertsBD(
+            id: 0,
+            time: format.parse(date.createDate.toString()),
+            type: "Zona",
+            video: date.video);
         tempDynamic.add(tempAct);
       }
     }
@@ -126,8 +144,6 @@ class HistorialController extends GetxController {
       });
       print(tempDynamic);
     }
-
-    var format = DateFormat('dd-MM-yyyy');
 
     groupedAlerts = groupBy(tempDynamic,
         (product) => format.parse(product.time.toString()).toString());

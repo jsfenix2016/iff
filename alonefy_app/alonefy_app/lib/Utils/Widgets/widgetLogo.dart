@@ -1,7 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:ifeelefine/Common/colorsPalette.dart';
-import 'package:ifeelefine/Common/utils.dart';
 
 class WidgetLogoApp extends StatelessWidget {
   const WidgetLogoApp({super.key});
@@ -9,11 +6,11 @@ class WidgetLogoApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 90,
-      width: 200,
+      height: 60.31,
+      width: 250,
       decoration: const BoxDecoration(
         image: DecorationImage(
-          image: AssetImage('assets/images/logoAlertfriends.png'),
+          image: AssetImage('assets/images/new_logo.png'),
           fit: BoxFit.fill,
         ),
         color: Colors.transparent,

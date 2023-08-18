@@ -3,6 +3,7 @@ import 'package:ifeelefine/Common/Constant.dart';
 import 'package:ifeelefine/Common/colorsPalette.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:ifeelefine/Common/text_style_font.dart';
 import 'package:ifeelefine/Common/utils.dart';
 import 'package:ifeelefine/Model/activityDay.dart';
 import 'package:ifeelefine/Model/activitydaybd.dart';
@@ -64,6 +65,7 @@ class _PreviewInactivityPageState extends State<PreviewInactivityPage> {
 
   Widget _createButtonNext() {
     return ElevateButtonFilling(
+      showIcon: false,
       onChanged: (value) async {
         Navigator.push(
           context,
@@ -71,6 +73,7 @@ class _PreviewInactivityPageState extends State<PreviewInactivityPage> {
         );
       },
       mensaje: Constant.nextTxt,
+      img: '',
     );
   }
 
@@ -82,7 +85,10 @@ class _PreviewInactivityPageState extends State<PreviewInactivityPage> {
       key: scaffoldKey,
       appBar: AppBar(
         backgroundColor: Colors.brown,
-        title: const Text("Previsualizar actividades"),
+        title: Text(
+          "Prvisualizar actividades",
+          style: textForTitleApp(),
+        ),
       ),
       body: Container(
         decoration: decorationCustom(),

@@ -4,8 +4,11 @@ import 'package:get/get.dart';
 
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ifeelefine/Common/manager_alerts.dart';
+import 'package:ifeelefine/Common/notificationService.dart';
+import 'package:ifeelefine/Common/text_style_font.dart';
 
 import 'package:ifeelefine/Controllers/contactUserController.dart';
+import 'package:ifeelefine/Page/Premium/Controller/premium_controller.dart';
 
 import '../../../Common/Constant.dart';
 import '../../../Common/colorsPalette.dart';
@@ -63,10 +66,14 @@ class _ChangeNotificationTimePageState
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
+    RedirectViewNotifier.setContext(context);
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: ColorPalette.backgroundAppBar,
-        title: const Text("Configuración"),
+        backgroundColor: Colors.brown,
+        title: Text(
+          "Configuración",
+          style: textForTitleApp(),
+        ),
       ),
       body: Container(
         decoration: decorationCustom(),
@@ -251,13 +258,16 @@ class _ChangeNotificationTimePageState
                           builder: (context) => const PremiumPage(
                               isFreeTrial: false,
                               img: 'Pantalla5.jpg',
-                              title: Constant.premiumChangeTimeTitle,
-                              subtitle: '')),
+                              title:
+                                  'Protege tu Seguridad Personal las 24h:\n\n',
+                              subtitle: Constant.premiumChangeTimeTitle)),
                     ).then(
                       (value) {
                         if (value != null && value) {
                           _prefs.setUserPremium = true;
                           _prefs.setUserFree = false;
+                          var premiumController = Get.put(PremiumController());
+                          premiumController.updatePremiumAPI(true);
                         }
                       },
                     );

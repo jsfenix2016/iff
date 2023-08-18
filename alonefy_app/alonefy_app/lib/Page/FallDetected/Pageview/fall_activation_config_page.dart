@@ -7,7 +7,10 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:ifeelefine/Common/Constant.dart';
 import 'package:ifeelefine/Common/colorsPalette.dart';
 import 'package:ifeelefine/Common/manager_alerts.dart';
+import 'package:ifeelefine/Common/notificationService.dart';
+import 'package:ifeelefine/Common/text_style_font.dart';
 import 'package:ifeelefine/Page/FallDetected/Controller/fall_detectedController.dart';
+import 'package:ifeelefine/Page/Premium/Controller/premium_controller.dart';
 
 import 'package:ifeelefine/Provider/prefencesUser.dart';
 
@@ -56,10 +59,14 @@ class _FallActivationConfigPageState extends State<FallActivationConfigPage> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
+    RedirectViewNotifier.setContext(context);
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: ColorPalette.backgroundAppBar,
-        title: const Text("Configuración"),
+        backgroundColor: Colors.brown,
+        title: Text(
+          "Configuración",
+          style: textForTitleApp(),
+        ),
       ),
       body: Container(
         decoration: decorationCustom(),
@@ -77,7 +84,7 @@ class _FallActivationConfigPageState extends State<FallActivationConfigPage> {
                     style: GoogleFonts.barlow(
                       fontSize: 22.0,
                       wordSpacing: 1,
-                      letterSpacing: 1.2,
+                      letterSpacing: 0.001,
                       fontWeight: FontWeight.w500,
                       color: Colors.white,
                     )),
@@ -246,7 +253,7 @@ class _FallActivationConfigPageState extends State<FallActivationConfigPage> {
             MaterialPageRoute(
                 builder: (context) => const PremiumPage(
                     isFreeTrial: false,
-                    img: 'pantalla2.png',
+                    img: 'Mapsicle Map.png',
                     title: Constant.premiumFallTitle,
                     subtitle: '')),
           ).then(
@@ -254,6 +261,8 @@ class _FallActivationConfigPageState extends State<FallActivationConfigPage> {
               if (value != null && value) {
                 _prefs.setUserPremium = true;
                 _prefs.setUserFree = false;
+                var premiumController = Get.put(PremiumController());
+                premiumController.updatePremiumAPI(true);
               }
             },
           );
@@ -293,13 +302,16 @@ class _FallActivationConfigPageState extends State<FallActivationConfigPage> {
         MaterialPageRoute(
           builder: (context) => const PremiumPage(
               isFreeTrial: false,
-              img: 'pantalla3.png',
+              img: 'pantalla2.png',
               title: Constant.premiumFallTitle,
               subtitle: ''),
         ),
       ).then((value) {
         if (value != null && value) {
           _prefs.setUserFree = false;
+          var premiumController = Get.put(PremiumController());
+          premiumController.updatePremiumAPI(true);
+
           saveChange();
         }
       });

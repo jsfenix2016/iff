@@ -3,8 +3,11 @@ import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ifeelefine/Common/Constant.dart';
+import 'package:ifeelefine/Common/notificationService.dart';
+import 'package:ifeelefine/Common/text_style_font.dart';
 
 import 'package:ifeelefine/Page/Geolocator/Controller/configGeolocatorController.dart';
+import 'package:ifeelefine/Page/Premium/Controller/premium_controller.dart';
 
 import 'package:slidable_button/slidable_button.dart';
 
@@ -157,10 +160,14 @@ class _ConfigGeolocatorState extends State<ConfigGeolocator> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
+    RedirectViewNotifier.setContext(context);
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: ColorPalette.backgroundAppBar,
-        title: const Text("Configuración"),
+        backgroundColor: Colors.brown,
+        title: Text(
+          "Configuración",
+          style: textForTitleApp(),
+        ),
       ),
       body: Container(
         decoration: decorationCustom(),
@@ -236,14 +243,19 @@ class _ConfigGeolocatorState extends State<ConfigGeolocator> {
                         MaterialPageRoute(
                             builder: (context) => const PremiumPage(
                                 isFreeTrial: false,
-                                img: 'pantalla3.png',
-                                title: Constant.premiumMapTitle,
-                                subtitle: '')),
+                                img: 'Pantalla4.jpg',
+                                title:
+                                    'Protege tu Seguridad Personal las 24h:\n\n',
+                                subtitle:
+                                    'Activa para enviar tu última ubicación')),
                       ).then(
                         (value) {
                           if (value != null && value) {
                             _prefs.setUserPremium = true;
                             _prefs.setUserFree = false;
+                            var premiumController =
+                                Get.put(PremiumController());
+                            premiumController.updatePremiumAPI(true);
                           }
                         },
                       );
@@ -352,6 +364,9 @@ class _ConfigGeolocatorState extends State<ConfigGeolocator> {
         if (value != null && value) {
           _prefs.setUserFree = false;
           _prefs.setUserPremium = true;
+          var premiumController = Get.put(PremiumController());
+          premiumController.updatePremiumAPI(true);
+
           savePermission();
         }
       });

@@ -84,20 +84,22 @@ class _RowContactState extends State<RowContact> {
           color: getColor(widget.contactRisk),
           borderRadius: const BorderRadius.all(Radius.circular(20)),
         ),
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(top: 4, left: 4.0, right: 4),
-              child: Container(
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
                 color: Colors.transparent,
                 height: 30,
                 width: double.infinity,
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   mainAxisSize: MainAxisSize.max,
                   children: [
                     Container(
-                      width: 105,
+                      width: 115,
                       color: Colors.transparent,
                       child: Text(
                         "Hora de inicio:",
@@ -106,144 +108,216 @@ class _RowContactState extends State<RowContact> {
                           fontSize: 16.0,
                           wordSpacing: 1,
                           letterSpacing: 0.001,
-                          fontWeight: FontWeight.bold,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                    Container(
+                      color: Colors.transparent,
+                      width: 90,
+                      child: Text(
+                        parseTimeString(widget.contactRisk.timeinit),
+                        textAlign: TextAlign.center,
+                        style: GoogleFonts.barlow(
+                          fontSize: 16.0,
+                          wordSpacing: 1,
+                          letterSpacing: 1,
+                          fontWeight: FontWeight.w700,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                    Container(
+                      height: 50,
+                      width: 100,
+                      color: Colors.transparent,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Container(
+                            color: Colors.transparent,
+                            height: 30,
+                            width: 30,
+                            child: IconButton(
+                              iconSize: 20,
+                              onPressed: (() {
+                                widget.onChanged(true);
+                              }),
+                              icon: Container(
+                                width: 16,
+                                height: 16,
+                                decoration: const BoxDecoration(
+                                  image: DecorationImage(
+                                    image:
+                                        AssetImage('assets/images/pencil.png'),
+                                    fit: BoxFit.contain,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(
+                            width: 20,
+                          ),
+                          Container(
+                            color: Colors.transparent,
+                            height: 30,
+                            width: 30,
+                            child: IconButton(
+                              iconSize: 20,
+                              onPressed: (() {
+                                widget.onChangedDelete(true);
+                              }),
+                              icon: Container(
+                                width: 16,
+                                height: 16,
+                                decoration: const BoxDecoration(
+                                  image: DecorationImage(
+                                    image:
+                                        AssetImage('assets/images/trash.png'),
+                                    fit: BoxFit.contain,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Container(
+                color: Colors.transparent,
+                height: 30,
+                width: double.infinity,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  mainAxisSize: MainAxisSize.max,
+                  children: [
+                    Container(
+                      width: 115,
+                      color: Colors.transparent,
+                      child: Text(
+                        "Hora de fin:",
+                        textAlign: TextAlign.left,
+                        style: GoogleFonts.barlow(
+                          fontSize: 16.0,
+                          wordSpacing: 1,
+                          letterSpacing: 0.001,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      width: 90,
+                      child: Text(
+                        parseTimeString(widget.contactRisk.timefinish),
+                        textAlign: TextAlign.center,
+                        style: GoogleFonts.barlow(
+                          fontSize: 16.0,
+                          wordSpacing: 1,
+                          letterSpacing: 1,
+                          fontWeight: FontWeight.w700,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                    Container(
+                      height: 35,
+                      width: 100,
+                      color: Colors.transparent,
+                      child: Center(
+                        child: IconButton(
+                          iconSize: 20,
+                          onPressed: (() {}),
+                          icon: const Icon(
+                            Icons.edit,
+                            color: Colors.transparent,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Container(
+                color: Colors.transparent,
+                height: 30,
+                width: double.infinity,
+                child: Row(
+                  children: [
+                    Container(
+                      width: 105,
+                      color: Colors.transparent,
+                      child: Text(
+                        "Avisar a:",
+                        textAlign: TextAlign.left,
+                        style: GoogleFonts.barlow(
+                          fontSize: 16.0,
+                          wordSpacing: 1,
+                          letterSpacing: 0.001,
+                          fontWeight: FontWeight.w600,
                           color: Colors.white,
                         ),
                       ),
                     ),
                     Text(
-                      parseTimeString(widget.contactRisk.timeinit),
-                      textAlign: TextAlign.left,
+                      widget.contactRisk.name,
+                      textAlign: TextAlign.center,
                       style: GoogleFonts.barlow(
                         fontSize: 16.0,
                         wordSpacing: 1,
-                        letterSpacing: 1,
-                        fontWeight: FontWeight.bold,
+                        letterSpacing: 0.001,
+                        fontWeight: FontWeight.w700,
                         color: Colors.white,
-                      ),
-                    ),
-                    const SizedBox(
-                      width: 15,
-                    ),
-                    IconButton(
-                      iconSize: 20,
-                      onPressed: (() {
-                        widget.onChanged(true);
-                      }),
-                      icon: const Icon(
-                        Icons.edit,
-                        color: ColorPalette.principal,
-                      ),
-                    ),
-                    IconButton(
-                      iconSize: 20,
-                      onPressed: (() {
-                        widget.onChangedDelete(true);
-                      }),
-                      icon: const Icon(
-                        Icons.delete,
-                        color: ColorPalette.principal,
                       ),
                     ),
                   ],
                 ),
               ),
-            ),
-            Container(
-              color: Colors.transparent,
-              height: 30,
-              width: double.infinity,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                mainAxisSize: MainAxisSize.max,
-                children: [
-                  Container(
-                    width: 110,
-                    color: Colors.transparent,
-                    child: Text(
-                      "Hora de fin:",
-                      textAlign: TextAlign.left,
-                      style: GoogleFonts.barlow(
-                        fontSize: 16.0,
-                        wordSpacing: 1,
-                        letterSpacing: 0.001,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
-                  Container(
-                    width: 90,
-                    color: Colors.transparent,
-                    child: Text(
-                      parseTimeString(widget.contactRisk.timefinish),
-                      textAlign: TextAlign.left,
-                      style: GoogleFonts.barlow(
-                        fontSize: 16.0,
-                        wordSpacing: 1,
-                        letterSpacing: 1,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
-                  Container(
-                    height: 35,
-                    width: 90,
-                    color: Colors.transparent,
-                    child: Center(
-                      child: IconButton(
-                        iconSize: 20,
-                        onPressed: (() {}),
-                        icon: const Icon(
-                          Icons.edit,
-                          color: Colors.transparent,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(top: 0, left: 0.0, right: 0),
-              child: Container(
+              Container(
                 color: Colors.transparent,
-                height: 40,
                 width: double.infinity,
-                child: Stack(
+                height: 60,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
                   children: [
-                    Padding(
-                      padding: const EdgeInsets.only(left: 0.0, top: 8),
-                      child: Container(
-                        width: 100,
-                        color: Colors.transparent,
-                        child: Padding(
-                          padding: const EdgeInsets.only(left: 8.0),
-                          child: Text(
-                            "Avisar a:",
-                            textAlign: TextAlign.left,
-                            style: GoogleFonts.barlow(
-                              fontSize: 16.0,
-                              wordSpacing: 1,
-                              letterSpacing: 0.001,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 108.0, top: 8),
+                    Container(
+                      width: 105,
+                      height: 55,
+                      color: Colors.transparent,
                       child: Text(
-                        widget.contactRisk.name,
-                        textAlign: TextAlign.center,
+                        "Asunto:",
+                        textAlign: TextAlign.left,
                         style: GoogleFonts.barlow(
                           fontSize: 16.0,
                           wordSpacing: 1,
                           letterSpacing: 0.001,
-                          fontWeight: FontWeight.bold,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                    Container(
+                      width: 205,
+                      height: 60,
+                      color: Colors.transparent,
+                      child: Text(
+                        widget.contactRisk.titleMessage,
+                        maxLines: 3,
+                        overflow: TextOverflow
+                            .ellipsis, // Mostrar puntos suspensivos si el texto es demasiado largo
+                        softWrap: false,
+                        textAlign: TextAlign.left,
+                        style: GoogleFonts.barlow(
+                          fontSize: 16.0,
+                          wordSpacing: 1,
+                          letterSpacing: 0.001,
+                          fontWeight: FontWeight.w400,
                           color: Colors.white,
                         ),
                       ),
@@ -251,70 +325,24 @@ class _RowContactState extends State<RowContact> {
                   ],
                 ),
               ),
-            ),
-            Expanded(
-              flex: 1,
-              child: Container(
-                color: Colors.transparent,
-                width: double.infinity,
-                child: Stack(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(left: 0.0, top: 8),
-                      child: Container(
-                        width: 80,
-                        color: Colors.transparent,
-                        child: Padding(
-                          padding: const EdgeInsets.only(left: 8.0),
-                          child: Text(
-                            "Asunto:",
-                            textAlign: TextAlign.left,
-                            style: GoogleFonts.barlow(
-                              fontSize: 16.0,
-                              wordSpacing: 1,
-                              letterSpacing: 1,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 108.0, right: 8),
-                      child: Container(
-                        height: 100,
-                        color: Colors.transparent,
-                        child: Text(
-                          widget.contactRisk.messages,
-                          maxLines: 3,
-                          textAlign: TextAlign.justify,
-                          style: GoogleFonts.barlow(
-                            fontSize: 16.0,
-                            wordSpacing: 1,
-                            letterSpacing: 0.001,
-                            fontWeight: FontWeight.normal,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
+              const SizedBox(
+                height: 4,
+              ),
+              Visibility(
+                visible: (widget.contactRisk.isActived ||
+                        widget.contactRisk.isprogrammed) &&
+                    widget.contactRisk.code != '',
+                child: ElevateButtonFilling(
+                  showIcon: false,
+                  onChanged: (value) {
+                    widget.onCancel(true);
+                  },
+                  mensaje: 'Cancelar',
+                  img: 'assets/images/User.png',
                 ),
               ),
-            ),
-            Visibility(
-              visible: (widget.contactRisk.isActived ||
-                      widget.contactRisk.isprogrammed) &&
-                  widget.contactRisk.code != '',
-              child: ElevateButtonFilling(
-                onChanged: (value) {
-                  widget.onCancel(true);
-                },
-                mensaje: 'Cancelar',
-              ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

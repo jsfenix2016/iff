@@ -69,125 +69,140 @@ class _UserRestPageState extends State<UserRestPage> {
         width: size.width,
         height: size.height,
         child: SizedBox(
-          child: Stack(
-            children: <Widget>[
-              SizedBox(
-                width: size.width,
-                height: size.height - 120,
-                child: ListView(
-                  children: [
-                    Column(
-                      children: const [
-                        WidgetLogoApp(),
-                      ],
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(
-                          top: 90.0, left: 30, right: 30, bottom: 30),
-                      child: Container(
-                        color: Colors.transparent,
-                        width: size.width,
-                        child: Text(
-                          Constant.hoursSleepAndWakeup,
-                          textAlign: TextAlign.center,
-                          style: textBold24PrincipalColor(),
+          child: SafeArea(
+            child: Stack(
+              children: <Widget>[
+                Container(
+                  color: Colors.transparent,
+                  width: size.width,
+                  height: size.height - 140,
+                  child: ListView(
+                    children: [
+                      Column(
+                        children: const [
+                          SizedBox(
+                            height: 36,
+                          ),
+                          WidgetLogoApp(),
+                        ],
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(
+                            top: 32.0, left: 54, right: 54, bottom: 20),
+                        child: Container(
+                          color: Colors.transparent,
+                          width: 252,
+                          height: 75,
+                          child: Text(
+                            Constant.hoursSleepAndWakeup,
+                            textAlign: TextAlign.center,
+                            style: textBold24PrincipalColor(),
+                          ),
                         ),
                       ),
-                    ),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    Container(
-                      color: Colors.transparent,
-                      width: size.width,
-                      height: 210 * noSelectDay.toDouble(),
-                      child: ListView.builder(
-                        physics: const NeverScrollableScrollPhysics(),
-                        shrinkWrap: true,
-                        itemCount: noSelectDay,
-                        itemBuilder: (BuildContext context, int index) {
-                          return Column(
-                            mainAxisSize: MainAxisSize.max,
-                            key: Key(index.toString()),
-                            children: [
-                              ListDayWeek(
-                                listRest: tempRestDays,
-                                newIndex: index,
-                                onChanged: (value) {
-                                  var temp = tempRestDays[value];
-                                  temp.selection = index;
-
-                                  temp.isSelect =
-                                      (temp.isSelect == false) ? true : false;
-
-                                  tempRestDays.remove(temp);
-                                  tempRestDays.insert(value, temp);
-
-                                  indexFile = index;
-                                  setState(() {});
-                                },
-                              ),
-                              RowSelectTimer(
-                                index: index,
-                                timeLblAM: timeLblAM, //AM
-                                timeLblPM: timeLblPM, //PM
-                                onChanged: (value) {
-                                  timeLblAM = value.timeWakeup;
-                                  timeLblPM = value.timeSleep;
-                                  indexFile = index;
-
-                                  for (var element in tempRestDays) {
-                                    if (element.selection == index) {
-                                      element.timeWakeup = timeLblAM;
-                                      element.timeSleep = timeLblPM;
-                                    }
-                                  }
-                                  setState(() {});
-                                },
-                              ),
-                              const SizedBox(
-                                height: 30,
-                              ),
-                            ],
-                          );
-                        },
+                      const SizedBox(
+                        height: 10,
                       ),
-                    ),
-                  ],
-                ),
-              ),
-              Positioned(
-                bottom: 70,
-                child: SizedBox(
-                  width: size.width,
-                  child: Center(
-                    child: ElevateButtonFilling(
-                      onChanged: (value) {
-                        btnAdd();
-                      },
-                      mensaje: "Agregar",
-                    ),
+                      Container(
+                        color: Colors.transparent,
+                        width: size.width,
+                        height: 230 * noSelectDay.toDouble(),
+                        child: ListView.builder(
+                          physics: const NeverScrollableScrollPhysics(),
+                          shrinkWrap: true,
+                          itemCount: noSelectDay,
+                          itemBuilder: (BuildContext context, int index) {
+                            return Column(
+                              mainAxisSize: MainAxisSize.max,
+                              key: Key(index.toString()),
+                              children: [
+                                ListDayWeek(
+                                  listRest: tempRestDays,
+                                  newIndex: index,
+                                  onChanged: (value) {
+                                    var temp = tempRestDays[value];
+                                    temp.selection = index;
+
+                                    temp.isSelect =
+                                        (temp.isSelect == false) ? true : false;
+
+                                    tempRestDays.remove(temp);
+                                    tempRestDays.insert(value, temp);
+
+                                    indexFile = index;
+                                    setState(() {});
+                                  },
+                                ),
+                                RowSelectTimer(
+                                  index: index,
+                                  timeLblAM: timeLblAM, //AM
+                                  timeLblPM: timeLblPM, //PM
+                                  onChanged: (value) {
+                                    timeLblAM = value.timeWakeup;
+                                    timeLblPM = value.timeSleep;
+                                    indexFile = index;
+
+                                    for (var element in tempRestDays) {
+                                      if (element.selection == index) {
+                                        element.timeWakeup = timeLblAM;
+                                        element.timeSleep = timeLblPM;
+                                        tempRestDays[index].timeWakeup =
+                                            timeLblAM;
+                                        tempRestDays[index].timeSleep =
+                                            timeLblPM;
+                                      }
+                                    }
+                                    setState(() {});
+                                  },
+                                ),
+                                const SizedBox(
+                                  height: 30,
+                                ),
+                              ],
+                            );
+                          },
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-              ),
-              Positioned(
-                bottom: 10,
-                child: Visibility(
-                  visible: (isVisibleBtn) ? true : false,
+                Positioned(
+                  bottom: 55,
                   child: SizedBox(
                     width: size.width,
                     child: Center(
                       child: ElevateButtonFilling(
+                        showIcon: false,
                         onChanged: (value) {
-                          btnContinue();
+                          btnAdd();
                         },
-                        mensaje: Constant.continueTxt,
+                        mensaje: "Agregar",
+                        img: '',
                       ),
                     ),
                   ),
                 ),
-              ),
-            ],
+                Positioned(
+                  bottom: 5,
+                  child: Visibility(
+                    visible: (isVisibleBtn) ? true : false,
+                    child: SizedBox(
+                      width: size.width,
+                      child: Center(
+                        child: ElevateButtonFilling(
+                          showIcon: false,
+                          onChanged: (value) {
+                            btnContinue();
+                          },
+                          mensaje: Constant.continueTxt,
+                          img: '',
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),

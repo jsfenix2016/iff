@@ -9,6 +9,8 @@ import 'package:get/get_core/src/get_main.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ifeelefine/Common/Constant.dart';
 import 'package:ifeelefine/Common/colorsPalette.dart';
+import 'package:ifeelefine/Common/notificationService.dart';
+import 'package:ifeelefine/Common/text_style_font.dart';
 import 'package:ifeelefine/Common/utils.dart';
 import 'package:ifeelefine/Page/PermissionUser/Controller/permission_controller.dart';
 import 'package:ifeelefine/Provider/prefencesUser.dart';
@@ -151,11 +153,15 @@ class _PermitionUserPageState extends State<PermitionUserPage> {
   @override
   Widget build(BuildContext context) {
     final Size size = MediaQuery.of(context).size;
+    RedirectViewNotifier.setContext(context);
     return Scaffold(
       extendBodyBehindAppBar: false,
       appBar: AppBar(
-        backgroundColor: ColorPalette.backgroundAppBar,
-        title: const Text("Configuración"),
+        backgroundColor: Colors.brown,
+        title: Text(
+          "Configuración",
+          style: textForTitleApp(),
+        ),
       ),
       body: Container(
         decoration: decorationCustom(),

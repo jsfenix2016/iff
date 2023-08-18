@@ -4,13 +4,10 @@ import 'package:get/get.dart';
 import 'package:ifeelefine/Model/ApiRest/userApi.dart';
 import 'package:ifeelefine/Model/userbd.dart';
 import 'package:ifeelefine/Page/UserEdit/Service/getUserService.dart';
-import 'package:ifeelefine/main.dart';
+
 import 'package:uuid/uuid.dart';
 
-import '../../../Model/user.dart';
-
 class GetUserController extends GetxController {
-  
   Future<UserApi?> getUser(String phoneNumber) async {
     var userApi = await GetUserService().getUser(phoneNumber);
 
@@ -30,8 +27,7 @@ class GetUserController extends GetxController {
         pathImage: pathImage,
         age: userApi.age > 0 ? userApi.age.toString() : "",
         country: userApi.country,
-        city: userApi.city
-    );
+        city: userApi.city);
   }
 
   Future<Uint8List?> getUserImage(String url) async {

@@ -6,12 +6,12 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:ifeelefine/Common/Constant.dart';
 import 'package:ifeelefine/Common/colorsPalette.dart';
 import 'package:ifeelefine/Common/manager_alerts.dart';
+import 'package:ifeelefine/Common/text_style_font.dart';
 
-import 'package:ifeelefine/Common/utils.dart';
 import 'package:ifeelefine/Controllers/contactUserController.dart';
 import 'package:ifeelefine/Data/hive_data.dart';
 import 'package:ifeelefine/Model/contact.dart';
-import 'package:ifeelefine/Page/Contact/ListContact/PageView/list_contact_page.dart';
+
 import 'package:ifeelefine/Page/Contact/Widget/filter_contact.dart';
 
 import 'package:ifeelefine/Page/Geolocator/PageView/geolocator_page.dart';
@@ -87,7 +87,7 @@ class _ContactListState extends State<ContactList> {
                   _prefs.setUserPremium = true;
                   _prefs.setUserFree = false;
                   var premiumController = Get.put(PremiumController());
-                  premiumController.updatePremiumAPIFree(true);
+                  premiumController.updatePremiumAPI(true);
                   setState(() {});
                 }
               },
@@ -128,7 +128,7 @@ class _ContactListState extends State<ContactList> {
 
   void _showContactListScreen(BuildContext context) async {
     Contact? cont;
-    Contact? selectedContact = await Navigator.push(
+    await Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) =>
@@ -234,6 +234,7 @@ class _ContactListState extends State<ContactList> {
                                   img: listContact[index].photo,
                                   delete: true,
                                   onDelete: (bool) {
+                                    isAutorice = false;
                                     isDeleteContact = true;
                                     contactVC.deleteContact(listContact[index]);
                                     listContact.removeAt(index);
@@ -310,7 +311,10 @@ class _ContactListState extends State<ContactList> {
       appBar: widget.isMenu
           ? AppBar(
               backgroundColor: Colors.brown,
-              title: const Center(child: Text("Contactos")),
+              title: Text(
+                "Contactos",
+                style: textForTitleApp(),
+              ),
             )
           : null,
       body: Container(

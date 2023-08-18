@@ -192,12 +192,16 @@ class _UserEditPageState extends State<UserEditPage> {
       isLoading: isloading,
       child: Scaffold(
         appBar: AppBar(
-          backgroundColor: const Color.fromARGB(255, 76, 52, 22),
-          title: const Text('Editar perfil'),
+          backgroundColor: Colors.brown,
+          title: Text(
+            "Editar perfil",
+            style: textForTitleApp(),
+          ),
         ),
-        backgroundColor: const Color.fromRGBO(115, 75, 24, 1),
+        backgroundColor: Colors.transparent,
         key: scaffoldKey,
         body: SingleChildScrollView(
+          keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
           child: Container(
             decoration: decorationCustom(),
             padding: const EdgeInsets.all(10.0),
@@ -239,6 +243,7 @@ class _UserEditPageState extends State<UserEditPage> {
                           child: SizedBox(
                             height: 52,
                             child: DropdownButton<String?>(
+                              dropdownColor: Colors.brown,
                               underline: Container(
                                 height: 1,
                                 color: ColorPalette.principal,
@@ -249,10 +254,7 @@ class _UserEditPageState extends State<UserEditPage> {
                                   (user != null && user!.gender != "")
                                       ? user!.gender
                                       : Constant.selectGender,
-                                  style: const TextStyle(
-                                    fontSize: 18,
-                                    color: Colors.white,
-                                  ),
+                                  style: textNormal16White(),
                                 ),
                               ),
                               iconEnabledColor: ColorPalette.principal, //Ico
@@ -265,8 +267,7 @@ class _UserEditPageState extends State<UserEditPage> {
                                       value: Constant.gender[e],
                                       child: Text(
                                         Constant.gender[e] ?? "",
-                                        style: const TextStyle(
-                                            fontSize: 18, color: Colors.black),
+                                        style: textNormal16White(),
                                       ),
                                     ),
                                   )
@@ -291,6 +292,7 @@ class _UserEditPageState extends State<UserEditPage> {
                           child: SizedBox(
                             height: 52,
                             child: DropdownButton<String?>(
+                              dropdownColor: Colors.brown,
                               underline: Container(
                                 height: 1,
                                 color: ColorPalette.principal,
@@ -301,10 +303,7 @@ class _UserEditPageState extends State<UserEditPage> {
                                   (user != null && user!.maritalStatus != "")
                                       ? user!.maritalStatus
                                       : Constant.maritalStatus,
-                                  style: const TextStyle(
-                                    fontSize: 18,
-                                    color: Colors.white,
-                                  ),
+                                  style: textNormal16White(),
                                 ),
                               ),
                               iconEnabledColor: ColorPalette.principal, //Ico
@@ -317,8 +316,7 @@ class _UserEditPageState extends State<UserEditPage> {
                                       value: Constant.maritalState[e],
                                       child: Text(
                                         Constant.maritalState[e] ?? "",
-                                        style: const TextStyle(
-                                            fontSize: 18, color: Colors.black),
+                                        style: textNormal16White(),
                                       ),
                                     ),
                                   )
@@ -345,6 +343,7 @@ class _UserEditPageState extends State<UserEditPage> {
                           child: SizedBox(
                             height: 52,
                             child: DropdownButton<String?>(
+                              dropdownColor: Colors.brown,
                               key: const Key("styleLife"),
                               underline: Container(
                                 height: 1,
@@ -356,10 +355,7 @@ class _UserEditPageState extends State<UserEditPage> {
                                   (user != null && user!.styleLife != "")
                                       ? user!.styleLife
                                       : Constant.styleLive,
-                                  style: const TextStyle(
-                                    fontSize: 18,
-                                    color: Colors.white,
-                                  ),
+                                  style: textNormal16White(),
                                 ),
                               ),
                               iconEnabledColor: ColorPalette.principal, //Ico
@@ -372,8 +368,7 @@ class _UserEditPageState extends State<UserEditPage> {
                                       value: Constant.lifeStyle[e],
                                       child: Text(
                                         Constant.lifeStyle[e] ?? "",
-                                        style: const TextStyle(
-                                            fontSize: 18, color: Colors.black),
+                                        style: textNormal16White(),
                                       ),
                                     ),
                                   )
@@ -400,6 +395,7 @@ class _UserEditPageState extends State<UserEditPage> {
                           child: SizedBox(
                             height: 52,
                             child: DropdownButton<String?>(
+                              dropdownColor: Colors.brown,
                               key: const Key("age"),
                               underline: Container(
                                 height: 1,
@@ -411,13 +407,10 @@ class _UserEditPageState extends State<UserEditPage> {
                                   (user != null && user!.age != "")
                                       ? user!.age
                                       : Constant.age,
-                                  style: const TextStyle(
-                                    fontSize: 18,
-                                    color: Colors.white,
-                                  ),
+                                  style: textNormal16White(),
                                 ),
                               ),
-                              dropdownColor: Colors.brown,
+
                               iconEnabledColor: ColorPalette.principal, //Ico
                               value: ages[0],
                               isExpanded: true,
@@ -430,9 +423,7 @@ class _UserEditPageState extends State<UserEditPage> {
                                         padding: const EdgeInsets.all(8.0),
                                         child: Text(
                                           ages[e] ?? "",
-                                          style: const TextStyle(
-                                              fontSize: 18,
-                                              color: ColorPalette.principal),
+                                          style: textNormal16White(),
                                         ),
                                       ),
                                     ),
@@ -446,133 +437,6 @@ class _UserEditPageState extends State<UserEditPage> {
                           ),
                         ),
                       ),
-                      // Padding(
-                      //   padding: const EdgeInsets.all(8.0),
-                      //   child: DecoratedBox(
-                      //     decoration: BoxDecoration(
-                      //       border: Border.all(
-                      //           color: ColorPalette.principal,
-                      //           width: 1,
-                      //           style: BorderStyle.none),
-                      //     ),
-                      //     child: SizedBox(
-                      //       height: 52,
-                      //       child: DropdownButton<String?>(
-                      //         key: const Key("country"),
-                      //         underline: Container(
-                      //           height: 1,
-                      //           color: ColorPalette.principal,
-                      //         ),
-                      //         dropdownColor: Colors.brown,
-                      //         hint: Padding(
-                      //           padding: const EdgeInsets.all(8.0),
-                      //           child: Text(
-                      //             selectCountry,
-                      //             style: const TextStyle(
-                      //                 fontSize: 18,
-                      //                 color: ColorPalette.principal),
-                      //           ),
-                      //         ),
-                      //         iconEnabledColor: ColorPalette.principal, //Ico
-                      //         value: _country[indexCountry],
-                      //         isExpanded: true,
-
-                      //         items: _country
-                      //             .map(
-                      //               (e) => DropdownMenuItem<String>(
-                      //                 value: e,
-                      //                 child: Padding(
-                      //                   padding: const EdgeInsets.all(8.0),
-                      //                   child: Text(
-                      //                     e,
-                      //                     style: const TextStyle(
-                      //                         fontSize: 18,
-                      //                         color: ColorPalette.principal),
-                      //                   ),
-                      //                 ),
-                      //               ),
-                      //             )
-                      //             .toList(),
-                      //         onChanged: (v) async {
-                      //           selectCountry = v!;
-
-                      //           user!.country = v;
-                      //           //await editVC.refreshContry();
-                      //           final int index2 = _country.indexWhere(
-                      //               (country) =>
-                      //                   country.contains(v.toString()));
-                      //           indexCountry = index2;
-                      //           //_states = await editVC.filterState();
-                      //           updateStates();
-                      //           setState(() {});
-                      //         },
-                      //       ),
-                      //     ),
-                      //   ),
-                      // ),
-                      // Padding(
-                      //   padding: const EdgeInsets.all(8.0),
-                      //   child: DecoratedBox(
-                      //     decoration: BoxDecoration(
-                      //       border: Border.all(
-                      //           color: ColorPalette.principal,
-                      //           width: 1,
-                      //           style: BorderStyle.none),
-                      //     ),
-                      //     child: SizedBox(
-                      //       height: 52,
-                      //       child: DropdownButton<String?>(
-                      //         key: const Key("city"),
-                      //         underline: Container(
-                      //           height: 1,
-                      //           color: ColorPalette.principal,
-                      //         ),
-                      //         dropdownColor: Colors.brown,
-                      //         hint: Padding(
-                      //           padding: const EdgeInsets.all(8.0),
-                      //           child: Padding(
-                      //             padding: const EdgeInsets.all(8.0),
-                      //             child: Padding(
-                      //               padding: const EdgeInsets.all(8.0),
-                      //               child: Text(
-                      //                 selectState,
-                      //                 style: const TextStyle(
-                      //                     fontSize: 18,
-                      //                     color: ColorPalette.principal),
-                      //               ),
-                      //             ),
-                      //           ),
-                      //         ),
-                      //         iconEnabledColor: ColorPalette.principal, //Ico
-                      //         value: _states[indexState],
-                      //         isExpanded: true,
-
-                      //         items: _states
-                      //             .map(
-                      //               (e) => DropdownMenuItem<String>(
-                      //                 value: e,
-                      //                 child: Padding(
-                      //                   padding: const EdgeInsets.all(8.0),
-                      //                   child: Text(
-                      //                     e,
-                      //                     style: const TextStyle(
-                      //                         fontSize: 18,
-                      //                         color: ColorPalette.principal),
-                      //                   ),
-                      //                 ),
-                      //               ),
-                      //             )
-                      //             .toList(),
-                      //         onChanged: (v) {
-                      //           user?.city = v.toString();
-                      //           selectState = v!;
-                      //           selectDropState();
-                      //           setState(() {});
-                      //         },
-                      //       ),
-                      //     ),
-                      //   ),
-                      // ),
                       Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: DecoratedBox(
@@ -596,13 +460,7 @@ class _UserEditPageState extends State<UserEditPage> {
                                   selectCountry.isEmpty
                                       ? "Selecciona el país"
                                       : selectCountry.tr,
-                                  style: GoogleFonts.barlow(
-                                    fontSize: 18.0,
-                                    wordSpacing: 1,
-                                    letterSpacing: 1.2,
-                                    fontWeight: FontWeight.normal,
-                                    color: Colors.white,
-                                  ),
+                                  style: textNormal16White(),
                                 ),
                               ),
                             ),
@@ -633,13 +491,7 @@ class _UserEditPageState extends State<UserEditPage> {
                                   selectState.isEmpty
                                       ? "Selecciona la ciudad"
                                       : selectState,
-                                  style: GoogleFonts.barlow(
-                                    fontSize: 18.0,
-                                    wordSpacing: 1,
-                                    letterSpacing: 1.2,
-                                    fontWeight: FontWeight.normal,
-                                    color: Colors.white,
-                                  ),
+                                  style: textNormal16White(),
                                 ),
                               ),
                             ),
@@ -699,8 +551,13 @@ class _UserEditPageState extends State<UserEditPage> {
                                                 setState(() {
                                                   isloading = false;
 
-                                                  Get.off(
-                                                    () => OnboardingPage(),
+                                                  Navigator.of(context)
+                                                      .pushAndRemoveUntil(
+                                                    MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            OnboardingPage()),
+                                                    (Route<dynamic> route) =>
+                                                        false, // Elimina todas las rutas existentes
                                                   );
                                                 });
                                               }
@@ -759,6 +616,7 @@ class _UserEditPageState extends State<UserEditPage> {
         onChanged: (valor) {
           onChanged(valor);
         },
+        readOnly: labeltext.contains(Constant.email) ? true : false,
         autofocus: false,
         key: Key(text),
         initialValue: text,
@@ -766,7 +624,9 @@ class _UserEditPageState extends State<UserEditPage> {
         decoration: InputDecoration(
           hintText: text,
           labelText: labeltext,
-          suffixIcon: const Icon(Icons.edit, color: ColorPalette.principal),
+          suffixIcon: labeltext.contains(Constant.email)
+              ? null
+              : const Icon(Icons.edit, color: ColorPalette.principal),
           focusedBorder: const UnderlineInputBorder(
             borderSide: BorderSide(color: ColorPalette.principal),
           ),
@@ -774,17 +634,11 @@ class _UserEditPageState extends State<UserEditPage> {
             borderSide: BorderSide(
                 width: 1, color: ColorPalette.principal), //<-- SEE HERE
           ),
-          hintStyle: const TextStyle(
-            color: Colors.white,
-          ),
+          hintStyle: textNormal16White(),
           filled: true,
-          labelStyle: const TextStyle(
-            color: Colors.white,
-          ),
+          labelStyle: textNormal16White(),
         ),
-        style: const TextStyle(
-          color: Colors.white,
-        ),
+        style: textNormal16White(),
         onSaved: (value) => {
           onChanged(value!),
         },
@@ -799,6 +653,7 @@ class _UserEditPageState extends State<UserEditPage> {
     return Padding(
       padding: const EdgeInsets.only(left: 3.0, right: 3.0),
       child: TextFormField(
+        readOnly: true,
         keyboardType: TextInputType.number,
         onChanged: (value) {
           user?.telephone = value;
@@ -809,7 +664,7 @@ class _UserEditPageState extends State<UserEditPage> {
         decoration: InputDecoration(
           hintText: '+34',
           labelText: Constant.telephone,
-          suffixIcon: const Icon(Icons.edit, color: ColorPalette.principal),
+          // suffixIcon: const Icon(Icons.edit, color: ColorPalette.principal),
           focusedBorder: const UnderlineInputBorder(
             borderSide: BorderSide(color: ColorPalette.principal),
           ),
@@ -817,17 +672,11 @@ class _UserEditPageState extends State<UserEditPage> {
             borderSide: BorderSide(
                 width: 1, color: ColorPalette.principal), //<-- SEE HERE
           ),
-          hintStyle: const TextStyle(
-            color: Colors.white,
-          ),
+          hintStyle: textNormal16White(),
           filled: true,
-          labelStyle: const TextStyle(
-            color: Colors.white,
-          ),
+          labelStyle: textNormal16White(),
         ),
-        style: const TextStyle(
-          color: Colors.white,
-        ),
+        style: textNormal16White(),
         onSaved: (value) => {
           user?.telephone = value!,
         },

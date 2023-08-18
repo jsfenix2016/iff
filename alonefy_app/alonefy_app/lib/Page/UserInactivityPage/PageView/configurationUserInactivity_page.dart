@@ -158,6 +158,7 @@ class _UserInactivityPageState extends State<UserInactivityPage> {
 
   Widget _createButtonNext() {
     return ElevateButtonFilling(
+      showIcon: false,
       onChanged: (value) async {
         if (selecDicActivity.isEmpty) {
           mostrarAlertaTwoButton(context,
@@ -175,6 +176,7 @@ class _UserInactivityPageState extends State<UserInactivityPage> {
         }
       },
       mensaje: Constant.nextTxt,
+      img: '',
     );
   }
 

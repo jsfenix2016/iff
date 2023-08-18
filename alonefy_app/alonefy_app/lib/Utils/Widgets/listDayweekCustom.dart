@@ -45,6 +45,7 @@ class _ListDayWeekState extends State<ListDayWeek> {
 
     return Row(
       mainAxisSize: MainAxisSize.max,
+      mainAxisAlignment: MainAxisAlignment.center,
       children: [
         for (var i = 0; i < Constant.tempListShortDay.length; i++)
           GestureDetector(
@@ -62,11 +63,12 @@ class _ListDayWeekState extends State<ListDayWeek> {
             },
             child: Container(
               key: Key(i.toString()),
-              width: size.width / 7,
-              height: 50,
+              width: size.width / 7.5,
+              height: 40,
               color: Colors.transparent,
               child: Center(
                 child: Stack(
+                  alignment: Alignment.center,
                   children: [
                     Container(
                       key: Key(i.toString()),
@@ -79,7 +81,10 @@ class _ListDayWeekState extends State<ListDayWeek> {
                                         widget.listRest[i].selection ==
                                             widget.newIndex)
                                     ? ColorPalette.principal
-                                    : Colors.white,
+                                    : widget.listRest[i].day.contains("S") ||
+                                            widget.listRest[i].day.contains("D")
+                                        ? Colors.red
+                                        : Colors.white,
                                 width: 1,
                               ),
                         color: (widget.listRest[i].isSelect &&
@@ -95,19 +100,26 @@ class _ListDayWeekState extends State<ListDayWeek> {
                           Constant.tempListShortDay[i],
                           textAlign: TextAlign.center,
                           style: GoogleFonts.barlow(
-                            fontSize: 20.0,
+                            fontSize: (widget.listRest[i].isSelect &&
+                                    widget.listRest[i].selection ==
+                                        widget.newIndex)
+                                ? 18.0
+                                : 16,
                             wordSpacing: 1,
                             letterSpacing: 1,
                             fontWeight: (widget.listRest[i].isSelect &&
                                     widget.listRest[i].selection ==
                                         widget.newIndex)
-                                ? FontWeight.bold
-                                : FontWeight.normal,
+                                ? FontWeight.w800
+                                : FontWeight.w500,
                             color: (widget.listRest[i].isSelect &&
                                     widget.listRest[i].selection ==
                                         widget.newIndex)
                                 ? Colors.black
-                                : Colors.white,
+                                : widget.listRest[i].day.contains("S") ||
+                                        widget.listRest[i].day.contains("D")
+                                    ? Colors.red
+                                    : Colors.white,
                           ),
                         ),
                       ),

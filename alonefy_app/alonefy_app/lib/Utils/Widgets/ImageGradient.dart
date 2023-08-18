@@ -87,7 +87,7 @@ Widget getMapImageGradient() {
                 tileMode: TileMode.mirror,
               ),
             ),
-            height: 150,
+            height: 250,
             width: constraints.maxWidth,
           );
         },

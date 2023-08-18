@@ -1,9 +1,7 @@
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:ifeelefine/Common/utils.dart';
+
 import 'package:ifeelefine/Page/Geolocator/Service/locationService.dart';
 import 'package:ifeelefine/Provider/prefencesUser.dart';
-import 'package:ifeelefine/Page/FinishConfig/Pageview/finishConfig_page.dart';
 
 import '../../../Controllers/mainController.dart';
 

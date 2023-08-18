@@ -7,7 +7,7 @@ class Constant {
   static const selectGender = 'Selecciona el género';
   static const selectCity = 'Selecciona la ciudad';
   static const maritalStatus = 'Estado civil';
-  static const styleLive = 'Estilo de vida';
+  static const styleLive = 'Modo de vida';
   static const telephone = 'Teléfono';
   static const telephonePlaceholder = 'Ingresa un teléfono';
   static const nameUser = 'Nombre';
@@ -21,14 +21,16 @@ class Constant {
   static const codeSmsPlaceholder = 'Ingresa un código sms';
   static const continueTxt = 'Continuar';
   static const saveBtn = 'Guardar';
+  static const cancelBtn = 'Cancelar';
   static const nextTxt = 'Siguiente';
   static const configurationbtn = 'Configurar';
   static const age = 'Edad';
-  static const newDate = 'Crear nuevo';
-  static const onBoardingWelcome = 'Te damos la Bienvenida/o a AlertFriends';
+  static const newDate = 'Crear nueva';
+  static const btnhabits = "Ajustar según mis hábitos";
+  static const onBoardingWelcome = 'Te damos la Bienvenida a AlertFriends';
   static const onBoardingWelcomeMessage =
       'Si vives feliz solo o sola además, quieres sentirte protegido/a';
-
+  static const addActivity = 'Añadir actividad';
   static const onBoardingPageTwoTitle =
       'Ante una situación de riesgo cuando estás solo/a';
   static const onBoardingPageTwoSubtitle =
@@ -43,12 +45,13 @@ class Constant {
   static const onBoardingPageFourSubtitle =
       'AlertFriends activará una alerta inmediata si te ocurre algo';
 
+  static const sendSMSWhatsapp = 'Enviar SMS y whatsapp transcurridos:';
   static const onBoardingPageFiveTitle =
       'Sientete ahora más seguro/a viviendo solo/a';
   static const onBoardingPageFiveSubtitle =
       'Con AlertFriends tu  smartphone será tu mejor protección personal';
 
-  static const alternativePageButtonPersonalizar = 'Personalizar ajustes';
+  static const alternativePageButtonPersonalizar = 'Personalizarlo para tí';
   static const alternativePageButtonInit = 'Comenzar a usar';
 
   static const userConfigPageButtonFree = 'Gratuito 30 días';
@@ -56,7 +59,8 @@ class Constant {
   static const userConfigPageButtonConfig = 'Configurar';
 
   static const hoursRest = 'A que horas duermes';
-  static const hoursSleepAndWakeup = '¿A qué hora te acuestas y te levantas?';
+  static const hoursSleepAndWakeup =
+      '¿A qué hora te levantas y te acuestas cada día?';
   static const casefallText =
       '¿Deseas que, en caso de alerta, enviemos tu ubicación a tus contactos?';
 
@@ -86,23 +90,25 @@ class Constant {
   static const String whatsapp = "WHATSAPP";
   static const String notification = "NOTIFICATION";
 
+  static const String habitsActive =
+      'La función de los hábitos se encuentra activada.';
   static const Map<String, String> headers = {
     'Content-Type': 'application/json; charset=UTF-8'
   };
 
   static const Map<String, String> gender = {
-    '0': 'Hombre',
-    '1': 'Mujer',
-    '2': 'Otro',
+    '0': 'Femenino',
+    '1': 'Masculino',
+    '2': 'Otro/a',
   };
 
   static const Map<String, String> maritalState = {
-    '0': 'Soltera/o',
-    '1': 'Casada/o',
+    '0': 'Casada/o',
+    '1': 'Soltera/o',
     '2': 'Divorciada/o',
     '3': 'Separada/o',
     '4': 'Viuda/o',
-    '5': 'Otros',
+    '5': 'Otro',
   };
 
   static const Map<String, String> lifeStyle = {
@@ -322,7 +328,7 @@ class Constant {
   static const String validateEmail = 'Debe colocar un email válido';
 
   static const String premiumHabitsTitle = 'Aprende de tus hábitos';
-
+  static const String premiumTitle = 'Registrate y sientete protegido';
   static const String premiumChangeTimeTitle =
       'Modifica los tiempos para enviar sms, whatsapp y llamadas';
   static const String premiumUseTimeTitle =
@@ -347,7 +353,8 @@ class Constant {
   static const String alertMessageValidateUser =
       'Debe tener el teléfono e email validado para continuar.';
 
-  static const String tokenRequestTxt = 'Solicitar códigos de verificación';
+  static const String tokenRequestTxt = 'Enviar código de verificación';
+  static const String tokenRequestSendAgainTxt = 'Reenviar código';
 
   static const String disambleProtected = "Se ha deshabilitado la protección";
   static const String disambleProtectedError =

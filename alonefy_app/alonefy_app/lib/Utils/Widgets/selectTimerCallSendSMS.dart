@@ -1,7 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ifeelefine/Common/Constant.dart';
+import 'package:ifeelefine/Page/Premium/Controller/premium_controller.dart';
 import 'package:ifeelefine/Page/Premium/PageView/premium_page.dart';
 import 'package:ifeelefine/Provider/prefencesUser.dart';
 
@@ -64,7 +66,7 @@ class _SelectTimerCallSendSMSState extends State<SelectTimerCallSendSMS> {
             SizedBox(
               width: 130,
               child: Text(
-                'Enviar whatsapp transcurridos:',
+                Constant.sendSMSWhatsapp,
                 textAlign: TextAlign.center,
                 style: GoogleFonts.barlow(
                   fontSize: 14.0,
@@ -88,6 +90,15 @@ class _SelectTimerCallSendSMSState extends State<SelectTimerCallSendSMS> {
                             img: 'Pantalla5.jpg',
                             title: Constant.premiumChangeTimeTitle,
                             subtitle: '')),
+                  ).then(
+                    (value) {
+                      if (value != null && value) {
+                        prefs.setUserPremium = true;
+                        prefs.setUserFree = false;
+                        var premiumController = Get.put(PremiumController());
+                        premiumController.updatePremiumAPI(true);
+                      }
+                    },
                   );
                 },
                 child: AbsorbPointer(
@@ -116,10 +127,10 @@ class _SelectTimerCallSendSMSState extends State<SelectTimerCallSendSMS> {
                                 Constant.timeDic[i.toString()].toString(),
                                 textAlign: TextAlign.center,
                                 style: GoogleFonts.barlow(
-                                  fontSize: 36.0,
+                                  fontSize: 24.0,
                                   wordSpacing: 1,
                                   letterSpacing: 0.001,
-                                  fontWeight: FontWeight.bold,
+                                  fontWeight: FontWeight.w700,
                                   color: Colors.white,
                                 ),
                               ),
@@ -189,10 +200,10 @@ class _SelectTimerCallSendSMSState extends State<SelectTimerCallSendSMS> {
                                 Constant.timeDic[i.toString()].toString(),
                                 textAlign: TextAlign.center,
                                 style: GoogleFonts.barlow(
-                                  fontSize: 36.0,
+                                  fontSize: 24.0,
                                   wordSpacing: 1,
                                   letterSpacing: 0.001,
-                                  fontWeight: FontWeight.bold,
+                                  fontWeight: FontWeight.w700,
                                   color: Colors.white,
                                 ),
                               ),
@@ -217,7 +228,14 @@ class _SelectTimerCallSendSMSState extends State<SelectTimerCallSendSMS> {
                           img: 'Pantalla5.jpg',
                           title: Constant.premiumChangeTimeTitle,
                           subtitle: '')),
-                );
+                ).then((value) {
+                  if (value != null && value) {
+                    prefs.setUserFree = false;
+                    prefs.setUserPremium = true;
+                    var premiumController = Get.put(PremiumController());
+                    premiumController.updatePremiumAPI(true);
+                  }
+                });
               },
             )
           ],

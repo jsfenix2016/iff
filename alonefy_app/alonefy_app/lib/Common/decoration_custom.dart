@@ -3,6 +3,20 @@ import 'package:ifeelefine/Common/colorsPalette.dart';
 
 class DecorationCustom {}
 
+BoxDecoration decorationCustomPush() {
+  return const BoxDecoration(
+    gradient: LinearGradient(
+      begin: Alignment.topCenter,
+      end: Alignment.bottomCenter,
+      colors: [
+        Color.fromARGB(255, 5, 3, 1),
+        Color.fromARGB(255, 5, 3, 1),
+      ],
+      stops: [0.0, 1.568],
+    ),
+  );
+}
+
 BoxDecoration decorationCustom() {
   return const BoxDecoration(
     gradient: LinearGradient(
@@ -10,9 +24,9 @@ BoxDecoration decorationCustom() {
       end: Alignment.bottomCenter,
       colors: [
         Color(0xFF150E03),
-        Color.fromARGB(255, 91, 59, 21),
+        Color.fromARGB(255, 47, 31, 10),
       ],
-      stops: [0.11, 1.0],
+      stops: [0.41, 1.0],
     ),
   );
 }

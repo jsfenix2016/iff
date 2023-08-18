@@ -50,7 +50,7 @@ class _ListWeekDayCustomState<T> extends State<ListWeekDayCustom<T>> {
     final size = MediaQuery.of(context).size;
 
     return Row(
-      mainAxisSize: MainAxisSize.max,
+      mainAxisSize: MainAxisSize.min,
       children: [
         for (var i = 0; i < Constant.tempListShortDay.length; i++)
           GestureDetector(
@@ -68,7 +68,7 @@ class _ListWeekDayCustomState<T> extends State<ListWeekDayCustom<T>> {
             },
             child: Container(
               key: Key(i.toString()),
-              width: size.width / 7,
+              width: size.width / 7.5,
               height: 50,
               color: Colors.transparent,
               child: Center(
@@ -85,7 +85,9 @@ class _ListWeekDayCustomState<T> extends State<ListWeekDayCustom<T>> {
                                         widget.listRest[i].selection ==
                                             widget.newIndex)
                                     ? ColorPalette.principal
-                                    : Colors.white,
+                                    : i == 5 || i == 6
+                                        ? Colors.red
+                                        : Colors.white,
                                 width: 1,
                               ),
                         color: (widget.listRest[i].isSelect &&
@@ -113,7 +115,9 @@ class _ListWeekDayCustomState<T> extends State<ListWeekDayCustom<T>> {
                                     widget.listRest[i].selection ==
                                         widget.newIndex)
                                 ? Colors.black
-                                : Colors.white,
+                                : i == 5 || i == 6
+                                    ? Colors.red
+                                    : Colors.white,
                           ),
                         ),
                       ),

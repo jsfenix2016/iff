@@ -5,6 +5,7 @@ import 'package:ifeelefine/Common/manager_alerts.dart';
 import 'package:ifeelefine/Common/text_style_font.dart';
 import 'package:ifeelefine/Page/Calendar/calendarPopup.dart';
 import 'package:ifeelefine/Page/Contact/Widget/filter_contact.dart';
+import 'package:ifeelefine/Page/Premium/Controller/premium_controller.dart';
 import 'package:ifeelefine/Page/Premium/PageView/premium_page.dart';
 import 'package:ifeelefine/Page/Risk/DateRisk/ListDateRisk/Controller/riskPageController.dart';
 import 'package:ifeelefine/Utils/Widgets/loading_page.dart';
@@ -50,6 +51,8 @@ class EditRiskPage extends StatefulWidget {
 class _EditRiskPageState extends State<EditRiskPage> {
   EditRiskController editVC = Get.put(EditRiskController());
   RiskController riskVC = Get.find<RiskController>();
+  TextEditingController controllerText = TextEditingController();
+
   var isTimeInit = false;
   var isTimeFinish = false;
   var sendWhatsappSMS = false;
@@ -78,7 +81,7 @@ class _EditRiskPageState extends State<EditRiskPage> {
   String from = "";
   String to = "";
   bool isLoading = false;
-
+  bool isSelectContact = false;
   late DateTime dateTimeTemp = DateTime.now();
   late DateTime dateTimeTempIncrease = DateTime.now();
   @override
@@ -95,18 +98,21 @@ class _EditRiskPageState extends State<EditRiskPage> {
     List<String> parts = [];
     if (widget.contactRisk.code != "") {
       parts = widget.contactRisk.code.split(',');
-
+      isSelectContact = true;
       code.textCode1 = parts[0];
       code.textCode2 = parts[1];
       code.textCode3 = parts[2];
       code.textCode4 = parts[3];
     } else {
+      isSelectContact = false;
       code.textCode1 = '';
       code.textCode2 = '';
       code.textCode3 = '';
       code.textCode4 = '';
     }
-
+    if (widget.contactRisk.messages.isNotEmpty) {
+      controllerText.text = widget.contactRisk.messages;
+    }
     super.initState();
   }
 
@@ -200,7 +206,8 @@ class _EditRiskPageState extends State<EditRiskPage> {
       initTimeTemp = temp + widget.contactRisk.timeinit.split(' ').last;
       finishTimeTemp = temp + widget.contactRisk.timefinish.split(' ').last;
     }
-
+    DateTime now = DateTime.now();
+    DateTime nowTemp = DateTime(now.year, now.month, now.day);
     var list = await convertImageData();
     var contactRisk = ContactRiskBD(
         id: widget.contactRisk.id,
@@ -222,7 +229,7 @@ class _EditRiskPageState extends State<EditRiskPage> {
         isprogrammed: isprogrammed,
         photoDate: list,
         saveContact: widget.contactRisk.saveContact,
-        createDate: DateTime.now(),
+        createDate: nowTemp,
         taskIds: []);
 
     getchangeContact(context, contactRisk);
@@ -360,8 +367,15 @@ class _EditRiskPageState extends State<EditRiskPage> {
                   }
                 }
               },
-              child: Text(dateType == "De" ? from : to,
-                  textAlign: TextAlign.left, style: textNomral18White()),
+              child: Text(dateType == "De:" ? from : to,
+                  textAlign: TextAlign.left,
+                  style: GoogleFonts.barlow(
+                    fontSize: 18.0,
+                    wordSpacing: 1,
+                    letterSpacing: 1.2,
+                    fontWeight: FontWeight.normal,
+                    color: Color.fromRGBO(222, 222, 222, 1),
+                  )),
             ),
           ),
         ),
@@ -420,7 +434,7 @@ class _EditRiskPageState extends State<EditRiskPage> {
       setState(() {
         contactSelect = cont!;
         widget.contactRisk.name = contactSelect!.displayName;
-
+        isSelectContact = true;
         indexSelect =
             contactlist.indexWhere((item) => item.id == contactSelect!.id);
         print(indexSelect);
@@ -437,11 +451,16 @@ class _EditRiskPageState extends State<EditRiskPage> {
       child: Scaffold(
         appBar: AppBar(
           backgroundColor: Colors.brown,
-          title: const Text("Edición de mensaje de cita"),
+          title: Text(
+            "Edición de mensaje de cita",
+            style: textForTitleApp(),
+          ),
         ),
+        backgroundColor: Colors.transparent,
         body: Container(
           decoration: decorationCustom(),
           child: SingleChildScrollView(
+            keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
             child: Center(
               child: Column(
                 children: [
@@ -450,7 +469,7 @@ class _EditRiskPageState extends State<EditRiskPage> {
                       heightTemp: 10,
                     ),
                   ),
-                  getDateSelected("De"),
+                  getDateSelected("De:"),
                   Padding(
                     padding: const EdgeInsets.all(16.0),
                     child: Container(
@@ -605,7 +624,13 @@ class _EditRiskPageState extends State<EditRiskPage> {
                           child: Text(
                             "Establece tu clave de cancelación",
                             textAlign: TextAlign.center,
-                            style: textNomral18White(),
+                            style: GoogleFonts.barlow(
+                              fontSize: 18.0,
+                              wordSpacing: 1,
+                              letterSpacing: 0.001,
+                              fontWeight: FontWeight.w700,
+                              color: Color.fromRGBO(222, 222, 222, 1),
+                            ),
                           ),
                         ),
                         ContentCode(
@@ -629,12 +654,19 @@ class _EditRiskPageState extends State<EditRiskPage> {
                             child: Text(
                               "Después de la hora de fin llamar a:",
                               textAlign: TextAlign.center,
-                              style: textNomral18White(),
+                              style: GoogleFonts.barlow(
+                                fontSize: 18.0,
+                                wordSpacing: 1,
+                                letterSpacing: 0.001,
+                                fontWeight: FontWeight.w700,
+                                color: Color.fromRGBO(222, 222, 222, 1),
+                              ),
                             ),
                           ),
                         ),
                         const SpaceHeightCustom(heightTemp: 12),
                         CardContact(
+                          isSelect: isSelectContact,
                           visible: true,
                           photo: (indexSelect != -1 &&
                                   contactlist.isNotEmpty &&
@@ -652,28 +684,6 @@ class _EditRiskPageState extends State<EditRiskPage> {
                               : name,
                           onChanged: (value) {
                             _showContactListScreen(context);
-                            // showDialog(
-                            //   context: context,
-                            //   builder: (BuildContext context) => Container(
-                            //     width: size.width,
-                            //     height: size.height,
-                            //     color: const Color.fromRGBO(169, 146, 125, 1),
-                            //     child: Padding(
-                            //       padding: const EdgeInsets.only(
-                            //           top: 28.0, left: 8, right: 8),
-                            //       child: PopUpContact(
-                            //         listcontact: contactlist,
-                            //         onChanged: (int value) {
-                            //           indexSelect = value;
-                            //           contactSelect = contactlist[value];
-                            //           widget.contactRisk.name =
-                            //               contactSelect!.displayName;
-                            //           setState(() {});
-                            //         },
-                            //       ),
-                            //     ),
-                            //   ),
-                            // );
                           },
                         ),
                       ],
@@ -697,32 +707,45 @@ class _EditRiskPageState extends State<EditRiskPage> {
                                 width: 270,
                                 color: Colors.transparent,
                                 child: Text(
-                                  "Enviar Whatsapp a mí contacto predefinido:",
+                                  "Enviar Whatsapp a mí contacto predefinido",
                                   textAlign: TextAlign.left,
-                                  style: textNormal14White(),
+                                  style: GoogleFonts.barlow(
+                                    fontSize: 14.0,
+                                    wordSpacing: 1,
+                                    letterSpacing: 1,
+                                    fontWeight: FontWeight.normal,
+                                    color:
+                                        const Color.fromRGBO(222, 222, 222, 1),
+                                  ),
                                 ),
                               ),
                               Container(
                                 width: size.width / 6,
                                 color: Colors.transparent,
-                                child: Switch(
-                                  onChanged: (value) {
-                                    sendWhatsappSMS = value;
-                                    widget.contactRisk.sendWhatsapp = value;
-                                    (context as Element).markNeedsBuild();
-                                  },
-                                  value: widget.contactRisk.sendWhatsapp,
+                                child: Transform.scale(
+                                  scale: 0.8,
+                                  child: CupertinoSwitch(
+                                    value: widget.contactRisk.sendWhatsapp,
+                                    activeColor: ColorPalette.activeSwitch,
+                                    trackColor: CupertinoColors.inactiveGray,
+                                    onChanged: (bool? value) {
+                                      setState(() {
+                                        sendWhatsappSMS = value!;
+                                        widget.contactRisk.sendWhatsapp = value;
+                                      });
+                                    },
+                                  ),
                                 ),
                               ),
                             ],
                           ),
                         ),
                       ),
-                      Padding(
-                        padding: const EdgeInsets.only(left: 12.0, right: 8),
-                        child: Container(
-                          height: 65.0,
-                          color: Colors.transparent,
+                      Container(
+                        height: 65.0,
+                        color: Colors.transparent,
+                        child: Padding(
+                          padding: const EdgeInsets.all(12.0),
                           child: Row(
                             mainAxisSize: MainAxisSize.max,
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -731,7 +754,7 @@ class _EditRiskPageState extends State<EditRiskPage> {
                                 width: 270,
                                 color: Colors.transparent,
                                 child: Text(
-                                  "Enviar mi última ubicación registrada:",
+                                  "Enviar mi última ubicación registrada",
                                   textAlign: TextAlign.left,
                                   style: textNormal14White(),
                                 ),
@@ -739,13 +762,19 @@ class _EditRiskPageState extends State<EditRiskPage> {
                               Container(
                                 width: size.width / 6,
                                 color: Colors.transparent,
-                                child: Switch(
-                                  onChanged: (value) {
-                                    sendLocation = value;
-                                    widget.contactRisk.sendLocation = value;
-                                    (context as Element).markNeedsBuild();
-                                  },
-                                  value: widget.contactRisk.sendLocation,
+                                child: Transform.scale(
+                                  scale: 0.8,
+                                  child: CupertinoSwitch(
+                                    value: widget.contactRisk.sendLocation,
+                                    activeColor: ColorPalette.activeSwitch,
+                                    trackColor: CupertinoColors.inactiveGray,
+                                    onChanged: (bool? value) {
+                                      setState(() {
+                                        sendLocation = value!;
+                                        widget.contactRisk.sendLocation = value;
+                                      });
+                                    },
+                                  ),
                                 ),
                               ),
                             ],
@@ -796,11 +825,10 @@ class _EditRiskPageState extends State<EditRiskPage> {
                           Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: TextField(
+                              controller: controllerText,
                               decoration: InputDecoration(
-                                hintText: "Mensaje:",
-                                labelText: widget.contactRisk.messages == ""
-                                    ? 'Mensaje:'
-                                    : widget.contactRisk.messages,
+                                hintText: widget.contactRisk.messages,
+                                labelText: "Mensaje",
                                 focusedBorder: const UnderlineInputBorder(
                                   borderSide: BorderSide(color: Colors.white),
                                 ),
@@ -931,52 +959,71 @@ class _EditRiskPageState extends State<EditRiskPage> {
                               ),
                             ),
                           ),
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.max,
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                SizedBox(
-                                  width: 280,
-                                  child: Text(
-                                    "Guardar está configuración",
-                                    textAlign: TextAlign.right,
-                                    style: textNormal14White(),
+                          Container(
+                            color: Colors.transparent,
+                            child: Padding(
+                              padding: const EdgeInsets.all(12.0),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.max,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  SizedBox(
+                                    width: 276,
+                                    child: Text(
+                                      "Guardar esta configuración",
+                                      textAlign: TextAlign.right,
+                                      style: textNormal14White(),
+                                    ),
                                   ),
-                                ),
-                                SizedBox(
-                                  width: size.width / 6,
-                                  child: Switch(
-                                    onChanged: (value) async {
-                                      if (_prefs.getUserFree &&
-                                          !_prefs.getUserPremium) {
-                                        await Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  const PremiumPage(
-                                                      isFreeTrial: false,
-                                                      img: 'pantalla3.png',
-                                                      title: Constant
-                                                          .premiumFallTitle,
-                                                      subtitle: '')),
-                                        ).then((value) {
-                                          if (value != null && value) {
-                                            _prefs.setUserFree = false;
-                                            _prefs.setUserPremium = true;
-                                          }
-                                        });
-                                        return;
-                                      }
-                                      saveConfig = value;
-                                      widget.contactRisk.saveContact = value;
-                                      (context as Element).markNeedsBuild();
-                                    },
-                                    value: saveConfig,
+                                  SizedBox(
+                                    width: size.width / 6,
+                                    child: Transform.scale(
+                                      scale: 0.8,
+                                      child: CupertinoSwitch(
+                                        value: saveConfig,
+                                        activeColor: ColorPalette.activeSwitch,
+                                        trackColor:
+                                            CupertinoColors.inactiveGray,
+                                        onChanged: (bool? value) async {
+                                          setState(() async {
+                                            if (_prefs.getUserFree &&
+                                                !_prefs.getUserPremium) {
+                                              await Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        const PremiumPage(
+                                                            isFreeTrial: false,
+                                                            img:
+                                                                'pantalla3.png',
+                                                            title:
+                                                                'Tus citas más seguras con la versión Premium\n',
+                                                            subtitle:
+                                                                '\nCuando acabes tu cita, avisaremos a tu contacto sino desactivas esta alarma.')),
+                                              ).then((value) {
+                                                if (value != null && value) {
+                                                  _prefs.setUserFree = false;
+                                                  _prefs.setUserPremium = true;
+                                                  var premiumController =
+                                                      Get.put(
+                                                          PremiumController());
+                                                  premiumController
+                                                      .updatePremiumAPI(true);
+                                                }
+                                              });
+                                              return;
+                                            }
+                                            saveConfig = value!;
+                                            widget.contactRisk.saveContact =
+                                                value;
+                                          });
+                                        },
+                                      ),
+                                    ),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
                           ),
                         ],
@@ -985,6 +1032,7 @@ class _EditRiskPageState extends State<EditRiskPage> {
                   ),
                   const SpaceHeightCustom(heightTemp: 20),
                   ElevateButtonFilling(
+                    showIcon: false,
                     onChanged: (value) {
                       isActived = true;
                       isprogrammed = false;
@@ -993,6 +1041,7 @@ class _EditRiskPageState extends State<EditRiskPage> {
                       saveDate(context);
                     },
                     mensaje: 'Iniciar cita ahora',
+                    img: '',
                   ),
                   const SpaceHeightCustom(heightTemp: 20),
                   ElevateButtonCustomBorder(

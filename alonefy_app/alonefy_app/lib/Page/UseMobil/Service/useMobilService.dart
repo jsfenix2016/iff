@@ -1,10 +1,7 @@
 import 'package:http/http.dart' as http;
 import 'package:ifeelefine/Common/Constant.dart';
 import 'package:ifeelefine/Model/ApiRest/UseMobilApi.dart';
-import 'package:ifeelefine/Model/useMobilbd.dart';
 import 'dart:convert';
-
-import 'package:ifeelefine/Model/userbd.dart';
 
 class UseMobilService {
   Future<bool> saveUseMobil(List<UseMobilApi> listuse) async {

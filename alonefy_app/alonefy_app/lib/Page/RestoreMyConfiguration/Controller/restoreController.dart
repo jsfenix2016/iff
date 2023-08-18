@@ -6,7 +6,7 @@ import 'package:ifeelefine/Common/Firebase/firebaseManager.dart';
 import 'package:ifeelefine/Common/manager_alerts.dart';
 import 'package:ifeelefine/Common/utils.dart';
 import 'package:ifeelefine/Controllers/contactUserController.dart';
-import 'package:ifeelefine/Controllers/mainController.dart';
+
 import 'package:ifeelefine/Data/hiveRisk_data.dart';
 import 'package:ifeelefine/Model/ApiRest/ContactRiskApi.dart';
 import 'package:ifeelefine/Model/ApiRest/UseMobilApi.dart';
@@ -47,6 +47,7 @@ class RestoreController extends GetxController {
       if (isRunning) {
         service.invoke("stopService");
       }
+
       await _saveNotifications(userApi);
       await _saveUserFromAPI(userApi);
       await _saveTimeUseMobile(userApi.inactivityTimes);
@@ -63,7 +64,7 @@ class RestoreController extends GetxController {
 
       await _saveScheduleExactAlarm(userApi);
       await _saveCameraPermission(userApi);
-
+      onActionSelected("get_apns_token");
       Future.sync(() => {
             _saveConfig(),
             showSaveAlert(context, Constant.info, Constant.restoredCorrectly.tr)
@@ -207,6 +208,7 @@ class RestoreController extends GetxController {
   void _saveConfig() {
     _prefs.firstConfig = true;
     _prefs.config = true;
+    _prefs.setUseMobilConfig = true;
     _prefs.saveLastScreenRoute("home");
   }
 

@@ -101,17 +101,19 @@ class PremiumController extends GetxController {
   }
 
   Future _getProducts() async {
-    List<IAPItem> items =
-        await FlutterInappPurchase.instance.getSubscriptions(_productLists);
-    for (var item in items) {
-      print('${item.toString()}');
-      _items.add(item);
+    Future.sync(() async {
+      List<IAPItem> items =
+          await FlutterInappPurchase.instance.getSubscriptions(_productLists);
+      for (var item in items) {
+        print('${item.toString()}');
+        _items.add(item);
 
-      if (item.productId == subscriptionId ||
-          item.productId == subscriptionFreeTrialId) {
-        _prefs.setPremiumPrice = '${item.localizedPrice!}/mes';
+        if (item.productId == subscriptionId ||
+            item.productId == subscriptionFreeTrialId) {
+          _prefs.setPremiumPrice = '${item.localizedPrice!}/mes';
+        }
       }
-    }
+    });
   }
 
   Future<bool> isSubscribed() async {
@@ -135,7 +137,6 @@ class PremiumController extends GetxController {
     for (var item in items!) {
       print("Available purchases: " + item.productId!);
     }
-
     return items;
   }
 
@@ -150,7 +151,7 @@ class PremiumController extends GetxController {
     }
   }
 
-  void updatePremiumAPIFree(bool ispremium) async {
+  void updatePremiumAPI(bool ispremium) async {
     final MainController mainController = Get.put(MainController());
     var user = await mainController.getUserData();
     PremiumApi premiumApi = PremiumApi(

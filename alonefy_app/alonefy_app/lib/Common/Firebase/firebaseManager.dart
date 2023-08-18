@@ -1,11 +1,10 @@
-import 'dart:convert';
-
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+
 import 'package:get/get.dart';
 import 'package:ifeelefine/Common/Firebase/FirebaseService.dart';
+
 import 'package:ifeelefine/Common/notificationService.dart';
 import 'package:ifeelefine/Model/ApiRest/FirebaseTokenApi.dart';
 
@@ -13,13 +12,9 @@ import '../../Controllers/mainController.dart';
 
 @pragma('vm:entry-point')
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  showFlutterNotification(message);
   print('Handling a background message ${message.messageId}');
+  showFlutterNotification(message);
 }
-
-late AndroidNotificationChannel channel;
-
-bool isFlutterLocalNotificationsInitialized = false;
 
 void showFlutterNotification(RemoteMessage message) {
   RedirectViewNotifier.manageNotifications(message);
@@ -27,16 +22,20 @@ void showFlutterNotification(RemoteMessage message) {
 
 Future<void> initializeFirebase() async {
   //await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  await Firebase.initializeApp();
+  await FirebaseMessaging.instance.getInitialMessage();
+  onActionSelected("get_apns_token");
+  FirebaseMessaging.onMessage.listen(showFlutterNotification);
+  FirebaseMessaging.onMessageOpenedApp.listen((event) {
+    if (event.data.isNotEmpty) {}
+  });
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
-  Future.sync(() async => {
-        await Firebase.initializeApp(),
-        FirebaseMessaging.instance.getInitialMessage(),
-        onActionSelected("get_apns_token"),
-        FirebaseMessaging.onMessage.listen(showFlutterNotification),
-        // Set the background messaging handler early on, as a named top-level function
-        FirebaseMessaging.onBackgroundMessage(
-            _firebaseMessagingBackgroundHandler),
-      });
+  await FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(
+    alert: true,
+    badge: true,
+    sound: true,
+  );
 }
 
 Future<void> updateFirebaseToken() async {
@@ -82,7 +81,9 @@ Future<void> onActionSelected(String value) async {
 
           if (user.telephone != "" && token != null) {
             var firebaseTokenApi = FirebaseTokenApi(
-                phoneNumber: user.telephone.replaceAll("+34", ""),
+                phoneNumber: user.telephone.contains("+34")
+                    ? user.telephone.replaceAll("+34", "")
+                    : user.telephone,
                 fcmToken: token);
             FirebaseService().saveData(firebaseTokenApi);
           }

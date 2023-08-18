@@ -28,12 +28,6 @@ class _CustomDropdownMaritalStateState
 
   var _selectedLocation = '';
 
-  void _selectOption(String value) {
-    setState(() {
-      widget.onChanged(value);
-    });
-  }
-
   @override
   void initState() {
     _indexList = 0;
@@ -53,44 +47,56 @@ class _CustomDropdownMaritalStateState
           borderRadius: BorderRadius.circular(100),
         ),
         child: SizedBox(
-          height: 52,
-          child: DropdownButton<String?>(
-            underline: Container(),
-            hint: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text(
-                widget.mensaje,
-                style: textNormal16White(),
+          height: 55,
+          child: Padding(
+            padding: const EdgeInsets.all(4.0),
+            child: DropdownButton<String?>(
+              underline: Container(),
+              hint: Padding(
+                padding: const EdgeInsets.all(2.0),
+                child: Text(
+                  widget.mensaje,
+                  style: textNormal16White(),
+                ),
               ),
-            ),
-            dropdownColor: Colors.brown,
-            iconEnabledColor: ColorPalette.principal, //Ico
-            value: _selectedLocation.isEmpty
-                ? widget.instance[_indexList]
-                : _selectedLocation,
-            isExpanded: true,
-            items: widget.instance.keys
-                .toList()
-                .map(
-                  (e) => DropdownMenuItem<String>(
-                    value: widget.instance[e],
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text(
-                        widget.instance[e] ?? "",
-                        style: textNomral18White(),
+              dropdownColor: Colors.brown,
+              icon: IconButton(
+                alignment: Alignment.centerLeft,
+                color: ColorPalette.principal,
+                icon: const ImageIcon(
+                  AssetImage('assets/images/arrow_drop_down.png'),
+                  color: Colors.white,
+                ),
+                onPressed: () {},
+              ),
+              iconEnabledColor: ColorPalette.principal, //Ico
+              value: _selectedLocation.isEmpty
+                  ? widget.instance[_indexList]
+                  : _selectedLocation,
+              isExpanded: true,
+              items: widget.instance.keys
+                  .toList()
+                  .map(
+                    (e) => DropdownMenuItem<String>(
+                      value: widget.instance[e],
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          widget.instance[e] ?? "",
+                          style: textNormal16White(),
+                        ),
                       ),
                     ),
-                  ),
-                )
-                .toList(),
+                  )
+                  .toList(),
 
-            onChanged: (v) {
-              setState(() {
-                _selectedLocation = v.toString();
-                widget.onChanged(_selectedLocation);
-              });
-            },
+              onChanged: (v) {
+                setState(() {
+                  _selectedLocation = v.toString();
+                  widget.onChanged(_selectedLocation);
+                });
+              },
+            ),
           ),
         ),
       ),

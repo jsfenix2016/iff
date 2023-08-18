@@ -5,6 +5,8 @@ import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:ifeelefine/Common/notificationService.dart';
+import 'package:ifeelefine/Common/text_style_font.dart';
 import 'package:ifeelefine/Page/Premium/Controller/premium_controller.dart';
 import 'package:ifeelefine/Provider/prefencesUser.dart';
 import 'package:ifeelefine/Utils/Widgets/ImageGradient.dart';
@@ -74,12 +76,17 @@ class _PremiumPageState extends State<PremiumPage> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
+    RedirectViewNotifier.setContext(context);
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: ColorPalette.backgroundAppBar,
-        title: const Text("Suscripciones"),
+        backgroundColor: Colors.brown,
+        title: Text(
+          "Suscripciones",
+          style: textForTitleApp(),
+        ),
       ),
       body: Container(
+        height: size.height,
         decoration: decorationCustom(),
         child: SingleChildScrollView(
           child: Stack(
@@ -117,37 +124,54 @@ class _PremiumPageState extends State<PremiumPage> {
                 left: 32,
                 right: 32,
                 child: Center(
-                  child: Text(
-                    widget.title,
+                  child: RichText(
                     textAlign: TextAlign.center,
-                    style: GoogleFonts.barlow(
-                      fontSize: 22.0,
-                      wordSpacing: 1,
-                      letterSpacing: 1.2,
-                      fontWeight: FontWeight.bold,
-                      color: ColorPalette.principal,
+                    text: TextSpan(
+                      text: widget.title,
+                      style: GoogleFonts.barlow(
+                        fontSize: 26.0,
+                        wordSpacing: 1,
+                        letterSpacing: 1.2,
+                        fontWeight: FontWeight.bold,
+                        color: ColorPalette.principal,
+                      ),
+                      children: <TextSpan>[
+                        TextSpan(
+                          text: widget.subtitle,
+                          style: GoogleFonts.barlow(
+                            fontSize: 24.0,
+                            wordSpacing: 1,
+                            letterSpacing: 0.001,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ),
               ),
+
               Positioned(
-                top: 200,
+                top: 250,
                 left: 0,
                 right: 0,
                 child: Align(
                   alignment: Alignment.center,
-                  child: Stack(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Container(
                         width: 180,
-                        height: 165,
+                        height: 111,
                         decoration: const BoxDecoration(
                             borderRadius: BorderRadius.all(Radius.circular(20)),
                             color: ColorPalette.backgroundDarkGrey2),
                         child: Column(
                           children: [
                             Padding(
-                              padding: EdgeInsets.fromLTRB(16, 12, 16, 0),
+                              padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
                               child: Text(
                                 'Seguridad ilimitada',
                                 textAlign: TextAlign.center,
@@ -177,15 +201,23 @@ class _PremiumPageState extends State<PremiumPage> {
                           ],
                         ),
                       ),
+                      SizedBox(
+                        height: 40,
+                      ),
+                      getListOfComments(),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      Positioned(
+                          bottom: 30,
+                          left: 32,
+                          right: 32,
+                          child: getHorizontalSlide())
                     ],
                   ),
                 ),
               ),
               //getListOfComments(),
-              Positioned(
-                  bottom: 150, left: 32, right: 32, child: getListOfComments()),
-              Positioned(
-                  bottom: 82, left: 32, right: 32, child: getHorizontalSlide())
             ],
           ),
         ),
@@ -195,7 +227,7 @@ class _PremiumPageState extends State<PremiumPage> {
 
   Widget getListOfComments() {
     return SizedBox(
-        height: 115,
+        height: 100,
         child: ListView.builder(
             shrinkWrap: true,
             scrollDirection: Axis.horizontal,
@@ -210,7 +242,7 @@ class _PremiumPageState extends State<PremiumPage> {
       padding: const EdgeInsets.fromLTRB(12, 0, 12, 0),
       child: Container(
         width: 300,
-        height: 115,
+        height: 100,
         decoration: const BoxDecoration(
             borderRadius: BorderRadius.all(Radius.circular(18)),
             color: ColorPalette.secondView),

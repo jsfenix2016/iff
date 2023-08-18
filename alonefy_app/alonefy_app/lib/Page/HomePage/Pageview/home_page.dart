@@ -1,12 +1,9 @@
 import 'dart:async';
-import 'dart:convert';
+
 import 'package:device_info_plus/device_info_plus.dart';
-import 'package:flutter/foundation.dart';
-import 'package:flutter_background_service/flutter_background_service.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+
 import 'package:get/get.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:hive_flutter/hive_flutter.dart';
+
 import 'package:ifeelefine/Common/Constant.dart';
 import 'package:ifeelefine/Common/colorsPalette.dart';
 import 'package:ifeelefine/Common/manager_alerts.dart';
@@ -15,8 +12,6 @@ import 'package:ifeelefine/Common/text_style_font.dart';
 import 'package:ifeelefine/Common/utils.dart';
 import 'package:ifeelefine/Page/HomePage/Controller/homeController.dart';
 import 'package:ifeelefine/Page/HomePage/Widget/customNavbar.dart';
-import 'package:ifeelefine/Page/Risk/DateRisk/Pageview/editRiskDatePage.dart';
-import 'package:ifeelefine/Page/Risk/DateRisk/ListDateRisk/PageView/riskDatePage.dart';
 import 'package:ifeelefine/Page/UserConfig/Controller/userConfigController.dart';
 import 'package:ifeelefine/Model/user.dart';
 import 'package:ifeelefine/Model/userbd.dart';
@@ -24,11 +19,12 @@ import 'package:ifeelefine/Model/logAlertsBD.dart';
 import 'package:ifeelefine/Provider/prefencesUser.dart';
 import 'package:ifeelefine/Utils/Widgets/swipeableContainer.dart';
 import 'package:ifeelefine/Page/Alerts/PageView/alerts_page.dart';
-import 'package:ifeelefine/Page/UserInactivityPage/PageView/configurationUserInactivity_page.dart';
+
+import 'package:ifeelefine/Utils/Widgets/widgetLogo.dart';
 import 'package:ifeelefine/Views/menuconfig_page.dart';
-import 'package:ifeelefine/Views/protectuser_page.dart';
+
 import 'package:flutter/material.dart';
-import 'dart:io' show Directory, File, Platform;
+import 'dart:io' show File;
 
 import 'package:avatar_glow/avatar_glow.dart';
 import 'package:ifeelefine/main.dart';
@@ -125,8 +121,25 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     if (user != null) {
       user = user;
     }
+    requestAlarmPermission();
 
     setState(() {});
+  }
+
+  Future<void> requestAlarmPermission() async {
+    // if (await Permission.scheduleExactAlarm.request().isGranted) {
+    //   // Permiso concedido, aquí puedes configurar la alarma
+    //   // Llama al método showNotification() que configuraste previamente
+    // } else {
+    //   // Permiso denegado, puedes manejarlo según tus necesidades
+    //   print('El permiso de alarma exacta fue denegado.');
+    // }
+
+    await Permission.scheduleExactAlarm.isDenied.then((value) {
+      if (value) {
+        Permission.scheduleExactAlarm.request();
+      }
+    });
   }
 
   Future<void> getpermission() async {
@@ -202,6 +215,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     }
     RedirectViewNotifier.setContext(context);
     return Scaffold(
+      drawer: const MenuConfigurationPage(),
       extendBodyBehindAppBar: true,
       key: _scaffoldKey,
       body: Container(
@@ -210,19 +224,25 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
         height: size.height,
         child: SafeArea(
           child: Stack(
+            alignment: Alignment.center,
             children: <Widget>[
+              const Positioned(
+                  top: 36,
+                  child: SizedBox(
+                      height: 60.31, width: 250, child: WidgetLogoApp())),
               Positioned(
-                top: 44,
+                top: 94,
                 left: 16,
                 child: IconButton(
                   iconSize: 40,
                   color: ColorPalette.principal,
                   onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const MenuConfigurationPage()),
-                    );
+                    _scaffoldKey.currentState!.openDrawer();
+                    // Navigator.push(
+                    //   context,
+                    //   MaterialPageRoute(
+                    //       builder: (context) => const MenuConfigurationPage()),
+                    // );
                   },
                   icon: Container(
                     height: 32,
@@ -239,7 +259,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
               ),
               Positioned(
                 left: 57,
-                top: 55,
+                top: 105,
                 child: Visibility(
                   visible: _prefs.getUserFree && !_prefs.getUserPremium,
                   child: Container(
@@ -254,7 +274,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                 ),
               ),
               Positioned(
-                top: 44,
+                top: 94,
                 right: 16,
                 child: IconButton(
                   iconSize: 40,
@@ -279,14 +299,14 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                 ),
               ),
               Positioned(
-                top: 90,
+                top: 130,
                 child: Container(
                   width: size.width,
                   color: Colors.transparent,
                   child: Padding(
                     padding: const EdgeInsets.only(left: 8.0, right: 8.0),
                     child: Text(
-                      "Bienvenido $nameComplete",
+                      "Bienvenido\n $nameComplete",
                       style: textBold20White(),
                       textAlign: TextAlign.center,
                     ),
@@ -294,7 +314,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                 ),
               ),
               Positioned(
-                top: 120,
+                top: 180,
                 left: (size.width / 3) - 30,
                 child: AvatarGlow(
                   glowColor: Colors.white,

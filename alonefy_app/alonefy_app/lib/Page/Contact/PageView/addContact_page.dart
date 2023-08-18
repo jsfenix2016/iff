@@ -3,6 +3,7 @@ import 'package:flutter_contacts/contact.dart';
 import 'package:get/get.dart';
 
 import 'package:google_fonts/google_fonts.dart';
+import 'package:ifeelefine/Data/hive_data.dart';
 import 'package:ifeelefine/Model/contact.dart';
 import 'package:ifeelefine/Page/Contact/ListContact/PageView/list_contact_page.dart';
 import 'package:ifeelefine/Page/Contact/Widget/filter_contact.dart';
@@ -58,6 +59,7 @@ class _AddContactPageState extends State<AddContactPage> {
     );
 
     if (cont!.name.first.isNotEmpty) {
+      await const HiveData().saveUserContact(contactBD);
       setState(() {
         Navigator.pushReplacement(
           context,
@@ -92,7 +94,7 @@ class _AddContactPageState extends State<AddContactPage> {
                     ),
                     const WidgetLogoApp(),
                     Padding(
-                      padding: const EdgeInsets.fromLTRB(40, 0, 40, 0),
+                      padding: const EdgeInsets.fromLTRB(44, 0, 44, 0),
                       child: Text.rich(
                         TextSpan(
                           children: [
@@ -113,7 +115,7 @@ class _AddContactPageState extends State<AddContactPage> {
                                   fontSize: 24.0,
                                   wordSpacing: 1,
                                   letterSpacing: 0.001,
-                                  fontWeight: FontWeight.w200,
+                                  fontWeight: FontWeight.w300,
                                   color: Colors.white,
                                   height: 1.5),
                             ),
@@ -137,30 +139,13 @@ class _AddContactPageState extends State<AddContactPage> {
                     ),
                     Center(
                       child: ElevateButtonFilling(
-                          onChanged: ((value) async {
-                            _showContactListScreen(context);
-                            // await showDialog(
-                            //   context: context,
-                            //   builder: (BuildContext context) => AlertDialog(
-                            //     contentPadding: const EdgeInsets.all(0),
-                            //     content: ListContact(
-                            //       onSelectContact: (Contact value) {
-                            //         Navigator.pushReplacement(
-                            //           context,
-                            //           MaterialPageRoute(
-                            //             settings:
-                            //                 RouteSettings(arguments: value),
-                            //             builder: (context) => const ContactList(
-                            //               isMenu: false,
-                            //             ),
-                            //           ),
-                            //         );
-                            //       },
-                            //     ),
-                            //   ),
-                            // );
-                          }),
-                          mensaje: 'Añadir contacto'),
+                        showIcon: true,
+                        onChanged: ((value) async {
+                          _showContactListScreen(context);
+                        }),
+                        mensaje: 'Añadir contacto',
+                        img: 'assets/images/User.png',
+                      ),
                     ),
                   ],
                 ),

@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:ifeelefine/Common/Constant.dart';
 import 'package:ifeelefine/Common/button_style_custom.dart';
 import 'package:ifeelefine/Common/manager_alerts.dart';
+import 'package:ifeelefine/Common/notificationService.dart';
 import 'package:ifeelefine/Common/text_style_font.dart';
 import 'package:ifeelefine/Page/PermissionUser/Controller/permission_controller.dart';
 import 'package:ifeelefine/Page/TermsAndConditions/Controller/terms_conditionController.dart';
@@ -33,6 +34,7 @@ class _ConditionGeneralPageState extends State<ConditionGeneralPage> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
+    RedirectViewNotifier.setContext(context);
     return Scaffold(
       body: Container(
         decoration: decorationCustom(),
@@ -43,11 +45,14 @@ class _ConditionGeneralPageState extends State<ConditionGeneralPage> {
             Center(
               child: Column(
                 children: [
-                  SafeArea(
+                  const SafeArea(
                     child: Column(
                       mainAxisSize: MainAxisSize.max,
                       mainAxisAlignment: MainAxisAlignment.center,
-                      children: const [
+                      children: [
+                        SizedBox(
+                          height: 36,
+                        ),
                         WidgetLogoApp(),
                       ],
                     ),
@@ -56,7 +61,7 @@ class _ConditionGeneralPageState extends State<ConditionGeneralPage> {
                     child: Column(
                       children: <Widget>[
                         Padding(
-                          padding: const EdgeInsets.only(top: 40),
+                          padding: const EdgeInsets.only(top: 32),
                           child: Row(
                             children: [
                               Expanded(
@@ -99,7 +104,7 @@ class _ConditionGeneralPageState extends State<ConditionGeneralPage> {
                           ),
                         ),
                         Padding(
-                            padding: const EdgeInsets.only(top: 24),
+                            padding: const EdgeInsets.only(top: 14, left: 24),
                             child: Row(
                               children: [
                                 Expanded(
@@ -107,7 +112,7 @@ class _ConditionGeneralPageState extends State<ConditionGeneralPage> {
                                   child: Align(
                                     alignment: Alignment.centerRight,
                                     child: Text(
-                                      'Acepto envío de SMS y llamadas en caso de interpretar AlertFriends que pueda estar en riesgo ',
+                                      'Acepto envío de whatsapp SMS y llamadas en caso de interpretar AlertFriends que pueda estar en riesgo ',
                                       textAlign: TextAlign.right,
                                       style: textNomral18White(),
                                     ),
@@ -118,7 +123,7 @@ class _ConditionGeneralPageState extends State<ConditionGeneralPage> {
                                   child: Align(
                                     alignment: Alignment.centerLeft,
                                     child: Padding(
-                                      padding: const EdgeInsets.only(left: 16),
+                                      padding: const EdgeInsets.only(left: 8),
                                       child: Transform.scale(
                                         scale: 0.8,
                                         child: CupertinoSwitch(
@@ -143,7 +148,7 @@ class _ConditionGeneralPageState extends State<ConditionGeneralPage> {
                           padding: const EdgeInsets.only(top: 24),
                           child: Container(
                             width: 304,
-                            height: 274,
+                            height: 254,
                             padding: const EdgeInsets.fromLTRB(12, 40, 12, 18),
                             decoration: BoxDecoration(
                                 color: ColorPalette.backgroundDarkGrey,
@@ -154,16 +159,16 @@ class _ConditionGeneralPageState extends State<ConditionGeneralPage> {
                                   child: SingleChildScrollView(
                                     scrollDirection: Axis.vertical,
                                     child: RichText(
-                                      textAlign: TextAlign.justify,
+                                      textAlign: TextAlign.left,
                                       text: TextSpan(
                                         text:
-                                            '''Política de privacidad\n\n1. Introducción\n\n Diecisiete Digital es el titular del sitio web https://alertfriends.app/es/ (en adelante, el “Portal”) y actúa como responsable de tratamiento de los datos personales de los usuarios (“Usuario/s”) que acceden y usan el Portal.\n\nMediante la presente Política de Privacidad, y en cumplimiento del Reglamento (UE) 2016/679 (“RGPD”)  y Ley  Orgánica  3/2018,  de  5 de  diciembre,  de  Protección  de  Datos  Personales  y garantía de los derechos digitales (“LOPDPGDD”), Diecisiete Digital informa a los Usuarios que se registren y/o hagan uso del Portal, de los tratamientos  de aquellos datos personales  que puedan ser recabados a través del Portal y tratados por Diecisiete Digital, con el fin de que los Usuarios decidan, libre y voluntariamente, si desean facilitar la información solicitada.\n\n''',
+                                            '''Diecisiete Digital actúa como responsable de tratamiento de los datos personales de los usuarios.\n\nPara mayor información por favor, lea las condiciones de uso en el siguiente enlace.\n\n''',
                                         style: textNormal16White(),
                                         children: <TextSpan>[
                                           TextSpan(
                                             onEnter: (event) {},
                                             text:
-                                                'Antes de continuar lee los términos y condiciones: https://alertfriends.app/politica_privacidad/',
+                                                'https://alertfriends.app/politica_privacidad/',
                                             style: GoogleFonts.barlow(
                                               fontSize: 16.0,
                                               wordSpacing: 1,
@@ -224,8 +229,13 @@ class _ConditionGeneralPageState extends State<ConditionGeneralPage> {
                                             aceptedConditions,
                                             aceptedSendMessage);
                                       } else {
-                                        showSaveAlert(context, Constant.info,
-                                            'Para continuar debe aceptar las condiciones y el permiso de envío de mensajes y llamadas.');
+                                        if (!sawTerms ||
+                                            !aceptedSendMessage ||
+                                            !aceptedConditions) {
+                                          showSaveAlert(context, Constant.info,
+                                              'Debe leer y aceptar las condiciones de uso y el envio de mensajes para continuar.');
+                                          return;
+                                        }
                                       }
                                     },
                                   ),

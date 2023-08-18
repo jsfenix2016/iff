@@ -7,6 +7,8 @@ import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:ifeelefine/Common/notificationService.dart';
+import 'package:ifeelefine/Common/text_style_font.dart';
 import 'package:ifeelefine/Page/Premium/Controller/premium_controller.dart';
 import 'package:ifeelefine/Provider/prefencesUser.dart';
 import 'package:ifeelefine/Utils/Widgets/ImageGradient.dart';
@@ -74,10 +76,14 @@ class _PremiumMothFreeState extends State<PremiumMothFree> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
+    RedirectViewNotifier.setContext(context);
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: ColorPalette.backgroundAppBar,
-        title: const Text("Suscripciones"),
+        backgroundColor: Colors.brown,
+        title: Text(
+          "Suscripciones",
+          style: textForTitleApp(),
+        ),
       ),
       body: Container(
         decoration: decorationCustom(),
@@ -303,7 +309,7 @@ class _PremiumMothFreeState extends State<PremiumMothFree> {
         if (value == SlidableButtonPosition.end) {
           if (!_prefs.getUserFree) {
             var premiumController = Get.put(PremiumController());
-            premiumController.updatePremiumAPIFree(true);
+            premiumController.updatePremiumAPI(true);
 
             Navigator.of(context).pop();
           }

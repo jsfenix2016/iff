@@ -1,6 +1,8 @@
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:ifeelefine/Model/contactRiskBD.dart';
 import 'package:ifeelefine/Model/contactZoneRiskBD.dart';
+import 'package:ifeelefine/Model/logAlertsBD.dart';
+import 'package:intl/intl.dart';
 
 class HiveDataRisk {
   const HiveDataRisk();
@@ -11,6 +13,14 @@ class HiveDataRisk {
           await Hive.openBox<ContactRiskBD>('contactriskbd');
 
       final person = await box.add(contact);
+
+      var formattedDate = DateFormat('yMd').format(contact.createDate);
+      print(formattedDate); // Imprimirá: 10-08-2023
+
+      DateTime fss = DateFormat('yMd').parse(formattedDate);
+      var tempAct = LogAlertsBD(
+          id: 0, time: fss, type: "Cita", photoDate: contact.photoDate);
+
       return true;
     } catch (error) {
       return false;

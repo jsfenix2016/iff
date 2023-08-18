@@ -245,7 +245,9 @@ class _TestCameraPageState extends State<TestCameraPage> {
                       onChanged: (value) {
                         initCameras();
                       },
+                      showIcon: false,
                       mensaje: "Agregar",
+                      img: '',
                     ),
                   ),
                 ),
@@ -260,6 +262,8 @@ class _TestCameraPageState extends State<TestCameraPage> {
                         stopCameras();
                       },
                       mensaje: Constant.continueTxt,
+                      showIcon: false,
+                      img: '',
                     ),
                   ),
                 ),

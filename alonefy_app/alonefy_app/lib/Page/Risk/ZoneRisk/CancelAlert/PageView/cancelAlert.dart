@@ -45,7 +45,7 @@ class _CancelAlertState extends State<CancelAlertPage> {
   String codeTemp = '';
   var code = CodeModel();
 
-  int _secondsRemaining = 300; //5 minutes = 300 seconds
+  int _secondsRemaining = 180; //5 minutes = 300 seconds
   Timer? _timer;
 
   @override
@@ -85,7 +85,7 @@ class _CancelAlertState extends State<CancelAlertPage> {
       Route route = MaterialPageRoute(
         builder: (context) => const ZoneRiskPage(),
       );
-      Navigator.pop(context);
+      Navigator.of(context).pop();
     } else {
       showSaveAlert(context, Constant.info, Constant.codeError);
     }
@@ -104,6 +104,8 @@ class _CancelAlertState extends State<CancelAlertPage> {
         () {
           if (_secondsRemaining < 1) {
             timer.cancel();
+            showSaveAlert(context, Constant.info,
+                "El servidor de AlertFriends envío una alerta con tu última ubicación.");
           } else {
             _secondsRemaining -= 1;
           }
@@ -129,6 +131,7 @@ class _CancelAlertState extends State<CancelAlertPage> {
           height: size.height,
           decoration: decorationCustom(),
           child: SingleChildScrollView(
+            keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
             child: Stack(
               children: [
                 SafeArea(
@@ -147,7 +150,7 @@ class _CancelAlertState extends State<CancelAlertPage> {
                             top: 85.0, left: 12, right: 12),
                         child: Center(
                           child: Text(
-                            "I’m fine ha activado una alerta en el servidor y se ejecutará en: ",
+                            "AlertFriends ha activado una alerta en el servidor y se ejecutará en: ",
                             textAlign: TextAlign.center,
                             style: GoogleFonts.barlow(
                               fontSize: 24.0,
@@ -215,10 +218,12 @@ class _CancelAlertState extends State<CancelAlertPage> {
                       Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: ElevateButtonFilling(
+                          showIcon: false,
                           onChanged: (value) {
                             saveDate(context);
                           },
                           mensaje: 'Cancelar alerta',
+                          img: '',
                         ),
                       ),
                       SizedBox(
@@ -229,7 +234,7 @@ class _CancelAlertState extends State<CancelAlertPage> {
                                 padding: const EdgeInsets.only(
                                     left: 27.0, top: 20, right: 27),
                                 child: Text(
-                                  "Si no cancelas, el servidor de  AlertFriends enviará una alerta con tu última ubicación en: ",
+                                  "Si no cancelas, el servidor de AlertFriends enviará una alerta con tu última ubicación.",
                                   textAlign: TextAlign.center,
                                   style: GoogleFonts.barlow(
                                     fontSize: 18.0,

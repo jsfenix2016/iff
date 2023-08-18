@@ -36,6 +36,6 @@ final Map<String, Widget Function(BuildContext)> appRoute = {
   "inactivityDay": (BuildContext context) => const UserInactivityPage(),
   "configGeo": (BuildContext context) => const InitGeolocator(),
   "finishConfig": (BuildContext context) => const FinishConfigPage(),
-  "userConfig": (BuildContext context) => const UserConfigPage(),
+  "userConfig": (BuildContext context) => const UserConfigPage(isMenu: false),
   "addContact": (BuildContext context) => const AddContactPage(),
 };

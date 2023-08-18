@@ -1,5 +1,7 @@
 import 'package:get/get.dart';
 import 'package:ifeelefine/Common/colorsPalette.dart';
+import 'package:ifeelefine/Common/notificationService.dart';
+import 'package:ifeelefine/Common/text_style_font.dart';
 
 import 'package:ifeelefine/Controllers/mainController.dart';
 
@@ -15,6 +17,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:ifeelefine/Page/UserConfig/PageView/userconfig_page.dart';
 
 import 'package:ifeelefine/Utils/Widgets/elevatedButtonFilling.dart';
+import 'package:ifeelefine/Views/space_heidht_custom.dart';
 import 'package:notification_center/notification_center.dart';
 import 'package:ifeelefine/Common/decoration_custom.dart';
 
@@ -277,11 +280,14 @@ class _ZoneRiskPageState extends State<ZoneRiskPage> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-
+    RedirectViewNotifier.setContext(context);
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.brown,
-        title: const Text("Zona de riesgo"),
+        title: Text(
+          "Zona de riesgo",
+          style: textForTitleApp(),
+        ),
       ),
       body: Container(
         decoration: decorationCustom(),
@@ -297,20 +303,18 @@ class _ZoneRiskPageState extends State<ZoneRiskPage> {
               child: Column(
                 mainAxisSize: MainAxisSize.max,
                 children: [
-                  const SizedBox(
-                    height: 20,
-                  ),
+                  const SpaceHeightCustom(heightTemp: 50),
                   Padding(
-                    padding: const EdgeInsets.all(8.0),
+                    padding: const EdgeInsets.only(left: 32.0, right: 32),
                     child: Text(
-                      "Utilizar una configuración guardada o crear una nueva.",
+                      "Utilizar una configuración guardada o crear una nueva",
                       textAlign: TextAlign.center,
                       style: GoogleFonts.barlow(
-                        fontSize: 24.0,
+                        fontSize: 20.0,
                         wordSpacing: 1,
-                        letterSpacing: 1,
-                        fontWeight: FontWeight.normal,
-                        color: Colors.white,
+                        letterSpacing: 0.001,
+                        fontWeight: FontWeight.w700,
+                        color: Color.fromRGBO(222, 222, 222, 1),
                       ),
                     ),
                   ),
@@ -328,6 +332,7 @@ class _ZoneRiskPageState extends State<ZoneRiskPage> {
               bottom: 10,
               left: (size.width / 2) - 100,
               child: ElevateButtonFilling(
+                showIcon: true,
                 onChanged: (value) async {
                   initContact();
                   MainController mainController = Get.put(MainController());
@@ -335,7 +340,7 @@ class _ZoneRiskPageState extends State<ZoneRiskPage> {
 
                   if (user.idUser == "-1") {
                     Route route = MaterialPageRoute(
-                      builder: (context) => const UserConfigPage(),
+                      builder: (context) => const UserConfigPage(isMenu: false),
                     );
                     Future.sync(
                         () => Navigator.pushReplacement(context, route));
@@ -351,7 +356,8 @@ class _ZoneRiskPageState extends State<ZoneRiskPage> {
                         ),
                       ));
                 },
-                mensaje: "Crear nuevo",
+                mensaje: "Crear nueva",
+                img: 'assets/images/User.png',
               ),
             ),
           ],

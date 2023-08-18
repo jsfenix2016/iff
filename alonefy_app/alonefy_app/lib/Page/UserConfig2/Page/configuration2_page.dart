@@ -8,6 +8,7 @@ import 'package:ifeelefine/Common/Firebase/firebaseManager.dart';
 import 'package:ifeelefine/Common/colorsPalette.dart';
 import 'package:ifeelefine/Common/initialize_models_bd.dart';
 import 'package:ifeelefine/Common/location_custom.dart';
+import 'package:ifeelefine/Common/notificationService.dart';
 import 'package:ifeelefine/Common/text_style_font.dart';
 import 'package:ifeelefine/Common/utils.dart';
 
@@ -173,169 +174,178 @@ class _UserConfigPageState2 extends State<UserConfigPage2> {
 
   @override
   Widget build(BuildContext context) {
+    RedirectViewNotifier.setContext(context);
     return Scaffold(
       body: Container(
         decoration: decorationCustom(),
         padding: const EdgeInsets.only(left: 15.0, right: 15.0),
-        child: ListView(
-          children: <Widget>[
-            Column(
-              children: [
-                const WidgetLogoApp(),
-                CustomDropdownMaritalState(
-                  instance: Constant.gender,
-                  mensaje: Constant.selectGender,
-                  isVisible: true,
-                  onChanged: (value) {
-                    user?.gender = value;
-                  },
-                ),
-                const SizedBox(height: 10),
-                CustomDropdownMaritalState(
-                  instance: Constant.maritalState,
-                  mensaje: Constant.maritalStatus,
-                  isVisible: true,
-                  onChanged: (value) {
-                    user?.maritalStatus = value;
-                  },
-                ),
-                const SizedBox(height: 10),
-                CustomDropdownStylelive(
-                  instance: Constant.lifeStyle,
-                  mensaje: Constant.styleLive,
-                  isVisible: true,
-                  onChanged: (value) {
-                    user?.styleLife = value;
-                  },
-                ),
+        child: SizedBox.expand(
+          child: SingleChildScrollView(
+            keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+            child: SafeArea(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  SizedBox(height: 34),
+                  const WidgetLogoApp(),
+                  SizedBox(height: 34),
+                  CustomDropdownMaritalState(
+                    instance: Constant.gender,
+                    mensaje: Constant.selectGender,
+                    isVisible: true,
+                    onChanged: (value) {
+                      user?.gender = value;
+                    },
+                  ),
+                  const SizedBox(height: 10),
+                  CustomDropdownMaritalState(
+                    instance: ages,
+                    mensaje: Constant.age,
+                    isVisible: true,
+                    onChanged: (value) {
+                      user?.age = value;
+                    },
+                  ),
+                  const SizedBox(height: 10),
+                  CustomDropdownMaritalState(
+                    instance: Constant.maritalState,
+                    mensaje: Constant.maritalStatus,
+                    isVisible: true,
+                    onChanged: (value) {
+                      user?.maritalStatus = value;
+                    },
+                  ),
+                  const SizedBox(height: 10),
+                  CustomDropdownStylelive(
+                    instance: Constant.lifeStyle,
+                    mensaje: Constant.styleLive,
+                    isVisible: true,
+                    onChanged: (value) {
+                      user?.styleLife = value;
+                    },
+                  ),
 
-                const SizedBox(height: 10),
-                CustomDropdownMaritalState(
-                  instance: ages,
-                  mensaje: Constant.age,
-                  isVisible: true,
-                  onChanged: (value) {
-                    user?.age = value;
-                  },
-                ),
-                // LocationCustom(
-                //   title: "Coloca tu dirección",
-                //   isVisible: true,
-                //   onChange: (String value) {
-                //     print(value);
-                //     user?.country = value != '' ? value : '';
-                //     // userModel.localizacion = value != '' ? value : '';
-                //   },
-                // ),
-                const SizedBox(height: 10),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: DecoratedBox(
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                        color: ColorPalette.principal,
-                        width: 1,
+                  // LocationCustom(
+                  //   title: "Coloca tu dirección",
+                  //   isVisible: true,
+                  //   onChange: (String value) {
+                  //     print(value);
+                  //     user?.country = value != '' ? value : '';
+                  //     // userModel.localizacion = value != '' ? value : '';
+                  //   },
+                  // ),
+                  const SizedBox(height: 10),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: DecoratedBox(
+                      decoration: BoxDecoration(
+                        border: Border.all(
+                          color: ColorPalette.principal,
+                          width: 1,
+                        ),
+                        borderRadius: BorderRadius.circular(100),
                       ),
-                      borderRadius: BorderRadius.circular(100),
-                    ),
-                    child: GestureDetector(
-                      onTap: () => _showCountryListScreen(context),
-                      child: SizedBox(
-                        width: 350,
-                        height: 52,
-                        child: Padding(
-                          padding: const EdgeInsets.only(
-                              left: 16.0, right: 16, top: 12),
-                          child: Text(
-                            selectCountry.isEmpty
-                                ? "Selecciona el país"
-                                : selectCountry.obs.value,
-                            style: textNormal16White(),
+                      child: GestureDetector(
+                        onTap: () => _showCountryListScreen(context),
+                        child: SizedBox(
+                          width: 350,
+                          height: 52,
+                          child: Padding(
+                            padding: const EdgeInsets.only(
+                                left: 8.0, right: 16, top: 14),
+                            child: Text(
+                              selectCountry.isEmpty
+                                  ? "Selecciona el país"
+                                  : selectCountry.obs.value,
+                              style: textNormal16White(),
+                            ),
                           ),
                         ),
                       ),
                     ),
                   ),
-                ),
-                const SizedBox(height: 10),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: DecoratedBox(
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                        color: ColorPalette.principal,
-                        width: 1,
+                  const SizedBox(height: 10),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: DecoratedBox(
+                      decoration: BoxDecoration(
+                        border: Border.all(
+                          color: ColorPalette.principal,
+                          width: 1,
+                        ),
+                        borderRadius: BorderRadius.circular(100),
                       ),
-                      borderRadius: BorderRadius.circular(100),
-                    ),
-                    child: GestureDetector(
-                      onTap: () => _showStateListScreen(context),
-                      child: SizedBox(
-                        width: 350,
-                        height: 52,
-                        child: Padding(
-                          padding: const EdgeInsets.only(
-                              left: 16.0, right: 16, top: 12),
-                          child: Text(
-                            selectState.isEmpty
-                                ? "Selecciona la ciudad"
-                                : selectState,
-                            style: textNormal16White(),
+                      child: GestureDetector(
+                        onTap: () => _showStateListScreen(context),
+                        child: SizedBox(
+                          width: 350,
+                          height: 52,
+                          child: Padding(
+                            padding: const EdgeInsets.only(
+                                left: 8.0, right: 16, top: 14),
+                            child: Text(
+                              selectState.isEmpty
+                                  ? "Selecciona la ciudad"
+                                  : selectState,
+                              style: textNormal16White(),
+                            ),
                           ),
                         ),
                       ),
                     ),
                   ),
-                ),
 
-                const SizedBox(height: 10),
+                  const SizedBox(height: 10),
 
-                const SizedBox(height: 20),
-                // ElevateButtonCustomBorder(
-                //     onChanged: ((value) {
-                //       // free(false);
+                  const SizedBox(height: 20),
+                  // ElevateButtonCustomBorder(
+                  //     onChanged: ((value) {
+                  //       // free(false);
 
-                //     }),
-                //     mensaje: "Gratuito 30 días"),
-                // const SizedBox(height: 20),
-                // _createButtonPremium(),
-                ElevatedButton(
-                  style: styleColorClear(),
-                  onPressed: (() {
-                    _submit(false);
-                  }),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: Colors.transparent,
-                      borderRadius:
-                          const BorderRadius.all(Radius.circular(100)),
-                      border: Border.all(color: ColorPalette.principal),
-                    ),
-                    height: 42,
-                    width: 200,
-                    child: Center(
-                      child: Text(
-                        "Gratuito 30 días",
-                        style: GoogleFonts.barlow(
-                          fontSize: 16.0,
-                          wordSpacing: 1,
-                          letterSpacing: 0.005,
-                          fontWeight: FontWeight.normal,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 20),
-                ElevateButtonCustomBorder(
-                    onChanged: ((value) {
-                      free(true);
+                  //     }),
+                  //     mensaje: "Gratuito 30 días"),
+                  // const SizedBox(height: 20),
+                  // _createButtonPremium(),
+                  ElevatedButton(
+                    style: styleColorClear(),
+                    onPressed: (() {
+                      _submit(false);
                     }),
-                    mensaje: "Continuar"),
-              ],
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.transparent,
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(100)),
+                        border: Border.all(color: ColorPalette.principal),
+                      ),
+                      height: 42,
+                      width: 250,
+                      child: Center(
+                        child: Text(
+                          "Prueba Premium gratis 30 días",
+                          style: GoogleFonts.barlow(
+                            fontSize: 16.0,
+                            wordSpacing: 1,
+                            letterSpacing: 0.005,
+                            fontWeight: FontWeight.w700,
+                            color: Colors.white,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  ElevateButtonCustomBorder(
+                      onChanged: ((value) {
+                        free(true);
+                      }),
+                      mensaje: "Continuar"),
+                ],
+              ),
             ),
-          ],
+          ),
         ),
       ),
     );
@@ -349,6 +359,9 @@ class _UserConfigPageState2 extends State<UserConfigPage2> {
       },
       child: Container(
         decoration: BoxDecoration(
+          border: Border.all(
+            width: 1,
+          ),
           gradient: linerGradientButtonFilling(),
           borderRadius: const BorderRadius.all(Radius.circular(100)),
         ),
@@ -357,7 +370,7 @@ class _UserConfigPageState2 extends State<UserConfigPage2> {
         child: Center(
           child: Text(
             "Gratuito 30 días",
-            style: textBold16White(),
+            style: textNormal16White(),
           ),
         ),
       ),
@@ -369,7 +382,7 @@ class _UserConfigPageState2 extends State<UserConfigPage2> {
       updateFirebaseToken();
 
       var premiumController = Get.put(PremiumController());
-      premiumController.updatePremiumAPIFree(!isFree);
+      premiumController.updatePremiumAPI(!isFree);
       _prefs.setUserFree = true;
       _prefs.setUserPremium = false;
       if (!isFree) {
@@ -403,8 +416,8 @@ class _UserConfigPageState2 extends State<UserConfigPage2> {
           MaterialPageRoute(
             builder: (context) => const PremiumPage(
                 isFreeTrial: false,
-                img: 'pantalla3.png',
-                title: Constant.premiumFallTitle,
+                img: 'pantalla5.png',
+                title: Constant.premiumTitle,
                 subtitle: ''),
           ),
         ).then(
@@ -413,7 +426,7 @@ class _UserConfigPageState2 extends State<UserConfigPage2> {
               _prefs.setUserPremium = true;
               _prefs.setUserFree = false;
               var premiumController = Get.put(PremiumController());
-              premiumController.updatePremiumAPIFree(true);
+              premiumController.updatePremiumAPI(true);
               Get.off(
                 () => UseMobilePage(userbd: userbd!),
               );

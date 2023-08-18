@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
@@ -13,11 +11,9 @@ import 'package:ifeelefine/Page/UserRest/Controller/userRestController.dart';
 import 'package:ifeelefine/Provider/prefencesUser.dart';
 import 'package:jiffy/jiffy.dart';
 
-import '../Model/activitydaybd.dart';
 import '../Model/logActivity.dart';
 import '../Page/AddActivityPage/Controller/addActivityController.dart';
 import '../Page/EditUseMobil/Controller/editUseController.dart';
-import 'Constant.dart';
 
 class Habits {
   final _prefs = PreferenceUser();
@@ -152,7 +148,8 @@ class Habits {
   }
 
   void updateUseTimeBD(BuildContext context, String time) {
-    final EditUseMobilController editUseMobilVC = Get.put(EditUseMobilController());
+    final EditUseMobilController editUseMobilVC =
+        Get.put(EditUseMobilController());
 
     editUseMobilVC.saveTimeUseMobileFromHabits(context, time);
   }

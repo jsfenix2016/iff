@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ifeelefine/Common/Constant.dart';
 import 'package:ifeelefine/Common/manager_alerts.dart';
+import 'package:ifeelefine/Common/text_style_font.dart';
 import 'package:ifeelefine/Model/contactZoneRiskBD.dart';
 import 'package:ifeelefine/Page/Premium/PageView/premium_page.dart';
 
@@ -138,8 +139,11 @@ class _PushAlertPageState extends State<PushAlertPage> {
       child: Scaffold(
         appBar: isMenu
             ? AppBar(
-                backgroundColor: Colors.black,
-                title: const Text('Alerta zona de riesgo'),
+                backgroundColor: Colors.brown,
+                title: Text(
+                  "Alerta zona de riesgo",
+                  style: textForTitleApp(),
+                ),
               )
             : null,
         body: GestureDetector(
@@ -165,7 +169,7 @@ class _PushAlertPageState extends State<PushAlertPage> {
             }
           },
           child: Container(
-            decoration: decorationCustom(),
+            decoration: decorationCustomPush(),
             width: size.width,
             height: size.height,
             child: Stack(
@@ -186,8 +190,7 @@ class _PushAlertPageState extends State<PushAlertPage> {
                 ),
                 Positioned(
                   top: 100,
-                  child: Column(
-                    mainAxisSize: MainAxisSize.max,
+                  child: Stack(
                     children: [
                       SizedBox(
                         height: 347,
@@ -198,6 +201,26 @@ class _PushAlertPageState extends State<PushAlertPage> {
                           'assets/images/alertButton.png',
                           height: 340,
                           width: 340,
+                          opacity: const AlwaysStoppedAnimation(.3),
+                        ),
+                      ),
+                      SizedBox(
+                        height: 347,
+                        width: size.width,
+                        child: Padding(
+                          padding: const EdgeInsets.all(80.0),
+                          child: SizedBox(
+                            height: 204,
+                            width: 200,
+                            child: Image.asset(
+                              fit: BoxFit.fill,
+                              scale: 0.5,
+                              'assets/images/Ellipse 198.png',
+                              height: 340,
+                              width: 340,
+                              opacity: const AlwaysStoppedAnimation(.3),
+                            ),
+                          ),
                         ),
                       ),
                     ],
@@ -221,7 +244,7 @@ class _PushAlertPageState extends State<PushAlertPage> {
                             wordSpacing: 1,
                             letterSpacing: 1.2,
                             fontWeight: FontWeight.bold,
-                            color: const Color.fromRGBO(75, 72, 72, 1),
+                            color: const Color.fromRGBO(75, 72, 72, 0.3),
                           ),
                         ),
                       ),

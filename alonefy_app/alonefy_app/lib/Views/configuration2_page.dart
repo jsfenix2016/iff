@@ -1,9 +1,5 @@
-import 'dart:convert';
-import 'dart:io';
 import 'dart:async';
 
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ifeelefine/Common/Constant.dart';
 import 'package:ifeelefine/Common/button_style_custom.dart';
@@ -17,16 +13,15 @@ import 'package:ifeelefine/Page/UseMobil/PageView/configurationUseMobile_page.da
 import 'package:ifeelefine/Page/UserConfig/Controller/userConfigController.dart';
 import 'package:ifeelefine/Utils/Widgets/CustomDropdownMaritalState.dart';
 import 'package:ifeelefine/Utils/Widgets/CustomDropdownStylelive.dart';
-import 'package:ifeelefine/Utils/Widgets/customDropDown.dart';
-import 'package:ifeelefine/Utils/Widgets/datepickerwidget.dart';
+
 import 'package:ifeelefine/Utils/Widgets/elevateButtonCustomBorder.dart';
-import 'package:ifeelefine/Views/protectuser_page.dart';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:image_picker/image_picker.dart';
+
 import 'package:country_state_city_picker/model/select_status_model.dart'
     as StatusModel;
-import 'package:uuid/uuid.dart';
+
 import 'package:ifeelefine/Common/decoration_custom.dart';
 
 // ignore: use_key_in_widget_constructors

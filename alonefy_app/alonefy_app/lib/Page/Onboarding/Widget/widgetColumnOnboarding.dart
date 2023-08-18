@@ -59,19 +59,19 @@ class _WidgetColumnOnboardingState extends State<WidgetColumnOnboarding> {
                       tileMode: TileMode.mirror,
                     ),
                   ),
-                  height: 250,
+                  height: 300,
                   width: constraints.maxWidth,
                   child: Padding(
                     padding:
-                        const EdgeInsets.only(top: 38.0, left: 32, right: 32),
+                        const EdgeInsets.only(top: 80.0, left: 44, right: 44),
                     child: Text(
                       widget.title,
                       textAlign: TextAlign.center,
                       style: GoogleFonts.barlow(
                         fontSize: fontSize,
-                        wordSpacing: 1,
+                        wordSpacing: 2,
                         letterSpacing: 1.2,
-                        fontWeight: FontWeight.bold,
+                        fontWeight: FontWeight.w700,
                         color: ColorPalette.principal,
                       ),
                     ),
@@ -86,7 +86,7 @@ class _WidgetColumnOnboardingState extends State<WidgetColumnOnboarding> {
                         begin: Alignment.topCenter,
                         end: const Alignment(0, 1),
                         colors: <Color>[
-                          ColorPalette.secondView.withAlpha(300),
+                          ColorPalette.secondView.withAlpha(10),
                           ColorPalette.secondView,
                           Colors.black,
                         ],
@@ -96,15 +96,15 @@ class _WidgetColumnOnboardingState extends State<WidgetColumnOnboarding> {
                     width: double.infinity,
                     child: Padding(
                       padding: const EdgeInsets.only(
-                          bottom: 18.0, left: 18, right: 18),
+                          bottom: 18.0, left: 24, right: 24),
                       child: Text(
                         widget.subtitle,
                         textAlign: TextAlign.center,
                         style: GoogleFonts.barlow(
                           fontSize: 26.0,
                           wordSpacing: 1,
-                          letterSpacing: 1,
-                          fontWeight: FontWeight.normal,
+                          letterSpacing: 0.001,
+                          fontWeight: FontWeight.w500,
                           color: Colors.white,
                         ),
                       ),

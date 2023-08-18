@@ -2,6 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ifeelefine/Common/manager_alerts.dart';
+import 'package:ifeelefine/Common/notificationService.dart';
+import 'package:ifeelefine/Common/text_style_font.dart';
 import 'package:ifeelefine/Common/utils.dart';
 import 'package:ifeelefine/Model/restday.dart';
 import 'package:ifeelefine/Page/Disamble/Controller/disambleController.dart';
@@ -76,12 +78,15 @@ class _DesactivePageState extends State<DesactivePage> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-
+    RedirectViewNotifier.setContext(context);
     return Scaffold(
       extendBodyBehindAppBar: false,
       appBar: AppBar(
-        backgroundColor: ColorPalette.backgroundAppBar,
-        title: const Text("Configuración"),
+        backgroundColor: Colors.brown,
+        title: Text(
+          "Configuración",
+          style: textForTitleApp(),
+        ),
       ),
       body: Container(
           decoration: decorationCustom(),

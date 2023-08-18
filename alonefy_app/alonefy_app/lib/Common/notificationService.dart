@@ -18,7 +18,10 @@ import 'package:ifeelefine/Page/Premium/PageView/premium_moths_free.dart';
 import 'package:ifeelefine/Page/Premium/PageView/premium_page.dart';
 import 'package:ifeelefine/Page/Risk/DateRisk/Controller/editRiskController.dart';
 import 'package:ifeelefine/Page/Risk/DateRisk/Pageview/cancelDatePage.dart';
+import 'package:ifeelefine/Provider/prefencesUser.dart';
 import 'package:ifeelefine/main.dart';
+
+PreferenceUser prefs = PreferenceUser();
 
 class RedirectViewNotifier with ChangeNotifier {
   static BuildContext? context;
@@ -52,17 +55,14 @@ class RedirectViewNotifier with ChangeNotifier {
 
   static Future<void> onTapPremiumNotification(
       NotificationResponse? response) async {
-    if (RedirectViewNotifier.context == null || response?.payload == null)
-      return;
-
     await inicializeHiveBD();
     await Navigator.push(
       RedirectViewNotifier.context!,
       MaterialPageRoute(
         builder: (context) => const PremiumPage(
             isFreeTrial: false,
-            img: 'pantalla3.png',
-            title: "Prueba la versión gratuita por 30 días",
+            img: 'Pantalla5.png',
+            title: "Prueba la versión gratuita por 30 días y siente protegido",
             subtitle: ''),
       ),
     ).then((value) {
@@ -75,16 +75,15 @@ class RedirectViewNotifier with ChangeNotifier {
 
   static Future<void> onTapFreeNotification(
       NotificationResponse? response) async {
-    if (RedirectViewNotifier.context == null || response?.payload == null)
-      return;
+    if (RedirectViewNotifier.context == null) return;
 
     await inicializeHiveBD();
     await Navigator.push(
       RedirectViewNotifier.context!,
       MaterialPageRoute(
         builder: (context) => const PremiumMothFree(
-            img: 'pantalla3.png',
-            title: "Prueba la versión gratuita por 30 días",
+            img: 'Pantalla5.png',
+            title: "Prueba la versión gratuita por 30 días y siente protegido",
             subtitle: ''),
       ),
     ).then((value) {
@@ -92,7 +91,8 @@ class RedirectViewNotifier with ChangeNotifier {
         Navigator.of(context!).pop();
       }
     });
-    //
+    // await flutterLocalNotificationsPlugin.cancel(12,
+    //     tag: response!.actionId.toString());
   }
 
   static Future<void> manageNotifications(RemoteMessage message) async {
@@ -141,55 +141,76 @@ class RedirectViewNotifier with ChangeNotifier {
   }
 
   static Future<void> showHelpNotification(RemoteMessage message) async {
-    // RemoteNotification? notification = message.notification;
+    /// OPTIONAL, using custom notification channel id
 
     String? taskIds = message.data['task_ids']; //getTaskIds(message.data);
     String? title = message.data['title'];
     String? body = message.data['body'];
     taskIds ??= "";
 
-    await flutterLocalNotificationsPlugin.show(
+    PreferenceUser prefs = PreferenceUser();
+    await prefs.initPrefs();
+    String sound = prefs.getNotificationAudio;
+
+    FlutterLocalNotificationsPlugin notifications =
+        FlutterLocalNotificationsPlugin();
+
+    var initializationSettingsAndroid =
+        const AndroidInitializationSettings('@mipmap/logo_alertfriends_v2');
+
+    var initializationSettings =
+        InitializationSettings(android: initializationSettingsAndroid);
+    await notifications.initialize(initializationSettings);
+    var androidPlatformChannelSpecifics = AndroidNotificationDetails(
+      sound, // id
+      'AlertFriends – PERSONAL PROTECTION', // title
+      icon: '@mipmap/logo_alertfriends_v2',
+      color: ColorPalette.principal,
+      importance: Importance.high,
+
+      priority: Priority.high,
+      showWhen: false,
+      playSound: true,
+
+      enableLights: true,
+
+      enableVibration: true,
+      channelShowBadge: true,
+      fullScreenIntent: true,
+      audioAttributesUsage: AudioAttributesUsage.notificationRingtone,
+      // visibility: NotificationVisibility.public,
+      largeIcon:
+          const DrawableResourceAndroidBitmap('@mipmap/logo_alertfriends_v2'),
+      sound: RawResourceAndroidNotificationSound(sound),
+
+      actions: <AndroidNotificationAction>[
+        AndroidNotificationAction(
+          "helpID_$taskIds",
+          "AYUDA",
+          icon: const DrawableResourceAndroidBitmap(
+              '@mipmap/logo_alertfriends_v2'),
+          showsUserInterface: true,
+          cancelNotification: true,
+        ),
+        AndroidNotificationAction(
+          "imgoodId_$taskIds",
+          "ESTOY BIEN",
+          icon: const DrawableResourceAndroidBitmap(
+              '@mipmap/logo_alertfriends_v2'),
+          showsUserInterface: true,
+          cancelNotification: true,
+        ),
+      ],
+    );
+
+    var platformChannelSpecifics =
+        NotificationDetails(android: androidPlatformChannelSpecifics);
+
+    await notifications.show(
       0,
       title,
       body,
-      NotificationDetails(
-        android: AndroidNotificationDetails(
-          '0',
-          'MY FOREGROUND SERVICE',
-          icon: '@mipmap/logo_alertfriends',
-          color: ColorPalette.principal,
-          importance: Importance.high,
-          ongoing: true,
-          enableLights: true,
-          playSound: true,
-          enableVibration: true,
-          channelShowBadge: false,
-          priority: Priority.high,
-
-          largeIcon:
-              const DrawableResourceAndroidBitmap('@mipmap/logo_alertfriends'),
-          // sound: RawResourceAndroidNotificationSound(
-          //     "content://media/internal/audio/media/26.wav"),
-          actions: <AndroidNotificationAction>[
-            AndroidNotificationAction(
-              "helpID_$taskIds",
-              "AYUDA",
-              icon: const DrawableResourceAndroidBitmap(
-                  '@mipmap/logo_alertfriends'),
-              showsUserInterface: true,
-              cancelNotification: true,
-            ),
-            AndroidNotificationAction(
-              "imgoodId_$taskIds",
-              "ESTOY BIEN",
-              icon: const DrawableResourceAndroidBitmap(
-                  '@mipmap/logo_alertfriends'),
-              showsUserInterface: true,
-              cancelNotification: true,
-            ),
-          ],
-        ),
-      ),
+      platformChannelSpecifics,
       payload: 'Inactived_$taskIds',
     );
   }
@@ -199,28 +220,43 @@ class RedirectViewNotifier with ChangeNotifier {
     // RemoteNotification? notification = message.notification;
     String? title = message.data['title'];
     String? body = message.data['body'];
-    await flutterLocalNotificationsPlugin.show(
-      20,
+    PreferenceUser prefs = PreferenceUser();
+    await prefs.initPrefs();
+    String sound = prefs.getNotificationAudio;
+
+    FlutterLocalNotificationsPlugin notifications =
+        FlutterLocalNotificationsPlugin();
+
+    var initializationSettingsAndroid =
+        const AndroidInitializationSettings('@mipmap/logo_alertfriends_v2');
+
+    var initializationSettings =
+        InitializationSettings(android: initializationSettingsAndroid);
+    await notifications.initialize(initializationSettings);
+
+    var platformChannelSpecifics = NotificationDetails(
+      android: AndroidNotificationDetails(
+        sound,
+        'SendToContact',
+        icon: '@mipmap/logo_alertfriends_v2',
+        color: ColorPalette.principal,
+        importance: Importance.high,
+        enableLights: true,
+        playSound: true,
+        enableVibration: true,
+        channelShowBadge: false,
+        priority: Priority.high,
+        largeIcon:
+            const DrawableResourceAndroidBitmap('@mipmap/logo_alertfriends_v2'),
+        sound: RawResourceAndroidNotificationSound(sound),
+      ),
+    );
+
+    await notifications.show(
+      0,
       title,
       body,
-      const NotificationDetails(
-        android: AndroidNotificationDetails(
-          '20',
-          'MY FOREGROUND SERVICE',
-          icon: '@mipmap/logo_alertfriends',
-          color: ColorPalette.principal,
-          importance: Importance.high,
-          ongoing: false,
-          enableLights: true,
-          playSound: true,
-          enableVibration: true,
-          channelShowBadge: false,
-          priority: Priority.high,
-          largeIcon: DrawableResourceAndroidBitmap('@mipmap/logo_alertfriends'),
-          // sound: RawResourceAndroidNotificationSound(
-          //     "content://media/internal/audio/media/26.wav"),
-        ),
-      ),
+      platformChannelSpecifics,
       payload: 'SMS',
     );
   }
@@ -242,30 +278,49 @@ class RedirectViewNotifier with ChangeNotifier {
     // RemoteNotification? notification = message.notification;
     String? title = message.data['title'];
     String? body = message.data['body'];
-    await flutterLocalNotificationsPlugin.show(
-      1,
+    PreferenceUser prefs = PreferenceUser();
+    await prefs.initPrefs();
+    String sound = prefs.getNotificationAudio;
+
+    FlutterLocalNotificationsPlugin notifications =
+        FlutterLocalNotificationsPlugin();
+
+    var initializationSettingsAndroid =
+        const AndroidInitializationSettings('@mipmap/logo_alertfriends_v2');
+
+    var initializationSettings =
+        InitializationSettings(android: initializationSettingsAndroid);
+    await notifications.initialize(initializationSettings);
+
+    var platformChannelSpecifics = NotificationDetails(
+      android: AndroidNotificationDetails(
+        sound,
+        'DateNotifications',
+        icon: '@mipmap/logo_alertfriends_v2',
+        color: ColorPalette.principal,
+        importance: Importance.max,
+        fullScreenIntent: true,
+        audioAttributesUsage: AudioAttributesUsage.notificationRingtone,
+
+        enableLights: true,
+        playSound: true,
+        enableVibration: true,
+        channelShowBadge: false,
+        visibility: NotificationVisibility.public,
+        //groupAlertBehavior: GroupAlertBehavior.children,
+        priority: Priority.high,
+
+        largeIcon:
+            const DrawableResourceAndroidBitmap('@mipmap/logo_alertfriends_v2'),
+        sound: RawResourceAndroidNotificationSound(sound),
+      ),
+    );
+
+    await notifications.show(
+      0,
       title,
       body,
-      const NotificationDetails(
-        android: AndroidNotificationDetails(
-          '1',
-          'MY FOREGROUND SERVICE',
-          icon: '@mipmap/logo_alertfriends',
-          color: ColorPalette.principal,
-          importance: Importance.max,
-          ongoing: false,
-          enableLights: true,
-          playSound: true,
-          enableVibration: true,
-          channelShowBadge: false,
-          //groupAlertBehavior: GroupAlertBehavior.children,
-          priority: Priority.high,
-
-          largeIcon: DrawableResourceAndroidBitmap('@mipmap/logo_alertfriends'),
-          // sound: RawResourceAndroidNotificationSound(
-          //     "content://media/internal/audio/media/26.wav"),
-        ),
-      ),
+      platformChannelSpecifics,
       payload: 'DateRisk_',
     );
   }
@@ -278,50 +333,66 @@ class RedirectViewNotifier with ChangeNotifier {
     String? taskIds = message.data['task_ids'];
 
     taskIds ??= "";
+    PreferenceUser prefs = PreferenceUser();
+    await prefs.initPrefs();
+    String sound = prefs.getNotificationAudio;
 
-    await flutterLocalNotificationsPlugin.show(
-      2,
+    FlutterLocalNotificationsPlugin notifications =
+        FlutterLocalNotificationsPlugin();
+
+    var initializationSettingsAndroid =
+        const AndroidInitializationSettings('@mipmap/logo_alertfriends_v2');
+
+    var initializationSettings =
+        InitializationSettings(android: initializationSettingsAndroid);
+    await notifications.initialize(initializationSettings);
+
+    var platformChannelSpecifics = NotificationDetails(
+      android: AndroidNotificationDetails(
+        sound,
+        'DateFinish',
+        icon: '@mipmap/logo_alertfriends_v2',
+        color: ColorPalette.principal,
+        importance: Importance.max,
+        fullScreenIntent: true,
+        audioAttributesUsage: AudioAttributesUsage.notificationRingtone,
+        visibility: NotificationVisibility.public,
+        enableLights: true,
+        playSound: true,
+        enableVibration: true,
+        channelShowBadge: false,
+        // groupAlertBehavior: GroupAlertBehavior.children,
+        priority: Priority.high,
+
+        largeIcon:
+            const DrawableResourceAndroidBitmap('@mipmap/logo_alertfriends_v2'),
+        sound: RawResourceAndroidNotificationSound(sound),
+        actions: <AndroidNotificationAction>[
+          AndroidNotificationAction(
+            "dateHelp_$taskIds",
+            "AYUDA",
+            icon: const DrawableResourceAndroidBitmap(
+                '@mipmap/logo_alertfriends_v2'),
+            showsUserInterface: true,
+            cancelNotification: true,
+          ),
+          AndroidNotificationAction(
+            "dateImgood_${taskIds}id=$id",
+            "CANCELAR CITA",
+            icon: const DrawableResourceAndroidBitmap(
+                '@mipmap/logo_alertfriends_v2'),
+            showsUserInterface: true,
+            cancelNotification: true,
+          ),
+        ],
+      ),
+    );
+
+    await notifications.show(
+      0,
       title,
       body,
-      NotificationDetails(
-        android: AndroidNotificationDetails(
-          '2',
-          'MY FOREGROUND SERVICE',
-          icon: '@mipmap/logo_alertfriends',
-          color: ColorPalette.principal,
-          importance: Importance.max,
-          ongoing: false,
-          enableLights: true,
-          playSound: true,
-          enableVibration: true,
-          channelShowBadge: false,
-          // groupAlertBehavior: GroupAlertBehavior.children,
-          priority: Priority.high,
-
-          largeIcon:
-              const DrawableResourceAndroidBitmap('@mipmap/logo_alertfriends'),
-          // sound: RawResourceAndroidNotificationSound(
-          //     "content://media/internal/audio/media/26.wav"),
-          actions: <AndroidNotificationAction>[
-            AndroidNotificationAction(
-              "dateHelp_$taskIds",
-              "AYUDA",
-              icon: const DrawableResourceAndroidBitmap(
-                  '@mipmap/logo_alertfriends'),
-              showsUserInterface: true,
-              cancelNotification: true,
-            ),
-            AndroidNotificationAction(
-              "dateImgood_${taskIds}id=$id",
-              "CANCELAR CITA",
-              icon: const DrawableResourceAndroidBitmap(
-                  '@mipmap/logo_alertfriends'),
-              showsUserInterface: true,
-              cancelNotification: true,
-            ),
-          ],
-        ),
-      ),
+      platformChannelSpecifics,
       payload: 'DateRisk_${taskIds}id=$id',
     );
   }
@@ -331,28 +402,43 @@ class RedirectViewNotifier with ChangeNotifier {
     // RemoteNotification? notification = message.notification;
     String? title = message.data['title'];
     String? body = message.data['body'];
-    await flutterLocalNotificationsPlugin.show(
-      10,
+    PreferenceUser prefs = PreferenceUser();
+    await prefs.initPrefs();
+    String sound = prefs.getNotificationAudio;
+
+    FlutterLocalNotificationsPlugin notifications =
+        FlutterLocalNotificationsPlugin();
+
+    var initializationSettingsAndroid =
+        const AndroidInitializationSettings('@mipmap/logo_alertfriends_v2');
+
+    var initializationSettings =
+        InitializationSettings(android: initializationSettingsAndroid);
+    await notifications.initialize(initializationSettings);
+
+    var platformChannelSpecifics = NotificationDetails(
+      android: AndroidNotificationDetails(
+        sound,
+        'ContactResponse',
+        icon: '@mipmap/logo_alertfriends_v2',
+        color: ColorPalette.principal,
+        importance: Importance.high,
+        enableLights: true,
+        playSound: true,
+        enableVibration: true,
+        channelShowBadge: false,
+        priority: Priority.high,
+        largeIcon:
+            const DrawableResourceAndroidBitmap('@mipmap/logo_alertfriends_v2'),
+        sound: RawResourceAndroidNotificationSound(sound),
+      ),
+    );
+
+    await notifications.show(
+      0,
       title,
       body,
-      const NotificationDetails(
-        android: AndroidNotificationDetails(
-          '10',
-          'MY FOREGROUND SERVICE',
-          icon: '@mipmap/logo_alertfriends',
-          color: ColorPalette.principal,
-          importance: Importance.high,
-          ongoing: false,
-          enableLights: true,
-          playSound: true,
-          enableVibration: true,
-          channelShowBadge: false,
-          priority: Priority.high,
-          largeIcon: DrawableResourceAndroidBitmap('@mipmap/logo_alertfriends'),
-          // sound: RawResourceAndroidNotificationSound(
-          //     "content://media/internal/audio/media/26.wav"),
-        ),
-      ),
+      platformChannelSpecifics,
       payload: 'ContactResponse',
     );
   }
@@ -367,24 +453,26 @@ class RedirectViewNotifier with ChangeNotifier {
       const NotificationDetails(
         android: AndroidNotificationDetails(
           '11',
-          'MY FOREGROUND SERVICE',
-          icon: '@mipmap/logo_alertfriends',
+          'free',
+          icon: '@mipmap/logo_alertfriends_v2',
           color: ColorPalette.principal,
 
           importance: Importance.max,
-          ongoing: false,
+
           enableLights: true,
           playSound: true,
           enableVibration: true,
           channelShowBadge: false,
           priority: Priority.high,
 
-          largeIcon: DrawableResourceAndroidBitmap('@mipmap/logo_alertfriends'),
+          largeIcon:
+              DrawableResourceAndroidBitmap('@mipmap/logo_alertfriends_v2'),
           actions: <AndroidNotificationAction>[
             AndroidNotificationAction(
               "ok",
               "Probar",
-              icon: DrawableResourceAndroidBitmap('@mipmap/logo_alertfriends'),
+              icon:
+                  DrawableResourceAndroidBitmap('@mipmap/logo_alertfriends_v2'),
               showsUserInterface: true,
               cancelNotification: true,
             ),
@@ -407,24 +495,26 @@ class RedirectViewNotifier with ChangeNotifier {
       const NotificationDetails(
         android: AndroidNotificationDetails(
           '12',
-          'MY FOREGROUND SERVICE',
-          icon: '@mipmap/logo_alertfriends',
+          'premium',
+          icon: '@mipmap/logo_alertfriends_v2',
           color: ColorPalette.principal,
 
           importance: Importance.max,
-          ongoing: false,
+
           enableLights: true,
           playSound: true,
           enableVibration: true,
           channelShowBadge: false,
           priority: Priority.high,
 
-          largeIcon: DrawableResourceAndroidBitmap('@mipmap/logo_alertfriends'),
+          largeIcon:
+              DrawableResourceAndroidBitmap('@mipmap/logo_alertfriends_v2'),
           actions: <AndroidNotificationAction>[
             AndroidNotificationAction(
               "premium",
               "Prmium",
-              icon: DrawableResourceAndroidBitmap('@mipmap/logo_alertfriends'),
+              icon:
+                  DrawableResourceAndroidBitmap('@mipmap/logo_alertfriends_v2'),
               showsUserInterface: true,
               cancelNotification: true,
             ),

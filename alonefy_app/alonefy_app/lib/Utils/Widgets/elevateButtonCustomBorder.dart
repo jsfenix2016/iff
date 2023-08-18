@@ -37,7 +37,7 @@ class _ElevateButtonCustomBorderState extends State<ElevateButtonCustomBorder> {
         decoration: BoxDecoration(
           color: Colors.transparent,
           borderRadius: const BorderRadius.all(Radius.circular(100)),
-          border: Border.all(color: ColorPalette.principal),
+          border: Border.all(color: ColorPalette.principal, width: 1),
         ),
         height: 42,
         width: 200,
@@ -48,7 +48,7 @@ class _ElevateButtonCustomBorderState extends State<ElevateButtonCustomBorder> {
               fontSize: 16.0,
               wordSpacing: 1,
               letterSpacing: 0.005,
-              fontWeight: FontWeight.normal,
+              fontWeight: FontWeight.w700,
               color: Colors.white,
             ),
           ),

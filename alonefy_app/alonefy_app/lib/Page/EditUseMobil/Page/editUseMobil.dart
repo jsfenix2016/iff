@@ -7,17 +7,22 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:ifeelefine/Common/Constant.dart';
 import 'package:ifeelefine/Common/colorsPalette.dart';
 import 'package:ifeelefine/Common/manager_alerts.dart';
-import 'package:ifeelefine/Data/hive_data.dart';
+import 'package:ifeelefine/Common/notificationService.dart';
+import 'package:ifeelefine/Common/text_style_font.dart';
+import 'package:ifeelefine/Common/utils.dart';
+
 import 'package:hive_flutter/hive_flutter.dart';
 
 import 'package:ifeelefine/Model/useMobilbd.dart';
 import 'package:ifeelefine/Page/EditUseMobil/Controller/editUseController.dart';
 import 'package:ifeelefine/Page/EditUseMobil/Page/Widget/listWeekDayCustom.dart';
-
-import 'package:ifeelefine/Utils/Widgets/elevateButtonCustomBorder.dart';
+import 'package:ifeelefine/Page/Premium/Controller/premium_controller.dart';
+import 'package:ifeelefine/Page/UserRest/Widgets/row_buttons_when_menu.dart';
 
 import 'package:collection/collection.dart';
-import 'package:ifeelefine/Utils/Widgets/loading_page.dart';
+
+import 'package:jiffy/jiffy.dart';
+import 'package:slidable_button/slidable_button.dart';
 
 import '../../../Provider/prefencesUser.dart';
 import '../../Premium/PageView/premium_page.dart';
@@ -177,6 +182,7 @@ class _EditUseMobilPageState extends State<EditUseMobilPage> {
       }
       var a = {"${noSelectDay - 1}": sortWeekdays(newRestDays)};
       groupedProducts.addAll(a);
+      setState(() {});
       Future.sync(() => {
             showSaveAlert(context, Constant.info, "Faltan días por seleccionar")
           });
@@ -187,14 +193,17 @@ class _EditUseMobilPageState extends State<EditUseMobilPage> {
           MaterialPageRoute(
             builder: (context) => const PremiumPage(
                 isFreeTrial: false,
-                img: 'pantalla3.png',
-                title: Constant.premiumFallTitle,
+                img: 'pantalla1.jpg',
+                title: Constant.premiumChangeTimeTitle,
                 subtitle: ''),
           ),
         ).then((value) {
           if (value != null && value) {
             _prefs.setUserPremium = true;
             _prefs.setUserFree = false;
+            var premiumController = Get.put(PremiumController());
+            premiumController.updatePremiumAPI(true);
+
             saveChange();
           }
         });
@@ -217,156 +226,318 @@ class _EditUseMobilPageState extends State<EditUseMobilPage> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
+    RedirectViewNotifier.setContext(context);
     return Scaffold(
       key: scaffoldKey,
       extendBodyBehindAppBar: true,
       appBar: AppBar(
-        backgroundColor: ColorPalette.secondView,
-        title: const Text('Tiempo de uso'),
+        backgroundColor: Colors.brown,
+        title: Text(
+          "Configuración",
+          style: textForTitleApp(),
+        ),
       ),
       body: Container(
         decoration: decorationCustom(),
         width: size.width,
         height: size.height,
-        child: ListView(
-          children: [
-            const SizedBox(
-              height: 10,
-            ),
-            for (var indexGroup = 0;
-                indexGroup <= groupedProducts.length - 1;
-                indexGroup++)
-              Container(
-                key: Key(indexGroup.toString()),
-                color: Colors.transparent,
-                width: size.width,
-                height: 210,
-                child: ListView.builder(
-                  key: Key(indexGroup.toString()),
-                  shrinkWrap: true,
-                  scrollDirection: Axis.vertical,
-                  physics: const NeverScrollableScrollPhysics(),
-                  itemCount: 1,
-                  itemBuilder: (context, indexList) {
-                    final scrollController = FixedExtentScrollController(
-                      initialItem: timeDic.values.toList().indexOf(
-                            groupedProducts.entries
-                                .toList()[indexGroup]
-                                .value
-                                .first
-                                .time,
-                          ),
-                    );
-
-                    return Column(
-                      mainAxisSize: MainAxisSize.max,
-                      key: Key(indexList.toString()),
-                      children: [
-                        ListWeekDayCustom(
-                          listRest: selecListUseMobilDays,
-                          newIndex: indexGroup,
-                          onChanged: (value) async {
-                            indexFile = value;
-                            var temp = selecListUseMobilDays[value];
-                            temp.isSelect =
-                                (selecListUseMobilDays[value].isSelect == true)
-                                    ? false
-                                    : true;
-                            temp.selection = indexGroup;
-                            indexSelect = indexGroup;
-                            selecListUseMobilDays.removeAt(value);
-                            selecListUseMobilDays.insert(value, temp);
-                          },
-                          model: selecListUseMobilDays[indexList],
+        child: Container(
+          width: size.width,
+          height: size.height,
+          child: Stack(
+            children: [
+              ListView(
+                children: [
+                  const SizedBox(
+                    height: 30,
+                  ),
+                  Container(
+                    color: Colors.transparent,
+                    child: Center(
+                      child: Text(
+                        "Tiempo de uso",
+                        style: GoogleFonts.barlow(
+                          fontSize: 24.0,
+                          wordSpacing: 1,
+                          letterSpacing: 0.001,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.white,
                         ),
-                        Container(
-                          height: 200,
-                          color: Colors.transparent,
-                          child: SizedBox(
-                            width: 200,
-                            height: 90,
-                            child: Stack(
-                              children: [
-                                if (_prefs.getUserPremium) ...[
-                                  _getCupertinoPicker(
-                                      indexList, indexGroup, scrollController),
-                                ] else ...[
-                                  GestureDetector(
-                                    child: AbsorbPointer(
-                                        absorbing: !_prefs.getUserPremium,
-                                        child: _getCupertinoPicker(
-                                            indexList,
-                                            indexGroup,
-                                            FixedExtentScrollController(
-                                                initialItem: 1))),
-                                    onVerticalDragEnd: (drag) {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                                const PremiumPage(
-                                                    isFreeTrial: false,
-                                                    img: 'pantalla3.png',
-                                                    title: Constant
-                                                        .premiumUseTimeTitle,
-                                                    subtitle: '')),
-                                      ).then(
-                                        (value) {
-                                          if (value != null && value) {
-                                            _prefs.setUserPremium = true;
-                                            _prefs.setUserFree = false;
-                                          }
-                                        },
-                                      );
-                                    },
+                      ),
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 30,
+                  ),
+                  for (var indexGroup = 0;
+                      indexGroup <= groupedProducts.length - 1;
+                      indexGroup++)
+                    Container(
+                      key: Key(indexGroup.toString()),
+                      color: Colors.transparent,
+                      width: size.width,
+                      height: 210,
+                      child: ListView.builder(
+                        key: Key(indexGroup.toString()),
+                        shrinkWrap: true,
+                        scrollDirection: Axis.vertical,
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemCount: 1,
+                        itemBuilder: (context, indexList) {
+                          final scrollController = FixedExtentScrollController(
+                            initialItem: timeDic.values.toList().indexOf(
+                                  groupedProducts.entries
+                                      .toList()[indexGroup]
+                                      .value
+                                      .first
+                                      .time,
+                                ),
+                          );
+
+                          return Column(
+                            mainAxisSize: MainAxisSize.max,
+                            key: Key(indexList.toString()),
+                            children: [
+                              ListWeekDayCustom(
+                                listRest: selecListUseMobilDays,
+                                newIndex: indexGroup,
+                                onChanged: (value) async {
+                                  indexFile = value;
+                                  var temp = selecListUseMobilDays[value];
+                                  temp.isSelect =
+                                      (selecListUseMobilDays[value].isSelect ==
+                                              true)
+                                          ? false
+                                          : true;
+                                  temp.selection = indexGroup;
+                                  indexSelect = indexGroup;
+                                  selecListUseMobilDays.removeAt(value);
+                                  selecListUseMobilDays.insert(value, temp);
+                                },
+                                model: selecListUseMobilDays[indexList],
+                              ),
+                              Container(
+                                height: 200,
+                                color: Colors.transparent,
+                                child: SizedBox(
+                                  width: 200,
+                                  height: 90,
+                                  child: Stack(
+                                    children: [
+                                      if (_prefs.getUserPremium) ...[
+                                        _getCupertinoPicker(indexList,
+                                            indexGroup, scrollController),
+                                      ] else ...[
+                                        GestureDetector(
+                                          child: AbsorbPointer(
+                                              absorbing: !_prefs.getUserPremium,
+                                              child: _getCupertinoPicker(
+                                                  indexList,
+                                                  indexGroup,
+                                                  FixedExtentScrollController(
+                                                      initialItem: 1))),
+                                          onVerticalDragEnd: (drag) {
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      const PremiumPage(
+                                                          isFreeTrial: false,
+                                                          img: 'pantalla1.jpg',
+                                                          title: Constant
+                                                              .premiumUseTimeTitle,
+                                                          subtitle: '')),
+                                            ).then(
+                                              (value) {
+                                                if (value != null && value) {
+                                                  _prefs.setUserPremium = true;
+                                                  _prefs.setUserFree = false;
+                                                  var premiumController =
+                                                      Get.put(
+                                                          PremiumController());
+                                                  premiumController
+                                                      .updatePremiumAPI(true);
+                                                }
+                                              },
+                                            );
+                                          },
+                                        ),
+                                      ],
+                                    ],
                                   ),
-                                ],
+                                ),
+                              ),
+                            ],
+                          );
+                        },
+                      ),
+                    ),
+                ],
+              ),
+              Positioned(
+                bottom: 50,
+                child: Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(left: 20.0, right: 20.0),
+                      child: Container(
+                        decoration: const BoxDecoration(
+                          gradient: LinearGradient(
+                            begin: Alignment.centerLeft,
+                            end: Alignment.centerRight,
+                            colors: [
+                              Color(
+                                  0xFFCA9D0B), // El color #CA9D0B en formato ARGB (Alpha, Rojo, Verde, Azul)
+                              Color(
+                                  0xFFDBB12A), // El color #DBB12A en formato ARGB (Alpha, Rojo, Verde, Azul)
+                            ],
+                            stops: [
+                              0.1425,
+                              0.9594
+                            ], // Puedes ajustar estos valores para cambiar la ubicación de los colores en el gradiente
+                            transform: GradientRotation(92.66 *
+                                (3.14159265359 /
+                                    180)), // Convierte el ángulo a radianes para Flutter
+                          ),
+                        ),
+                        child: HorizontalSlidableButton(
+                          isRestart: true,
+                          borderRadius:
+                              const BorderRadius.all(Radius.circular(2)),
+                          height: 55,
+                          width: 296,
+                          buttonWidth: 60.0,
+                          // color: ColorPalette.principal,
+                          buttonColor: const Color.fromRGBO(157, 123, 13, 1),
+                          dismissible: false,
+                          label: Image.asset(
+                            scale: 1,
+                            fit: BoxFit.fill,
+                            'assets/images/Group 969.png',
+                            height: 13,
+                            width: 21,
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.only(left: 40.0),
+                                  child: Center(
+                                    child: Text(
+                                      'Aprender de mis hábitos',
+                                      textAlign: TextAlign.center,
+                                      style: textBold16Black(),
+                                    ),
+                                  ),
+                                ),
                               ],
                             ),
                           ),
+                          onChanged: (position) async {
+                            await Jiffy.locale('es');
+                            var datetime = DateTime.now();
+                            var strDatetime =
+                                Jiffy(datetime).format(getDefaultPattern());
+
+                            setState(
+                              () async {
+                                if (position == SlidableButtonPosition.end) {
+                                  if (_prefs.getUserFree &&
+                                      !_prefs.getUserPremium) {
+                                    await Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => const PremiumPage(
+                                            isFreeTrial: false,
+                                            img: 'Pantalla5.jpg',
+                                            title:
+                                                'Protege tu Seguridad Personal las 24h:\n\n',
+                                            subtitle:
+                                                'Activa detección de hábitos'),
+                                      ),
+                                    ).then(
+                                      (value) {
+                                        if (value != null && value) {
+                                          _prefs.setUserFree = false;
+                                          _prefs.setUserPremium = true;
+                                          _prefs.setHabitsEnable = true;
+                                          _prefs.setHabitsRefresh = strDatetime;
+                                          var premiumController =
+                                              Get.put(PremiumController());
+                                          premiumController
+                                              .updatePremiumAPI(true);
+                                        }
+                                      },
+                                    );
+                                  }
+                                }
+                              },
+                            );
+                          },
                         ),
-                      ],
-                    );
-                  },
+                      ),
+                    ),
+                    SizedBox(
+                      height: 40,
+                    ),
+                    RowButtonsWhenMenu(
+                      onCancel: (bool) {
+                        setState(() {
+                          Navigator.of(context).pop();
+                        });
+                      },
+                      onSave: (bool) {
+                        btnAdd();
+                      },
+                    ),
+                    // Row(
+                    //   children: [
+                    //     Container(
+                    //       color: Colors.transparent,
+                    //       height: 50,
+                    //       width: size.width / 2,
+                    //       child: SizedBox(
+                    //         width: size.width,
+                    //         child: Center(
+                    //           child: ElevateButtonCustomBorder(
+                    //             onChanged: (value) async {
+                    //               //btnCancel();
+                    //               setState(() {
+                    //                 Navigator.of(context).pop();
+                    //               });
+                    //             },
+                    //             mensaje: "Cancelar",
+                    //           ),
+                    //         ),
+                    //       ),
+                    //     ),
+                    //     Container(
+                    //       color: Colors.transparent,
+                    //       height: 50,
+                    //       width: size.width / 2,
+                    //       child: SizedBox(
+                    //         width: size.width,
+                    //         child: Center(
+                    //           child: ElevateButtonFilling(
+                    //             onChanged: (value) {
+                    //               btnAdd();
+                    //             },
+                    //             mensaje: Constant.saveBtn,
+                    //             showIcon: false,
+                    //             img: '',
+                    //           ),
+                    //         ),
+                    //       ),
+                    //     ),
+                    //   ],
+                    // ),
+                  ],
                 ),
               ),
-            Row(
-              children: [
-                Container(
-                  color: Colors.transparent,
-                  height: 50,
-                  width: size.width / 2,
-                  child: SizedBox(
-                    width: size.width,
-                    child: Center(
-                      child: ElevateButtonCustomBorder(
-                        onChanged: (value) async {
-                          //btnCancel();
-                        },
-                        mensaje: "Cancelar",
-                      ),
-                    ),
-                  ),
-                ),
-                Container(
-                  color: Colors.transparent,
-                  height: 50,
-                  width: size.width / 2,
-                  child: SizedBox(
-                    width: size.width,
-                    child: Center(
-                      child: ElevateButtonCustomBorder(
-                        onChanged: (value) {
-                          btnAdd();
-                        },
-                        mensaje: Constant.saveBtn,
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            )
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -375,6 +546,8 @@ class _EditUseMobilPageState extends State<EditUseMobilPage> {
   Widget _getCupertinoPicker(int indexList, int indexGroup,
       FixedExtentScrollController scrollController) {
     return CupertinoPicker(
+      selectionOverlay: const CupertinoPickerDefaultSelectionOverlay(
+          background: Colors.transparent),
       key: Key(indexList.toString()),
       scrollController: scrollController,
       backgroundColor: Colors.transparent,
@@ -398,10 +571,10 @@ class _EditUseMobilPageState extends State<EditUseMobilPage> {
                 timeDic.values.toList()[index],
                 textAlign: TextAlign.center,
                 style: GoogleFonts.barlow(
-                  fontSize: 36.0,
+                  fontSize: 30.0,
                   wordSpacing: 1,
                   letterSpacing: 0.001,
-                  fontWeight: FontWeight.bold,
+                  fontWeight: FontWeight.w700,
                   color: Colors.white,
                 ),
               ),

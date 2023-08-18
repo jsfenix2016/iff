@@ -4,10 +4,13 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ifeelefine/Common/Constant.dart';
 import 'package:ifeelefine/Common/colorsPalette.dart';
+import 'package:ifeelefine/Common/notificationService.dart';
+import 'package:ifeelefine/Common/text_style_font.dart';
 import 'package:ifeelefine/Common/utils.dart';
 import 'package:ifeelefine/Model/activitydaybd.dart';
 import 'package:ifeelefine/Page/Calendar/calendarPopup.dart';
 import 'package:ifeelefine/Page/FallDetected/Pageview/fall_activation_page.dart';
+import 'package:ifeelefine/Utils/Widgets/elevatedButtonFilling.dart';
 import 'package:ifeelefine/Utils/Widgets/widgetLogo.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:notification_center/notification_center.dart';
@@ -43,8 +46,8 @@ class _PreviewActivitiesByDateState extends State<PreviewActivitiesByDate>
     false
   ];
 
-  DateTime? _from = DateTime.now();
-  DateTime? _to = DateTime.now();
+  DateTime _from = DateTime.now();
+  DateTime _to = DateTime.now();
 
   var _rangeDateText = "";
 
@@ -59,14 +62,25 @@ class _PreviewActivitiesByDateState extends State<PreviewActivitiesByDate>
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    _from = DateTime(_from!.year, _from!.month, _from!.day);
-    _to = DateTime(_to!.year, _to!.month, _to!.day);
+    _from = DateTime(_from.year, _from.month, _from.day);
+    _to = DateTime(_to.year, _to.month, _to.day);
     init();
     updateRangeDateTextSelected();
     NotificationCenter()
         .subscribe('refreshPreviewActivities', refreshPreviewActivities);
 
     setState(() {});
+  }
+
+  @override
+  void didUpdateWidget(covariant PreviewActivitiesByDate oldWidget) {
+    // TODO: implement didUpdateWidget
+    _from = DateTime(_from.year, _from.month, _from.day);
+    _to = DateTime(_to.year, _to.month, _to.day);
+    NotificationCenter()
+        .subscribe('refreshPreviewActivities', refreshPreviewActivities);
+
+    super.didUpdateWidget(oldWidget);
   }
 
   Future refreshPreviewActivities() async {
@@ -95,11 +109,11 @@ class _PreviewActivitiesByDateState extends State<PreviewActivitiesByDate>
     _activitiesByDay.clear();
 
     if (_from != null && _to != null) {
-      daysBetweenToAndFrom = daysBetween(_from!, _to!);
+      daysBetweenToAndFrom = daysBetween(_from, _to);
     }
 
     for (var index = 0; index <= daysBetweenToAndFrom; index++) {
-      var currentDate = DateTime(_from!.year, _from!.month, _from!.day + index);
+      var currentDate = DateTime(_from.year, _from.month, _from.day + index);
 
       List<ActivityDay> activitiesByDay = [];
 
@@ -110,7 +124,7 @@ class _PreviewActivitiesByDateState extends State<PreviewActivitiesByDate>
             Jiffy(activity.dayFinish.toLowerCase(), 'EEEE, d MMMM yyyy');
 
         // Comprobar si la fecha actual (currentDate) está dentro del rango de fechas de la activity
-        if (endDate.isBefore(_from!) || startDate.isAfter(_to!)) {
+        if (endDate.isBefore(_from) || startDate.isAfter(_to)) {
         } else {
           var isDayRemoved = false;
 
@@ -320,8 +334,8 @@ class _PreviewActivitiesByDateState extends State<PreviewActivitiesByDate>
   }
 
   void updateRangeDateTime(RangeDateTime rangeDateTime) {
-    _from = rangeDateTime.from;
-    _to = rangeDateTime.to ?? rangeDateTime.from;
+    _from = rangeDateTime.from!;
+    _to = (rangeDateTime.to ?? rangeDateTime.from)!;
   }
 
   void updateRangeDateTextSelected() async {
@@ -366,58 +380,81 @@ class _PreviewActivitiesByDateState extends State<PreviewActivitiesByDate>
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
+    RedirectViewNotifier.setContext(context);
     return Scaffold(
       appBar: widget.isMenu
           ? AppBar(
-              backgroundColor: ColorPalette.backgroundAppBar,
-              title: Text("Configuración"),
+              backgroundColor: Colors.brown,
+              title: Text(
+                "Configuración",
+                style: textForTitleApp(),
+              ),
             )
           : null,
       body: Container(
           decoration: decorationCustom(),
           width: size.width,
           height: size.height,
-          child: Stack(
-            children: [
-              Column(
+          child: SafeArea(
+            child: SizedBox(
+              child: Stack(
+                alignment: Alignment.center,
                 children: [
-                  const WidgetLogoApp(),
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(32, 32, 32, 0),
-                    child:
-                        Text("¿En qué actividades no utilizas tu smartphone?",
+                  Column(
+                    children: [
+                      const SizedBox(height: 34),
+                      const WidgetLogoApp(),
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(32, 10, 32, 0),
+                        child: Text(
+                            "¿En que actividades no utilizas tu smartphone?",
                             textAlign: TextAlign.center,
                             style: GoogleFonts.barlow(
+                              height: 2,
                               fontSize: 24.0,
                               wordSpacing: 1,
-                              letterSpacing: 1.2,
+                              letterSpacing: 0.001,
                               fontWeight: FontWeight.w500,
                               color: ColorPalette.principal,
                             )),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(32, 8, 32, 0),
-                    child: Text(_activitiesNameText,
-                        textAlign: TextAlign.center,
-                        style: GoogleFonts.barlow(
-                          fontSize: 14.0,
-                          wordSpacing: 1,
-                          letterSpacing: 1.2,
-                          fontWeight: FontWeight.w500,
-                          color: ColorPalette.offWhite,
-                        )),
-                  ),
-                  Padding(
-                      padding: const EdgeInsets.fromLTRB(32, 20, 32, 0),
-                      child: Row(
-                        children: [
-                          Expanded(
-                              flex: 1,
-                              child: IconButton(
-                                icon: const Icon(
-                                  Icons.arrow_back_ios,
-                                  color: Colors.white,
-                                ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(32, 0, 32, 0),
+                        child: Text(
+                          _activitiesNameText,
+                          textAlign: TextAlign.center,
+                          style: GoogleFonts.barlow(
+                            fontSize: 14.0,
+                            wordSpacing: 1,
+                            letterSpacing: 0.001,
+                            fontWeight: FontWeight.w500,
+                            color: ColorPalette.offWhite,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      GestureDetector(
+                        onTap: () async {
+                          var rangeDateTime = await showCalendar(context);
+
+                          if (rangeDateTime != null) {
+                            updateRangeDateTime(rangeDateTime);
+                            filterActivitiesByRangeDate();
+                            updateRangeDateTextSelected();
+                            updateActivitiesName();
+                          }
+                        },
+                        child: Container(
+                          color: Colors.transparent,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              IconButton(
+                                iconSize: 24,
+                                color: ColorPalette.principal,
                                 onPressed: () async {
                                   var rangeDateTime =
                                       await showCalendar(context);
@@ -429,47 +466,52 @@ class _PreviewActivitiesByDateState extends State<PreviewActivitiesByDate>
                                     updateActivitiesName();
                                   }
                                 },
-                              )),
-                          Expanded(
-                              flex: 6,
-                              child: Row(
+                                icon: Container(
+                                  height: 24,
+                                  width: 24,
+                                  decoration: const BoxDecoration(
+                                    image: DecorationImage(
+                                      image: AssetImage(
+                                          'assets/images/Arrow2-Left.png'),
+                                      fit: BoxFit.fill,
+                                    ),
+                                    color: Colors.transparent,
+                                  ),
+                                ),
+                              ),
+                              Row(
+                                mainAxisSize: MainAxisSize.min,
                                 children: [
-                                  Expanded(
-                                    flex: 1,
-                                    child: Container(
-                                      width: 22,
-                                      height: 19,
-                                      decoration: const BoxDecoration(
-                                        image: DecorationImage(
-                                          image: AssetImage(
-                                              'assets/images/calendar.png'),
-                                        ),
-                                        color: Colors.transparent,
+                                  Container(
+                                    width: 22,
+                                    height: 19,
+                                    decoration: const BoxDecoration(
+                                      image: DecorationImage(
+                                        image: AssetImage(
+                                            'assets/images/calendar.png'),
                                       ),
+                                      color: Colors.transparent,
                                     ),
                                   ),
-                                  Expanded(
-                                      flex: 6,
-                                      child: Text(
-                                        _rangeDateText,
-                                        textAlign: TextAlign.left,
-                                        style: GoogleFonts.barlow(
-                                          fontSize: 16.0,
-                                          wordSpacing: 1,
-                                          letterSpacing: 1.2,
-                                          fontWeight: FontWeight.w600,
-                                          color: Colors.white,
-                                        ),
-                                      ))
+                                  SizedBox(
+                                    width: 8,
+                                  ),
+                                  Text(
+                                    _rangeDateText,
+                                    textAlign: TextAlign.center,
+                                    style: GoogleFonts.barlow(
+                                      fontSize: 16.0,
+                                      wordSpacing: 1,
+                                      letterSpacing: 0.001,
+                                      fontWeight: FontWeight.w600,
+                                      color: Colors.white,
+                                    ),
+                                  )
                                 ],
-                              )),
-                          Expanded(
-                              flex: 1,
-                              child: IconButton(
-                                icon: const Icon(
-                                  Icons.arrow_forward_ios,
-                                  color: Colors.white,
-                                ),
+                              ),
+                              IconButton(
+                                iconSize: 24,
+                                color: ColorPalette.principal,
                                 onPressed: () async {
                                   var rangeDateTime =
                                       await showCalendar(context);
@@ -481,275 +523,308 @@ class _PreviewActivitiesByDateState extends State<PreviewActivitiesByDate>
                                     updateActivitiesName();
                                   }
                                 },
-                              )),
-                        ],
-                      )),
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(0, 24, 0, 0),
-                    child: Row(
-                      children: [
-                        const SizedBox(width: 16),
-                        getDayContainer(0, size),
-                        getDayContainer(1, size),
-                        getDayContainer(2, size),
-                        getDayContainer(3, size),
-                        getDayContainer(4, size),
-                        getDayContainer(5, size),
-                        getDayContainer(6, size),
-                        const SizedBox(width: 16)
-                      ],
-                    ),
+                                icon: Container(
+                                  height: 24,
+                                  width: 24,
+                                  decoration: const BoxDecoration(
+                                    image: DecorationImage(
+                                      image: AssetImage(
+                                          'assets/images/Arrow2-Right.png'),
+                                      fit: BoxFit.fill,
+                                    ),
+                                    color: Colors.transparent,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(0, 24, 0, 0),
+                        child: Row(
+                          children: [
+                            const SizedBox(width: 16),
+                            getDayContainer(0, size),
+                            getDayContainer(1, size),
+                            getDayContainer(2, size),
+                            getDayContainer(3, size),
+                            getDayContainer(4, size),
+                            getDayContainer(5, size),
+                            getDayContainer(6, size),
+                            const SizedBox(width: 16)
+                          ],
+                        ),
+                      ),
+                      Expanded(
+                        child: Padding(
+                          padding: EdgeInsets.fromLTRB(
+                              16, 24, 16, widget.isMenu ? 100 : 150),
+                          child: ListView.builder(
+                            shrinkWrap: true,
+                            itemCount: _days.length,
+                            itemBuilder: (BuildContext context, int index) {
+                              return Column(
+                                children: [
+                                  Padding(
+                                      padding: const EdgeInsets.fromLTRB(
+                                          16, 8, 0, 0),
+                                      child: Align(
+                                        alignment: Alignment.centerLeft,
+                                        child: Text(
+                                          Jiffy(_days[index])
+                                              .format(getShortPattern())
+                                              .capitalizeFirst!,
+                                          textAlign: TextAlign.left,
+                                          style: GoogleFonts.barlow(
+                                            fontSize: 16.0,
+                                            wordSpacing: 1,
+                                            letterSpacing: 1.2,
+                                            fontWeight: FontWeight.w600,
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                      )),
+                                  Padding(
+                                      padding:
+                                          const EdgeInsets.fromLTRB(0, 4, 0, 0),
+                                      child: Container(
+                                        height: 2,
+                                        decoration: const BoxDecoration(
+                                            color: ColorPalette.secondView),
+                                      )),
+                                  Padding(
+                                    padding:
+                                        const EdgeInsets.fromLTRB(0, 0, 0, 0),
+                                    child: ListView.builder(
+                                      physics:
+                                          const NeverScrollableScrollPhysics(),
+                                      shrinkWrap: true,
+                                      itemCount:
+                                          _activitiesByDay[index]!.length,
+                                      itemBuilder: (BuildContext context,
+                                          int indexActivity) {
+                                        return Container(
+                                          height: 80,
+                                          margin: const EdgeInsets.fromLTRB(
+                                              0, 8, 0, 0),
+                                          decoration: BoxDecoration(
+                                              color: ColorPalette.itemActivity,
+                                              borderRadius:
+                                                  BorderRadius.circular(20)),
+                                          child: Stack(
+                                            children: [
+                                              Positioned(
+                                                  top: 16,
+                                                  left: 16,
+                                                  child: Text(
+                                                    rangeTimeToString(
+                                                        _activitiesByDay[
+                                                                    index]![
+                                                                indexActivity]
+                                                            .timeStart,
+                                                        _activitiesByDay[
+                                                                    index]![
+                                                                indexActivity]
+                                                            .timeFinish),
+                                                    //_activitiesByDay[index]![indexActivity].activity,
+                                                    textAlign: TextAlign.left,
+                                                    style: GoogleFonts.barlow(
+                                                      fontSize: 16.0,
+                                                      wordSpacing: 1,
+                                                      letterSpacing: 1.2,
+                                                      fontWeight:
+                                                          FontWeight.w400,
+                                                      color: Colors.white,
+                                                    ),
+                                                  )),
+                                              Positioned(
+                                                  top: 36,
+                                                  bottom: 16,
+                                                  left: 16,
+                                                  child: Text(
+                                                    _activitiesByDay[index]![
+                                                            indexActivity]
+                                                        .activity,
+                                                    textAlign: TextAlign.left,
+                                                    style: GoogleFonts.barlow(
+                                                      fontSize: 16.0,
+                                                      wordSpacing: 1,
+                                                      letterSpacing: 1.2,
+                                                      fontWeight:
+                                                          FontWeight.w600,
+                                                      color: Colors.white,
+                                                    ),
+                                                  )),
+                                              Positioned(
+                                                top: 0,
+                                                right: 4,
+                                                child: IconButton(
+                                                  padding: EdgeInsets.zero,
+                                                  icon: Container(
+                                                    width: 15,
+                                                    height: 20,
+                                                    decoration:
+                                                        const BoxDecoration(
+                                                      image: DecorationImage(
+                                                        image: AssetImage(
+                                                            'assets/images/trash.png'),
+                                                        fit: BoxFit.fill,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  onPressed: () {
+                                                    addIsRemoved(
+                                                        _activitiesByDay[
+                                                                index]![
+                                                            indexActivity],
+                                                        _days[index]);
+                                                    controller.updateActivity(
+                                                        _activitiesByDay[
+                                                                index]![
+                                                            indexActivity]);
+                                                    controller
+                                                        .updateActivityApi(
+                                                            _activitiesByDay[
+                                                                    index]![
+                                                                indexActivity]);
+                                                    _activitiesByDay[index]!
+                                                        .removeAt(
+                                                            indexActivity);
+                                                    setState(() {});
+                                                    filterActivitiesByRangeDate();
+                                                    updateActivitiesName();
+                                                  },
+                                                ),
+                                              ),
+                                              Positioned(
+                                                  top: 36,
+                                                  right: 4,
+                                                  child: Transform.scale(
+                                                      scale: 0.7,
+                                                      child: FutureBuilder<
+                                                              bool>(
+                                                          future: isDeactivated(
+                                                              _activitiesByDay[
+                                                                      index]![
+                                                                  indexActivity],
+                                                              _days[index]),
+                                                          builder: (BuildContext
+                                                                  context,
+                                                              AsyncSnapshot<
+                                                                      bool>
+                                                                  snapshot) {
+                                                            return CupertinoSwitch(
+                                                              value: snapshot
+                                                                      .hasData
+                                                                  ? snapshot
+                                                                      .data!
+                                                                  : false,
+                                                              activeColor:
+                                                                  ColorPalette
+                                                                      .activeSwitch,
+                                                              trackColor:
+                                                                  CupertinoColors
+                                                                      .inactiveGray,
+                                                              onChanged:
+                                                                  (bool value) {
+                                                                if (value) {
+                                                                  addIsDeactivated(
+                                                                      _activitiesByDay[
+                                                                              index]![
+                                                                          indexActivity],
+                                                                      _days[
+                                                                          index]);
+                                                                } else {
+                                                                  removeIsDeactivated(
+                                                                      _activitiesByDay[
+                                                                              index]![
+                                                                          indexActivity],
+                                                                      _days[
+                                                                          index]);
+                                                                }
+                                                                controller.updateActivity(
+                                                                    _activitiesByDay[
+                                                                            index]![
+                                                                        indexActivity]);
+                                                                controller.updateActivityApi(
+                                                                    _activitiesByDay[
+                                                                            index]![
+                                                                        indexActivity]);
+                                                                setState(() {});
+                                                              },
+                                                            );
+                                                          })))
+                                            ],
+                                          ),
+                                        );
+                                      },
+                                    ),
+                                  ),
+                                ],
+                              );
+                            },
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-                  Expanded(
-                    child: Padding(
-                      padding: EdgeInsets.fromLTRB(
-                          16, 24, 16, widget.isMenu ? 100 : 150),
-                      child: ListView.builder(
-                        shrinkWrap: true,
-                        itemCount: _days.length,
-                        itemBuilder: (BuildContext context, int index) {
-                          return Column(
-                            children: [
-                              Padding(
-                                  padding:
-                                      const EdgeInsets.fromLTRB(16, 8, 0, 0),
-                                  child: Align(
-                                    alignment: Alignment.centerLeft,
+                  Positioned(
+                    bottom: widget.isMenu ? 20 : 60,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        widget.isMenu
+                            ? Container(
+                                decoration: const BoxDecoration(
+                                  color: Color.fromRGBO(219, 177, 42, 1),
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(8)),
+                                ),
+                                width: 200,
+                                height: 42,
+                                child: Center(
+                                  child: TextButton(
                                     child: Text(
-                                      Jiffy(_days[index])
-                                          .format(getShortPattern())
-                                          .capitalizeFirst!,
-                                      textAlign: TextAlign.left,
+                                      Constant.addActivity,
+                                      textAlign: TextAlign.center,
                                       style: GoogleFonts.barlow(
                                         fontSize: 16.0,
                                         wordSpacing: 1,
                                         letterSpacing: 1.2,
-                                        fontWeight: FontWeight.w600,
-                                        color: Colors.white,
+                                        fontWeight: FontWeight.w700,
+                                        color: Colors.black,
                                       ),
                                     ),
-                                  )),
-                              Padding(
-                                  padding:
-                                      const EdgeInsets.fromLTRB(0, 4, 0, 0),
-                                  child: Container(
-                                    height: 2,
-                                    decoration: const BoxDecoration(
-                                        color: ColorPalette.secondView),
-                                  )),
-                              Padding(
-                                padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
-                                child: ListView.builder(
-                                  physics: const NeverScrollableScrollPhysics(),
-                                  shrinkWrap: true,
-                                  itemCount: _activitiesByDay[index]!.length,
-                                  itemBuilder: (BuildContext context,
-                                      int indexActivity) {
-                                    return Container(
-                                      height: 80,
-                                      margin:
-                                          const EdgeInsets.fromLTRB(0, 8, 0, 0),
-                                      decoration: BoxDecoration(
-                                          color: ColorPalette.itemActivity,
-                                          borderRadius:
-                                              BorderRadius.circular(20)),
-                                      child: Stack(
-                                        children: [
-                                          Positioned(
-                                              top: 16,
-                                              left: 16,
-                                              child: Text(
-                                                rangeTimeToString(
-                                                    _activitiesByDay[index]![
-                                                            indexActivity]
-                                                        .timeStart,
-                                                    _activitiesByDay[index]![
-                                                            indexActivity]
-                                                        .timeFinish),
-                                                //_activitiesByDay[index]![indexActivity].activity,
-                                                textAlign: TextAlign.left,
-                                                style: GoogleFonts.barlow(
-                                                  fontSize: 16.0,
-                                                  wordSpacing: 1,
-                                                  letterSpacing: 1.2,
-                                                  fontWeight: FontWeight.w400,
-                                                  color: Colors.white,
-                                                ),
-                                              )),
-                                          Positioned(
-                                              top: 36,
-                                              bottom: 16,
-                                              left: 16,
-                                              child: Text(
-                                                _activitiesByDay[index]![
-                                                        indexActivity]
-                                                    .activity,
-                                                textAlign: TextAlign.left,
-                                                style: GoogleFonts.barlow(
-                                                  fontSize: 16.0,
-                                                  wordSpacing: 1,
-                                                  letterSpacing: 1.2,
-                                                  fontWeight: FontWeight.w600,
-                                                  color: Colors.white,
-                                                ),
-                                              )),
-                                          Positioned(
-                                            top: 0,
-                                            right: 4,
-                                            child: IconButton(
-                                              padding: EdgeInsets.zero,
-                                              icon: Container(
-                                                width: 15,
-                                                height: 20,
-                                                decoration: const BoxDecoration(
-                                                  image: DecorationImage(
-                                                    image: AssetImage(
-                                                        'assets/images/trash.png'),
-                                                    fit: BoxFit.fill,
-                                                  ),
-                                                ),
-                                              ),
-                                              onPressed: () {
-                                                addIsRemoved(
-                                                    _activitiesByDay[index]![
-                                                        indexActivity],
-                                                    _days[index]);
-                                                controller.updateActivity(
-                                                    _activitiesByDay[index]![
-                                                        indexActivity]);
-                                                controller.updateActivityApi(
-                                                    _activitiesByDay[index]![
-                                                        indexActivity]);
-                                                _activitiesByDay[index]!
-                                                    .removeAt(indexActivity);
-                                                setState(() {});
-                                                filterActivitiesByRangeDate();
-                                                updateActivitiesName();
-                                              },
-                                            ),
-                                          ),
-                                          Positioned(
-                                              top: 36,
-                                              right: 4,
-                                              child: Transform.scale(
-                                                  scale: 0.7,
-                                                  child: FutureBuilder<bool>(
-                                                      future: isDeactivated(
-                                                          _activitiesByDay[
-                                                                  index]![
-                                                              indexActivity],
-                                                          _days[index]),
-                                                      builder: (BuildContext
-                                                              context,
-                                                          AsyncSnapshot<bool>
-                                                              snapshot) {
-                                                        return CupertinoSwitch(
-                                                          value: snapshot
-                                                                  .hasData
-                                                              ? snapshot.data!
-                                                              : false,
-                                                          activeColor:
-                                                              ColorPalette
-                                                                  .activeSwitch,
-                                                          trackColor:
-                                                              CupertinoColors
-                                                                  .inactiveGray,
-                                                          onChanged:
-                                                              (bool value) {
-                                                            if (value) {
-                                                              addIsDeactivated(
-                                                                  _activitiesByDay[
-                                                                          index]![
-                                                                      indexActivity],
-                                                                  _days[index]);
-                                                            } else {
-                                                              removeIsDeactivated(
-                                                                  _activitiesByDay[
-                                                                          index]![
-                                                                      indexActivity],
-                                                                  _days[index]);
-                                                            }
-                                                            controller.updateActivity(
-                                                                _activitiesByDay[
-                                                                        index]![
-                                                                    indexActivity]);
-                                                            controller.updateActivityApi(
-                                                                _activitiesByDay[
-                                                                        index]![
-                                                                    indexActivity]);
-                                                            setState(() {});
-                                                          },
-                                                        );
-                                                      })))
-                                        ],
-                                      ),
-                                    );
-                                  },
+                                    onPressed: () {
+                                      navigateToAddActivity(context);
+                                    },
+                                  ),
                                 ),
+                              )
+                            : ElevateButtonFilling(
+                                mensaje: Constant.addActivity,
+                                showIcon: false,
+                                onChanged: (bool value) async {
+                                  print(value);
+                                  navigateToAddActivity(context);
+                                },
+                                img: '',
                               ),
-                            ],
-                          );
-                        },
-                      ),
+                      ],
                     ),
                   ),
-                ],
-              ),
-              Positioned(
-                bottom: widget.isMenu ? 20 : 70,
-                right: 32,
-                left: 32,
-                child: Container(
-                  decoration: const BoxDecoration(
-                    color: Color.fromRGBO(219, 177, 42, 1),
-                    borderRadius: BorderRadius.all(Radius.circular(8)),
-                  ),
-                  height: 42,
-                  child: Center(
-                    child: TextButton(
-                      style: TextButton.styleFrom(
-                          minimumSize: const Size.fromWidth(300)),
-                      child: Text('Añadir actividad',
-                          textAlign: TextAlign.center,
-                          style: GoogleFonts.barlow(
-                            fontSize: 16.0,
-                            wordSpacing: 1,
-                            letterSpacing: 1.2,
-                            fontWeight: FontWeight.w700,
-                            color: Colors.black,
-                          )),
-                      onPressed: () {
-                        navigateToAddActivity(context);
-                      },
-                    ),
-                  ),
-                ),
-              ),
-              if (!widget.isMenu) ...[
-                Positioned(
-                  bottom: 20,
-                  right: 32,
-                  left: 32,
-                  child: Container(
-                    decoration: const BoxDecoration(
-                      color: Color.fromRGBO(219, 177, 42, 1),
-                      borderRadius: BorderRadius.all(Radius.circular(8)),
-                    ),
-                    height: 42,
-                    child: Center(
-                      child: TextButton(
-                        style: TextButton.styleFrom(
-                            minimumSize: const Size.fromWidth(300)),
-                        child: Text('Continuar',
-                            textAlign: TextAlign.center,
-                            style: GoogleFonts.barlow(
-                              fontSize: 16.0,
-                              wordSpacing: 1,
-                              letterSpacing: 1.2,
-                              fontWeight: FontWeight.w700,
-                              color: Colors.black,
-                            )),
-                        onPressed: () async {
+                  if (!widget.isMenu) ...[
+                    Positioned(
+                      bottom: 10,
+                      right: 32,
+                      left: 32,
+                      child: ElevateButtonFilling(
+                        mensaje: Constant.continueTxt,
+                        showIcon: false,
+                        onChanged: (bool value) async {
+                          print(value);
                           await Navigator.push(
                             context,
                             MaterialPageRoute(
@@ -757,22 +832,24 @@ class _PreviewActivitiesByDateState extends State<PreviewActivitiesByDate>
                             ),
                           );
                         },
+                        img: '',
                       ),
-                    ),
-                  ),
-                )
-              ],
-            ],
+                    )
+                  ],
+                ],
+              ),
+            ),
           )),
     );
   }
 
   Future<void> navigateToAddActivity(BuildContext context) async {
+    setState(() {});
     await Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) =>
-            AddActivityPage(isMenu: widget.isMenu, from: _from!, to: _to!),
+            AddActivityPage(isMenu: widget.isMenu, from: _from, to: _to),
       ),
     );
 
@@ -794,7 +871,9 @@ class _PreviewActivitiesByDateState extends State<PreviewActivitiesByDate>
             : Border.all(
                 color: _selectedDays[index]
                     ? ColorPalette.principal
-                    : Colors.white,
+                    : index == 5 || index == 6
+                        ? Colors.red
+                        : Colors.white,
                 width: 1,
               ),
         color: _selectedDays[index] ? ColorPalette.principal : null,
@@ -818,12 +897,16 @@ class _PreviewActivitiesByDateState extends State<PreviewActivitiesByDate>
           Constant.tempListShortDay[index],
           textAlign: TextAlign.center,
           style: GoogleFonts.barlow(
-            fontSize: 20.0,
+            fontSize: _selectedDays[index] ? 18 : 16.0,
             wordSpacing: 1,
             letterSpacing: 1,
             fontWeight:
                 _selectedDays[index] ? FontWeight.bold : FontWeight.normal,
-            color: _selectedDays[index] ? Colors.black : Colors.white,
+            color: _selectedDays[index]
+                ? Colors.black
+                : index == 5 || index == 6
+                    ? Colors.red
+                    : Colors.white,
           ),
         ),
       )),

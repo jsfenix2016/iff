@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.alonefy_app">
+    package="com.alertfriends.alertfriends">
 
     <!-- Required only if your app needs to access images or photos
          that other apps created. -->
@@ -31,8 +31,24 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
     
+    <uses-permission android:name="android.permission.RingtoneManager.TYPE_ALARM"/>
+    <uses-permission android:name="android.permission.RingtoneManager.TYPE_NOTIFICATION"/>
+    <uses-permission android:name="android.permission.RingtoneManager.TYPE_RINGTONE"/>
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
+    <uses-permission android:name="android.permission.USE_EXACT_ALARM" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <!-- Permiso para acceder a la configuración de políticas de notificación -->
+    <uses-permission android:name="android.permission.access_notification_policy" />
 
-
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" /> <!-- To read images created by other apps -->
+    <uses-permission android:name="android.permission.READ_MEDIA_AUDIO" /> <!-- To read audios created by other apps -->
+    <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" /> <!-- To read vidoes created by other apps -->
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
+    <uses-permission android:name="android.permission.USE_EXACT_ALARM" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <queries>
         <!-- If your app opens https URLs -->
         <intent>
@@ -54,14 +70,16 @@
             <action android:name="android.intent.action.SEND" />
             <data android:mimeType="*/*" />
         </intent>
+        
     </queries>
 
     <application
         android:label="AlertFriends"
         android:name="${applicationName}"
-        
-        android:icon="@mipmap/logo_alertfriends">
-        
+        android:showOnLockScreen="true"
+        android:turnScreenOn="true"
+        android:icon="@mipmap/logo_alertfriends_v2">
+
         <activity
             android:name=".MainActivity"
             android:exported="true"
@@ -69,6 +87,8 @@
             android:theme="@style/LaunchTheme"
             android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
             android:hardwareAccelerated="true"
+            android:showWhenLocked="true"
+            android:turnScreenOn="true"
             android:windowSoftInputMode="adjustResize">
             <meta-data
             android:name="io.flutter.embedding.android.SplashScreenDrawable"
@@ -87,8 +107,13 @@
 
             </intent-filter>
 
-        </activity>
+            <intent-filter> 
+                <action android:name="FLUTTER_NOTIFICATION_CLICK" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
 
+        </activity>
+       
         <!-- Don't delete the meta-data below.
              This is used by the Flutter tool to generate GeneratedPluginRegistrant.java -->
         <meta-data
@@ -103,5 +128,23 @@
         <!--<meta-data
             android:name="com.google.firebase.messaging.default_notification_icon"
             android:resource="" />-->
+            <meta-data
+            android:name="com.google.firebase.messaging.default_notification_channel_id"
+            android:value="uri_channel_name" />
+            <service
+            android:name="com.alertfriends.alertfriends.ForegroundService"        
+            android:exported="false"
+            android:stopWithTask="false"/>
+            <receiver
+            android:name="com.alertfriends.alertfriends.ScheduledNotificationBootReceiver"
+            android:enabled="true"
+            android:exported="false"
+            android:directBootAware="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+                <action android:name="android.intent.action.LOCKED_BOOT_COMPLETED"/>
+            </intent-filter>
+        </receiver>
     </application>
+   
 </manifest>

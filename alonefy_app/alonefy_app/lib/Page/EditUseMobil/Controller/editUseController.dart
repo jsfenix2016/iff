@@ -51,7 +51,9 @@ class EditUseMobilController extends GetxController {
 
     for (var useMobil in listMobilBD) {
       var useMobilApi = UseMobilApi(
-          phoneNumber: phoneNumber.replaceAll("+34", ""),
+          phoneNumber: phoneNumber.contains("+34")
+              ? phoneNumber.replaceAll("+34", "")
+              : phoneNumber,
           dayOfWeek: Constant.tempMapDayApi[useMobil.day]!,
           time: stringTimeToInt(useMobil.time),
           index: useMobil.selection,

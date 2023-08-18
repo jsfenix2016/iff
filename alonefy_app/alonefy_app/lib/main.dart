@@ -1,25 +1,16 @@
 import 'dart:async';
 import 'dart:io';
+import 'dart:isolate';
 import 'dart:math';
 import 'dart:ui';
-// import 'package:all_sensors2/all_sensors2.dart';
+
 import 'package:flutter/services.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
-import 'package:ifeelefine/Common/initialize_models_bd.dart';
-import 'package:ifeelefine/Page/HomePage/Pageview/home_page.dart';
-import 'package:ifeelefine/Page/Onboarding/PageView/onboarding_page.dart';
-import 'package:ifeelefine/Page/Premium/PageView/premium_moths_free.dart';
-import 'package:ifeelefine/Page/PreviewActivitiesFilteredByDate/PageView/previewActivitiesByDate_page.dart';
-import 'package:ifeelefine/Page/Risk/ZoneRisk/ListContactZoneRisk/PageView/zoneRisk.dart';
-import 'package:ifeelefine/Page/UserConfig/PageView/userconfig_page.dart';
-import 'package:ifeelefine/Page/UserConfig2/Page/configuration2_page.dart';
-import 'package:ifeelefine/Page/UserEdit/PageView/editUser_page.dart';
-import 'package:ifeelefine/Views/contact_page.dart';
+
 import 'package:notification_center/notification_center.dart';
-import 'package:permission_handler/permission_handler.dart';
 
 import 'package:sensors_plus/sensors_plus.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
+
 import 'package:flutter/cupertino.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:ifeelefine/Common/notificationService.dart';
@@ -42,7 +33,8 @@ import 'package:ifeelefine/Routes/routes.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
 
-import 'package:flutter_background_service_android/flutter_background_service_android.dart';
+import 'package:flutter_background_service_android/flutter_background_service_android.dart'
+    show AndroidServiceInstance;
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
 
@@ -53,6 +45,7 @@ import 'Common/Firebase/firebaseManager.dart';
 import 'Page/Geolocator/Controller/configGeolocatorController.dart';
 import 'Page/LogActivity/Controller/logActivity_controller.dart';
 import 'Page/Premium/Controller/premium_controller.dart';
+
 import 'Page/UserEdit/Controller/getUserController.dart';
 
 DateTime now = DateTime.now();
@@ -62,8 +55,9 @@ List<double> userAccelerometerValues = <double>[];
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 /// OPTIONAL when use custom notification
-final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
     FlutterLocalNotificationsPlugin();
+
 final List<StreamSubscription<dynamic>> _streamSubscriptions =
     <StreamSubscription<dynamic>>[];
 
@@ -80,9 +74,9 @@ final LogActivityController logActivityController =
     Get.put(LogActivityController());
 
 final MainController mainController = Get.put(MainController());
-int _logActivityTimer = 30;
+int _logActivityTimer = 60;
 int _logRudeMovementTimer = 20;
-const int _logActivityTimerRefresh = 30;
+const int _logActivityTimerRefresh = 60;
 const int _logRudeMovementTimerRefresh = 20;
 
 final _locationController = Get.put(ConfigGeolocatorController());
@@ -92,6 +86,7 @@ String? initApp;
 UserBD? user;
 int time = 120;
 int timeUpdateFirebase = 36000;
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -100,14 +95,21 @@ Future<void> main() async {
   await _prefs.initPrefs();
   _prefs.setProtected = 'AlertFriends no estás totalmente protegido.';
   await inicializeHiveBD();
+
   await initializeFirebase();
   await initializeService();
-
+  _prefs.setNameZone = await locateZone();
   user = await mainController.getUserData();
 
   if (user != null) {
-    var userApi = await GetUserController().getUser(user!.telephone);
-
+    var userApi = await GetUserController().getUser(
+        user!.telephone.contains('+34')
+            ? user!.telephone.replaceAll("+34", "")
+            : user!.telephone);
+    // _prefs.setUserFree = false;
+    // _prefs.setUserPremium = true;
+    // var premiumController = Get.put(PremiumController());
+    // premiumController.updatePremiumAPI(true);
     if (userApi != null && userApi.idUser != user!.idUser) {
       await RestoreController().deleteAllData();
 
@@ -115,27 +117,18 @@ Future<void> main() async {
     }
   }
 
-  // var premiumController = Get.put(PremiumController());
-  _prefs.setDemoActive = false;
-
-  // premiumController.initPlatformState();
   Future.sync(() => {Get.put(PremiumController()).initPlatformState()});
 // Recupera la última ruta de pantalla visitada
   final lastRoute = await _prefs.getLastScreenRoute();
   initApp = _prefs.isFirstConfig == false ? 'onboarding' : lastRoute;
-  final deviceInfo = DeviceInfoPlugin();
 
-  if (Platform.isAndroid) {
-    var androidInfo = await deviceInfo.androidInfo;
-    device = androidInfo.model;
-  }
-
+  _prefs.setHabitsEnable = false;
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
 
   runApp(
     GetMaterialApp(
-      home: UserConfigPage2(
-        userbd: initUserBD(),
+      home: MyApp(
+        initApp: initApp!,
       ),
       debugShowCheckedModeBanner: false,
     ),
@@ -150,18 +143,23 @@ Future<void> main() async {
 Future activateService() async {
   await inicializeHiveBD();
 
+  String sound = prefs.getNotificationAudio;
+
   /// OPTIONAL, using custom notification channel id
-  const AndroidNotificationChannel channel = AndroidNotificationChannel(
-    'my_foreground', // id
-    'AlertFriends – PERSONAL PROTECTION', // title
-    description: 'AlertFriends está activado.', // description
-    importance: Importance.high, // importance must be at low or higher level
-  );
+  AndroidNotificationChannel channel = AndroidNotificationChannel(
+      'my_foreground', // id
+      'AlertFriends – PERSONAL PROTECTION', // title
+      description: 'AlertFriends esta activado.', // description
+      importance: Importance.high, // importance must be at low or higher level
+      playSound: true,
+      showBadge: false,
+      enableLights: true,
+      sound: RawResourceAndroidNotificationSound(sound));
 
   var textDescrip = _prefs.getUserPremium
-      ? 'AlertFriends está activado.'
+      ? 'AlertFriends esta activado.'
       : 'AlertFriends no estás totalmente protegido.';
-  print(textDescrip);
+
   service.invoke('update');
   await flutterLocalNotificationsPlugin
       .resolvePlatformSpecificImplementation<
@@ -200,7 +198,7 @@ Future activateService() async {
   }
 
   const AndroidInitializationSettings initializationSettingsAndroid =
-      AndroidInitializationSettings('@mipmap/logo_alertfriends');
+      AndroidInitializationSettings('@mipmap/logo_alertfriends_v2');
   final List<DarwinNotificationCategory> darwinNotificationCategories =
       <DarwinNotificationCategory>[];
   final DarwinInitializationSettings initializationSettingsDarwin =
@@ -243,103 +241,178 @@ Future activateService() async {
   await flutterLocalNotificationsPlugin.initialize(
     initializationSettings,
     onDidReceiveNotificationResponse:
-        (NotificationResponse notificationResponse) {
-      switch (notificationResponse.notificationResponseType) {
-        case NotificationResponseType.selectedNotification:
-          // selectNotificationStream.add(notificationResponse.payload);
-          if (notificationResponse.payload!.contains("free")) {
-            RedirectViewNotifier.onTapFreeNotification(notificationResponse);
-          }
-          if (notificationResponse.payload!.contains("premium")) {
-            RedirectViewNotifier.onTapPremiumNotification(notificationResponse);
-          }
-          if (notificationResponse.payload!.contains("Inactived_")) {
-            ismove = false;
-            timerActive = true;
-            String taskIds =
-                notificationResponse.payload!.replaceAll("Inactived_", "");
-            var taskIdList = getTaskIdList(taskIds);
-            MainService().cancelAllNotifications(taskIdList);
-          }
-          if (notificationResponse.actionId == "Inactived") {
-            ismove = false;
-            timerActive = true;
-            String taskIds =
-                notificationResponse.actionId!.replaceAll("Inactived_", "");
-            var taskIdList = getTaskIdList(taskIds);
-            MainService().cancelAllNotifications(taskIdList);
-          }
-          if (notificationResponse.actionId != null &&
-              notificationResponse.actionId!.contains("DateRisk")) {
-            String taskIds = notificationResponse.actionId!
-                .substring(0, notificationResponse.actionId!.indexOf('id='));
-            taskIds = taskIds.replaceAll("DateRisk_", "");
-            String id = notificationResponse.actionId!.substring(
-                notificationResponse.actionId!.indexOf('id='),
-                notificationResponse.actionId!.length);
-            id = id.replaceAll("id=", "");
-            NotificationCenter().notify('getContactRisk');
-            var taskIdList = getTaskIdList(taskIds);
-            RedirectViewNotifier.onTapNotification(
-                notificationResponse, taskIdList, int.parse(id));
-          }
-          break;
-        case NotificationResponseType.selectedNotificationAction:
-          if (notificationResponse.actionId != null &&
-              notificationResponse.actionId!.contains("helpID")) {
-            String taskIds =
-                notificationResponse.actionId!.replaceAll("helpID_", "");
-            var taskIdList = getTaskIdList(taskIds);
-            MainService().sendAlertToContactImmediately(taskIdList);
-          }
-          if (notificationResponse.actionId != null &&
-              notificationResponse.actionId!.contains("imgoodId")) {
-            String taskIds =
-                notificationResponse.actionId!.replaceAll("imgoodId_", "");
-            var taskIdList = getTaskIdList(taskIds);
-            ismove = false;
-            timerActive = true;
-            MainService().cancelAllNotifications(taskIdList);
-          }
-          if (notificationResponse.actionId != null &&
-              notificationResponse.actionId!.contains("dateHelp")) {
-            String taskIds =
-                notificationResponse.actionId!.replaceAll("dateHelp_", "");
-            var taskIdList = getTaskIdList(taskIds);
-            NotificationCenter().notify('getContactRisk');
-            MainService().sendAlertToContactImmediately(taskIdList);
-          }
-          if (notificationResponse.actionId!.contains("premium")) {
-            RedirectViewNotifier.onTapPremiumNotification(notificationResponse);
-          }
-          if (notificationResponse.actionId!.contains("ok")) {
-            RedirectViewNotifier.onTapFreeNotification(notificationResponse);
-          }
-          if (notificationResponse.actionId != null &&
-              notificationResponse.actionId!.contains("dateImgood")) {
-            String taskIds = notificationResponse.actionId!
-                .substring(0, notificationResponse.actionId!.indexOf('id='));
-            taskIds = taskIds.replaceAll("dateImgood_", "");
-            String id = notificationResponse.actionId!.substring(
-                notificationResponse.actionId!.indexOf('id='),
-                notificationResponse.actionId!.length);
-            id = id.replaceAll("id=", "");
-            NotificationCenter().notify('getContactRisk');
-            var taskIdList = getTaskIdList(taskIds);
-            RedirectViewNotifier.onTapNotification(
-                notificationResponse, taskIdList, int.parse(id));
-          }
-          break;
-      }
+        (NotificationResponse notificationResponse) async {
+      onDidReceiveNotificationResponse(notificationResponse);
     },
-    onDidReceiveBackgroundNotificationResponse: notificationTapBackground,
+    onDidReceiveBackgroundNotificationResponse:
+        onDidReceiveBackgroundNotificationResponse,
   );
 
-  await FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(
-    alert: true,
-    badge: true,
-    sound: true,
-  );
+  final details =
+      await flutterLocalNotificationsPlugin.getNotificationAppLaunchDetails();
+  if (details != null && details.didNotificationLaunchApp) {
+    print("object ${details.notificationResponse!.payload}");
+    onDidReceiveNotificationResponse(details.notificationResponse!);
+  }
+}
+
+Future<void> activateService2() async {
+  // ... otras configuraciones ...
+
+  final ReceivePort receivePort = ReceivePort();
+  await Isolate.spawn(backgroundNotificationHandler, receivePort.sendPort);
+
+  // Escucha los mensajes del aislamiento
+  receivePort.listen((dynamic data) {
+    if (data is SendPort) {
+      final SendPort sendPort = data;
+      // Envía el método para manejar las respuestas de notificaciones en segundo plano al aislamiento
+      sendPort.send(onDidReceiveBackgroundNotificationResponse);
+    }
+  });
+
+  // ... otras configuraciones ...
+}
+
+void backgroundNotificationHandler(SendPort sendPort) {
+  final ReceivePort receivePort = ReceivePort();
+  sendPort.send(receivePort.sendPort);
+
+  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+      FlutterLocalNotificationsPlugin(); // Crea una instancia del plugin aquí
+
+  receivePort.listen((dynamic data) async {
+    if (data is Map<String, dynamic>) {
+      // Maneja las respuestas de las notificaciones en segundo plano aquí
+      // final notificationResponse = NotificationResponse.fromMap(data);
+      // print('Manejando notificación en segundo plano: $notificationResponse');
+      String sound = prefs.getNotificationAudio;
+      // Muestra la notificación local en segundo plano
+      AndroidNotificationDetails androidDetails = AndroidNotificationDetails(
+          'my_foreground', // channelId
+          'AlertFriends – PERSONAL PROTECTION', // channelName
+          importance: Importance.max,
+          priority: Priority.high,
+          showWhen: false,
+          playSound: true,
+          sound: RawResourceAndroidNotificationSound(sound));
+      NotificationDetails platformChannelSpecifics =
+          NotificationDetails(android: androidDetails);
+      await flutterLocalNotificationsPlugin.show(
+        1000,
+        'Notificación en segundo plano',
+        'Respuesta recibida: ',
+        platformChannelSpecifics,
+      );
+    }
+  });
+}
+
+void onDidReceiveNotificationResponse(
+    NotificationResponse notificationResponse) async {
+  mainController.saveActivityLog(DateTime.now(), "Movimiento normal");
+  // Maneja las respuestas de notificaciones en segundo plano aquí
+  switch (notificationResponse.notificationResponseType) {
+    case NotificationResponseType.selectedNotification:
+      // selectNotificationStream.add(notificationResponse.payload);
+      if (notificationResponse.payload!.contains("free")) {
+        RedirectViewNotifier.onTapFreeNotification(notificationResponse);
+      }
+      if (notificationResponse.payload!.contains("premium")) {
+        RedirectViewNotifier.onTapPremiumNotification(notificationResponse);
+      }
+      if (notificationResponse.payload!.contains("Inactived_")) {
+        ismove = false;
+        timerActive = true;
+        String taskIds =
+            notificationResponse.payload!.replaceAll("Inactived_", "");
+        var taskIdList = getTaskIdList(taskIds);
+
+        MainService().cancelAllNotifications(taskIdList);
+      }
+      if (notificationResponse.actionId == "Inactived") {
+        ismove = false;
+        timerActive = true;
+        String taskIds =
+            notificationResponse.actionId!.replaceAll("Inactived_", "");
+        var taskIdList = getTaskIdList(taskIds);
+
+        MainService().cancelAllNotifications(taskIdList);
+      }
+      if (notificationResponse.actionId != null &&
+          notificationResponse.actionId!.contains("DateRisk")) {
+        String taskIds = notificationResponse.actionId!
+            .substring(0, notificationResponse.actionId!.indexOf('id='));
+        taskIds = taskIds.replaceAll("DateRisk_", "");
+        String id = notificationResponse.actionId!.substring(
+            notificationResponse.actionId!.indexOf('id='),
+            notificationResponse.actionId!.length);
+        id = id.replaceAll("id=", "");
+        NotificationCenter().notify('getContactRisk');
+        var taskIdList = getTaskIdList(taskIds);
+        RedirectViewNotifier.onTapNotification(
+            notificationResponse, taskIdList, int.parse(id));
+      }
+
+      break;
+    case NotificationResponseType.selectedNotificationAction:
+      if (notificationResponse.actionId != null &&
+          notificationResponse.actionId!.contains("helpID")) {
+        String taskIds =
+            notificationResponse.actionId!.replaceAll("helpID_", "");
+        var taskIdList = getTaskIdList(taskIds);
+
+        MainService().sendAlertToContactImmediately(taskIdList);
+      }
+      if (notificationResponse.actionId != null &&
+          notificationResponse.actionId!.contains("imgoodId")) {
+        String taskIds =
+            notificationResponse.actionId!.replaceAll("imgoodId_", "");
+        var taskIdList = getTaskIdList(taskIds);
+        ismove = false;
+        timerActive = true;
+
+        MainService().cancelAllNotifications(taskIdList);
+        await flutterLocalNotificationsPlugin.cancelAll();
+      }
+      if (notificationResponse.actionId != null &&
+          notificationResponse.actionId!.contains("dateHelp")) {
+        String taskIds =
+            notificationResponse.actionId!.replaceAll("dateHelp_", "");
+        var taskIdList = getTaskIdList(taskIds);
+        NotificationCenter().notify('getContactRisk');
+
+        MainService().sendAlertToContactImmediately(taskIdList);
+      }
+      if (notificationResponse.actionId!.contains("premium")) {
+        RedirectViewNotifier.onTapPremiumNotification(notificationResponse);
+      }
+      if (notificationResponse.actionId!.contains("ok")) {
+        RedirectViewNotifier.onTapFreeNotification(notificationResponse);
+      }
+      if (notificationResponse.actionId != null &&
+          notificationResponse.actionId!.contains("dateImgood")) {
+        String taskIds = notificationResponse.actionId!
+            .substring(0, notificationResponse.actionId!.indexOf('id='));
+        taskIds = taskIds.replaceAll("dateImgood_", "");
+        String id = notificationResponse.actionId!.substring(
+            notificationResponse.actionId!.indexOf('id='),
+            notificationResponse.actionId!.length);
+        id = id.replaceAll("id=", "");
+        NotificationCenter().notify('getContactRisk');
+        var taskIdList = getTaskIdList(taskIds);
+        RedirectViewNotifier.onTapNotification(
+            notificationResponse, taskIdList, int.parse(id));
+      }
+
+      break;
+  }
+}
+
+@pragma('vm:entry-point')
+void onDidReceiveBackgroundNotificationResponse(
+    NotificationResponse notificationResponse) async {
+  onDidReceiveNotificationResponse(notificationResponse);
 }
 
 ///Funcion utilizada para inicializar el servicio en segundo plano
@@ -408,14 +481,14 @@ void onStart(ServiceInstance service) async {
         _prefs.setUserPremium = false;
         _prefs.setDayFree = "0";
         var premiumController = Get.put(PremiumController());
-        premiumController.updatePremiumAPIFree(false);
+        premiumController.updatePremiumAPI(false);
       }
     }
 
     increaceTime += 1;
     increaceTimeUpdate += 1;
     if (_prefs.getUserFree && !_prefs.getUserPremium) {
-      if (time == increaceTime) {
+      if (259200 == increaceTime) {
         if (_prefs.getUsedFreeDays) {
           RedirectViewNotifier.showPremiumNotification();
         } else {
@@ -436,25 +509,9 @@ void onStart(ServiceInstance service) async {
 
     _logActivityTimer += 1;
     _logRudeMovementTimer += 1;
-    //getDateRisk();
 
     service.invoke('update');
   });
-}
-
-// to ensure this is executed
-// run app from xcode, then from xcode menu, select Simulate Background Fetch
-@pragma('vm:entry-point')
-void notificationTapBackground(NotificationResponse notificationResponse) {
-  // ignore: avoid_print
-  print('notification(${notificationResponse.id}) action tapped: '
-      '${notificationResponse.actionId} with'
-      ' payload: ${notificationResponse.payload}');
-  if (notificationResponse.input?.isNotEmpty ?? false) {
-    // ignore: avoid_print
-    print(
-        'notification action tapped with input: ${notificationResponse.input}');
-  }
 }
 
 @pragma('vm:entry-point')
@@ -482,7 +539,7 @@ Future accelerometer() async {
       double accelerationMagnitude =
           sqrt(event.x * event.x + event.y * event.y + event.z * event.z);
 
-      if (accelerationMagnitude > 24) {
+      if (accelerationMagnitude > 30) {
         if (_prefs.getUserFree) return;
         if (!enableIFF && !_prefs.getDetectedFall && !_prefs.getUserPremium)
           return;
@@ -494,10 +551,15 @@ Future accelerometer() async {
         }
       } else {
         isMovRude = false;
-        if (accelerationMagnitude < 24 && accelerationMagnitude > 10) {
+        if (accelerationMagnitude < 30 && accelerationMagnitude > 10) {
+          print("Movimiento normal ${DateTime.now()}");
           if (_logActivityTimer >= _logActivityTimerRefresh) {
-            print("Movimiento normal");
-            mainController.saveActivityLog(DateTime.now(), "Movimiento normal");
+            print("Movimiento normal ${DateTime.now()}");
+            if (_prefs.getUseMobilConfig) {
+              mainController.saveActivityLog(
+                  DateTime.now(), "Movimiento normal");
+            }
+
             _logActivityTimer = 0;
           }
           ismove = false;
@@ -550,21 +612,6 @@ class _MyAppState extends State<MyApp> {
 }
 
 void sendLocation() async {
-  //PermissionStatus permission = await Permission.location.request();
-
-  //if (permission.isPermanentlyDenied) {
-  //  _locationController.activateLocation(PreferencePermission.deniedForever);
-  //  showPermissionDialog(RedirectViewNotifier.context!, Constant.enablePermission);
-  //} else if (permission.isDenied) {
-  //  _locationController.activateLocation(PreferencePermission.denied);
-  //} else {
-  //  if (_prefs.getAcceptedSendLocation != PreferencePermission.allow) {
-  //    _locationController.activateLocation(PreferencePermission.allow);
-  //  }
-  //  var position = await determinePosition();
-  //  _locationController.sendLocation(position.latitude.toString(), position.longitude.toString());
-  //}
-
   if (_prefs.getAcceptedSendLocation == PreferencePermission.allow) {
     var position = await determinePosition();
     _locationController.sendLocation(

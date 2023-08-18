@@ -4,11 +4,14 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ifeelefine/Common/Constant.dart';
 import 'package:ifeelefine/Common/manager_alerts.dart';
+import 'package:ifeelefine/Common/notificationService.dart';
+import 'package:ifeelefine/Common/text_style_font.dart';
 import 'package:ifeelefine/Common/utils.dart';
 import 'package:ifeelefine/Model/activityDay.dart';
-import 'package:ifeelefine/Model/activitydaybd.dart';
+
 import 'package:ifeelefine/Page/AddActivityPage/Controller/addActivityController.dart';
 import 'package:ifeelefine/Page/Calendar/calendarPopup.dart';
+import 'package:ifeelefine/Page/Premium/Controller/premium_controller.dart';
 import 'package:ifeelefine/Page/Premium/PageView/premium_page.dart';
 import 'package:ifeelefine/Provider/prefencesUser.dart';
 import 'package:jiffy/jiffy.dart';
@@ -122,13 +125,15 @@ class _AddActivityPageState extends State<AddActivityPage>
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
+    RedirectViewNotifier.setContext(context);
     return Scaffold(
-      appBar: widget.isMenu
-          ? AppBar(
-              backgroundColor: ColorPalette.backgroundAppBar,
-              title: Text("Configuración"),
-            )
-          : null,
+      appBar: AppBar(
+        backgroundColor: Colors.brown,
+        title: Text(
+          "Configuración",
+          style: textForTitleApp(),
+        ),
+      ),
       body: Container(
         decoration: decorationCustom(),
         width: size.width,
@@ -160,7 +165,7 @@ class _AddActivityPageState extends State<AddActivityPage>
                 style: GoogleFonts.barlow(
                   fontSize: 22.0,
                   wordSpacing: 1,
-                  letterSpacing: 1.2,
+                  letterSpacing: 0.001,
                   fontWeight: FontWeight.w500,
                   color: Colors.white,
                 )),
@@ -169,14 +174,17 @@ class _AddActivityPageState extends State<AddActivityPage>
         Padding(
           padding: const EdgeInsets.fromLTRB(0, 70, 0, 100),
           child: SingleChildScrollView(
+            keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
             child: Column(children: [
               Padding(
-                  padding: const EdgeInsets.fromLTRB(32.0, 0.0, 32.0, 0.0),
-                  child: getTextField()),
-              const SizedBox(height: 40),
+                padding: const EdgeInsets.fromLTRB(24.0, 0.0, 24.0, 0.0),
+                child: getTextField(),
+              ),
+              const SizedBox(height: 37),
               Row(
                 children: [
                   Expanded(
+                    flex: 1,
                     child: Text(
                       "Todo el día",
                       textAlign: TextAlign.right,
@@ -187,7 +195,6 @@ class _AddActivityPageState extends State<AddActivityPage>
                           fontWeight: FontWeight.w500,
                           color: Colors.white),
                     ),
-                    flex: 1,
                   ),
                   SizedBox(
                       width: 120,
@@ -333,7 +340,7 @@ class _AddActivityPageState extends State<AddActivityPage>
                     style: GoogleFonts.barlow(
                       fontSize: 16.0,
                       wordSpacing: 1,
-                      letterSpacing: 1.2,
+                      letterSpacing: 0.001,
                       fontWeight: FontWeight.w700,
                       color: Colors.black,
                     )),
@@ -354,6 +361,8 @@ class _AddActivityPageState extends State<AddActivityPage>
                         if (value != null && value) {
                           _prefs.setUserFree = false;
                           _prefs.setUserPremium = true;
+                          var premiumController = Get.put(PremiumController());
+                          premiumController.updatePremiumAPI(true);
                         }
                       });
                     } else {
@@ -400,7 +409,7 @@ class _AddActivityPageState extends State<AddActivityPage>
                     style: GoogleFonts.barlow(
                       fontSize: 16.0,
                       wordSpacing: 1,
-                      letterSpacing: 1.2,
+                      letterSpacing: 0.001,
                       fontWeight: FontWeight.w700,
                       color: Colors.white,
                     )),
@@ -424,9 +433,9 @@ class _AddActivityPageState extends State<AddActivityPage>
             fontSize: 20.0,
             wordSpacing: 1,
             letterSpacing: 0.001,
-            fontWeight: FontWeight.normal,
+            fontWeight: FontWeight.w500,
             color: Colors.white),
-        fillColor: const Color.fromRGBO(169, 146, 125, 50),
+        fillColor: const Color.fromRGBO(169, 146, 125, 0.2),
         filled: true,
         contentPadding: const EdgeInsets.fromLTRB(20.0, 0.0, 20.0, 0.0),
         focusedBorder: OutlineInputBorder(
@@ -440,7 +449,7 @@ class _AddActivityPageState extends State<AddActivityPage>
           fontSize: 20.0,
           wordSpacing: 1,
           letterSpacing: 0.001,
-          fontWeight: FontWeight.normal,
+          fontWeight: FontWeight.w500,
           color: Colors.white),
     );
   }
@@ -456,7 +465,7 @@ class _AddActivityPageState extends State<AddActivityPage>
             child: Text(
               dateType,
               style: GoogleFonts.barlow(
-                  fontSize: 18.0,
+                  fontSize: 22.0,
                   wordSpacing: 1,
                   letterSpacing: 0.001,
                   fontWeight: FontWeight.w500,
@@ -484,7 +493,7 @@ class _AddActivityPageState extends State<AddActivityPage>
               dateType == "De" ? from : to,
               textAlign: TextAlign.right,
               style: GoogleFonts.barlow(
-                  fontSize: 18.0,
+                  fontSize: 16.0,
                   wordSpacing: 1,
                   letterSpacing: 0.001,
                   fontWeight: FontWeight.w500,
@@ -628,7 +637,7 @@ class _AddActivityPageState extends State<AddActivityPage>
                     time[i.toString()].toString(),
                     textAlign: TextAlign.center,
                     style: GoogleFonts.barlow(
-                      fontSize: 24.0,
+                      fontSize: 30.0,
                       wordSpacing: 1,
                       letterSpacing: 0.001,
                       fontWeight: FontWeight.w600,
@@ -661,7 +670,7 @@ class _AddActivityPageState extends State<AddActivityPage>
   }
 
   Widget getDayContainer(int index, Size size) {
-    return Container(
+    return SizedBox(
         width: size.width / 7 - 32 / 7, child: Center(child: getDay(index)));
   }
 
@@ -756,6 +765,7 @@ class _AddActivityPageState extends State<AddActivityPage>
       children: [
         if (!isDropDownVisible) ...[
           Expanded(
+            flex: 1,
             child: Text(
               text,
               textAlign: TextAlign.right,
@@ -766,7 +776,6 @@ class _AddActivityPageState extends State<AddActivityPage>
                   fontWeight: FontWeight.w500,
                   color: const Color.fromARGB(255, 222, 222, 222)),
             ),
-            flex: 1,
           ),
           SizedBox(
             width: 120,

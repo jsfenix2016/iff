@@ -40,7 +40,7 @@ class _CancelDatePageState extends State<CancelDatePage> {
   var code = CodeModel();
   late ContactRiskBD contactRiskTemp;
 
-  int _secondsRemaining = 300; //5 minutes = 300 seconds
+  int _secondsRemaining = 180; //5 minutes = 300 seconds
   Timer? _timer;
   bool isLoading = false;
   @override
@@ -136,12 +136,16 @@ class _CancelDatePageState extends State<CancelDatePage> {
       child: Scaffold(
         appBar: AppBar(
           backgroundColor: Colors.brown,
-          title: const Text("Finalizar cita"),
+          title: Text(
+            "Finalizar cita",
+            style: textForTitleApp(),
+          ),
         ),
         body: Container(
           height: size.height,
           decoration: decorationCustom(),
           child: SingleChildScrollView(
+            keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
             child: Stack(
               children: [
                 SafeArea(
@@ -206,10 +210,12 @@ class _CancelDatePageState extends State<CancelDatePage> {
                       Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: ElevateButtonFilling(
+                          showIcon: false,
                           onChanged: (value) {
                             saveDate(context);
                           },
                           mensaje: 'Cancelar alerta',
+                          img: '',
                         ),
                       ),
                       Padding(

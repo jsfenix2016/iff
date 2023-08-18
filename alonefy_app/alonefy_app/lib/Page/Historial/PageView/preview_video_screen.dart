@@ -1,6 +1,8 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:ifeelefine/Common/notificationService.dart';
+import 'package:ifeelefine/Common/text_style_font.dart';
 import 'package:ifeelefine/Utils/Widgets/video_player.dart';
 import 'package:video_player/video_player.dart';
 
@@ -71,9 +73,10 @@ class _PreviewVideoState extends State<PreviewVideoPage>
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
+    RedirectViewNotifier.setContext(context);
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Video zona de riesgo'),
+        title: Text('Video zona de riesgo', style: textForTitleApp()),
         elevation: 0,
         backgroundColor: Colors.black26,
       ),

@@ -5,6 +5,7 @@ import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_contacts/flutter_contacts.dart';
+import 'package:flutter_timezone/flutter_timezone.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:ifeelefine/Common/Constant.dart';
@@ -25,6 +26,8 @@ import '../Model/ApiRest/UseMobilApi.dart';
 import '../Model/ApiRest/UserRestApi.dart';
 import '../Model/ApiRest/activityDayApiResponse.dart';
 import 'package:flutter_countries/flutter_countries.dart';
+import 'package:timezone/data/latest.dart' as tz;
+import 'package:timezone/timezone.dart' as tz;
 
 final _prefs = PreferenceUser();
 final _locationController = Get.put(ConfigGeolocatorController());
@@ -101,27 +104,6 @@ String weekDayToString(int weekDay) {
   };
 
   return map[weekDay] ?? 'error';
-}
-
-void makePayment() async {
-  // FlutterPay flutterPay = FlutterPay();
-
-  // String result = "Result will be shown here";
-  // List<PaymentItem> items = [PaymentItem(name: "Premium user", price: 2.98)];
-
-  // flutterPay.setEnvironment(environment: PaymentEnvironment.Test);
-
-  // flutterPay.requestPayment(
-  //   googleParameters: GoogleParameters(
-  //     gatewayName: "example",
-  //     gatewayMerchantId: "example_id",
-  //   ),
-  //   appleParameters:
-  //       AppleParameters(merchantIdentifier: "merchant.flutterpay.example"),
-  //   currencyCode: "USD",
-  //   countryCode: "US",
-  //   paymentItems: items,
-  // );
 }
 
 String calculateAge(DateTime birthDate) {
@@ -226,25 +208,49 @@ Duration getDuration(List<String> parts) {
   return temp;
 }
 
+Future<String> locateZone() async {
+  var zone = await localizeStringName();
+  return zone.toString();
+}
+
 DateTime parseDurationRow(String s) {
-  List<String> parts = [];
-  List<String> parts2 = [];
-  Duration temp = Duration.zero;
+  List<String> parts;
+  Duration temp;
+  tz.initializeTimeZones();
 
   if (s == "00:00") {
     parts = s.split(':');
-    temp = getDuration(parts);
+    temp = getDurationNew(parts);
   } else {
     parts = s.split(' ');
-    parts2 = parts[1].split(':');
-    temp = getDuration(parts2);
+    parts = parts[1].split(':');
+    temp = getDurationNew(parts);
   }
 
-  var format = DateFormat("HH:mm");
+  DateTime currentTime = DateTime.now();
+  var dateTimed = DateFormat("yyyy-MM-dd HH:mm:ss")
+      .parse("${currentTime.toString().split(" ")[0]} $temp", true);
 
-  String sDuration = "${temp.inHours}:${temp.inMinutes.remainder(60)}";
-  DateTime pastDateTime = format.parse(sDuration);
-  return pastDateTime;
+  // Obtener la zona horaria de Madrid
+  tz.Location madridLocation = tz.getLocation(_prefs.getNameZone);
+
+  return dateTimed
+      .subtract(Duration(milliseconds: madridLocation.currentTimeZone.offset));
+}
+
+Future<String> localizeStringName() async {
+  tz.initializeTimeZones(); // Inicializar las zonas horarias
+  final String timeZoneName = await FlutterTimezone.getLocalTimezone();
+  tz.setLocalLocation(tz.getLocation(timeZoneName));
+
+  return timeZoneName;
+}
+
+Duration getDurationNew(List<String> parts) {
+  int hours = int.parse(parts[0]);
+  int minutes = int.parse(parts[1]);
+
+  return Duration(hours: hours, minutes: minutes);
 }
 
 DateTime parseStringHours(String s) {
@@ -263,7 +269,8 @@ DateTime parseStringHours(String s) {
 
   var format = DateFormat("HH:mm");
 
-  String sDuration = "${temp.inHours}:${temp.inMinutes.remainder(60)}";
+  String sDuration =
+      "${temp.inHours.toString().padLeft(2, '0')}:${temp.inMinutes.remainder(60).toString().padLeft(2, '0')}";
   DateTime pastDateTime = format.parse(sDuration);
   return pastDateTime;
 }
@@ -306,7 +313,8 @@ String parseTimeString(String s) {
     temp = getDuration(parts2);
   }
 
-  String sDuration = "${temp.inHours}:${temp.inMinutes.remainder(60)}";
+  String sDuration =
+      "${temp.inHours.toString().padLeft(2, '0')}:${temp.inMinutes.remainder(60).toString().padLeft(2, '0')}";
 
   return sDuration;
 }
@@ -327,7 +335,8 @@ DateTime parseDuration(String s) {
 
   var format = DateFormat("HH:mm");
 
-  String sDuration = "${temp.inHours}:${temp.inMinutes.remainder(60)}";
+  String sDuration =
+      "${temp.inHours.toString().padLeft(2, '0')}:${temp.inMinutes.remainder(60).toString().padLeft(2, '0')}";
   DateTime pastDateTime = format.parse(sDuration);
   return pastDateTime;
 }
@@ -481,9 +490,6 @@ Future<List<String>> getTraslateState(Country countryId) async {
   var province = await getProvince() as List;
   List<Map<String, dynamic>> jsonList = province.cast<Map<String, dynamic>>();
 
-  // Ordenar la lista alfabéticamente por el campo "name"
-  // jsonList.sort((a, b) => a['name'].compareTo(b['name']));
-
   jsonList.sort((a, b) =>
       removeDiacritics(a['name']).compareTo(removeDiacritics(b['name'])));
 
@@ -493,13 +499,13 @@ Future<List<String>> getTraslateState(Country countryId) async {
       states.add(f["name"].toString());
     }
     liststate.value = states;
-    return liststate.value;
+    return liststate;
   }
   for (var f in list) {
     states.add(f.name.toString());
   }
   liststate.value = states;
-  return liststate.value;
+  return liststate;
 }
 
 Future<List<Country>> getTraslateCountry() async {

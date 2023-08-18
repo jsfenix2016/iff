@@ -1,6 +1,5 @@
 import 'package:http/http.dart' as http;
 import 'package:ifeelefine/Common/Constant.dart';
-import 'package:ifeelefine/Model/restdaybd.dart';
 import 'dart:convert';
 
 import 'package:ifeelefine/Model/userbd.dart';
@@ -14,6 +13,7 @@ class MainService {
           body: jsonEncode(taskIds));
 
       if (response.statusCode == 200) {
+        print("cancelar notificacion: ${taskIds.first}");
         return true;
       } else {
         return false;
@@ -25,8 +25,6 @@ class MainService {
 
   Future<bool> sendAlertToContactImmediately(List<String> taskIds) async {
     try {
-      var json = jsonEncode(taskIds);
-
       final response = await http.post(
           Uri.parse("${Constant.baseApi}/v1/notifications/send"),
           headers: Constant.headers,

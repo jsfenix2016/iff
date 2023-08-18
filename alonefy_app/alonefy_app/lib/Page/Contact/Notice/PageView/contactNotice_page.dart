@@ -3,6 +3,8 @@ import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ifeelefine/Common/Constant.dart';
+import 'package:ifeelefine/Common/notificationService.dart';
+import 'package:ifeelefine/Common/text_style_font.dart';
 import 'package:ifeelefine/Common/utils.dart';
 import 'package:ifeelefine/Model/contact.dart';
 import 'package:ifeelefine/Page/Contact/EditContact/PageView/editContact.dart';
@@ -10,6 +12,7 @@ import 'package:ifeelefine/Page/Contact/ListContact/PageView/list_contact_page.d
 import 'package:ifeelefine/Page/Contact/Notice/Controller/contactNoticeController.dart';
 import 'package:ifeelefine/Page/Contact/Widget/cellContactStatus.dart';
 import 'package:ifeelefine/Page/Contact/Widget/filter_contact.dart';
+import 'package:ifeelefine/Page/Premium/Controller/premium_controller.dart';
 import 'package:ifeelefine/Page/Premium/PageView/premium_page.dart';
 import 'package:ifeelefine/Provider/prefencesUser.dart';
 import 'package:ifeelefine/Utils/Widgets/elevatedButtonFilling.dart';
@@ -79,17 +82,20 @@ class _ContactNoticePageState extends State<ContactNoticePage> {
             ),
           ),
         );
-        // Opcional: También puedes actualizar la variable user?.country aquí
       });
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    RedirectViewNotifier.setContext(context);
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.brown,
-        title: const Text("Configuración"),
+        title: Text(
+          "Configuración",
+          style: textForTitleApp(),
+        ),
       ),
       body: Container(
         decoration: decorationCustom(),
@@ -146,8 +152,8 @@ class _ContactNoticePageState extends State<ContactNoticePage> {
                                         100.0) //                 <--- border radius here
                                     ),
                               ),
-                              height: 79,
-                              width: 280,
+                              height: 80,
+                              width: 320,
                               child: Stack(
                                 children: [
                                   CellContactStatus(
@@ -164,8 +170,34 @@ class _ContactNoticePageState extends State<ContactNoticePage> {
                       },
                     ),
                   ),
-                  Center(
-                    child: ElevateButtonFilling(
+                  Padding(
+                    padding: const EdgeInsets.only(left: 80.0, right: 80.0),
+                    child: Container(
+                      decoration: const BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.centerLeft,
+                          end: Alignment.centerRight,
+                          colors: [
+                            Color(
+                                0xFFCA9D0B), // El color #CA9D0B en formato ARGB (Alpha, Rojo, Verde, Azul)
+                            Color(
+                                0xFFDBB12A), // El color #DBB12A en formato ARGB (Alpha, Rojo, Verde, Azul)
+                          ],
+                          stops: [
+                            0.1425,
+                            0.9594
+                          ], // Puedes ajustar estos valores para cambiar la ubicación de los colores en el gradiente
+                          transform: GradientRotation(92.66 *
+                              (3.14159265359 /
+                                  180)), // Convierte el ángulo a radianes para Flutter
+                        ),
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(8)),
+                      ),
+                      height: 42,
+                      child: Center(
+                          child: ElevateButtonFilling(
+                        showIcon: true,
                         onChanged: ((value) async {
                           if (_prefs.getUserFree && listContact.isNotEmpty) {
                             NotificationCenter().notify('getContact');
@@ -174,15 +206,19 @@ class _ContactNoticePageState extends State<ContactNoticePage> {
                               MaterialPageRoute(
                                 builder: (context) => const PremiumPage(
                                     isFreeTrial: false,
-                                    img: 'pantalla3.png',
-                                    title: Constant.premiumFallTitle,
-                                    subtitle: ''),
+                                    img: 'Mask group-7.png',
+                                    title:
+                                        'Protege tu Seguridad Personal las 24h:\n\n',
+                                    subtitle: 'Activa avisar a más contactos'),
                               ),
                             ).then(
                               (value) {
                                 if (value != null && value) {
                                   _prefs.setUserPremium = true;
                                   _prefs.setUserFree = false;
+                                  var premiumController =
+                                      Get.put(PremiumController());
+                                  premiumController.updatePremiumAPI(true);
                                 }
                               },
                             );
@@ -190,7 +226,10 @@ class _ContactNoticePageState extends State<ContactNoticePage> {
                           }
                           _showCountryListScreen(context);
                         }),
-                        mensaje: 'Añadir contacto'),
+                        mensaje: 'Añadir contacto',
+                        img: 'assets/images/User.png',
+                      )),
+                    ),
                   ),
                   const SizedBox(
                     height: 32,

@@ -4,6 +4,7 @@ import 'package:ifeelefine/Common/colorsPalette.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ifeelefine/Common/decoration_custom.dart';
+import 'package:ifeelefine/Common/notificationService.dart';
 import 'package:ifeelefine/Common/text_style_font.dart';
 import 'package:ifeelefine/Common/utils.dart';
 import 'package:ifeelefine/Model/logAlertsBD.dart';
@@ -60,12 +61,15 @@ class _AlertsPageState extends State<AlertsPage> {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     final listData = groupedProducts.entries.toList();
-
+    RedirectViewNotifier.setContext(context);
     return Scaffold(
       key: scaffoldKey,
       appBar: AppBar(
         backgroundColor: Colors.brown,
-        title: const Text("Alertas"),
+        title: Text(
+          "Alertas",
+          style: textForTitleApp(),
+        ),
       ),
       body: Container(
         decoration: decorationCustom(),
@@ -200,6 +204,7 @@ class _AlertsPageState extends State<AlertsPage> {
                     child: Padding(
                       padding: const EdgeInsets.only(left: 50.0),
                       child: ElevateButtonFilling(
+                        showIcon: false,
                         onChanged: (value) {
                           Navigator.push(
                             context,
@@ -211,6 +216,7 @@ class _AlertsPageState extends State<AlertsPage> {
                           );
                         },
                         mensaje: "Desactivar",
+                        img: '',
                       ),
                     ),
                   ),

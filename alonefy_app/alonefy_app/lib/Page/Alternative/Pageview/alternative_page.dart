@@ -1,3 +1,4 @@
+import 'package:get/get.dart';
 import 'package:ifeelefine/Common/Constant.dart';
 import 'package:ifeelefine/Common/button_style_custom.dart';
 import 'package:ifeelefine/Common/colorsPalette.dart';
@@ -9,6 +10,7 @@ import 'package:ifeelefine/Page/UserConfig/PageView/userconfig_page.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ifeelefine/Utils/Widgets/elevateButtonCustomBorder.dart';
 import 'package:ifeelefine/Common/decoration_custom.dart';
+import 'package:ifeelefine/Utils/Widgets/widgetLogo.dart';
 
 class AlternativePage extends StatefulWidget {
   const AlternativePage({super.key});
@@ -45,17 +47,7 @@ class _AlternativePagePageState extends State<AlternativePage> {
                       height: 150.0,
                     ),
                   ),
-                  Text(
-                    "AlertFriends",
-                    textAlign: TextAlign.center,
-                    style: GoogleFonts.barlow(
-                      fontSize: 44.5,
-                      wordSpacing: 1,
-                      letterSpacing: 0.001,
-                      fontWeight: FontWeight.w100,
-                      color: ColorPalette.principal,
-                    ),
-                  ),
+                  const WidgetLogoApp(),
                   const SizedBox(
                     height: 100,
                   ),
@@ -64,15 +56,11 @@ class _AlternativePagePageState extends State<AlternativePage> {
                     onPressed: () {
                       _prefs.firstConfig = true;
                       _prefs.config = false;
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const HomePage(),
-                        ),
-                      );
+
+                      Get.off(() => const HomePage());
                     },
                     child: FractionallySizedBox(
-                      widthFactor: 0.7,
+                      widthFactor: 0.66,
                       child: Container(
                         decoration: BoxDecoration(
                           gradient: linerGradientButtonFilling(),
@@ -81,30 +69,26 @@ class _AlternativePagePageState extends State<AlternativePage> {
                         ),
                         height: 42,
                         width: 205,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            RichText(
-                              textAlign: TextAlign.center,
-                              text: TextSpan(
-                                text: Constant.alternativePageButtonInit,
-                                style: GoogleFonts.barlow(
-                                  fontSize: 16.0,
-                                  wordSpacing: 1,
-                                  letterSpacing: 0.001,
-                                  fontWeight: FontWeight.normal,
-                                  color: Colors.black,
-                                ),
-                                children: <TextSpan>[
-                                  TextSpan(
-                                    text: " AlertFriends",
-                                    style: textNormal16Black(),
+                        child: Center(
+                          child: RichText(
+                            textAlign: TextAlign.center,
+                            text: TextSpan(
+                              text: Constant.alternativePageButtonInit,
+                              style: textNormal16Black(),
+                              children: <TextSpan>[
+                                TextSpan(
+                                  text: " AlertFriends",
+                                  style: GoogleFonts.barlow(
+                                    fontSize: 16.0,
+                                    wordSpacing: 1,
+                                    letterSpacing: 0.001,
+                                    fontWeight: FontWeight.w300,
+                                    color: Colors.black,
                                   ),
-                                ],
-                              ),
+                                ),
+                              ],
                             ),
-                          ],
+                          ),
                         ),
                       ),
                     ),
@@ -115,12 +99,8 @@ class _AlternativePagePageState extends State<AlternativePage> {
                   ElevateButtonCustomBorder(
                     onChanged: (value) {
                       _prefs.firstConfig = true;
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const UserConfigPage(),
-                        ),
-                      );
+
+                      Get.off(() => const UserConfigPage(isMenu: false));
                     },
                     mensaje: Constant.alternativePageButtonPersonalizar,
                   ),

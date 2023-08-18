@@ -11,11 +11,13 @@ class CardContact extends StatefulWidget {
       required this.onChanged,
       required this.name,
       required this.photo,
-      required this.visible})
+      required this.visible,
+      required this.isSelect})
       : super(key: key);
   final String name;
   final Uint8List? photo;
   final bool visible;
+  final bool isSelect;
   final ValueChanged<bool> onChanged;
   @override
   // ignore: library_private_types_in_public_api
@@ -70,10 +72,11 @@ class _CardContactState extends State<CardContact> {
         ),
       ),
       height: 79,
-      width: 280,
+      width: 320,
       child: Stack(
+        alignment: Alignment.center,
         children: [
-          _mostrarFoto(widget.photo),
+          Positioned(left: 0, child: _mostrarFoto(widget.photo)),
           Positioned(
             right: 0,
             child: Center(
@@ -86,15 +89,16 @@ class _CardContactState extends State<CardContact> {
                   ),
                 ),
                 height: 79,
-                width: 200,
+                width: 240,
                 child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
                     Container(
                       decoration: const BoxDecoration(
                         color: Colors.transparent,
                       ),
                       height: 79,
-                      width: 150,
+                      width: 200,
                       child: Center(
                         child: Text(
                           widget.name,
@@ -119,21 +123,24 @@ class _CardContactState extends State<CardContact> {
                             topRight: Radius.circular(100),
                           ),
                         ),
-                        height: 79,
-                        width: 50,
+                        height: 30,
+                        width: 30,
                         child: IconButton(
-                          iconSize: 40,
+                          iconSize: 23,
                           color: ColorPalette.principal,
                           onPressed: () {
                             widget.onChanged(true);
                           },
                           icon: Container(
-                            height: 28,
-                            width: 28,
-                            decoration: const BoxDecoration(
+                            height: 22.77,
+                            width: 20.48,
+                            decoration: BoxDecoration(
                               image: DecorationImage(
-                                image:
-                                    AssetImage('assets/images/plussWhite.png'),
+                                image: widget.isSelect
+                                    ? const AssetImage(
+                                        'assets/images/pencil.png')
+                                    : const AssetImage(
+                                        'assets/images/plussWhite.png'),
                                 fit: BoxFit.fill,
                               ),
                               color: Colors.transparent,

@@ -1,6 +1,6 @@
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:ifeelefine/Common/initialize_models_bd.dart';
-import 'package:ifeelefine/Common/utils.dart';
+
 import 'package:ifeelefine/Model/activitydaybd.dart';
 import 'package:ifeelefine/Model/contact.dart';
 import 'package:ifeelefine/Model/logActivityBd.dart';
@@ -121,6 +121,79 @@ class HiveData {
     return box.delete(contact.key);
   }
 
+  // Future<int> deleteListHistorial(List list) async {
+  //   try {
+  //     final Box<LogAlertsBD> box =
+  //         await Hive.openBox<LogAlertsBD>('UserPositionBD');
+  //     Box<LogActivityBD> boxActivity =
+  //         await Hive.openBox<LogActivityBD>('LogActivityBD');
+
+  //     for (var element in list) {
+  //       if (element.type == "Movimiento") {
+  //         await boxActivity.deleteAll(element);
+  //       }
+  //       if (element.type == "Incactividad") {
+  //         await box.delete(element);
+  //       } else {}
+  //       //
+  //     }
+
+  //     return 0;
+  //   } catch (error) {
+  //     return -1;
+  //   }
+  // }
+
+  Future<List<LogAlertsBD>> get listHistorialLogbd async {
+    final Box<LogAlertsBD> box =
+        await Hive.openBox<LogAlertsBD>('listLogsHistorial');
+
+    var listContact = box.values.toList();
+
+    return listContact;
+  }
+
+  Future<int> deleteListLogHistorial(List<LogAlertsBD> listAlerts) async {
+    try {
+      final Box<LogAlertsBD> box =
+          await Hive.openBox<LogAlertsBD>('listLogsHistorial');
+
+      for (var element in listAlerts) {
+        box.delete(element.key);
+      }
+
+      return 0;
+    } catch (error) {
+      return -1;
+    }
+  }
+
+  Future<int> saveLogsHistorialBD(LogAlertsBD user) async {
+    try {
+      final Box<LogAlertsBD> box =
+          await Hive.openBox<LogAlertsBD>('UserPositionBD');
+
+      box.add(user);
+      return 0;
+    } catch (error) {
+      return -1;
+    }
+  }
+
+  Future<int> saveListLogsHistorial(List<dynamic> activities) async {
+    Box<dynamic> box = await Hive.openBox<dynamic>('listLogsHistorial');
+
+    for (var element in box.values) {
+      box.delete(element.key);
+    }
+
+    for (ActivityDayBD element in activities) {
+      box.add(element);
+    }
+
+    return 0;
+  }
+
   Future<int> deleteListAlerts(List<LogAlertsBD> listAlerts) async {
     try {
       final Box<LogAlertsBD> box =
@@ -135,6 +208,29 @@ class HiveData {
       return -1;
     }
   }
+
+  // Future<int> deleteListHistorial(List list) async {
+  //   try {
+  //     final Box<LogAlertsBD> box =
+  //         await Hive.openBox<LogAlertsBD>('UserPositionBD');
+  //     Box<LogActivityBD> boxActivity =
+  //         await Hive.openBox<LogActivityBD>('LogActivityBD');
+
+  //     for (var element in list) {
+  //       if (element.type == "Movimiento") {
+  //         await boxActivity.deleteAll(element);
+  //       }
+  //       if (element.type == "Incactividad") {
+  //         await box.delete(element);
+  //       } else {}
+  //       //
+  //     }
+
+  //     return 0;
+  //   } catch (error) {
+  //     return -1;
+  //   }
+  // }
 
   Future<int> saveUserPositionBD(LogAlertsBD user) async {
     try {

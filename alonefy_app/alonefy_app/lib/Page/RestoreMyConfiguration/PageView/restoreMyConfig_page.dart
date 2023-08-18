@@ -4,11 +4,13 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ifeelefine/Common/Constant.dart';
 import 'package:ifeelefine/Common/manager_alerts.dart';
+import 'package:ifeelefine/Common/notificationService.dart';
 import 'package:ifeelefine/Common/text_style_font.dart';
 import 'package:ifeelefine/Common/utils.dart';
 import 'package:ifeelefine/Page/HomePage/Pageview/home_page.dart';
 
 import 'package:ifeelefine/Page/RestoreMyConfiguration/Controller/restoreController.dart';
+import 'package:ifeelefine/Page/UserRest/Widgets/row_buttons_when_menu.dart';
 
 import '../../../Common/colorsPalette.dart';
 
@@ -40,12 +42,17 @@ class _RestoreMyConfigPageState extends State<RestoreMyConfigPage> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
+    RedirectViewNotifier.setContext(context);
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: ColorPalette.backgroundAppBar,
-        title: const Text("Configuración"),
+        backgroundColor: Colors.brown,
+        title: Text(
+          "Configuración",
+          style: textForTitleApp(),
+        ),
       ),
       body: SingleChildScrollView(
+        keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
         child: Container(
           decoration: decorationCustom(),
           width: size.width,
@@ -62,7 +69,7 @@ class _RestoreMyConfigPageState extends State<RestoreMyConfigPage> {
               ] else ...[
                 Column(
                   mainAxisSize: MainAxisSize.min,
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     const SizedBox(height: 32),
                     Center(
@@ -166,75 +173,96 @@ class _RestoreMyConfigPageState extends State<RestoreMyConfigPage> {
                   ],
                 ),
                 Positioned(
-                  bottom: 50,
-                  right: 32,
+                  bottom: 100,
                   child: Container(
-                    decoration: const BoxDecoration(
-                      color: Color.fromRGBO(219, 177, 42, 1),
-                      borderRadius: BorderRadius.all(Radius.circular(8)),
-                    ),
-                    width: 138,
-                    height: 42,
-                    child: Center(
-                      child: TextButton(
-                        child: Text('Restaurar',
-                            textAlign: TextAlign.center,
-                            style: textNormal16White()),
-                        onPressed: () async {
-                          if (phone.length < 8 || phone.isEmpty) {
-                            showSaveAlert(context, Constant.info,
-                                Constant.validatePhoneNumber);
+                    height: 77,
+                    width: size.width,
+                    color: Colors.transparent,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      mainAxisSize: MainAxisSize.max,
+                      children: [
+                        Container(
+                          decoration: BoxDecoration(
+                            color: Colors.transparent,
+                            border: Border.all(
+                                color: const Color.fromRGBO(219, 177, 42, 1)),
+                            borderRadius:
+                                const BorderRadius.all(Radius.circular(8)),
+                          ),
+                          width: 138,
+                          height: 42,
+                          child: Center(
+                            child: TextButton(
+                              child: Text('Cancelar',
+                                  textAlign: TextAlign.center,
+                                  style: GoogleFonts.barlow(
+                                    fontSize: 16.0,
+                                    wordSpacing: 1,
+                                    letterSpacing: 1.2,
+                                    fontWeight: FontWeight.w700,
+                                    color: Colors.white,
+                                  )),
+                              onPressed: () => Navigator.of(context).pop(),
+                            ),
+                          ),
+                        ),
+                        Container(
+                          decoration: const BoxDecoration(
+                            color: Color.fromRGBO(219, 177, 42, 1),
+                            borderRadius: BorderRadius.all(Radius.circular(8)),
+                          ),
+                          width: 138,
+                          height: 42,
+                          child: Center(
+                            child: TextButton(
+                              child: Text(
+                                'Restaurar',
+                                textAlign: TextAlign.center,
+                                style: GoogleFonts.barlow(
+                                  fontSize: 16.0,
+                                  wordSpacing: 1,
+                                  letterSpacing: 1.2,
+                                  fontWeight: FontWeight.w700,
+                                  color: Colors.black,
+                                ),
+                              ),
+                              onPressed: () async {
+                                if (phone.length < 8 || phone.isEmpty) {
+                                  showSaveAlert(context, Constant.info,
+                                      Constant.validatePhoneNumber);
 
-                            return;
-                          }
-                          if (email.isEmpty) {
-                            return;
-                          }
-                          if (!validateEmail(email)) {
-                            // El correo electrónico no es válido
-                            showSaveAlert(
-                                context, Constant.info, Constant.validateEmail);
-                            return;
-                          }
+                                  return;
+                                }
+                                if (email.isEmpty) {
+                                  return;
+                                }
+                                if (!validateEmail(email)) {
+                                  // El correo electrónico no es válido
+                                  showSaveAlert(context, Constant.info,
+                                      Constant.validateEmail);
+                                  return;
+                                }
 
-                          setState(() {
-                            _isRestoreInProgress = true;
-                          });
-                          var result =
-                              await restVC.sendData(context, phone, email);
+                                setState(() {
+                                  _isRestoreInProgress = true;
+                                });
+                                var result = await restVC.sendData(
+                                    context, phone, email);
 
-                          if (result) {
-                            setState(() {
-                              Get.off(() => const HomePage());
-                            });
-                          }
-                          setState(() {
-                            _isRestoreInProgress = false;
-                          });
-                        },
-                      ),
-                    ),
-                  ),
-                ),
-                Positioned(
-                  bottom: 50,
-                  left: 32,
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: Colors.transparent,
-                      border: Border.all(
-                          color: const Color.fromRGBO(219, 177, 42, 1)),
-                      borderRadius: const BorderRadius.all(Radius.circular(8)),
-                    ),
-                    width: 138,
-                    height: 42,
-                    child: Center(
-                      child: TextButton(
-                        child: Text('Cancelar',
-                            textAlign: TextAlign.center,
-                            style: textNormal16White()),
-                        onPressed: () => Navigator.of(context).pop(),
-                      ),
+                                if (result) {
+                                  setState(() {
+                                    Get.off(() => const HomePage());
+                                  });
+                                }
+                                setState(() {
+                                  _isRestoreInProgress = false;
+                                });
+                              },
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ),

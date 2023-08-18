@@ -51,13 +51,13 @@ class TextFieldFormCustomBorderState extends State<TextFieldFormCustomBorder> {
           prefix: (widget.labelText == Constant.telephone)
               ? const Text('+34 ')
               : null,
-          suffixIcon: (widget.labelText == Constant.email ||
-                  widget.labelText == Constant.telephone)
-              ? const Text(
-                  '*',
-                  style: TextStyle(color: Colors.red, fontSize: 40),
-                )
-              : null,
+          // suffixIcon: (widget.labelText == Constant.email ||
+          //         widget.labelText == Constant.telephone)
+          //     ? const Text(
+          //         '*',
+          //         style: TextStyle(color: Colors.red, fontSize: 40),
+          //       )
+          //     : null,
           hintText: widget.mesaje,
           labelText: widget.labelText,
           focusedBorder: OutlineInputBorder(
@@ -69,11 +69,29 @@ class TextFieldFormCustomBorderState extends State<TextFieldFormCustomBorder> {
                 width: 1, color: ColorPalette.principal), //<-- SEE HERE
             borderRadius: BorderRadius.circular(100.0),
           ),
-          hintStyle: textNormal16White(),
+          hintStyle: GoogleFonts.barlow(
+            fontSize: 16.0,
+            wordSpacing: 1,
+            letterSpacing: 0.001,
+            fontWeight: FontWeight.w400,
+            color: Colors.white,
+          ),
           filled: true,
-          labelStyle: textNormal16White(),
+          labelStyle: GoogleFonts.barlow(
+            fontSize: 16.0,
+            wordSpacing: 1,
+            letterSpacing: 0.001,
+            fontWeight: FontWeight.w400,
+            color: Colors.white,
+          ),
         ),
-        style: textNormal16White(),
+        style: GoogleFonts.barlow(
+          fontSize: 16.0,
+          wordSpacing: 1,
+          letterSpacing: 0.001,
+          fontWeight: FontWeight.w400,
+          color: Colors.white,
+        ),
         onSaved: (value) => {widget.onChanged(value!)},
         validator: (value) {
           return widget.placeholder;

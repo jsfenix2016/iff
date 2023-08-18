@@ -176,6 +176,14 @@ class PreferenceUser {
     _prefs.setString('FallTime', value);
   }
 
+  get getUseMobilConfig {
+    return _prefs.getBool('UseMobilConfig') ?? false;
+  }
+
+  set setUseMobilConfig(bool value) {
+    _prefs.setBool('UseMobilConfig', value);
+  }
+
   get getUserPremium {
     return _prefs.getBool('userPremium') ?? false;
   }
@@ -302,6 +310,14 @@ class PreferenceUser {
 
   get getHrefMail {
     return _prefs.getString('HrefMail') ?? '';
+  }
+
+  get getNameZone {
+    return _prefs.getString('NameZone') ?? "Europe/Madrid";
+  }
+
+  set setNameZone(String name) {
+    _prefs.setString('NameZone', name);
   }
 
   void resetToDefault() {

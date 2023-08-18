@@ -7,14 +7,9 @@ import 'package:ifeelefine/Data/hive_data.dart';
 import 'package:ifeelefine/Model/useMobilbd.dart';
 import 'package:ifeelefine/Model/userbd.dart';
 import 'package:ifeelefine/Page/UseMobil/Service/useMobilService.dart';
-import 'package:ifeelefine/Provider/prefencesUser.dart';
-import 'package:ifeelefine/Provider/user_provider.dart';
 
-import '../../../Data/hive_data.dart';
 import '../../../Model/ApiRest/UseMobilApi.dart';
 //import 'package:pay/pay.dart';
-
-final _prefs = PreferenceUser();
 
 class UseMobilController extends GetxController {
   final UseMobilService useMobilServ = Get.put(UseMobilService());
@@ -47,7 +42,9 @@ class UseMobilController extends GetxController {
     List<UseMobilApi> listMobilApi = [];
     for (var useMobil in listMobilBD) {
       var useMobilApi = UseMobilApi(
-          phoneNumber: userBD.telephone.replaceAll("+34", ""),
+          phoneNumber: userBD.telephone.contains('+34')
+              ? userBD.telephone.replaceAll("+34", "")
+              : userBD.telephone,
           dayOfWeek: Constant.tempMapDayApi[useMobil.day]!,
           time: _convertTimeToInt(useMobil.time),
           index: useMobil.selection,
@@ -70,48 +67,5 @@ class UseMobilController extends GetxController {
     }
 
     return minutes;
-  }
-
-  //Future<void> saveHabitsMobil(BuildContext context, String time) async {
-  //  _prefs.setHabitsTime = time;
-//
-  //  showAlert(context, "Se guardó correctamente");
-  //}
-
-  //Future<String> getTimeUseMobil() async {
-  //  return _prefs.getUseMobil;
-  //}
-
-  Future payAlgo() async {
-    // List<PaymentItem> items = [];
-    // items = [
-    //   const PaymentItem(
-    //     label: 'Total',
-    //     amount: '1.99',
-    //     status: PaymentItemStatus.final_price,
-    //   )
-    // ];
-
-    // FlutterPay flutterPay = FlutterPay();
-
-    // bool isAvailable = await flutterPay.canMakePayments();
-
-    // flutterPay.setEnvironment(environment: PaymentEnvironment.Test);
-
-    // String token = await flutterPay.requestPayment(
-    //   googleParameters: GoogleParameters(
-    //     gatewayName: "example",
-    //     gatewayMerchantId: "example_id",
-    //     merchantId: "example_merchant_id",
-    //     merchantName: "exampleMerchantName",
-    //   ),
-    //   appleParameters:
-    //       AppleParameters(merchantIdentifier: "merchant.flutterpay.example"),
-    //   currencyCode: "USD",
-    //   countryCode: "US",
-    //   paymentItems: items,
-    // );
-
-    // print(token);
   }
 }

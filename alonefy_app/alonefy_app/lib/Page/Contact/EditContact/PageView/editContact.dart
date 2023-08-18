@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ifeelefine/Common/Constant.dart';
 import 'package:ifeelefine/Common/manager_alerts.dart';
+import 'package:ifeelefine/Common/notificationService.dart';
+import 'package:ifeelefine/Common/text_style_font.dart';
 import 'package:ifeelefine/Model/contact.dart';
 import 'package:ifeelefine/Page/Contact/EditContact/Controller/edit_controller.dart';
 import 'package:ifeelefine/Utils/Widgets/elevateButtonCustomBorder.dart';
@@ -37,10 +39,14 @@ class _EditContactState extends State<EditContact> {
 
   @override
   Widget build(BuildContext context) {
+    RedirectViewNotifier.setContext(context);
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.brown,
-        title: const Text("Editar Contacto"),
+        title: Text(
+          "Editar contacto",
+          style: textForTitleApp(),
+        ),
       ),
       body: Container(
         decoration: decorationCustom(),
@@ -124,8 +130,7 @@ class _EditContactState extends State<EditContact> {
                                 contactBD.photo = widget.contact.photo;
                                 contactBD.timeSendSMS = timeSMS;
                                 contactBD.timeCall = timeCall;
-                                contactBD.timeWhatsapp =
-                                    widget.contact.timeWhatsapp;
+                                contactBD.timeWhatsapp = timeSMS;
                                 bool save = await contactVC.saveContact(
                                     context, contactBD);
                                 if (save) {

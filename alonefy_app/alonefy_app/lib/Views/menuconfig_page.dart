@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ifeelefine/Common/colorsPalette.dart';
+import 'package:ifeelefine/Common/decoration_custom.dart';
 import 'package:ifeelefine/Common/habits.dart';
 import 'package:ifeelefine/Common/text_style_font.dart';
 import 'package:ifeelefine/Controllers/mainController.dart';
@@ -86,9 +87,9 @@ class _MenuConfigurationPageState extends State<MenuConfigurationPage> {
 
   void redirectToConfigUser() {
     Route route = MaterialPageRoute(
-      builder: (context) => const UserConfigPage(),
+      builder: (context) => const UserConfigPage(isMenu: true),
     );
-    Navigator.pushReplacement(context, route);
+    Navigator.push(context, route);
   }
 
   void routeIndexSelect(int index) async {
@@ -229,11 +230,6 @@ class _MenuConfigurationPageState extends State<MenuConfigurationPage> {
             ));
         break;
       case 10:
-        //if (!prefs.isConfig) {
-        //  redirectToConfigUser();
-        //  return;
-        //}
-
         if (_prefs.getUserPremium) {
           Future.sync(() => Navigator.push(
                 context,
@@ -242,30 +238,34 @@ class _MenuConfigurationPageState extends State<MenuConfigurationPage> {
                 ),
               ));
         } else {
-          Future.sync(() => Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => const PremiumPage(
-                        isFreeTrial: false,
-                        img: 'Pantalla5.jpg',
-                        title: Constant.premiumRestoreTitle,
-                        subtitle: '')),
-              ).then(
-                (value) {
-                  if (value != null && value) {
-                    _prefs.setUserPremium = true;
-                    _prefs.setUserFree = false;
-                    var premiumController = Get.put(PremiumController());
-                    premiumController.updatePremiumAPIFree(true);
-                    Future.sync(() => Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const RestoreMyConfigPage(),
-                          ),
-                        ));
-                  }
-                },
-              ));
+          Future.sync(
+            () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => const PremiumPage(
+                      isFreeTrial: false,
+                      img: 'Pantalla5.jpg',
+                      title: 'Protege tu Seguridad Personal las 24h:\n\n',
+                      subtitle: Constant.premiumRestoreTitle)),
+            ).then(
+              (value) {
+                if (value != null && value) {
+                  _prefs.setUserPremium = true;
+                  _prefs.setUserFree = false;
+                  var premiumController = Get.put(PremiumController());
+                  premiumController.updatePremiumAPI(true);
+                  Future.sync(
+                    () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const RestoreMyConfigPage(),
+                      ),
+                    ),
+                  );
+                }
+              },
+            ),
+          );
         }
         break;
       case 11:
@@ -273,14 +273,16 @@ class _MenuConfigurationPageState extends State<MenuConfigurationPage> {
           redirectToConfigUser();
           return;
         }
-        Future.sync(() => Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => const DesactivePage(
-                  isMenu: true,
-                ),
+        Future.sync(
+          () => Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const DesactivePage(
+                isMenu: true,
               ),
-            ));
+            ),
+          ),
+        );
 
         break;
       default:
@@ -291,22 +293,17 @@ class _MenuConfigurationPageState extends State<MenuConfigurationPage> {
   Widget build(BuildContext context) {
     final Size size = MediaQuery.of(context).size;
     return Scaffold(
+      extendBodyBehindAppBar: true,
       appBar: AppBar(
-        backgroundColor: const Color.fromARGB(255, 76, 52, 22),
-        title: const Text('Configuración'),
+        backgroundColor: Colors.brown,
+        elevation: 0,
+        title: Text(
+          "Configuración",
+          style: textForTitleApp(),
+        ),
       ),
       body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment(0, 1),
-            colors: <Color>[
-              ColorPalette.principalView,
-              ColorPalette.secondView,
-            ],
-            tileMode: TileMode.mirror,
-          ),
-        ),
+        decoration: decorationCustom(),
         width: size.width,
         height: size.height,
         child: Stack(
@@ -399,6 +396,10 @@ class _MenuConfigurationPageState extends State<MenuConfigurationPage> {
       ),
       onChanged: (SlidableButtonPosition value) async {
         if (value == SlidableButtonPosition.end && _prefs.getUserPremium) {
+          if (_prefs.getHabitsEnable) {
+            showAlert(context, Constant.habitsActive);
+            return;
+          }
           updateHabits(context);
         } else if (value == SlidableButtonPosition.end) {
           Navigator.push(
@@ -407,9 +408,17 @@ class _MenuConfigurationPageState extends State<MenuConfigurationPage> {
                 builder: (context) => const PremiumPage(
                     isFreeTrial: false,
                     img: 'pantalla2.png',
-                    title: Constant.premiumHabitsTitle,
-                    subtitle: '')),
-          );
+                    title: "Protege tu Seguridad Personal las 24h:\n\n",
+                    subtitle:
+                        'AlertFriends aprende de tu ritmo de uso del móvil en cada momento')),
+          ).then((value) {
+            if (value != null && value) {
+              _prefs.setUserFree = false;
+              _prefs.setUserPremium = true;
+              var premiumController = Get.put(PremiumController());
+              premiumController.updatePremiumAPI(true);
+            }
+          });
         }
       },
       child: Padding(
@@ -421,13 +430,13 @@ class _MenuConfigurationPageState extends State<MenuConfigurationPage> {
               padding: const EdgeInsets.only(left: 48.0),
               child: Center(
                 child: Text(
-                  "Aprender de mis hábitos",
+                  Constant.btnhabits,
                   textAlign: TextAlign.center,
                   style: GoogleFonts.barlow(
                     fontSize: 16.0,
                     wordSpacing: 1,
                     letterSpacing: 1,
-                    fontWeight: FontWeight.bold,
+                    fontWeight: FontWeight.w700,
                     color: Colors.white,
                   ),
                 ),

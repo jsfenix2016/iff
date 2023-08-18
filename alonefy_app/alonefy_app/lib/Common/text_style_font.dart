@@ -29,7 +29,7 @@ TextStyle textNormal16Black() {
     fontSize: 16.0,
     wordSpacing: 1,
     letterSpacing: 0.001,
-    fontWeight: FontWeight.normal,
+    fontWeight: FontWeight.w700,
     color: Colors.black,
   );
 }
@@ -39,7 +39,17 @@ TextStyle textNormal16White() {
     fontSize: 16.0,
     wordSpacing: 1,
     letterSpacing: 0.001,
-    fontWeight: FontWeight.normal,
+    fontWeight: FontWeight.w400,
+    color: Colors.white,
+  );
+}
+
+TextStyle textForTitleApp() {
+  return GoogleFonts.barlow(
+    fontSize: 18.0,
+    wordSpacing: 1,
+    letterSpacing: 1.2,
+    fontWeight: FontWeight.w400,
     color: Colors.white,
   );
 }
@@ -88,7 +98,7 @@ TextStyle textBold24PrincipalColor() {
   return GoogleFonts.barlow(
     fontSize: 24.0,
     wordSpacing: 1,
-    letterSpacing: 1.2,
+    letterSpacing: 0.0001,
     height: 1.39,
     fontWeight: FontWeight.bold,
     color: ColorPalette.principal,

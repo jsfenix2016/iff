@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ifeelefine/Common/Constant.dart';
+import 'package:ifeelefine/Common/text_style_font.dart';
 
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:webview_flutter_wkwebview/webview_flutter_wkwebview.dart';
@@ -102,10 +103,11 @@ class _WebViewTermsConditionsState extends State<WebViewTermsConditions> {
       },
       child: Scaffold(
         appBar: AppBar(
-          title: const Text(
-            'Términos y condiciones',
+          backgroundColor: Colors.brown,
+          title: Text(
+            "Términos y condiciones",
+            style: textForTitleApp(),
           ),
-          backgroundColor: const Color.fromARGB(255, 76, 52, 22),
         ),
         body: SafeArea(child: WebViewWidget(controller: controller)),
       ),

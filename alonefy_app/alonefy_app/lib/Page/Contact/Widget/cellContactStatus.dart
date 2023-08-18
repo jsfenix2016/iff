@@ -69,8 +69,8 @@ class _CellContactStatusState extends State<CellContactStatus> {
           Radius.circular(100.0), //                 <--- border radius here
         ),
       ),
-      height: 79,
-      width: 280,
+      height: 80,
+      width: 320,
       child: Stack(
         children: [
           _mostrarFoto(widget.contact.photo),
@@ -85,33 +85,40 @@ class _CellContactStatusState extends State<CellContactStatus> {
                     topRight: Radius.circular(100),
                   ),
                 ),
-                height: 79,
-                width: 200,
+                height: 80,
+                width: 250,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
                   children: [
                     Container(
                       decoration: const BoxDecoration(
                         color: Colors.transparent,
                       ),
-                      height: 79,
-                      width: 150,
+                      height: 80,
+                      width: 190,
                       child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.max,
                         children: [
-                          Padding(
-                            padding: const EdgeInsets.all(4.0),
-                            child: SizedBox(
-                              height: 35,
-                              width: 150,
+                          Container(
+                            color: Colors.transparent,
+                            height: 52,
+                            width: 190,
+                            child: Padding(
+                              padding:
+                                  const EdgeInsets.only(left: 16.0, top: 8),
                               child: Text(
+                                overflow: TextOverflow.ellipsis,
+                                softWrap: false,
                                 widget.contact.displayName,
                                 textAlign: TextAlign.left,
+                                maxLines: 2,
                                 style: GoogleFonts.barlow(
-                                  fontSize: 15.0,
+                                  fontSize: 18.0,
                                   wordSpacing: 1,
                                   letterSpacing: 0.001,
-                                  fontWeight: FontWeight.normal,
+                                  fontWeight: FontWeight.w600,
                                   color: Colors.white,
                                 ),
                               ),
@@ -120,12 +127,12 @@ class _CellContactStatusState extends State<CellContactStatus> {
                           Container(
                             color: Colors.transparent,
                             height: 24,
-                            width: 150,
+                            width: 190,
                             child: Padding(
-                              padding: const EdgeInsets.only(left: 0.0),
+                              padding: const EdgeInsets.only(left: 16.0),
                               child: Container(
-                                margin:
-                                    const EdgeInsets.only(left: 4.0, right: 48),
+                                margin: const EdgeInsets.only(
+                                    bottom: 0, left: 0.0, right: 84),
                                 decoration: BoxDecoration(
                                   color: getColorStatus(
                                       widget.contact.requestStatus),
@@ -139,12 +146,12 @@ class _CellContactStatusState extends State<CellContactStatus> {
                                   child: Center(
                                     child: Text(
                                       widget.contact.requestStatus,
-                                      textAlign: TextAlign.left,
+                                      textAlign: TextAlign.center,
                                       style: GoogleFonts.barlow(
                                         fontSize: 14.0,
                                         wordSpacing: 1,
-                                        letterSpacing: 1,
-                                        fontWeight: FontWeight.bold,
+                                        letterSpacing: 0.001,
+                                        fontWeight: FontWeight.w700,
                                         color: Colors.black,
                                       ),
                                     ),
@@ -180,17 +187,23 @@ class _CellContactStatusState extends State<CellContactStatus> {
                                   ),
                                 ),
                                 height: 40,
-                                width: 50,
+                                width: 40,
                                 child: IconButton(
-                                  iconSize: 15,
+                                  iconSize: 16,
                                   color: ColorPalette.principal,
                                   onPressed: () {
-                                    print("delete contact");
                                     widget.onChanged(widget.contact);
                                   },
-                                  icon: const Icon(
-                                    Icons.delete,
-                                    color: ColorPalette.principal,
+                                  icon: Container(
+                                    width: 16,
+                                    height: 16,
+                                    decoration: const BoxDecoration(
+                                      image: DecorationImage(
+                                        image: AssetImage(
+                                            'assets/images/trash.png'),
+                                        fit: BoxFit.contain,
+                                      ),
+                                    ),
                                   ),
                                 ),
                               ),
@@ -205,9 +218,9 @@ class _CellContactStatusState extends State<CellContactStatus> {
                                   ),
                                 ),
                                 height: 40,
-                                width: 50,
+                                width: 40,
                                 child: IconButton(
-                                  iconSize: 15,
+                                  iconSize: 16,
                                   color: ColorPalette.principal,
                                   onPressed: () {
                                     print("edit contact");
@@ -221,9 +234,16 @@ class _CellContactStatusState extends State<CellContactStatus> {
                                       ),
                                     );
                                   },
-                                  icon: const Icon(
-                                    Icons.edit,
-                                    color: ColorPalette.principal,
+                                  icon: Container(
+                                    width: 16,
+                                    height: 16,
+                                    decoration: const BoxDecoration(
+                                      image: DecorationImage(
+                                        image: AssetImage(
+                                            'assets/images/pencil.png'),
+                                        fit: BoxFit.contain,
+                                      ),
+                                    ),
                                   ),
                                 ),
                               ),

@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:ifeelefine/Common/Constant.dart';
 import 'package:ifeelefine/Common/colorsPalette.dart';
 import 'package:ifeelefine/Common/manager_alerts.dart';
+import 'package:ifeelefine/Common/notificationService.dart';
 import 'package:ifeelefine/Common/utils.dart';
 import 'package:ifeelefine/Model/contact.dart';
 import 'package:ifeelefine/Page/Contact/ListContact/Controller/list_contact_controller.dart';
@@ -175,7 +176,9 @@ class _ListContactState extends State<ListContact> {
                                       child: Center(
                                         child: (listContact.isNotEmpty)
                                             ? Text(
-                                                listContact[index].displayName,
+                                                listContact[index]
+                                                    .displayName
+                                                    .trimRight(),
                                                 textAlign: TextAlign.center,
                                                 style: GoogleFonts.barlow(
                                                   fontSize: 18.0,
@@ -223,6 +226,7 @@ class _ListContactState extends State<ListContact> {
 
   @override
   Widget build(BuildContext context) {
+    RedirectViewNotifier.setContext(context);
     return Scaffold(
       backgroundColor: ColorPalette.secondView,
       body: Container(

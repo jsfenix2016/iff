@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ifeelefine/Common/Constant.dart';
 import 'package:ifeelefine/Common/manager_alerts.dart';
-import 'package:ifeelefine/Common/utils.dart';
+
 import 'package:ifeelefine/Model/ApiRest/TermsAndConditionsApi.dart';
 import 'package:ifeelefine/Page/TermsAndConditions/Service/termsAndConditionsService.dart';
 import 'package:ifeelefine/Provider/prefencesUser.dart';

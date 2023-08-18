@@ -97,7 +97,7 @@ class _FilterContactListScreenState extends State<FilterContactListScreen> {
         appBar: AppBar(
           backgroundColor: Colors.brown,
           title: TextField(
-            style: textNomral18White(),
+            style: textForTitleApp(),
             onChanged: (value) {
               setState(() {
                 searchQuery = value;

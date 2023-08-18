@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:ifeelefine/Common/notificationService.dart';
+import 'package:ifeelefine/Common/text_style_font.dart';
 import 'package:ifeelefine/Common/utils.dart';
 import 'package:ifeelefine/Model/logActivity.dart';
 import 'package:ifeelefine/Model/logActivityBd.dart';
@@ -48,10 +50,10 @@ class _HistorialPageState extends State<HistorialPage> {
   }
 
   Future<void> deleteForDayMov(
-      BuildContext context, List<LogAlertsBD> listLog) async {
+      BuildContext context, List<LogAlertsBD> time) async {
     groupedProducts = {};
 
-    var req = await alertsVC.deleteAlerts(context, listLog);
+    var req = await alertsVC.deleteAlerts(context, time);
     if (req == 0) {
       NotificationCenter().notify('getAlerts');
       getLog();
@@ -131,12 +133,17 @@ class _HistorialPageState extends State<HistorialPage> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    final listData = groupedAlert.entries.toList();
+    List<MapEntry<String, List<dynamic>>> listData =
+        groupedAlert.entries.toList();
+    RedirectViewNotifier.setContext(context);
     return Scaffold(
       key: scaffoldKey,
       appBar: AppBar(
         backgroundColor: Colors.brown,
-        title: const Text("Historial"),
+        title: Text(
+          "Historial",
+          style: textForTitleApp(),
+        ),
       ),
       body: Container(
         decoration: decorationCustom(),
@@ -185,28 +192,46 @@ class _HistorialPageState extends State<HistorialPage> {
                             itemBuilder: (BuildContext context, int index) {
                               listAlerts = listData[i].value.toList();
 
-                              // if ((listAlerts[index] as LogAlertsBD)
-                              //     .type
-                              //     .contains("Cita")) {
-                              // } else {}
-
                               return generic(listAlerts[index]);
                             },
                           ),
                         ),
                       ),
-                      Positioned(
-                        right: 10,
-                        child: IconButton(
-                          iconSize: 35,
-                          onPressed: () {
-                            var a = listData[i];
-                            // deleteForDayMov(context, a.value);
-                            print("object");
-                          },
-                          icon: const Icon(
-                            Icons.close,
-                            color: Colors.white,
+                      Visibility(
+                        visible: false,
+                        child: Positioned(
+                          right: 10,
+                          child: IconButton(
+                            iconSize: 35,
+                            onPressed: () {
+                              List key = listData[i].value;
+                              var a = listData[i];
+                              // int index = listData
+                              //     .indexWhere((entry) => entry.key == key);
+                              // if (index != -1) {
+                              //   listData[index] = MapEntry(key,
+                              //       listData[index].value..remove(listData[i]));
+                              // }
+                              // List<LogAlertsBD> listaLogAlertsBD =
+                              //     listData[i].value.map((dynamic item) {
+                              //   return LogAlertsBD(
+                              //     id: item["id"],
+                              //     type: item["type"],
+                              //     time: item["time"],
+                              //     photoDate:
+                              //   );
+                              // }).toList();
+                              // var a = listaLogAlertsBD;
+                              groupedAlert.remove(listData[i].key);
+                              var temp = key;
+                              print(temp);
+                              // deleteForDayMov(context, temp);
+                              print("object");
+                            },
+                            icon: const Icon(
+                              Icons.close,
+                              color: Colors.white,
+                            ),
                           ),
                         ),
                       ),

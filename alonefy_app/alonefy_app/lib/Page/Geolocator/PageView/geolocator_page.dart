@@ -6,10 +6,12 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:ifeelefine/Common/Constant.dart';
 import 'package:ifeelefine/Common/manager_alerts.dart';
 import 'package:ifeelefine/Page/Geolocator/Controller/configGeolocatorController.dart';
+import 'package:ifeelefine/Page/Premium/Controller/premium_controller.dart';
 import 'package:ifeelefine/Page/Premium/PageView/premium_page.dart';
 import 'package:ifeelefine/Page/TermsAndConditions/PageView/conditionGeneral_page.dart';
 import 'package:ifeelefine/Utils/Widgets/ImageGradient.dart';
 import 'package:ifeelefine/Utils/Widgets/elevatedButtonFilling.dart';
+import 'package:slidable_button/slidable_button.dart';
 import '../../../Common/colorsPalette.dart';
 import '../../../Provider/prefencesUser.dart';
 import 'package:ifeelefine/Common/decoration_custom.dart';
@@ -177,8 +179,93 @@ class _InitGeolocatorState extends State<InitGeolocator> {
   void initState() {
     super.initState();
     _prefs.saveLastScreenRoute("configGeo");
+
     preferencePermission = _prefs.getAcceptedSendLocation;
     _isActivePermission();
+  }
+
+  Widget getHorizontalSlide() {
+    return HorizontalSlidableButton(
+      isRestart: true,
+      borderRadius: const BorderRadius.all(Radius.circular(2)),
+      height: 55,
+      width: 296,
+      buttonWidth: 60.0,
+      color: ColorPalette.principal,
+      buttonColor: const Color.fromRGBO(157, 123, 13, 1),
+      dismissible: false,
+      label: Image.asset(
+        scale: 1,
+        fit: BoxFit.fill,
+        'assets/images/Group 969.png',
+        height: 13,
+        width: 21,
+      ),
+      onChanged: (SlidableButtonPosition value) async {
+        if (value == SlidableButtonPosition.end) {
+          if (_prefs.getUserFree && !_prefs.getUserPremium) {
+            await Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => const PremiumPage(
+                      isFreeTrial: false,
+                      img: 'pantalla2.png',
+                      title:
+                          'Activa la geolocalización y comparte tu ubicación en caso de emergencia',
+                      subtitle: '')),
+            ).then((value) async {
+              if (value != null && value) {
+                _prefs.setUserFree = false;
+                _prefs.setUserPremium = true;
+                var premiumController = Get.put(PremiumController());
+                premiumController.updatePremiumAPI(true);
+                isActive = true;
+                await _checkPermission();
+                getCurrentPosition();
+              }
+            });
+            return;
+          }
+          if (isActive) {
+            isActive = false;
+          } else {
+            isActive = true;
+          }
+          setState(() async {
+            await _checkPermission();
+            getCurrentPosition();
+          });
+        } else {}
+      },
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(left: 8.0),
+              child: Center(
+                child: Text(
+                  !_prefs.getUserPremium
+                      ? "Obtener Premium"
+                      : isActive
+                          ? 'Desactivar'
+                          : 'Activar',
+                  textAlign: TextAlign.center,
+                  style: GoogleFonts.barlow(
+                    fontSize: 16.0,
+                    wordSpacing: 1,
+                    letterSpacing: 1,
+                    fontWeight: FontWeight.w700,
+                    color: Colors.black,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   @override
@@ -215,6 +302,9 @@ class _InitGeolocatorState extends State<InitGeolocator> {
                 SizedBox(
                   child: Column(
                     children: <Widget>[
+                      const SizedBox(
+                        height: 20,
+                      ),
                       Padding(
                         padding: const EdgeInsets.only(
                             left: 8.0, right: 8.0, bottom: 8.0),
@@ -231,42 +321,12 @@ class _InitGeolocatorState extends State<InitGeolocator> {
                         ),
                       ),
                       // Add the image here
-
-                      CupertinoSwitch(
-                        value: isActive,
-                        activeColor: ColorPalette.activeSwitch,
-                        trackColor: CupertinoColors.inactiveGray,
-                        onChanged: ((value) async {
-                          if (_prefs.getUserFree && !_prefs.getUserPremium) {
-                            await Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => const PremiumPage(
-                                      isFreeTrial: false,
-                                      img: 'pantalla3.png',
-                                      title: Constant.premiumFallTitle,
-                                      subtitle: '')),
-                            ).then((value) {
-                              if (value != null && value) {
-                                _prefs.setUserFree = false;
-                                _prefs.setUserPremium = true;
-                              }
-                            });
-                            return;
-                          }
-                          setState(() {
-                            isActive = value;
-                          });
-                          if (value) {
-                            await _checkPermission();
-                            getCurrentPosition();
-                          } else {
-                            //_prefs.setAcceptedSendLocation = PreferencePermission.noAccepted;
-                            _locationController.activateLocation(
-                                PreferencePermission.noAccepted);
-                          }
-                          // geoVC.saveSendLocation(context, value);
-                        }),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      getHorizontalSlide(),
+                      const SizedBox(
+                        height: 20,
                       ),
                     ],
                   ),
@@ -274,10 +334,12 @@ class _InitGeolocatorState extends State<InitGeolocator> {
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: ElevateButtonFilling(
+                    showIcon: false,
                     onChanged: (value) {
                       Get.off(() => const ConditionGeneralPage());
                     },
                     mensaje: Constant.continueTxt,
+                    img: '',
                   ),
                 ),
               ],
