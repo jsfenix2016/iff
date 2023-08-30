@@ -333,7 +333,7 @@ class HiveData {
     final Box<ActivityDayBD> box =
         await Hive.openBox<ActivityDayBD>('listActivityDayBD');
     for (var element in box.values) {
-      if (element.key == activities.id &&
+      if (element.id == activities.id &&
           element.activity == activities.activity) {
         await box.delete(element.key);
       }

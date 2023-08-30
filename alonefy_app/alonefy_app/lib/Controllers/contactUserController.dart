@@ -72,20 +72,6 @@ class ContactUserController extends GetxController {
       String timeSendSMS, String timeCall, String timeWhatsapp) async {
     contextTemp = context;
     try {
-      // var contactBD = ContactBD("", null, "", "", "", "", "", "Pendiente");
-
-      // // for (var element in listContact) {
-      // contactBD.displayName = element.displayName;
-      // contactBD.phones = element.phones.first.number.contains("+34")
-      //     ? element.phones.first.number
-      //         .replaceAll("+34", "")
-      //         .replaceAll(" ", "")
-      //     : element.phones.first.number;
-      // contactBD.photo = element.photo;
-      // contactBD.timeSendSMS = timeSendSMS;
-      // contactBD.timeCall = timeCall;
-      // contactBD.timeWhatsapp = timeWhatsapp;
-
       final MainController mainController = Get.put(MainController());
       var user = await mainController.getUserData();
       var response = await contactServ

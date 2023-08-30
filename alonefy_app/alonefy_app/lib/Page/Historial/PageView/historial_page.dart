@@ -135,7 +135,7 @@ class _HistorialPageState extends State<HistorialPage> {
     final size = MediaQuery.of(context).size;
     List<MapEntry<String, List<dynamic>>> listData =
         groupedAlert.entries.toList();
-    RedirectViewNotifier.setContext(context);
+    RedirectViewNotifier.setStoredContext(context);
     return Scaffold(
       key: scaffoldKey,
       appBar: AppBar(

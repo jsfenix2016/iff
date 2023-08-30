@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ifeelefine/Common/Constant.dart';
 import 'package:ifeelefine/Common/manager_alerts.dart';
-import 'package:ifeelefine/Common/utils.dart';
+
 import 'package:ifeelefine/Controllers/mainController.dart';
 import 'package:ifeelefine/Data/hive_data.dart';
 import 'package:ifeelefine/Model/ApiRest/ContactApi.dart';
@@ -70,16 +70,6 @@ class EditContactController extends GetxController {
   }
 
   ContactApi convertToApi(ContactBD contactBD, String phoneNumber) {
-    //var contactAPI = ContactApi(
-    //    userPhoneNumber: phoneNumber,
-    //    phoneNumber: contactBD.phones,
-    //    name: contactBD.name,
-    //    displayName: contactBD.displayName,
-    //    timeSendSms: stringTimeToInt(contactBD.timeSendSMS),
-    //    timeCall: stringTimeToInt(contactBD.timeCall),
-    //    timeWhatsapp: stringTimeToInt(contactBD.timeWhatsapp)
-    //);
-
     var contactApi = ContactApi.fromContact(contactBD, phoneNumber);
 
     return contactApi;

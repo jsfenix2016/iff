@@ -1,15 +1,14 @@
 import 'package:flutter/cupertino.dart';
-import 'package:get/get.dart';
+
 import 'package:google_fonts/google_fonts.dart';
-import 'package:ifeelefine/Common/manager_alerts.dart';
 import 'package:ifeelefine/Common/notificationService.dart';
 import 'package:ifeelefine/Common/text_style_font.dart';
-import 'package:ifeelefine/Common/utils.dart';
+
 import 'package:ifeelefine/Model/restday.dart';
 import 'package:ifeelefine/Page/Disamble/Controller/disambleController.dart';
-import 'package:ifeelefine/Page/UserInactivityPage/PageView/configurationUserInactivity_page.dart';
-import 'package:ifeelefine/Utils/Widgets/elevatedButtonFilling.dart';
+
 import 'package:flutter/material.dart';
+import 'package:ifeelefine/main.dart';
 
 import '../../../Common/colorsPalette.dart';
 import '../../../Provider/prefencesUser.dart';
@@ -78,7 +77,7 @@ class _DesactivePageState extends State<DesactivePage> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    RedirectViewNotifier.setContext(context);
+    RedirectViewNotifier.setStoredContext(context);
     return Scaffold(
       extendBodyBehindAppBar: false,
       appBar: AppBar(
@@ -145,24 +144,26 @@ class _DesactivePageState extends State<DesactivePage> {
                                 activeColor: ColorPalette.activeSwitch,
                                 trackColor: CupertinoColors.inactiveGray,
                                 onChanged: (bool? value) {
-                                  setState(() {
-                                    desactiveIFeelFine = listDisamble[index];
-                                    if (value!) {
-                                      _prefs.setDisambleIFF =
-                                          desactiveIFeelFine;
-                                    } else {
-                                      _prefs.setDisambleIFF = "0 hora";
-                                      desactiveIFeelFine = "0 hora";
-                                    }
-                                    var count = 0;
-                                    for (var disambleEnabled
-                                        in listDisambleEnabled) {
-                                      listDisambleEnabled[count] = false;
+                                  desactiveIFeelFine = listDisamble[index];
+                                  if (value!) {
+                                    // _prefs.setEnableIFF = false;
 
-                                      count++;
-                                    }
-                                    listDisambleEnabled[index] = value;
-                                  });
+                                    // enableApp.value = false;
+                                  } else {
+                                    // _prefs.setEnableIFF = true;
+                                    // enableApp.value = true;
+                                    _prefs.setDisambleIFF = "0 hora";
+                                    desactiveIFeelFine = "0 hora";
+                                  }
+                                  var count = 0;
+                                  for (var disambleEnabled
+                                      in listDisambleEnabled) {
+                                    listDisambleEnabled[count] = false;
+
+                                    count++;
+                                  }
+                                  listDisambleEnabled[index] = value;
+                                  setState(() {});
                                 },
                               ),
                             ),
@@ -236,5 +237,6 @@ class _DesactivePageState extends State<DesactivePage> {
 
   void saveDisamble() {
     DisambleController().saveDisamble(context, desactiveIFeelFine);
+    setState(() {});
   }
 }

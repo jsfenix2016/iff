@@ -1,3 +1,4 @@
+import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:get/get.dart';
 import 'package:ifeelefine/Common/Constant.dart';
 import 'package:ifeelefine/Common/button_style_custom.dart';
@@ -11,6 +12,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:ifeelefine/Utils/Widgets/elevateButtonCustomBorder.dart';
 import 'package:ifeelefine/Common/decoration_custom.dart';
 import 'package:ifeelefine/Utils/Widgets/widgetLogo.dart';
+import 'package:ifeelefine/main.dart';
 
 class AlternativePage extends StatefulWidget {
   const AlternativePage({super.key});
@@ -53,7 +55,7 @@ class _AlternativePagePageState extends State<AlternativePage> {
                   ),
                   ElevatedButton(
                     style: styleColorClear(),
-                    onPressed: () {
+                    onPressed: () async {
                       _prefs.firstConfig = true;
                       _prefs.config = false;
 

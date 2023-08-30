@@ -76,7 +76,7 @@ class _PremiumPageState extends State<PremiumPage> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    RedirectViewNotifier.setContext(context);
+    RedirectViewNotifier.setStoredContext(context);
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.brown,

@@ -7,8 +7,6 @@ import 'package:ifeelefine/Common/Constant.dart';
 import 'package:ifeelefine/Model/ApiRest/ContactApi.dart';
 import 'dart:convert';
 
-import 'package:ifeelefine/Model/contact.dart';
-
 import '../../../Utils/MimeType/mime_type.dart';
 
 class ContactService {

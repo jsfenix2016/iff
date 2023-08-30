@@ -111,76 +111,71 @@ class _VideoPlayerState extends State<VideoPlayerCustom>
                   padding: const EdgeInsets.all(8.0),
                   child: Container(
                     color: Colors.transparent,
-                    child: Column(
-                      children: [
-                        StreamBuilder<double>(
-                          stream: _videoPositionStream,
-                          builder: (context, snapshot) {
-                            if (snapshot.hasData) {
-                              var temp = Duration(
-                                  milliseconds: _videoPlayerController
-                                      .value.position.inMilliseconds);
+                    child: StreamBuilder<double>(
+                      stream: _videoPositionStream,
+                      builder: (context, snapshot) {
+                        if (snapshot.hasData) {
+                          var temp = Duration(
+                              milliseconds: _videoPlayerController
+                                  .value.position.inMilliseconds);
 
-                              return Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceEvenly,
-                                children: [
-                                  FloatingActionButton(
-                                    key: const Key("playVideo"),
-                                    backgroundColor: Colors.grey,
-                                    child: Icon(_isRecording
-                                        ? Icons.stop
-                                        : Icons.play_arrow),
-                                    onPressed: () => _actionButtonVideo(),
-                                  ),
-                                  const SizedBox(
-                                    width: 10,
-                                  ),
-                                  Text(
-                                    textAlign: TextAlign.center,
-                                    "${temp.inMinutes.remainder(60).toString().padLeft(2, '0')}:${(temp.inSeconds.remainder(60)).toString().padLeft(2, '0')}",
-                                    style: const TextStyle(
-                                      color: Colors.black,
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.bold,
-                                      decoration: TextDecoration.none,
-                                    ),
-                                  ),
-                                  Slider(
-                                    activeColor: Colors.white,
-                                    inactiveColor: Colors.grey,
-                                    value: _currentSliderValue,
-                                    min: 0,
-                                    max: _videoPlayerController
-                                        .value.duration.inMilliseconds
-                                        .toDouble(),
-                                    onChanged: (value) {
-                                      _currentSliderValue = value;
+                          return Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              FloatingActionButton(
+                                key: const Key("playVideo"),
+                                backgroundColor: Colors.grey,
+                                child: Icon(_isRecording
+                                    ? Icons.stop
+                                    : Icons.play_arrow),
+                                onPressed: () => _actionButtonVideo(),
+                              ),
+                              const SizedBox(
+                                width: 10,
+                              ),
+                              Text(
+                                textAlign: TextAlign.center,
+                                "${temp.inMinutes.remainder(60).toString().padLeft(2, '0')}:${(temp.inSeconds.remainder(60)).toString().padLeft(2, '0')}",
+                                style: const TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.bold,
+                                  decoration: TextDecoration.none,
+                                ),
+                              ),
+                              Slider(
+                                activeColor: Colors.white,
+                                inactiveColor: Colors.grey,
+                                value: _currentSliderValue,
+                                min: 0,
+                                max: _videoPlayerController
+                                    .value.duration.inMilliseconds
+                                    .toDouble(),
+                                onChanged: (value) {
+                                  _currentSliderValue = value;
 
-                                      setState(() {
-                                        _videoPlayerController.seekTo(Duration(
-                                            milliseconds: value.toInt()));
-                                      });
-                                    },
-                                  ),
-                                  Text(
-                                    textAlign: TextAlign.center,
-                                    "${_videoPlayerController.value.duration.inMinutes.remainder(60).toString().padLeft(2, '0')}:${(_videoPlayerController.value.duration.inSeconds.remainder(60)).toString().padLeft(2, '0')}",
-                                    style: const TextStyle(
-                                      color: Colors.black,
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.bold,
-                                      decoration: TextDecoration.none,
-                                    ),
-                                  ),
-                                ],
-                              );
-                            } else {
-                              return const SizedBox.shrink();
-                            }
-                          },
-                        ),
-                      ],
+                                  setState(() {
+                                    _videoPlayerController.seekTo(
+                                        Duration(milliseconds: value.toInt()));
+                                  });
+                                },
+                              ),
+                              Text(
+                                textAlign: TextAlign.center,
+                                "${_videoPlayerController.value.duration.inMinutes.remainder(60).toString().padLeft(2, '0')}:${(_videoPlayerController.value.duration.inSeconds.remainder(60)).toString().padLeft(2, '0')}",
+                                style: const TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.bold,
+                                  decoration: TextDecoration.none,
+                                ),
+                              ),
+                            ],
+                          );
+                        } else {
+                          return const SizedBox.shrink();
+                        }
+                      },
                     ),
                   ),
                 ),

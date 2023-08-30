@@ -9,6 +9,7 @@ import 'package:ifeelefine/Model/logAlertsBD.dart';
 import 'package:ifeelefine/Provider/prefencesUser.dart';
 import 'package:intl/intl.dart';
 import 'package:collection/collection.dart';
+import 'package:jiffy/jiffy.dart';
 
 class HistorialController extends GetxController {
   List<LogActivity> _activities = [];
@@ -20,7 +21,7 @@ class HistorialController extends GetxController {
 
   Future<Map<String, List<LogAlertsBD>>> getAllMov() async {
     Map<String, List<LogAlertsBD>> groupedProducts = {};
-    Map<String, List<dynamic>> groupedAlerts = {};
+
     late final List<LogAlertsBD> allMovTime = [];
     late final List<LogAlertsBD> allMov = [];
     List<LogAlertsBD> temp = [];
@@ -56,14 +57,18 @@ class HistorialController extends GetxController {
     groupedProducts = groupBy(
         temp, (product) => format.parse(product.time.toString()).toString());
 
-    groupedAlerts = groupBy(tempDynamic,
-        (product) => format.parse(product.time.toString()).toString());
-
     return groupedProducts;
   }
 
+  getFormatedDate(DateTime date) {
+    var inputFormat = DateFormat('yyyy-MM-dd HH:mm');
+    var inputDate = inputFormat.parse(date.toString());
+    var outputFormat = DateFormat('dd-MM-yyyy');
+    var a = outputFormat.format(inputDate);
+    return a;
+  }
+
   Future<Map<String, List<dynamic>>> getAllAlerts() async {
-    Map<String, List<LogAlertsBD>> groupedProducts = {};
     Map<String, List<dynamic>> groupedAlerts = {};
     late final List<LogAlertsBD> allMovTime = [];
     late final List<LogAlertsBD> allMov = [];
@@ -79,26 +84,24 @@ class HistorialController extends GetxController {
     var format = DateFormat('dd-MM-yyyy');
     if (dateRisk.isNotEmpty) {
       for (var dateTem in dateRisk) {
-        var formatter = DateFormat('yMd');
+        var ar = getFormatedDate(dateTem.createDate);
+        var dateTime1 = DateFormat('dd-MM-yyyy').parse(ar);
 
-        // var datetime = formatter.parse(date.createDate.toIso8601String());
+        // var format = DateFormat('yMd');
+        // var t = DateTime(dateTem.createDate.day, dateTem.createDate.month,
+        //     dateTem.createDate.year);
 
-        // var dateNew = DateTime(datetime.year, datetime.month,
-        //     datetime.day); // Reordenar año, mes y día
+        // var a =
+        //     format.parse(dateTem.createDate.microsecondsSinceEpoch.toString());
+        // var inputFormat = DateFormat('dd/MM/yyyy HH:mm');
+        // var inputDate = inputFormat
+        //     .parse(dateTem.createDate.toString()); // <-- dd/MM 24H format
 
-        DateTime originalDateTime = DateTime(dateTem.createDate.year,
-            dateTem.createDate.month, dateTem.createDate.day);
-        // CustomDateTime customDateTime = CustomDateTime(originalDateTime);
-
-        // print(originalDateTime); // Imprime: 2023-08-10 00:00:00.000
-        // print(customDateTime); // Imprime: 10-08-2023
-
-        var formattedDate = DateFormat('yMd').format(dateTem.createDate);
-        print(formattedDate); // Imprimirá: 10-08-2023
-
-        DateTime fss = DateFormat('yMd').parse(formattedDate);
+        // var outputFormat = DateFormat('MM/dd/yyyy hh:mm a');
+        // var outputDate = outputFormat.format(inputDate);
+        // print(outputDate);
         var tempAct = LogAlertsBD(
-            id: 0, time: fss, type: "Cita", photoDate: dateTem.photoDate);
+            id: 0, time: dateTime1, type: "Cita", photoDate: dateTem.photoDate);
         tempDynamic.add(tempAct);
       }
     }
@@ -107,10 +110,7 @@ class HistorialController extends GetxController {
         convertDateTimeToString(date.createDate);
 
         var tempAct = LogAlertsBD(
-            id: 0,
-            time: format.parse(date.createDate.toString()),
-            type: "Zona",
-            video: date.video);
+            id: 0, time: (date.createDate), type: "Zona", video: date.video);
         tempDynamic.add(tempAct);
       }
     }

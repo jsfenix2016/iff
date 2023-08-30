@@ -15,6 +15,7 @@ import '../../../Model/activityDay.dart';
 import '../../../Model/activitydaybd.dart';
 
 class AddActivityController extends GetxController {
+  ActivityService serviceActivity = Get.put(ActivityService());
   Future<List<ActivityDay>> getActivities() async {
     try {
       var activitiesBD = await const HiveData().listUserActivitiesbd;
@@ -102,6 +103,15 @@ class AddActivityController extends GetxController {
     var activitybd = await convertActivityDayToBD(activityDay);
 
     await const HiveData().updateActivity(activitybd);
+  }
+
+  void deleteActivity(ActivityDay activityDay) async {
+    var activitybd = await convertActivityDayToBD(activityDay);
+    bool isdelete =
+        await serviceActivity.deleteActivities(activitybd.id.toString());
+    if (isdelete) {
+      await const HiveData().deleteActivities(activitybd);
+    }
   }
 
   Future<ActivityDayApiResponse?> saveActivityApi(ActivityDay activity) async {

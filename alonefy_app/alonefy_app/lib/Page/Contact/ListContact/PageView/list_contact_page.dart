@@ -226,7 +226,7 @@ class _ListContactState extends State<ListContact> {
 
   @override
   Widget build(BuildContext context) {
-    RedirectViewNotifier.setContext(context);
+    RedirectViewNotifier.setStoredContext(context);
     return Scaffold(
       backgroundColor: ColorPalette.secondView,
       body: Container(

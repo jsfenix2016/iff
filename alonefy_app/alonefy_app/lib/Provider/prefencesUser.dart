@@ -13,6 +13,10 @@ class PreferenceUser {
     _prefs = await SharedPreferences.getInstance();
   }
 
+  refreshData() {
+    _prefs.reload();
+  }
+
   get onBoarding {
     return _prefs.getBool('onboard') ?? false;
   }

@@ -1,5 +1,3 @@
-import 'dart:ffi';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -59,7 +57,7 @@ class _FallActivationConfigPageState extends State<FallActivationConfigPage> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    RedirectViewNotifier.setContext(context);
+    RedirectViewNotifier.setStoredContext(context);
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.brown,

@@ -380,7 +380,7 @@ class _PreviewActivitiesByDateState extends State<PreviewActivitiesByDate>
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    RedirectViewNotifier.setContext(context);
+    RedirectViewNotifier.setStoredContext(context);
     return Scaffold(
       appBar: widget.isMenu
           ? AppBar(
@@ -674,26 +674,24 @@ class _PreviewActivitiesByDateState extends State<PreviewActivitiesByDate>
                                                     ),
                                                   ),
                                                   onPressed: () {
-                                                    addIsRemoved(
-                                                        _activitiesByDay[
-                                                                index]![
-                                                            indexActivity],
-                                                        _days[index]);
-                                                    controller.updateActivity(
+                                                    // addIsRemoved(
+                                                    //     _activitiesByDay[
+                                                    //             index]![
+                                                    //         indexActivity],
+                                                    //     _days[index]);
+
+                                                    controller.deleteActivity(
                                                         _activitiesByDay[
                                                                 index]![
                                                             indexActivity]);
-                                                    controller
-                                                        .updateActivityApi(
-                                                            _activitiesByDay[
-                                                                    index]![
-                                                                indexActivity]);
+
                                                     _activitiesByDay[index]!
                                                         .removeAt(
                                                             indexActivity);
+
+                                                    // filterActivitiesByRangeDate();
+                                                    // updateActivitiesName();
                                                     setState(() {});
-                                                    filterActivitiesByRangeDate();
-                                                    updateActivitiesName();
                                                   },
                                                 ),
                                               ),

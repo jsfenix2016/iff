@@ -66,7 +66,7 @@ class _ChangeNotificationTimePageState
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    RedirectViewNotifier.setContext(context);
+    RedirectViewNotifier.setStoredContext(context);
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.brown,

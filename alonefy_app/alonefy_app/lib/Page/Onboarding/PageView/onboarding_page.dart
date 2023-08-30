@@ -31,7 +31,7 @@ class OnboardingPage extends StatelessWidget {
   ];
   @override
   Widget build(BuildContext context) {
-    RedirectViewNotifier.setContext(context);
+    RedirectViewNotifier.setStoredContext(context);
     return Scaffold(
       body: Container(
         decoration: decorationCustom(),

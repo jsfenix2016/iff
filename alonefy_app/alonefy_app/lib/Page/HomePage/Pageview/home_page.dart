@@ -2,6 +2,8 @@ import 'dart:async';
 
 import 'package:device_info_plus/device_info_plus.dart';
 
+import 'package:flutter_background_service/flutter_background_service.dart';
+
 import 'package:get/get.dart';
 
 import 'package:ifeelefine/Common/Constant.dart';
@@ -10,8 +12,10 @@ import 'package:ifeelefine/Common/manager_alerts.dart';
 import 'package:ifeelefine/Common/notificationService.dart';
 import 'package:ifeelefine/Common/text_style_font.dart';
 import 'package:ifeelefine/Common/utils.dart';
+
 import 'package:ifeelefine/Page/HomePage/Controller/homeController.dart';
 import 'package:ifeelefine/Page/HomePage/Widget/customNavbar.dart';
+
 import 'package:ifeelefine/Page/UserConfig/Controller/userConfigController.dart';
 import 'package:ifeelefine/Model/user.dart';
 import 'package:ifeelefine/Model/userbd.dart';
@@ -21,13 +25,14 @@ import 'package:ifeelefine/Utils/Widgets/swipeableContainer.dart';
 import 'package:ifeelefine/Page/Alerts/PageView/alerts_page.dart';
 
 import 'package:ifeelefine/Utils/Widgets/widgetLogo.dart';
+
 import 'package:ifeelefine/Views/menuconfig_page.dart';
 
 import 'package:flutter/material.dart';
 import 'dart:io' show File;
 
 import 'package:avatar_glow/avatar_glow.dart';
-import 'package:ifeelefine/main.dart';
+
 import 'package:image_picker/image_picker.dart';
 import 'package:notification_center/notification_center.dart';
 import 'package:ifeelefine/Common/decoration_custom.dart';
@@ -73,40 +78,55 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
 
   @override
   void initState() {
-    getUserData();
-    getAlerts();
-    getpermission();
-    _prefs.saveLastScreenRoute("home");
     super.initState();
     WidgetsBinding.instance.addObserver(this);
 
+    getUserData();
+    getAlerts();
+    getpermission();
+
+    _prefs.saveLastScreenRoute("home");
+
     NotificationCenter().subscribe('getAlerts', getAlerts);
     NotificationCenter().subscribe('getUserData', getUserData);
-  }
-
-  Future serviceBackgroundPlay() async {
-    if (_prefs.getAcceptedNotification == PreferencePermission.allow ||
-        _prefs.getDetectedFall ||
-        _prefs.getAcceptedSendLocation == PreferencePermission.allow) {
-      _prefs.setProtected = "AlertFriends está activado";
-      activateService();
-    }
+    Future.sync(() => RedirectViewNotifier.setStoredContext(context));
   }
 
   @override
   void dispose() {
-    WidgetsBinding.instance.removeObserver(this);
     super.dispose();
+    WidgetsBinding.instance.removeObserver(this);
   }
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) async {
     setState(() {
       _appLifecycleState = state;
-      if (state.name.contains("paused")) {
-        serviceBackgroundPlay();
-      }
+      if (state.name.contains("paused")) {}
     });
+
+    switch (state) {
+      case AppLifecycleState.resumed:
+        // isOppenedApp = true;
+        // FlutterBackgroundService().invoke("setAsForeground");
+        Future.sync(() => RedirectViewNotifier.setStoredContext(context));
+        break;
+      case AppLifecycleState.inactive:
+        // RedirectViewNotifier.setStoredContext(context);
+        // isOppenedApp = true;
+        break;
+      case AppLifecycleState.paused:
+        // RedirectViewNotifier.setStoredContext(context);
+        // isOppenedApp = true;
+
+        break;
+      case AppLifecycleState.detached:
+
+        // RedirectViewNotifier.setStoredContext(context);
+        // isOppenedApp = false;
+        break;
+    }
+    // Future.sync(() => RedirectViewNotifier.setStoredContext(context));
     print(_appLifecycleState);
   }
 
@@ -117,6 +137,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   }
 
   Future getUserData() async {
+    await _prefs.initPrefs();
     user = await userVC.getUserDate();
     if (user != null) {
       user = user;
@@ -127,14 +148,6 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   }
 
   Future<void> requestAlarmPermission() async {
-    // if (await Permission.scheduleExactAlarm.request().isGranted) {
-    //   // Permiso concedido, aquí puedes configurar la alarma
-    //   // Llama al método showNotification() que configuraste previamente
-    // } else {
-    //   // Permiso denegado, puedes manejarlo según tus necesidades
-    //   print('El permiso de alarma exacta fue denegado.');
-    // }
-
     await Permission.scheduleExactAlarm.isDenied.then((value) {
       if (value) {
         Permission.scheduleExactAlarm.request();
@@ -213,7 +226,6 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     } else {
       nameComplete = "Usuario";
     }
-    RedirectViewNotifier.setContext(context);
     return Scaffold(
       drawer: const MenuConfigurationPage(),
       extendBodyBehindAppBar: true,
@@ -226,80 +238,88 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
           child: Stack(
             alignment: Alignment.center,
             children: <Widget>[
-              const Positioned(
-                  top: 36,
-                  child: SizedBox(
-                      height: 60.31, width: 250, child: WidgetLogoApp())),
-              Positioned(
-                top: 94,
-                left: 16,
-                child: IconButton(
-                  iconSize: 40,
-                  color: ColorPalette.principal,
-                  onPressed: () {
-                    _scaffoldKey.currentState!.openDrawer();
-                    // Navigator.push(
-                    //   context,
-                    //   MaterialPageRoute(
-                    //       builder: (context) => const MenuConfigurationPage()),
-                    // );
-                  },
-                  icon: Container(
-                    height: 32,
-                    width: 28,
-                    decoration: const BoxDecoration(
-                      image: DecorationImage(
-                        image: AssetImage('assets/images/ajustes.png'),
-                        fit: BoxFit.fill,
-                      ),
-                      color: Colors.transparent,
-                    ),
+              Column(
+                children: [
+                  const SizedBox(
+                    height: 36,
                   ),
-                ),
-              ),
-              Positioned(
-                left: 57,
-                top: 105,
-                child: Visibility(
-                  visible: _prefs.getUserFree && !_prefs.getUserPremium,
-                  child: Container(
-                    decoration: const BoxDecoration(
-                        borderRadius: BorderRadius.all(Radius.circular(
-                                20.0) //                 <--- border radius here
+                  const SizedBox(
+                      height: 60.31, width: 250, child: WidgetLogoApp()),
+                  Container(
+                    height: 45,
+                    color: Colors.transparent,
+                    child: Stack(alignment: Alignment.center, children: [
+                      Positioned(
+                        top: 0,
+                        left: 16,
+                        child: IconButton(
+                          iconSize: 40,
+                          color: ColorPalette.principal,
+                          onPressed: () {
+                            _scaffoldKey.currentState!.openDrawer();
+                          },
+                          icon: Container(
+                            height: 32,
+                            width: 28,
+                            decoration: const BoxDecoration(
+                              image: DecorationImage(
+                                image: AssetImage('assets/images/ajustes.png'),
+                                fit: BoxFit.fill,
+                              ),
+                              color: Colors.transparent,
                             ),
-                        color: Colors.red),
-                    height: 8,
-                    width: 8,
-                  ),
-                ),
-              ),
-              Positioned(
-                top: 94,
-                right: 16,
-                child: IconButton(
-                  iconSize: 40,
-                  color: ColorPalette.principal,
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => AlertsPage()),
-                    );
-                  },
-                  icon: Container(
-                    height: 32,
-                    width: 28,
-                    decoration: const BoxDecoration(
-                      image: DecorationImage(
-                        image: AssetImage('assets/images/Vector.png'),
-                        fit: BoxFit.fill,
+                          ),
+                        ),
                       ),
-                      color: Colors.transparent,
-                    ),
-                  ),
-                ),
+                      Positioned(
+                        left: 57,
+                        top: 13,
+                        child: Visibility(
+                          visible: _prefs.getUserFree && !_prefs.getUserPremium,
+                          child: Container(
+                            decoration: const BoxDecoration(
+                                borderRadius: BorderRadius.all(Radius.circular(
+                                        20.0) //                 <--- border radius here
+                                    ),
+                                color: Colors.red),
+                            height: 8,
+                            width: 8,
+                          ),
+                        ),
+                      ),
+                      Positioned(
+                        top: 0,
+                        right: 16,
+                        child: IconButton(
+                          iconSize: 40,
+                          color: ColorPalette.principal,
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const AlertsPage(),
+                              ),
+                            );
+                          },
+                          icon: Container(
+                            height: 32,
+                            width: 28,
+                            decoration: const BoxDecoration(
+                              image: DecorationImage(
+                                image: AssetImage('assets/images/Vector.png'),
+                                fit: BoxFit.fill,
+                              ),
+                              color: Colors.transparent,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ]),
+                  )
+                ],
               ),
               Positioned(
-                top: 130,
+                top: 143,
                 child: Container(
                   width: size.width,
                   color: Colors.transparent,
@@ -314,7 +334,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                 ),
               ),
               Positioned(
-                top: 180,
+                top: 185,
                 left: (size.width / 3) - 30,
                 child: AvatarGlow(
                   glowColor: Colors.white,

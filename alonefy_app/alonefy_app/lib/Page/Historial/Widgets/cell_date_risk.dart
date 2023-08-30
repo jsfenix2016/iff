@@ -6,8 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ifeelefine/Common/colorsPalette.dart';
 import 'package:ifeelefine/Common/utils.dart';
-import 'package:ifeelefine/Model/contactRiskBD.dart';
-import 'package:ifeelefine/Model/logActivityBd.dart';
+
 import 'package:ifeelefine/Model/logAlertsBD.dart';
 import 'package:ifeelefine/Utils/Widgets/imageAccordingWidget.dart';
 
@@ -100,7 +99,7 @@ class _CellDateRiskState extends State<CellDateRisk> {
                 width: 200,
                 color: Colors.transparent,
                 child: Text(
-                  "Cita - ${widget.logAlert.time}",
+                  "Cita - ${widget.logAlert.time.day}-${widget.logAlert.time.month}-${widget.logAlert.time.year} | ${widget.logAlert.time.hour}-${widget.logAlert.time.minute}",
                   textAlign: TextAlign.left,
                   style: GoogleFonts.barlow(
                     fontSize: 14.0,

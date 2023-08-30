@@ -22,6 +22,7 @@ import 'package:ifeelefine/Page/UserEdit/Controller/getUserController.dart';
 import 'package:ifeelefine/Page/UserEdit/Service/editUserService.dart';
 import 'package:ifeelefine/Page/UserRest/Controller/userRestController.dart';
 import 'package:ifeelefine/Provider/prefencesUser.dart';
+import 'package:ifeelefine/main.dart';
 import 'package:notification_center/notification_center.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -42,7 +43,6 @@ class RestoreController extends GetxController {
     final userApi = await restServ.getUser(number);
 
     if (userApi != null) {
-      final service = FlutterBackgroundService();
       var isRunning = await service.isRunning();
       if (isRunning) {
         service.invoke("stopService");
@@ -64,18 +64,24 @@ class RestoreController extends GetxController {
 
       await _saveScheduleExactAlarm(userApi);
       await _saveCameraPermission(userApi);
-      onActionSelected("get_apns_token");
-      Future.sync(() => {
-            _saveConfig(),
-            showSaveAlert(context, Constant.info, Constant.restoredCorrectly.tr)
-          });
-
+      await onActionSelected("get_apns_token");
+      _saveConfig();
+      _prefs.setUserPremium = true;
+      _prefs.setUserFree = false;
+      Future.sync(
+        () => {
+          activateService(),
+          showSaveAlert(context, Constant.info, Constant.restoredCorrectly.tr)
+        },
+      );
       return true;
     } else {
-      Future.sync(() => {
-            showSaveAlert(
-                context, Constant.info, Constant.errorGenericConextion.tr)
-          });
+      Future.sync(
+        () => {
+          showSaveAlert(
+              context, Constant.info, Constant.errorGenericConextion.tr)
+        },
+      );
 
       return false;
     }
@@ -112,16 +118,16 @@ class RestoreController extends GetxController {
   }
 
   Future<void> _saveTimeUseMobile(List<UseMobilApi> useMobilApiList) async {
-    EditUseMobilController().saveUseMobilFromApi(useMobilApiList);
+    await EditUseMobilController().saveUseMobilFromApi(useMobilApiList);
   }
 
   Future<void> _saveRestDays(List<UserRestApi> userRestApiList) async {
-    UserRestController().saveFromApi(userRestApiList);
+    await UserRestController().saveFromApi(userRestApiList);
   }
 
   Future<void> _saveActivities(
       List<ActivityDayApiResponse> activitiesApi) async {
-    AddActivityController().saveFromApi(activitiesApi);
+    await AddActivityController().saveFromApi(activitiesApi);
   }
 
   Future<void> _saveFall(UserApi? userApi) async {
@@ -132,7 +138,7 @@ class RestoreController extends GetxController {
   }
 
   Future<void> _saveContacts(List<ContactApi> contactsApi) async {
-    ContactUserController().saveFromApi(contactsApi);
+    await ContactUserController().saveFromApi(contactsApi);
   }
 
   Future<void> _saveLocation(UserApi? userApi) async {
@@ -180,6 +186,11 @@ class RestoreController extends GetxController {
         _prefs.setAcceptedNotification = userApi.activateNotifications
             ? PreferencePermission.allow
             : PreferencePermission.noAccepted;
+      }
+      if (_prefs.getAcceptedNotification == PreferencePermission.allow ||
+          _prefs.getDetectedFall ||
+          _prefs.getAcceptedSendLocation == PreferencePermission.allow) {
+        _prefs.setProtected = "AlertFriends está activado";
       }
     }
   }

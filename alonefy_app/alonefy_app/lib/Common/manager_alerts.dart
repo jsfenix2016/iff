@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:ifeelefine/Common/notificationService.dart';
+import 'package:ifeelefine/Services/mainService.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 class ManagerAlert {}
@@ -18,6 +20,35 @@ void showPermissionDialog(BuildContext context, String message) {
           TextButton(
             child: const Text("Abrir"),
             onPressed: () => openAppSettings(),
+          )
+        ],
+      );
+    },
+  );
+}
+
+void showAlertDialog(String message, List<String> listid) async {
+  await showDialog(
+    context: RedirectViewNotifier.storedContext!,
+    builder: (context) {
+      return AlertDialog(
+        title: const Text("Información"),
+        content: Text(
+            "No detectamos una acción en la notificación, necesitas ayuda?"),
+        actions: <Widget>[
+          TextButton(
+            child: const Text("NO"),
+            onPressed: () => {
+              Navigator.of(context).pop(),
+              MainService().cancelAllNotifications(listid)
+            },
+          ),
+          TextButton(
+            child: const Text("SI"),
+            onPressed: () => {
+              MainService().sendAlertToContactImmediately(listid),
+              Navigator.of(context).pop(),
+            },
           )
         ],
       );

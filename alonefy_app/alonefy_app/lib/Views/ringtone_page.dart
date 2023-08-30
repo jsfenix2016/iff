@@ -9,6 +9,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_ringtone_player/flutter_ringtone_player.dart';
 
 import 'package:flutter_system_ringtones/flutter_system_ringtones_platform_interface.dart';
+import 'package:geolocator/geolocator.dart';
 
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ifeelefine/Common/colorsPalette.dart';
@@ -41,9 +42,6 @@ class RingTonePage extends StatefulWidget {
 class _RingTonePageState extends State<RingTonePage>
     with WidgetsBindingObserver {
   final UserConfigCOntroller userVC = Get.put(UserConfigCOntroller());
-
-  FlutterLocalNotificationsPlugin notifications =
-      FlutterLocalNotificationsPlugin();
 
   bool isCheck = false;
 
@@ -194,7 +192,8 @@ class _RingTonePageState extends State<RingTonePage>
   }
 
   Future<void> playNotificationSound(String soundResource) async {
-    notifications = FlutterLocalNotificationsPlugin();
+    FlutterLocalNotificationsPlugin notifications =
+        FlutterLocalNotificationsPlugin();
 
     var initializationSettingsAndroid =
         const AndroidInitializationSettings('@mipmap/logo_alertfriends_v2');
@@ -202,24 +201,33 @@ class _RingTonePageState extends State<RingTonePage>
     var initializationSettings =
         InitializationSettings(android: initializationSettingsAndroid);
     await notifications.initialize(initializationSettings);
+
     var androidPlatformChannelSpecifics = AndroidNotificationDetails(
-        soundResource, soundResource,
-        playSound: true,
-        fullScreenIntent: true,
-        audioAttributesUsage: AudioAttributesUsage.notificationRingtone,
-        sound: RawResourceAndroidNotificationSound(soundResource));
+      soundResource, soundResource,
+      playSound: true,
+      visibility: NotificationVisibility.public,
+      // fullScreenIntent: true,
+      groupKey: "testAudio",
+      styleInformation: const BigTextStyleInformation(''),
+      fullScreenIntent: true,
+      largeIcon:
+          const DrawableResourceAndroidBitmap('@drawable/splash_v2_screen'),
+      ticker: 'Nuevo mensaje recibido',
+      audioAttributesUsage: AudioAttributesUsage.notificationRingtone,
+      sound: RawResourceAndroidNotificationSound(soundResource),
+    );
 
     var platformChannelSpecifics =
         NotificationDetails(android: androidPlatformChannelSpecifics);
 
     await notifications.show(
-        100, soundResource, 'this is a test', platformChannelSpecifics);
+        100, soundResource, 'Prueba de sonido', platformChannelSpecifics);
   }
 
   @override
   Widget build(BuildContext context) {
     final Size size = MediaQuery.of(context).size;
-    RedirectViewNotifier.setContext(context);
+    RedirectViewNotifier.setStoredContext(context);
     return Scaffold(
       extendBodyBehindAppBar: false,
       key: scaffoldKey,
@@ -298,8 +306,9 @@ class _RingTonePageState extends State<RingTonePage>
                         // audioPlayer.pause();
                         indexAudioPlayer = -1;
                       } else {
-                        playNotificationSound(ringtonesTemp[index]);
-
+                        Future.delayed(const Duration(seconds: 8), () {
+                          playNotificationSound(ringtonesTemp[index]);
+                        });
                         setState(() {});
 
                         indexAudioPlayer = index;
@@ -368,7 +377,8 @@ class _RingTonePageState extends State<RingTonePage>
         if (isRunning) {
           service.invoke("stopService");
         }
-        service.startService();
+        await service.startService();
+        await activateService();
         break;
       }
 

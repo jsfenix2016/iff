@@ -174,7 +174,7 @@ class _UserConfigPageState2 extends State<UserConfigPage2> {
 
   @override
   Widget build(BuildContext context) {
-    RedirectViewNotifier.setContext(context);
+    RedirectViewNotifier.setStoredContext(context);
     return Scaffold(
       body: Container(
         decoration: decorationCustom(),
@@ -416,7 +416,7 @@ class _UserConfigPageState2 extends State<UserConfigPage2> {
           MaterialPageRoute(
             builder: (context) => const PremiumPage(
                 isFreeTrial: false,
-                img: 'pantalla5.png',
+                img: 'Pantalla5.jpg',
                 title: Constant.premiumTitle,
                 subtitle: ''),
           ),

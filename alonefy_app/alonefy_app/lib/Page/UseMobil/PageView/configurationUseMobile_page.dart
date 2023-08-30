@@ -67,7 +67,7 @@ class _UseMobilePageState extends State<UseMobilePage> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    RedirectViewNotifier.setContext(context);
+    RedirectViewNotifier.setStoredContext(context);
     return Scaffold(
       body: Container(
         decoration: decorationCustom(),
@@ -150,7 +150,7 @@ class _UseMobilePageState extends State<UseMobilePage> {
                         },
                         itemExtent: 60.0,
                         children: [
-                          for (var i = 0; i <= Constant.timeDic.length; i++)
+                          for (var i = 0; i < Constant.timeDic.length; i++)
                             Container(
                               height: 24,
                               width: 150,

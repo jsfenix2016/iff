@@ -33,6 +33,7 @@ class _ConfigGeolocatorState extends State<ConfigGeolocator> {
   final _prefs = PreferenceUser();
   final _locationController = Get.put(ConfigGeolocatorController());
   PreferencePermission preferencePermission = PreferencePermission.init;
+  bool isMenu = false;
 
   /// Determine the current position of the device.
   ///
@@ -156,11 +157,10 @@ class _ConfigGeolocatorState extends State<ConfigGeolocator> {
     _isActivePermission();
   }
 
-  bool isMenu = false;
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    RedirectViewNotifier.setContext(context);
+    RedirectViewNotifier.setStoredContext(context);
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.brown,

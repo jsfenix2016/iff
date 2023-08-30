@@ -88,7 +88,7 @@ class _ContactNoticePageState extends State<ContactNoticePage> {
 
   @override
   Widget build(BuildContext context) {
-    RedirectViewNotifier.setContext(context);
+    RedirectViewNotifier.setStoredContext(context);
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.brown,

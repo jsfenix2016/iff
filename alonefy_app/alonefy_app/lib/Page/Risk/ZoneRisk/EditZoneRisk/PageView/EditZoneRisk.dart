@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_contacts/flutter_contacts.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:ifeelefine/Common/Constant.dart';
 import 'package:ifeelefine/Common/colorsPalette.dart';
@@ -8,6 +9,7 @@ import 'package:ifeelefine/Common/text_style_font.dart';
 import 'package:ifeelefine/Common/utils.dart';
 import 'package:ifeelefine/Model/contactZoneRiskBD.dart';
 import 'package:ifeelefine/Page/Contact/Widget/filter_contact.dart';
+import 'package:ifeelefine/Page/Geolocator/Controller/configGeolocatorController.dart';
 import 'package:ifeelefine/Page/Premium/Controller/premium_controller.dart';
 import 'package:ifeelefine/Page/Premium/PageView/premium_page.dart';
 import 'package:ifeelefine/Page/Risk/DateRisk/Widgets/cardContact.dart';
@@ -16,7 +18,7 @@ import 'package:ifeelefine/Page/Risk/DateRisk/Widgets/contentCode.dart';
 import 'package:flutter/material.dart';
 
 import 'package:google_fonts/google_fonts.dart';
-import 'package:ifeelefine/Page/Risk/DateRisk/Widgets/popUpContact.dart';
+
 import 'package:ifeelefine/Page/Risk/ZoneRisk/EditZoneRisk/Controller/EditZoneController.dart';
 import 'package:ifeelefine/Page/Risk/ZoneRisk/PushAlert/PageView/pushAlert.dart';
 import 'package:ifeelefine/Provider/prefencesUser.dart';
@@ -38,6 +40,8 @@ class EditZoneRiskPage extends StatefulWidget {
 class _EditZoneRiskPageState extends State<EditZoneRiskPage> {
   EditZoneController editZoneVC = EditZoneController();
   final PreferenceUser _prefs = PreferenceUser();
+  PreferencePermission preferencePermission = PreferencePermission.init;
+  final _locationController = Get.put(ConfigGeolocatorController());
   var sendWhatsappSMS = false;
   var sendLocation = false;
   var saveConfig = false;
@@ -53,7 +57,7 @@ class _EditZoneRiskPageState extends State<EditZoneRiskPage> {
   late Contact contactSelect;
   var indexSelect = -1;
   var code = CodeModel();
-
+  late bool isActive = false;
   @override
   void initState() {
     getContact();
@@ -72,7 +76,8 @@ class _EditZoneRiskPageState extends State<EditZoneRiskPage> {
       code.textCode3 = '';
       code.textCode4 = '';
     }
-
+    preferencePermission = _prefs.getAcceptedSendLocation;
+    _isActivePermission();
     if (widget.contactRisk.id != -1) {
       saveConfig = widget.contactRisk.save;
     }
@@ -96,6 +101,111 @@ class _EditZoneRiskPageState extends State<EditZoneRiskPage> {
       isLoading = false;
     });
     setState(() {});
+  }
+
+  void savePermission() {
+    if (isActive) {
+      //_prefs.setAcceptedSendLocation = PreferencePermission.allow;
+      _locationController.activateLocation(PreferencePermission.allow);
+    } else {
+      if (_prefs.getAcceptedSendLocation == PreferencePermission.allow) {
+        _locationController.activateLocation(PreferencePermission.noAccepted);
+        //_prefs.setAcceptedSendLocation = PreferencePermission.noAccepted;
+      }
+    }
+
+    showSaveAlert(context, "Permiso guardado",
+        "El permiso del mapa se ha guardado correctamente.");
+  }
+
+  Future _isActivePermission() async {
+    LocationPermission permission = await Geolocator.checkPermission();
+
+    if (preferencePermission == PreferencePermission.allow &&
+        (permission == LocationPermission.whileInUse ||
+            permission == LocationPermission.always)) {
+      setState(() {
+        isActive = true;
+      });
+    } else {
+      setState(() {
+        isActive = false;
+        if (_prefs.getUserPremium) {
+          _checkPermission();
+        }
+      });
+    }
+  }
+
+  Future _checkPermission() async {
+    LocationPermission permission;
+    bool serviceEnabled;
+
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      // Location services are not enabled don't continue
+      // accessing the position and request users of the
+      // App to enable the location services.
+      setState(() {
+        isActive = false;
+      });
+      return Future.error('Location services are disabled.');
+    }
+
+    permission = await Geolocator.requestPermission();
+
+    if (permission == LocationPermission.deniedForever &&
+        preferencePermission == PreferencePermission.init) {
+      setState(() {
+        isActive = false;
+      });
+    } else {
+      if (permission == LocationPermission.denied ||
+          permission == LocationPermission.deniedForever) {
+        setState(() {
+          isActive = false;
+        });
+
+        switch (preferencePermission) {
+          case PreferencePermission.init:
+            _locationController.activateLocation(PreferencePermission.denied);
+            //_prefs.setAcceptedSendLocation = PreferencePermission.denied;
+            break;
+          case PreferencePermission.denied:
+            _locationController
+                .activateLocation(PreferencePermission.deniedForever);
+            //_prefs.setAcceptedSendLocation = PreferencePermission.deniedForever;
+            break;
+          case PreferencePermission.deniedForever:
+            //_prefs.setAcceptedSendLocation = PreferencePermission.deniedForever;
+            _locationController
+                .activateLocation(PreferencePermission.deniedForever);
+            if (permission == LocationPermission.deniedForever) {
+              showPermissionDialog(context, Constant.enablePermission);
+            }
+            break;
+          case PreferencePermission.allow:
+            //_prefs.setAcceptedSendLocation = PreferencePermission.deniedForever;
+            _locationController
+                .activateLocation(PreferencePermission.deniedForever);
+            break;
+          case PreferencePermission.noAccepted:
+            //_prefs.setAcceptedSendLocation = PreferencePermission.deniedForever;
+            _locationController
+                .activateLocation(PreferencePermission.deniedForever);
+            break;
+        }
+      } else {
+        //_prefs.setAcceptedSendLocation = PreferencePermission.allow;
+        _locationController.activateLocation(PreferencePermission.allow);
+
+        setState(() {
+          isActive = true;
+        });
+      }
+
+      preferencePermission = _prefs.getAcceptedSendLocation;
+    }
   }
 
   void saveContactZoneRisk(BuildContext context) async {
@@ -144,26 +254,28 @@ class _EditZoneRiskPageState extends State<EditZoneRiskPage> {
         var update =
             await editZoneVC.updateContactZoneRisk(context, contactRisk);
         if (update) {
-          Future.sync(() async => await showDialog(
-                context: context,
-                builder: (context) {
-                  return AlertDialog(
-                    title: const Text(Constant.info),
-                    content: const Text(Constant.saveCorrectly),
-                    actions: <Widget>[
-                      TextButton(
-                        onPressed: () {
-                          setState(() {
-                            Navigator.of(context).pop();
-                          });
-                          goToPush(contactRisk);
-                        },
-                        child: const Text("Ok"),
-                      )
-                    ],
-                  );
-                },
-              ));
+          Future.sync(
+            () async => await showDialog(
+              context: context,
+              builder: (context) {
+                return AlertDialog(
+                  title: const Text(Constant.info),
+                  content: const Text(Constant.saveCorrectly),
+                  actions: <Widget>[
+                    TextButton(
+                      onPressed: () {
+                        setState(() {
+                          Navigator.of(context).pop();
+                        });
+                        goToPush(contactRisk);
+                      },
+                      child: const Text("Ok"),
+                    )
+                  ],
+                );
+              },
+            ),
+          );
         }
       }
     } else {
@@ -211,6 +323,15 @@ class _EditZoneRiskPageState extends State<EditZoneRiskPage> {
             contactlist.indexWhere((item) => item.id == contactSelect.id);
         print(indexSelect);
       });
+    }
+  }
+
+  Future<Position> getCurrentPosition() async {
+    if (_prefs.getAcceptedSendLocation == PreferencePermission.allow) {
+      return await Geolocator.getCurrentPosition();
+    } else {
+      return Future.error(
+          'Location permissions are denied or you are not a premium user');
     }
   }
 
@@ -375,6 +496,7 @@ class _EditZoneRiskPageState extends State<EditZoneRiskPage> {
                                                           PremiumController());
                                                   premiumController
                                                       .updatePremiumAPI(true);
+                                                  _checkPermission();
                                                   setState(() {});
                                                 }
                                               });
@@ -523,7 +645,7 @@ class _EditZoneRiskPageState extends State<EditZoneRiskPage> {
                                                 subtitle:
                                                     'Activa para enviar tu última ubicación'),
                                           ),
-                                        ).then((value) {
+                                        ).then((value) async {
                                           if (value != null && value) {
                                             _prefs.setUserFree = false;
                                             _prefs.setUserPremium = true;
@@ -531,6 +653,9 @@ class _EditZoneRiskPageState extends State<EditZoneRiskPage> {
                                                 Get.put(PremiumController());
                                             premiumController
                                                 .updatePremiumAPI(true);
+                                            isActive = true;
+                                            await _checkPermission();
+                                            getCurrentPosition();
                                           }
                                         });
                                         ;
@@ -593,7 +718,7 @@ class _EditZoneRiskPageState extends State<EditZoneRiskPage> {
                                               title:
                                                   'Protege tu Seguridad Personal las 24h:\n\n',
                                               subtitle:
-                                                  'Activa para enviar tu última ubicación')),
+                                                  'Guarda la configuración de las zonas de riesgo, en caso de que quieras volverles a utilizar ')),
                                     ).then((value) {
                                       if (value != null && value) {
                                         _prefs.setUserFree = false;

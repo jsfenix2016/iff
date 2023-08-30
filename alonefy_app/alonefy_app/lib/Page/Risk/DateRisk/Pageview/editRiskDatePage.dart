@@ -1,10 +1,12 @@
 import 'dart:convert';
-import 'dart:ffi';
+
 import 'dart:io';
+import 'package:geolocator/geolocator.dart';
 import 'package:ifeelefine/Common/manager_alerts.dart';
 import 'package:ifeelefine/Common/text_style_font.dart';
 import 'package:ifeelefine/Page/Calendar/calendarPopup.dart';
 import 'package:ifeelefine/Page/Contact/Widget/filter_contact.dart';
+import 'package:ifeelefine/Page/Geolocator/Controller/configGeolocatorController.dart';
 import 'package:ifeelefine/Page/Premium/Controller/premium_controller.dart';
 import 'package:ifeelefine/Page/Premium/PageView/premium_page.dart';
 import 'package:ifeelefine/Page/Risk/DateRisk/ListDateRisk/Controller/riskPageController.dart';
@@ -84,6 +86,10 @@ class _EditRiskPageState extends State<EditRiskPage> {
   bool isSelectContact = false;
   late DateTime dateTimeTemp = DateTime.now();
   late DateTime dateTimeTempIncrease = DateTime.now();
+  PreferencePermission preferencePermission = PreferencePermission.init;
+  final _locationController = Get.put(ConfigGeolocatorController());
+  // late bool isActive = false;
+
   @override
   void initState() {
     // Agregar un día a la fecha actual
@@ -110,6 +116,7 @@ class _EditRiskPageState extends State<EditRiskPage> {
       code.textCode3 = '';
       code.textCode4 = '';
     }
+    _isActivePermission();
     if (widget.contactRisk.messages.isNotEmpty) {
       controllerText.text = widget.contactRisk.messages;
     }
@@ -143,6 +150,77 @@ class _EditRiskPageState extends State<EditRiskPage> {
     setState(() {
       isLoading = false;
     });
+  }
+
+  Future _isActivePermission() async {
+    LocationPermission permission = await Geolocator.checkPermission();
+
+    if (preferencePermission == PreferencePermission.allow &&
+        (permission == LocationPermission.whileInUse ||
+            permission == LocationPermission.always)) {
+    } else {
+      if (_prefs.getUserPremium) {
+        _checkPermission();
+      }
+    }
+  }
+
+  Future _checkPermission() async {
+    LocationPermission permission;
+    bool serviceEnabled;
+
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      // Location services are not enabled don't continue
+      // accessing the position and request users of the
+      // App to enable the location services.
+
+      return Future.error('Location services are disabled.');
+    }
+
+    permission = await Geolocator.requestPermission();
+
+    if (permission == LocationPermission.deniedForever &&
+        preferencePermission == PreferencePermission.init) {
+    } else {
+      if (permission == LocationPermission.denied ||
+          permission == LocationPermission.deniedForever) {
+        switch (preferencePermission) {
+          case PreferencePermission.init:
+            _locationController.activateLocation(PreferencePermission.denied);
+            //_prefs.setAcceptedSendLocation = PreferencePermission.denied;
+            break;
+          case PreferencePermission.denied:
+            _locationController
+                .activateLocation(PreferencePermission.deniedForever);
+            //_prefs.setAcceptedSendLocation = PreferencePermission.deniedForever;
+            break;
+          case PreferencePermission.deniedForever:
+            //_prefs.setAcceptedSendLocation = PreferencePermission.deniedForever;
+            _locationController
+                .activateLocation(PreferencePermission.deniedForever);
+            if (permission == LocationPermission.deniedForever) {
+              showPermissionDialog(context, Constant.enablePermission);
+            }
+            break;
+          case PreferencePermission.allow:
+            //_prefs.setAcceptedSendLocation = PreferencePermission.deniedForever;
+            _locationController
+                .activateLocation(PreferencePermission.deniedForever);
+            break;
+          case PreferencePermission.noAccepted:
+            //_prefs.setAcceptedSendLocation = PreferencePermission.deniedForever;
+            _locationController
+                .activateLocation(PreferencePermission.deniedForever);
+            break;
+        }
+      } else {
+        //_prefs.setAcceptedSendLocation = PreferencePermission.allow;
+        _locationController.activateLocation(PreferencePermission.allow);
+      }
+
+      preferencePermission = _prefs.getAcceptedSendLocation;
+    }
   }
 
   // Función para solicitar permiso de acceso a la galería
@@ -229,10 +307,9 @@ class _EditRiskPageState extends State<EditRiskPage> {
         isprogrammed: isprogrammed,
         photoDate: list,
         saveContact: widget.contactRisk.saveContact,
-        createDate: nowTemp,
+        createDate: DateTime.now(),
         taskIds: []);
-
-    getchangeContact(context, contactRisk);
+    Future.sync(() => {getchangeContact(context, contactRisk)});
   }
 
   void getchangeContact(BuildContext context, ContactRiskBD contactRisk) async {
@@ -414,6 +491,15 @@ class _EditRiskPageState extends State<EditRiskPage> {
     }
 
     (context as Element).markNeedsBuild();
+  }
+
+  Future<Position> getCurrentPosition() async {
+    if (_prefs.getAcceptedSendLocation == PreferencePermission.allow) {
+      return await Geolocator.getCurrentPosition();
+    } else {
+      return Future.error(
+          'Location permissions are denied or you are not a premium user');
+    }
   }
 
   void _showContactListScreen(BuildContext context) async {
@@ -768,11 +854,39 @@ class _EditRiskPageState extends State<EditRiskPage> {
                                     value: widget.contactRisk.sendLocation,
                                     activeColor: ColorPalette.activeSwitch,
                                     trackColor: CupertinoColors.inactiveGray,
-                                    onChanged: (bool? value) {
-                                      setState(() {
-                                        sendLocation = value!;
-                                        widget.contactRisk.sendLocation = value;
-                                      });
+                                    onChanged: (bool? value) async {
+                                      if (_prefs.getUserFree &&
+                                          !_prefs.getUserPremium) {
+                                        await Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) => const PremiumPage(
+                                                isFreeTrial: false,
+                                                img: 'Pantalla4.jpg',
+                                                title:
+                                                    'Protege tu Seguridad Personal las 24h:\n\n',
+                                                subtitle:
+                                                    'Activa para enviar tu última ubicación'),
+                                          ),
+                                        ).then((value) async {
+                                          if (value != null && value) {
+                                            _prefs.setUserFree = false;
+                                            _prefs.setUserPremium = true;
+                                            var premiumController =
+                                                Get.put(PremiumController());
+                                            premiumController
+                                                .updatePremiumAPI(true);
+
+                                            await _checkPermission();
+                                            getCurrentPosition();
+                                          }
+                                        });
+
+                                        return;
+                                      }
+                                      sendLocation = value!;
+                                      widget.contactRisk.sendLocation = value;
+                                      setState(() {});
                                     },
                                   ),
                                 ),
@@ -986,38 +1100,35 @@ class _EditRiskPageState extends State<EditRiskPage> {
                                         trackColor:
                                             CupertinoColors.inactiveGray,
                                         onChanged: (bool? value) async {
-                                          setState(() async {
-                                            if (_prefs.getUserFree &&
-                                                !_prefs.getUserPremium) {
-                                              await Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        const PremiumPage(
-                                                            isFreeTrial: false,
-                                                            img:
-                                                                'pantalla3.png',
-                                                            title:
-                                                                'Tus citas más seguras con la versión Premium\n',
-                                                            subtitle:
-                                                                '\nCuando acabes tu cita, avisaremos a tu contacto sino desactivas esta alarma.')),
-                                              ).then((value) {
-                                                if (value != null && value) {
-                                                  _prefs.setUserFree = false;
-                                                  _prefs.setUserPremium = true;
-                                                  var premiumController =
-                                                      Get.put(
-                                                          PremiumController());
-                                                  premiumController
-                                                      .updatePremiumAPI(true);
-                                                }
-                                              });
-                                              return;
-                                            }
-                                            saveConfig = value!;
-                                            widget.contactRisk.saveContact =
-                                                value;
-                                          });
+                                          if (_prefs.getUserFree &&
+                                              !_prefs.getUserPremium) {
+                                            await Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      const PremiumPage(
+                                                          isFreeTrial: false,
+                                                          img: 'pantalla3.png',
+                                                          title:
+                                                              'Tus citas más seguras con la versión Premium\n',
+                                                          subtitle:
+                                                              '\nCuando acabes tu cita, avisaremos a tu contacto sino desactivas esta alarma.')),
+                                            ).then((value) async {
+                                              if (value != null && value) {
+                                                _prefs.setUserFree = false;
+                                                _prefs.setUserPremium = true;
+                                                var premiumController = Get.put(
+                                                    PremiumController());
+                                                premiumController
+                                                    .updatePremiumAPI(true);
+                                              }
+                                            });
+                                            return;
+                                          }
+                                          saveConfig = value!;
+                                          widget.contactRisk.saveContact =
+                                              value;
+                                          setState(() {});
                                         },
                                       ),
                                     ),

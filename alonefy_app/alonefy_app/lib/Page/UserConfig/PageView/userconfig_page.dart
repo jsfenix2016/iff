@@ -54,7 +54,7 @@ class _UserConfigPageState extends State<UserConfigPage> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    RedirectViewNotifier.setContext(context);
+    RedirectViewNotifier.setStoredContext(context);
     return Scaffold(
       body: Container(
         height: size.height,
@@ -238,7 +238,7 @@ class _UserConfigPageState extends State<UserConfigPage> {
                                     ? _submit
                                     : () {
                                         showSaveAlert(context, Constant.info,
-                                            Constant.alertMessageValidateUser);
+                                            "Debe tener validado los tokens del correo y teléfono");
                                       },
                                 child: Container(
                                   decoration: BoxDecoration(

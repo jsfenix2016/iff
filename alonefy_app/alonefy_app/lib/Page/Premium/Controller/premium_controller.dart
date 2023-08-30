@@ -29,7 +29,7 @@ class PremiumController extends GetxController {
     // prepare
 
     try {
-      Future.sync(() async => await FlutterInappPurchase.instance.initialize());
+      await FlutterInappPurchase.instance.initialize();
       var result = "";
       print('result: $result');
       // Resto de tu lógica...
@@ -37,43 +37,45 @@ class PremiumController extends GetxController {
       print('Error al inicializar el paquete flutter_inapp_purchase: $e');
       // Mostrar un mensaje de error o realizar una acción específica...
     }
-    Future.sync(() => _connectionSubscription =
-            FlutterInappPurchase.connectionUpdated.listen((connected) async {
-          if (await isSubscribed()) {
+    _connectionSubscription =
+        FlutterInappPurchase.connectionUpdated.listen((connected) async {
+      if (await isSubscribed()) {
+        _prefs.setUserPremium = true;
+      } else {
+        if (_prefs.getUserFree && !_prefs.getUserPremium) {
+          _prefs.setUserPremium = false;
+        }
+      }
+      _updatePremiumAPI();
+
+      _getProducts();
+      print('connected: $connected');
+    });
+
+    _purchaseUpdatedSubscription = FlutterInappPurchase.purchaseUpdated.listen(
+      (productItem) {
+        if (_response != null) {
+          _response!(true);
+
+          if (!_prefs.getUserFree) {
             _prefs.setUserPremium = true;
-          } else {
-            if (_prefs.getUserFree && !_prefs.getUserPremium) {
-              _prefs.setUserPremium = false;
-            }
+            _prefs.setUserFree = false;
+            _updatePremiumAPI();
           }
-          _updatePremiumAPI();
+          print('purchase-updated: $productItem');
+        }
+      },
+    );
 
-          _getProducts();
-          print('connected: $connected');
-        }));
-
-    Future.sync(() => _purchaseUpdatedSubscription =
-            FlutterInappPurchase.purchaseUpdated.listen((productItem) {
-          if (_response != null) {
-            _response!(true);
-
-            if (!_prefs.getUserFree) {
-              _prefs.setUserPremium = true;
-              _prefs.setUserFree = false;
-              _updatePremiumAPI();
-            }
-            print('purchase-updated: $productItem');
-          }
-        }));
-
-    Future.sync(() => _purchaseErrorSubscription =
-            FlutterInappPurchase.purchaseError.listen((purchaseError) {
-          if (_response != null) _response!(false);
-          print('purchase-error: $purchaseError');
-        }));
+    _purchaseErrorSubscription = FlutterInappPurchase.purchaseError.listen(
+      (purchaseError) {
+        if (_response != null) _response!(false);
+        print('purchase-error: $purchaseError');
+      },
+    );
 
     _getProducts();
-    if (await Future.sync(() async => await isSubscribed())) {
+    if (await isSubscribed()) {
       _prefs.setUserPremium = true;
     } else {
       if (!_prefs.getUsedFreeDays &&
@@ -85,35 +87,31 @@ class PremiumController extends GetxController {
   }
 
   void requestPurchase(IAPItem item) {
-    Future.sync(() =>
-        FlutterInappPurchase.instance.requestSubscription(item.productId!));
+    FlutterInappPurchase.instance.requestSubscription(item.productId!);
   }
 
   void requestPurchaseByProductId(String productId, Function response) {
     _response = response;
     //FlutterInappPurchase.instance.requestPurchase(productId);
     try {
-      Future.sync(
-          () => FlutterInappPurchase.instance.requestSubscription(productId));
+      FlutterInappPurchase.instance.requestSubscription(productId);
     } catch (e) {
       print(e);
     }
   }
 
   Future _getProducts() async {
-    Future.sync(() async {
-      List<IAPItem> items =
-          await FlutterInappPurchase.instance.getSubscriptions(_productLists);
-      for (var item in items) {
-        print('${item.toString()}');
-        _items.add(item);
+    List<IAPItem> items =
+        await FlutterInappPurchase.instance.getSubscriptions(_productLists);
+    for (var item in items) {
+      print(item.toString());
+      _items.add(item);
 
-        if (item.productId == subscriptionId ||
-            item.productId == subscriptionFreeTrialId) {
-          _prefs.setPremiumPrice = '${item.localizedPrice!}/mes';
-        }
+      if (item.productId == subscriptionId ||
+          item.productId == subscriptionFreeTrialId) {
+        _prefs.setPremiumPrice = '${item.localizedPrice!}/mes';
       }
-    });
+    }
   }
 
   Future<bool> isSubscribed() async {

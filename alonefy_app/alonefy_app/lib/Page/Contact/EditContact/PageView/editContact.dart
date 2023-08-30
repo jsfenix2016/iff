@@ -39,7 +39,7 @@ class _EditContactState extends State<EditContact> {
 
   @override
   Widget build(BuildContext context) {
-    RedirectViewNotifier.setContext(context);
+    RedirectViewNotifier.setStoredContext(context);
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.brown,

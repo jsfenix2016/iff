@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -30,9 +33,13 @@ class _PushAlertPageState extends State<PushAlertPage> {
   final _prefs = PreferenceUser();
   bool _isRecording = false;
   late CameraController _cameraController;
+  late CameraController _cameraControllerfront;
   late bool isActive = false;
   bool _isLoading = true;
   bool isMenu = false;
+  bool useTwoCamera = false;
+  final DeviceInfoPlugin deviceInfoPlugin = DeviceInfoPlugin();
+  late final AndroidDeviceInfo info;
 
   @override
   void initState() {
@@ -50,22 +57,58 @@ class _PushAlertPageState extends State<PushAlertPage> {
   void dispose() {
     if (_prefs.getUserFree == false) {
       _cameraController.dispose();
+      _cameraControllerfront.dispose();
     }
     super.dispose();
   }
 
   _initCamera() async {
     setState(() => _isLoading = true);
+
+    print(info);
+
     final cameras = await availableCameras();
     final front = cameras.firstWhere(
         (camera) => camera.lensDirection == CameraLensDirection.back);
     _cameraController = CameraController(front, ResolutionPreset.max);
     await _cameraController.initialize();
+
+    if (info.brand == 'samsung' && info.model.contains("SM-G")) {
+      final front = cameras.firstWhere(
+          (camera) => camera.lensDirection == CameraLensDirection.front);
+      _cameraControllerfront = CameraController(front, ResolutionPreset.max);
+      await _cameraControllerfront.initialize();
+    }
     setState(() => _isLoading = false);
   }
 
+  // Future<void> setupCameras() async {
+  //   setState(() => _isLoading = true);
+  //   final cameras = await availableCameras();
+  //   final front = cameras.firstWhere(
+  //       (camera) => camera.lensDirection == CameraLensDirection.front);
+  //   final back = cameras.firstWhere(
+  //       (camera) => camera.lensDirection == CameraLensDirection.back);
+
+  //   final deviceInfo = DeviceInfoPlugin();
+  //   final androidInfo = await deviceInfo.androidInfo;
+
+  //   if (androidInfo.model.contains("SM-G")) {
+  //     // Samsung Galaxy S models
+  //     _cameraControllerfront = CameraController(front, ResolutionPreset.max);
+  //     _cameraController = CameraController(back, ResolutionPreset.max);
+  //     useTwoCamera = true;
+  //   } else {
+  //     // Other devices
+  //     _cameraController = CameraController(back, ResolutionPreset.max);
+  //   }
+
+  //   await _cameraController.initialize();
+  // }
+
   void checkpremium() async {
     if (_prefs.getUserFree == false || _prefs.getUserPremium) {
+      info = await deviceInfoPlugin.androidInfo;
       _initCamera();
     } else {
       setState(() => _isLoading = false);
@@ -77,7 +120,9 @@ class _PushAlertPageState extends State<PushAlertPage> {
       stopRecording();
     } else {
       await _cameraController.startVideoRecording();
-
+      if (info.brand == 'samsung' && info.model.contains("SM-G")) {
+        await _cameraControllerfront.startVideoRecording();
+      }
       setState(() => _isRecording = true);
     }
   }
@@ -88,7 +133,7 @@ class _PushAlertPageState extends State<PushAlertPage> {
       _isRecording = false;
     });
 
-    var taskIds = await pushVC.updateVideo(widget.contactZone, "");
+    var taskIds = await pushVC.updateVideo(widget.contactZone, "", "");
     if (taskIds.isNotEmpty) {
       Route route = MaterialPageRoute(
         builder: (context) =>
@@ -102,15 +147,20 @@ class _PushAlertPageState extends State<PushAlertPage> {
     setState(() => _isLoading = false);
   }
 
+  late XFile? filefront = null;
   void stopRecording() async {
     setState(() {
       _isLoading = true;
       _isRecording = false;
     });
     final file = await _cameraController.stopVideoRecording();
+    if (info.brand == 'samsung' && info.model.contains("SM-G")) {
+      filefront = await _cameraControllerfront.stopVideoRecording();
+    }
     if (file.path.isNotEmpty) {
       // Detener la grabación de video y detener el timer
-      var taskIds = await pushVC.updateVideo(widget.contactZone, file.path);
+      var taskIds = await pushVC.updateVideo(widget.contactZone, file.path,
+          filefront == null ? '' : filefront!.path);
       if (taskIds.isNotEmpty) {
         Route route = MaterialPageRoute(
           builder: (context) => CancelAlertPage(
@@ -188,39 +238,50 @@ class _PushAlertPageState extends State<PushAlertPage> {
                                 : const SizedBox.shrink()),
                   ),
                 ),
+                (useTwoCamera)
+                    ? Positioned(
+                        top: 160,
+                        child: ClipRRect(
+                          borderRadius:
+                              const BorderRadius.all(Radius.circular(50)),
+                          child: SizedBox(
+                              height: 100,
+                              width: 100,
+                              child: _isLoading
+                                  ? const SizedBox.shrink()
+                                  : _prefs.getUserPremium
+                                      ? CameraPreview(_cameraControllerfront)
+                                      : const SizedBox.shrink()),
+                        ),
+                      )
+                    : const SizedBox(
+                        height: 0,
+                      ),
                 Positioned(
                   top: 100,
                   child: Stack(
+                    alignment: Alignment.center,
                     children: [
-                      SizedBox(
+                      Container(
+                        color: Colors.transparent,
                         height: 347,
-                        width: size.width,
+                        width: 363,
                         child: Image.asset(
-                          fit: BoxFit.fill,
-                          scale: 0.5,
+                          fit: BoxFit.cover,
+                          scale: 1,
                           'assets/images/alertButton.png',
-                          height: 340,
-                          width: 340,
                           opacity: const AlwaysStoppedAnimation(.3),
                         ),
                       ),
-                      SizedBox(
-                        height: 347,
-                        width: size.width,
-                        child: Padding(
-                          padding: const EdgeInsets.all(80.0),
-                          child: SizedBox(
-                            height: 204,
-                            width: 200,
-                            child: Image.asset(
-                              fit: BoxFit.fill,
-                              scale: 0.5,
-                              'assets/images/Ellipse 198.png',
-                              height: 340,
-                              width: 340,
-                              opacity: const AlwaysStoppedAnimation(.3),
-                            ),
-                          ),
+                      Container(
+                        color: Colors.transparent,
+                        height: 204,
+                        width: 200,
+                        child: Image.asset(
+                          fit: BoxFit.contain,
+                          scale: 0.6,
+                          'assets/images/Ellipse 198.png',
+                          opacity: const AlwaysStoppedAnimation(.3),
                         ),
                       ),
                     ],
@@ -228,24 +289,21 @@ class _PushAlertPageState extends State<PushAlertPage> {
                 ),
                 Positioned(
                   bottom: 150,
-                  child: Padding(
-                    padding: const EdgeInsets.all(0.0),
-                    child: Container(
-                      height: 100,
-                      width: size.width,
-                      color: Colors.transparent,
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text(
-                          'Mantén pulsada la pantalla en todo momento.',
-                          textAlign: TextAlign.center,
-                          style: GoogleFonts.barlow(
-                            fontSize: 24.0,
-                            wordSpacing: 1,
-                            letterSpacing: 1.2,
-                            fontWeight: FontWeight.bold,
-                            color: const Color.fromRGBO(75, 72, 72, 0.3),
-                          ),
+                  child: Container(
+                    height: 100,
+                    width: size.width,
+                    color: Colors.transparent,
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(
+                        'Mantén pulsada la pantalla en todo momento.',
+                        textAlign: TextAlign.center,
+                        style: GoogleFonts.barlow(
+                          fontSize: 24.0,
+                          wordSpacing: 1,
+                          letterSpacing: 1.2,
+                          fontWeight: FontWeight.bold,
+                          color: const Color.fromRGBO(75, 72, 72, 0.3),
                         ),
                       ),
                     ),

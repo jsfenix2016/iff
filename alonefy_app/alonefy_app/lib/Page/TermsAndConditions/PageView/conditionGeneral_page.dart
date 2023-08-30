@@ -34,7 +34,7 @@ class _ConditionGeneralPageState extends State<ConditionGeneralPage> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    RedirectViewNotifier.setContext(context);
+    RedirectViewNotifier.setStoredContext(context);
     return Scaffold(
       body: Container(
         decoration: decorationCustom(),

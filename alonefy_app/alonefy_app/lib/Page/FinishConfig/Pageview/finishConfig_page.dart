@@ -10,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:ifeelefine/Provider/prefencesUser.dart';
 import 'package:ifeelefine/Utils/Widgets/elevatedButtonFilling.dart';
 import 'package:ifeelefine/Utils/Widgets/widgetLogo.dart';
+import 'package:ifeelefine/main.dart';
 
 class FinishConfigPage extends StatefulWidget {
   const FinishConfigPage({super.key});
@@ -123,11 +124,10 @@ class _FinishConfigPageState extends State<FinishConfigPage> {
                                   var isRunning = await service.isRunning();
                                   if (isRunning) {
                                     service.invoke("stopService");
-                                  } else {
-                                    _prefs.setProtected =
-                                        "AlertFriends esta activado";
-                                    service.startService();
                                   }
+
+                                  Future.sync(() => activateService());
+
                                   if (_prefs.getUserFree) {
                                     _prefs.config = false;
                                   } else {

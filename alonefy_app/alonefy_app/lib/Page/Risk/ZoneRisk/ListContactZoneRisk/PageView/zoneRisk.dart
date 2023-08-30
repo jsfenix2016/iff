@@ -137,7 +137,7 @@ class _ZoneRiskPageState extends State<ZoneRiskPage> {
                         children: [
                           _mostrarFoto(listContact[index]),
                           Positioned(
-                            right: 0,
+                            left: 75,
                             child: Center(
                               child: Container(
                                 decoration: const BoxDecoration(
@@ -148,15 +148,17 @@ class _ZoneRiskPageState extends State<ZoneRiskPage> {
                                   ),
                                 ),
                                 height: 79,
-                                width: 200,
+                                width: 230,
                                 child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  mainAxisSize: MainAxisSize.max,
                                   children: [
                                     Container(
                                       decoration: const BoxDecoration(
                                         color: Colors.transparent,
                                       ),
                                       height: 79,
-                                      width: 150,
+                                      width: 180,
                                       child: Center(
                                         child: (listContact.isNotEmpty &&
                                                 listContact[index]
@@ -186,63 +188,135 @@ class _ZoneRiskPageState extends State<ZoneRiskPage> {
                                               ),
                                       ),
                                     ),
-                                    Column(
-                                      children: [
-                                        Container(
-                                          decoration: const BoxDecoration(
+                                    Container(
+                                      height: 70,
+                                      width: 50,
+                                      color: Colors.transparent,
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Container(
                                             color: Colors.transparent,
-                                            borderRadius: BorderRadius.only(
-                                              bottomRight: Radius.circular(100),
-                                              topRight: Radius.circular(100),
-                                            ),
-                                          ),
-                                          height: 30,
-                                          width: 30,
-                                          child: IconButton(
-                                            iconSize: 20,
-                                            onPressed: (() {
-                                              riskVC.deleteContactRisk(
-                                                  context, listContact[index]);
-                                            }),
-                                            icon: const Icon(
-                                              Icons.delete,
-                                              color: ColorPalette.principal,
-                                            ),
-                                          ),
-                                        ),
-                                        Container(
-                                          decoration: const BoxDecoration(
-                                            color: Colors.transparent,
-                                            borderRadius: BorderRadius.only(
-                                              bottomRight: Radius.circular(100),
-                                              topRight: Radius.circular(100),
-                                            ),
-                                          ),
-                                          height: 30,
-                                          width: 30,
-                                          child: IconButton(
-                                            iconSize: 20,
-                                            onPressed: (() {
-                                              Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      EditZoneRiskPage(
-                                                    contactRisk:
-                                                        listContact[index],
-                                                    index: listContact.length,
+                                            height: 30,
+                                            width: 30,
+                                            child: IconButton(
+                                              iconSize: 20,
+                                              onPressed: (() {
+                                                riskVC.deleteContactRisk(
+                                                    context,
+                                                    listContact[index]);
+                                              }),
+                                              icon: Container(
+                                                width: 16,
+                                                height: 16,
+                                                decoration: const BoxDecoration(
+                                                  image: DecorationImage(
+                                                    image: AssetImage(
+                                                        'assets/images/trash.png'),
+                                                    fit: BoxFit.contain,
                                                   ),
                                                 ),
-                                              );
-                                            }),
-                                            icon: const Icon(
-                                              Icons.edit,
-                                              color: ColorPalette.principal,
+                                              ),
                                             ),
                                           ),
-                                        ),
-                                      ],
+                                          const SizedBox(
+                                            width: 20,
+                                          ),
+                                          Container(
+                                            color: Colors.transparent,
+                                            height: 30,
+                                            width: 30,
+                                            child: IconButton(
+                                              iconSize: 20,
+                                              onPressed: (() {
+                                                Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        EditZoneRiskPage(
+                                                      contactRisk:
+                                                          listContact[index],
+                                                      index: listContact.length,
+                                                    ),
+                                                  ),
+                                                );
+                                              }),
+                                              icon: Container(
+                                                width: 16,
+                                                height: 16,
+                                                decoration: const BoxDecoration(
+                                                  image: DecorationImage(
+                                                    image: AssetImage(
+                                                        'assets/images/pencil.png'),
+                                                    fit: BoxFit.contain,
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
                                     ),
+                                    // Column(
+                                    //   mainAxisAlignment:
+                                    //       MainAxisAlignment.center,
+                                    //   children: [
+                                    //     Container(
+                                    //       decoration: const BoxDecoration(
+                                    //         color: Colors.transparent,
+                                    //         borderRadius: BorderRadius.only(
+                                    //           bottomRight: Radius.circular(100),
+                                    //           topRight: Radius.circular(100),
+                                    //         ),
+                                    //       ),
+                                    //       height: 30,
+                                    //       width: 30,
+                                    //       child: IconButton(
+                                    //         iconSize: 20,
+                                    //         onPressed: (() {
+                                    //           riskVC.deleteContactRisk(
+                                    //               context, listContact[index]);
+                                    //         }),
+                                    //         icon: const Icon(
+                                    //           Icons.delete,
+                                    //           color: ColorPalette.principal,
+                                    //         ),
+                                    //       ),
+                                    //     ),
+                                    //     Container(
+                                    //       decoration: const BoxDecoration(
+                                    //         color: Colors.transparent,
+                                    //         borderRadius: BorderRadius.only(
+                                    //           bottomRight: Radius.circular(100),
+                                    //           topRight: Radius.circular(100),
+                                    //         ),
+                                    //       ),
+                                    //       height: 30,
+                                    //       width: 30,
+                                    //       child: IconButton(
+                                    //         iconSize: 20,
+                                    //         onPressed: (() {
+                                    //           Navigator.push(
+                                    //             context,
+                                    //             MaterialPageRoute(
+                                    //               builder: (context) =>
+                                    //                   EditZoneRiskPage(
+                                    //                 contactRisk:
+                                    //                     listContact[index],
+                                    //                 index: listContact.length,
+                                    //               ),
+                                    //             ),
+                                    //           );
+                                    //         }),
+                                    //         icon: const Icon(
+                                    //           Icons.edit,
+                                    //           color: ColorPalette.principal,
+                                    //         ),
+                                    //       ),
+                                    //     ),
+                                    //   ],
+                                    // ),
                                   ],
                                 ),
                               ),
@@ -280,7 +354,7 @@ class _ZoneRiskPageState extends State<ZoneRiskPage> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    RedirectViewNotifier.setContext(context);
+    RedirectViewNotifier.setStoredContext(context);
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.brown,

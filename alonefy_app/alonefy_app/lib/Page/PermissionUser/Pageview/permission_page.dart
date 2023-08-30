@@ -153,7 +153,7 @@ class _PermitionUserPageState extends State<PermitionUserPage> {
   @override
   Widget build(BuildContext context) {
     final Size size = MediaQuery.of(context).size;
-    RedirectViewNotifier.setContext(context);
+    RedirectViewNotifier.setStoredContext(context);
     return Scaffold(
       extendBodyBehindAppBar: false,
       appBar: AppBar(

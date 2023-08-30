@@ -24,12 +24,14 @@
     <uses-permission android:name="android.permission.RingtoneManager.TYPE_ALARM"/>
     <uses-permission android:name="android.permission.RingtoneManager.TYPE_NOTIFICATION"/>
     <uses-permission android:name="android.permission.RingtoneManager.TYPE_RINGTONE"/>
-    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
+    
     <uses-permission android:name="android.permission.USE_EXACT_ALARM" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <!-- Permiso para acceder a la configuración de políticas de notificación -->
     <uses-permission android:name="android.permission.access_notification_policy" />
 
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+
+   
 
 </manifest>

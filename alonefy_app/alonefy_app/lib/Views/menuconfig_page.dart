@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:ifeelefine/Common/colorsPalette.dart';
 import 'package:ifeelefine/Common/decoration_custom.dart';
 import 'package:ifeelefine/Common/habits.dart';
+import 'package:ifeelefine/Common/notificationService.dart';
 import 'package:ifeelefine/Common/text_style_font.dart';
 import 'package:ifeelefine/Controllers/mainController.dart';
 
@@ -68,8 +69,8 @@ class _MenuConfigurationPageState extends State<MenuConfigurationPage> {
         "Cambiar envío ubicación", 'assets/images/Group 1082.png', 24, 24),
     MenuConfigModel("Cambiar tiempo notificaciónes",
         'assets/images/Group 1099.png', 22, 17.15),
-    MenuConfigModel("Cambiar sonido notificaciones",
-        'assets/images/Group 1102.png', 22, 22.08),
+    // MenuConfigModel("Cambiar sonido notificaciones",
+    //     'assets/images/Group 1102.png', 22, 22.08),
     MenuConfigModel(
         "Ajustes de mi smartphone", 'assets/images/mobile.png', 22, 19.66),
     MenuConfigModel(
@@ -203,20 +204,20 @@ class _MenuConfigurationPageState extends State<MenuConfigurationPage> {
             ));
 
         break;
-      case 8:
-        if ((user.idUser == "-1") && _prefs.getUserFree) {
-          redirectToConfigUser();
-          return;
-        }
+      // case 8:
+      //   if ((user.idUser == "-1") && _prefs.getUserFree) {
+      //     redirectToConfigUser();
+      //     return;
+      //   }
 
-        Future.sync(() => Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => const RingTonePage(),
-              ),
-            ));
-        break;
-      case 9:
+      //   Future.sync(() => Navigator.push(
+      //         context,
+      //         MaterialPageRoute(
+      //           builder: (context) => const RingTonePage(),
+      //         ),
+      //       ));
+      //   break;
+      case 8:
         if ((user.idUser == "-1") && _prefs.getUserFree) {
           redirectToConfigUser();
           return;
@@ -229,14 +230,16 @@ class _MenuConfigurationPageState extends State<MenuConfigurationPage> {
               ),
             ));
         break;
-      case 10:
+      case 9:
         if (_prefs.getUserPremium) {
-          Future.sync(() => Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const RestoreMyConfigPage(),
-                ),
-              ));
+          Future.sync(
+            () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const RestoreMyConfigPage(),
+              ),
+            ),
+          );
         } else {
           Future.sync(
             () => Navigator.push(
@@ -268,7 +271,7 @@ class _MenuConfigurationPageState extends State<MenuConfigurationPage> {
           );
         }
         break;
-      case 11:
+      case 10:
         if ((user.idUser == "-1") && _prefs.getUserFree) {
           redirectToConfigUser();
           return;
@@ -291,6 +294,7 @@ class _MenuConfigurationPageState extends State<MenuConfigurationPage> {
 
   @override
   Widget build(BuildContext context) {
+    RedirectViewNotifier.setStoredContext(context);
     final Size size = MediaQuery.of(context).size;
     return Scaffold(
       extendBodyBehindAppBar: true,

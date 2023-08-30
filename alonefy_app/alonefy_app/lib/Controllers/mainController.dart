@@ -54,9 +54,9 @@ class MainController extends GetxController {
   }
 
   Future<void> saveActivityLog(DateTime dateTime, String movementType) async {
-    await inicializeHiveBD();
     LogActivityBD activityBD =
         LogActivityBD(time: dateTime, movementType: movementType);
+
     await logActivityController.saveLogActivity(activityBD);
     await logActivityController.saveLastMovement();
   }

@@ -15,8 +15,7 @@ class DropdownNotBorder extends StatefulWidget {
   final List<String> instance;
   final String mensaje;
   @override
-  // ignore: library_private_types_in_public_api
-  _DropdownNotBorderState createState() => _DropdownNotBorderState();
+  State<DropdownNotBorder> createState() => _DropdownNotBorderState();
 }
 
 class _DropdownNotBorderState extends State<DropdownNotBorder> {

@@ -768,6 +768,9 @@ int stringTimeToInt(String strTime) {
 }
 
 int deactivateTimeToMinutes(String strTime) {
+  if (strTime.isEmpty) {
+    strTime = '0 horas';
+  }
   var time = strTime.replaceAll("hora", "");
   time = strTime.replaceAll(" horas", "");
   time = strTime.replaceAll(" semana", "");

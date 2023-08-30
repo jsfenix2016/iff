@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 import 'dart:isolate';
+
 import 'dart:math';
 import 'dart:ui';
 
@@ -8,10 +9,10 @@ import 'package:flutter/services.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
 
 import 'package:notification_center/notification_center.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 import 'package:sensors_plus/sensors_plus.dart';
 
-import 'package:flutter/cupertino.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:ifeelefine/Common/notificationService.dart';
 import 'package:ifeelefine/Controllers/mainController.dart';
@@ -21,7 +22,6 @@ import 'package:ifeelefine/Model/userbd.dart';
 
 import 'package:ifeelefine/Page/RestoreMyConfiguration/Controller/restoreController.dart';
 
-import 'package:ifeelefine/Page/Risk/DateRisk/ListDateRisk/PageView/riskDatePage.dart';
 import 'package:ifeelefine/Services/mainService.dart';
 
 import 'package:ifeelefine/Common/idleLogic.dart';
@@ -30,7 +30,7 @@ import 'package:ifeelefine/Model/logAlerts.dart';
 
 import 'package:ifeelefine/Provider/prefencesUser.dart';
 import 'package:ifeelefine/Routes/routes.dart';
-import 'package:device_info_plus/device_info_plus.dart';
+
 import 'package:flutter/material.dart';
 
 import 'package:flutter_background_service_android/flutter_background_service_android.dart'
@@ -52,11 +52,13 @@ DateTime now = DateTime.now();
 late LogAlerts userMov;
 var accelerometerValues = <double>[];
 List<double> userAccelerometerValues = <double>[];
-final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 /// OPTIONAL when use custom notification
-FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
     FlutterLocalNotificationsPlugin();
+
+final FlutterBackgroundService service = FlutterBackgroundService();
 
 final List<StreamSubscription<dynamic>> _streamSubscriptions =
     <StreamSubscription<dynamic>>[];
@@ -68,6 +70,13 @@ bool ismove = true;
 bool timerActive = true;
 
 bool isMovRude = false;
+
+bool notActionPush = false;
+String idTask = "";
+List<String> listTask = [];
+RxList<String> rxlistTask = [''].obs;
+RxString rxIdTask = ''.obs;
+RxString name = "".obs;
 Timer timerSendSMS = Timer(const Duration(seconds: 20), () {});
 
 final LogActivityController logActivityController =
@@ -80,12 +89,38 @@ const int _logActivityTimerRefresh = 60;
 const int _logRudeMovementTimerRefresh = 20;
 
 final _locationController = Get.put(ConfigGeolocatorController());
-FlutterBackgroundService service = FlutterBackgroundService();
+
 String? device;
 String? initApp;
 UserBD? user;
 int time = 120;
 int timeUpdateFirebase = 36000;
+
+final StreamController<ReceivedNotification> didReceiveLocalNotificationStream =
+    StreamController<ReceivedNotification>.broadcast();
+
+final StreamController<String?> selectNotificationStream =
+    StreamController<String?>.broadcast();
+
+class ReceivedNotification {
+  ReceivedNotification({
+    required this.id,
+    required this.title,
+    required this.body,
+    required this.payload,
+  });
+
+  final int id;
+  final String? title;
+  final String? body;
+  final String? payload;
+}
+
+/// Defines a iOS/MacOS notification category for text input actions.
+const String darwinNotificationCategoryText = 'textCategory';
+
+/// Defines a iOS/MacOS notification category for plain actions.
+const String darwinNotificationCategoryPlain = 'plainCategory';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -97,17 +132,19 @@ Future<void> main() async {
   await inicializeHiveBD();
 
   await initializeFirebase();
-  await initializeService();
+
+  await activateService();
   _prefs.setNameZone = await locateZone();
   user = await mainController.getUserData();
 
-  if (user != null) {
+  if (user != null && user!.idUser != '-1') {
     var userApi = await GetUserController().getUser(
         user!.telephone.contains('+34')
             ? user!.telephone.replaceAll("+34", "")
             : user!.telephone);
-    // _prefs.setUserFree = false;
-    // _prefs.setUserPremium = true;
+    name.value = user!.name;
+    // _prefs.setUserFree = true;
+    // _prefs.setUserPremium = false;
     // var premiumController = Get.put(PremiumController());
     // premiumController.updatePremiumAPI(true);
     if (userApi != null && userApi.idUser != user!.idUser) {
@@ -117,7 +154,7 @@ Future<void> main() async {
     }
   }
 
-  Future.sync(() => {Get.put(PremiumController()).initPlatformState()});
+  Get.put(PremiumController()).initPlatformState();
 // Recupera la última ruta de pantalla visitada
   final lastRoute = await _prefs.getLastScreenRoute();
   initApp = _prefs.isFirstConfig == false ? 'onboarding' : lastRoute;
@@ -125,11 +162,11 @@ Future<void> main() async {
   _prefs.setHabitsEnable = false;
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
 
+  await requestPermission(Permission.notification);
+
   runApp(
     GetMaterialApp(
-      home: MyApp(
-        initApp: initApp!,
-      ),
+      home: MyApp(initApp: initApp!),
       debugShowCheckedModeBanner: false,
     ),
   );
@@ -142,29 +179,30 @@ Future<void> main() async {
 ///getDetectedFall:  indica que el usuario acepto la funcionalidad del acelerometro para poder detectar movimientos bruscos
 Future activateService() async {
   await inicializeHiveBD();
-
-  String sound = prefs.getNotificationAudio;
+  await prefs.initPrefs();
+  // String sound = prefs.getNotificationAudio;
 
   /// OPTIONAL, using custom notification channel id
-  AndroidNotificationChannel channel = AndroidNotificationChannel(
-      'my_foreground', // id
-      'AlertFriends – PERSONAL PROTECTION', // title
-      description: 'AlertFriends esta activado.', // description
-      importance: Importance.high, // importance must be at low or higher level
-      playSound: true,
-      showBadge: false,
-      enableLights: true,
-      sound: RawResourceAndroidNotificationSound(sound));
 
   var textDescrip = _prefs.getUserPremium
       ? 'AlertFriends esta activado.'
       : 'AlertFriends no estás totalmente protegido.';
 
-  service.invoke('update');
+  AndroidNotificationChannel channel = const AndroidNotificationChannel(
+    "my_foreground", // id
+    'AlertFriends – PERSONAL PROTECTION', // title
+    description: 'AlertFriends esta activado.', // description
+    importance: Importance.max, // importance must be at low or higher level
+    playSound: true,
+    showBadge: false,
+    enableLights: true,
+    // sound: RawResourceAndroidNotificationSound(sound)
+  );
   await flutterLocalNotificationsPlugin
       .resolvePlatformSpecificImplementation<
           AndroidFlutterLocalNotificationsPlugin>()
       ?.createNotificationChannel(channel);
+
   await service.configure(
     androidConfiguration: AndroidConfiguration(
       // this will be executed when app is in foreground or background in separated isolate
@@ -173,8 +211,7 @@ Future activateService() async {
       // auto start service
       autoStart: true,
       isForegroundMode: true,
-
-      notificationChannelId: 'my_foreground',
+      notificationChannelId: "my_foreground",
       initialNotificationTitle: 'AlertFriends – PERSONAL PROTECTION',
       initialNotificationContent: textDescrip,
       foregroundServiceNotificationId: 888,
@@ -200,7 +237,49 @@ Future activateService() async {
   const AndroidInitializationSettings initializationSettingsAndroid =
       AndroidInitializationSettings('@mipmap/logo_alertfriends_v2');
   final List<DarwinNotificationCategory> darwinNotificationCategories =
-      <DarwinNotificationCategory>[];
+      <DarwinNotificationCategory>[
+    DarwinNotificationCategory(
+      darwinNotificationCategoryText,
+      actions: <DarwinNotificationAction>[
+        DarwinNotificationAction.text(
+          'text_1',
+          'Action 1',
+          buttonTitle: 'Send',
+          placeholder: 'Placeholder',
+        ),
+      ],
+    ),
+    DarwinNotificationCategory(
+      darwinNotificationCategoryPlain,
+      actions: <DarwinNotificationAction>[
+        DarwinNotificationAction.plain('id_1', 'Action 1'),
+        DarwinNotificationAction.plain(
+          'id_2',
+          'Action 2 (destructive)',
+          options: <DarwinNotificationActionOption>{
+            DarwinNotificationActionOption.destructive,
+          },
+        ),
+        DarwinNotificationAction.plain(
+          '90',
+          'Action 3 (foreground)',
+          options: <DarwinNotificationActionOption>{
+            DarwinNotificationActionOption.foreground,
+          },
+        ),
+        DarwinNotificationAction.plain(
+          'id_4',
+          'Action 4 (auth required)',
+          options: <DarwinNotificationActionOption>{
+            DarwinNotificationActionOption.authenticationRequired,
+          },
+        ),
+      ],
+      options: <DarwinNotificationCategoryOption>{
+        DarwinNotificationCategoryOption.hiddenPreviewShowTitle,
+      },
+    )
+  ];
   final DarwinInitializationSettings initializationSettingsDarwin =
       DarwinInitializationSettings(
     requestAlertPermission: true,
@@ -208,26 +287,12 @@ Future activateService() async {
     requestSoundPermission: true,
     onDidReceiveLocalNotification:
         (int id, String? title, String? body, String? payload) async {
-      showDialog(
-        context: RedirectViewNotifier.context!,
-        builder: (BuildContext context) => CupertinoAlertDialog(
-          title: const Text("title"),
-          content: const Text("body"),
-          actions: [
-            CupertinoDialogAction(
-              isDefaultAction: true,
-              child: const Text('Ok'),
-              onPressed: () async {
-                Navigator.of(context, rootNavigator: true).pop();
-                await Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const RiskPage(),
-                  ),
-                );
-              },
-            )
-          ],
+      didReceiveLocalNotificationStream.add(
+        ReceivedNotification(
+          id: id,
+          title: title,
+          body: body,
+          payload: payload,
         ),
       );
     },
@@ -241,8 +306,8 @@ Future activateService() async {
   await flutterLocalNotificationsPlugin.initialize(
     initializationSettings,
     onDidReceiveNotificationResponse:
-        (NotificationResponse notificationResponse) async {
-      onDidReceiveNotificationResponse(notificationResponse);
+        (NotificationResponse notificationResponse) {
+      onDidReceiveBackgroundNotificationResponse(notificationResponse);
     },
     onDidReceiveBackgroundNotificationResponse:
         onDidReceiveBackgroundNotificationResponse,
@@ -250,68 +315,74 @@ Future activateService() async {
 
   final details =
       await flutterLocalNotificationsPlugin.getNotificationAppLaunchDetails();
+
   if (details != null && details.didNotificationLaunchApp) {
     print("object ${details.notificationResponse!.payload}");
-    onDidReceiveNotificationResponse(details.notificationResponse!);
+    onDidReceiveBackgroundNotificationResponse(details.notificationResponse!);
   }
 }
 
-Future<void> activateService2() async {
-  // ... otras configuraciones ...
+// Future<void> activateService2() async {
+//   // ... otras configuraciones ...
 
-  final ReceivePort receivePort = ReceivePort();
-  await Isolate.spawn(backgroundNotificationHandler, receivePort.sendPort);
+//   final ReceivePort receivePort = ReceivePort();
+//   await Isolate.spawn(backgroundNotificationHandler, receivePort.sendPort);
 
-  // Escucha los mensajes del aislamiento
-  receivePort.listen((dynamic data) {
-    if (data is SendPort) {
-      final SendPort sendPort = data;
-      // Envía el método para manejar las respuestas de notificaciones en segundo plano al aislamiento
-      sendPort.send(onDidReceiveBackgroundNotificationResponse);
-    }
-  });
+//   // Escucha los mensajes del aislamiento
+//   receivePort.listen((dynamic data) {
+//     if (data is SendPort) {
+//       final SendPort sendPort = data;
+//       // Envía el método para manejar las respuestas de notificaciones en segundo plano al aislamiento
+//       sendPort.send(onDidReceiveBackgroundNotificationResponse);
+//     }
+//   });
 
-  // ... otras configuraciones ...
-}
+//   // ... otras configuraciones ...
+// }
 
-void backgroundNotificationHandler(SendPort sendPort) {
-  final ReceivePort receivePort = ReceivePort();
-  sendPort.send(receivePort.sendPort);
+// void backgroundNotificationHandler(SendPort sendPort) {
+//   final ReceivePort receivePort = ReceivePort();
+//   sendPort.send(receivePort.sendPort);
 
-  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-      FlutterLocalNotificationsPlugin(); // Crea una instancia del plugin aquí
+//   // final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+//   //     FlutterLocalNotificationsPlugin(); // Crea una instancia del plugin aquí
 
-  receivePort.listen((dynamic data) async {
-    if (data is Map<String, dynamic>) {
-      // Maneja las respuestas de las notificaciones en segundo plano aquí
-      // final notificationResponse = NotificationResponse.fromMap(data);
-      // print('Manejando notificación en segundo plano: $notificationResponse');
-      String sound = prefs.getNotificationAudio;
-      // Muestra la notificación local en segundo plano
-      AndroidNotificationDetails androidDetails = AndroidNotificationDetails(
-          'my_foreground', // channelId
-          'AlertFriends – PERSONAL PROTECTION', // channelName
-          importance: Importance.max,
-          priority: Priority.high,
-          showWhen: false,
-          playSound: true,
-          sound: RawResourceAndroidNotificationSound(sound));
-      NotificationDetails platformChannelSpecifics =
-          NotificationDetails(android: androidDetails);
-      await flutterLocalNotificationsPlugin.show(
-        1000,
-        'Notificación en segundo plano',
-        'Respuesta recibida: ',
-        platformChannelSpecifics,
-      );
-    }
-  });
-}
+//   receivePort.listen((dynamic data) async {
+//     if (data is Map<String, dynamic>) {
+//       // Maneja las respuestas de las notificaciones en segundo plano aquí
+//       // final notificationResponse = NotificationResponse.fromMap(data);
+//       // print('Manejando notificación en segundo plano: $notificationResponse');
+//       String sound = prefs.getNotificationAudio;
+//       // Muestra la notificación local en segundo plano
+//       AndroidNotificationDetails androidDetails = AndroidNotificationDetails(
+//           sound.isEmpty ? "my_foreground" : sound, // id// channelId
+//           'AlertFriends – PERSONAL PROTECTION', // channelName
+//           importance: Importance.max,
+//           priority: Priority.high,
+//           showWhen: false,
+//           playSound: true,
+//           sound: RawResourceAndroidNotificationSound(sound));
+//       NotificationDetails platformChannelSpecifics =
+//           NotificationDetails(android: androidDetails);
+//       await flutterLocalNotificationsPlugin.show(
+//         1000,
+//         'Notificación en segundo plano',
+//         'Respuesta recibida: ',
+//         platformChannelSpecifics,
+//       );
+//     }
+//   });
+// }
 
-void onDidReceiveNotificationResponse(
+// void onDidReceiveNotificationResponse(
+//     NotificationResponse notificationResponse) async {
+//   // mainController.saveActivityLog(DateTime.now(), "Movimiento normal");
+//   // Maneja las respuestas de notificaciones en segundo plano aquí
+// }
+@pragma('vm:entry-point')
+void onDidReceiveBackgroundNotificationResponse(
     NotificationResponse notificationResponse) async {
   mainController.saveActivityLog(DateTime.now(), "Movimiento normal");
-  // Maneja las respuestas de notificaciones en segundo plano aquí
   switch (notificationResponse.notificationResponseType) {
     case NotificationResponseType.selectedNotification:
       // selectNotificationStream.add(notificationResponse.payload);
@@ -321,14 +392,39 @@ void onDidReceiveNotificationResponse(
       if (notificationResponse.payload!.contains("premium")) {
         RedirectViewNotifier.onTapPremiumNotification(notificationResponse);
       }
+      if (notificationResponse.payload!.contains("Drop_")) {
+        ismove = false;
+        timerActive = true;
+        String taskIds = notificationResponse.payload!.replaceAll("Drop_", "");
+        var taskIdList = getTaskIdList(taskIds);
+        idTask = taskIds;
+        rxIdTask.value = taskIds;
+        rxlistTask.value = taskIdList;
+        listTask = taskIdList;
+        notActionPush = true;
+
+        RedirectViewNotifier.onTapNotificationBody(
+            notificationResponse, taskIdList);
+        // MainService().cancelAllNotifications(taskIdList);
+        await flutterLocalNotificationsPlugin.cancel(notificationResponse.id!);
+      }
       if (notificationResponse.payload!.contains("Inactived_")) {
         ismove = false;
         timerActive = true;
         String taskIds =
             notificationResponse.payload!.replaceAll("Inactived_", "");
         var taskIdList = getTaskIdList(taskIds);
+        idTask = taskIds;
+        listTask = taskIdList;
+        rxIdTask.value = taskIds;
+        rxlistTask.value = taskIdList;
+        notActionPush = true;
 
-        MainService().cancelAllNotifications(taskIdList);
+        RedirectViewNotifier.onTapNotificationBody(
+            notificationResponse, taskIdList);
+        // RedirectViewNotifier.showAlertDialog(taskIds, taskIdList);
+        // MainService().cancelAllNotifications(taskIdList);
+        await flutterLocalNotificationsPlugin.cancel(notificationResponse.id!);
       }
       if (notificationResponse.actionId == "Inactived") {
         ismove = false;
@@ -373,7 +469,8 @@ void onDidReceiveNotificationResponse(
         timerActive = true;
 
         MainService().cancelAllNotifications(taskIdList);
-        await flutterLocalNotificationsPlugin.cancelAll();
+
+        await flutterLocalNotificationsPlugin.cancel(notificationResponse.id!);
       }
       if (notificationResponse.actionId != null &&
           notificationResponse.actionId!.contains("dateHelp")) {
@@ -383,6 +480,20 @@ void onDidReceiveNotificationResponse(
         NotificationCenter().notify('getContactRisk');
 
         MainService().sendAlertToContactImmediately(taskIdList);
+      }
+      if (notificationResponse.actionId != null &&
+          notificationResponse.actionId!.contains("DateRisk")) {
+        String taskIds = notificationResponse.actionId!
+            .substring(0, notificationResponse.actionId!.indexOf('id='));
+        taskIds = taskIds.replaceAll("DateRisk_", "");
+        String id = notificationResponse.actionId!.substring(
+            notificationResponse.actionId!.indexOf('id='),
+            notificationResponse.actionId!.length);
+        id = id.replaceAll("id=", "");
+        NotificationCenter().notify('getContactRisk');
+        var taskIdList = getTaskIdList(taskIds);
+        RedirectViewNotifier.onTapNotification(
+            notificationResponse, taskIdList, int.parse(id));
       }
       if (notificationResponse.actionId!.contains("premium")) {
         RedirectViewNotifier.onTapPremiumNotification(notificationResponse);
@@ -409,20 +520,6 @@ void onDidReceiveNotificationResponse(
   }
 }
 
-@pragma('vm:entry-point')
-void onDidReceiveBackgroundNotificationResponse(
-    NotificationResponse notificationResponse) async {
-  onDidReceiveNotificationResponse(notificationResponse);
-}
-
-///Funcion utilizada para inicializar el servicio en segundo plano
-///Variables:
-///getEnableIFF: se utiliza para activar y desactivar el servicio de segundo plano por indicacion del usuario
-///getDisambleIFF: se utilizada para asignar el tiempo de duracion de la desactivacion del servicio de proteccion.
-Future<void> initializeService() async {
-  activateService();
-}
-
 ///Funcion utilizada para el momento de detectar que la app esta en segundo plano y activar o invocar el servicio.
 ///Variables:
 ///isMovRude: valor booleano para asignar si se detecto un movimiento brusco en el dispositivo y proceder a notificar de dicho movimiento.
@@ -432,8 +529,10 @@ void onStart(ServiceInstance service) async {
   DartPluginRegistrant.ensureInitialized();
   await inicializeHiveBD();
   await _prefs.initPrefs();
+
   // For flutter prior to version 3.0.0
   // We have to register the plugin manually
+  /// OPTIONAL when use custom notification
 
   if (service is AndroidServiceInstance) {
     service.on('setAsForeground').listen((event) {
@@ -447,13 +546,14 @@ void onStart(ServiceInstance service) async {
   service.on('stopService').listen((event) {
     service.stopSelf();
   });
+
   accelerometer();
 
   int increaceTime = 0;
   int increaceTimeUpdate = 0;
 
   // bring to foreground
-  Timer.periodic(const Duration(seconds: 1), (timer) async {
+  Timer.periodic(const Duration(seconds: 5), (timer) async {
     if (Platform.isAndroid) {
       if (service is AndroidServiceInstance) {
         if (await service.isForegroundService()) {
@@ -464,7 +564,9 @@ void onStart(ServiceInstance service) async {
       }
     }
 
-    if (!_prefs.getUsedFreeDays && _prefs.getDayFree != "0") {
+    if (!_prefs.getUsedFreeDays &&
+        _prefs.getDayFree != "0" &&
+        _prefs.getUserFree) {
       DateTime dateTime = DateTime.parse(_prefs.getDayFree);
 
       DateTime fechaActual = DateTime.now();
@@ -485,10 +587,10 @@ void onStart(ServiceInstance service) async {
       }
     }
 
-    increaceTime += 1;
-    increaceTimeUpdate += 1;
+    increaceTime += 5;
+    increaceTimeUpdate += 5;
     if (_prefs.getUserFree && !_prefs.getUserPremium) {
-      if (259200 == increaceTime) {
+      if (increaceTime >= 259200) {
         if (_prefs.getUsedFreeDays) {
           RedirectViewNotifier.showPremiumNotification();
         } else {
@@ -497,20 +599,18 @@ void onStart(ServiceInstance service) async {
       }
     }
 
-    if (time == increaceTime) {
+    if (increaceTime >= time) {
       sendLocation();
 
       increaceTime = 0;
     }
 
-    if (timeUpdateFirebase == increaceTimeUpdate) {
+    if (increaceTimeUpdate >= timeUpdateFirebase) {
       updateFirebaseToken();
     }
 
-    _logActivityTimer += 1;
-    _logRudeMovementTimer += 1;
-
-    service.invoke('update');
+    _logActivityTimer += 5;
+    _logRudeMovementTimer += 5;
   });
 }
 
@@ -528,45 +628,75 @@ Future<bool> onIosBackground(ServiceInstance service) async {
   return true;
 }
 
-Future accelerometer() async {
+// Future<void> movimientoBrusco() async {
+//   await _prefs.initPrefs();
+//   await _prefs.refreshData();
+//   var enableIFF = await getEnableIFF();
+
+//   if (_prefs.getUserFree) return;
+//   if (enableIFF && !_prefs.getDetectedFall && !_prefs.getUserPremium) return;
+
+//   if (_logRudeMovementTimer >= _logRudeMovementTimerRefresh) {
+//     mainController.saveDrop();
+//     _logRudeMovementTimer = 0;
+//   }
+// }
+
+// Future<void> movimientoNormal() async {
+//   await _prefs.initPrefs();
+//   await _prefs.refreshData();
+//   var enableIFF = await getEnableIFF();
+
+//   if (_prefs.getUserFree) return;
+//   if (enableIFF && !_prefs.getDetectedFall && !_prefs.getUserPremium) return;
+
+//   if (_logRudeMovementTimer >= _logRudeMovementTimerRefresh) {
+//     mainController.saveDrop();
+//     _logRudeMovementTimer = 0;
+//   }
+// }
+
+void accelerometer() async {
   //Initialization Settings for Android
   await _prefs.initPrefs();
 
   var enableIFF = await getEnableIFF();
-
   _streamSubscriptions.add(
-    accelerometerEvents.listen((AccelerometerEvent event) {
-      double accelerationMagnitude =
-          sqrt(event.x * event.x + event.y * event.y + event.z * event.z);
+    accelerometerEvents.listen(
+      (AccelerometerEvent event) {
+        double accelerationMagnitude =
+            sqrt(event.x * event.x + event.y * event.y + event.z * event.z);
 
-      if (accelerationMagnitude > 30) {
-        if (_prefs.getUserFree) return;
-        if (!enableIFF && !_prefs.getDetectedFall && !_prefs.getUserPremium)
-          return;
-        isMovRude = true;
-        print("movimiento rudo $accelerationMagnitude");
-        if (_logRudeMovementTimer >= _logRudeMovementTimerRefresh) {
-          mainController.saveDrop();
-          _logRudeMovementTimer = 0;
-        }
-      } else {
-        isMovRude = false;
-        if (accelerationMagnitude < 30 && accelerationMagnitude > 10) {
-          print("Movimiento normal ${DateTime.now()}");
-          if (_logActivityTimer >= _logActivityTimerRefresh) {
-            print("Movimiento normal ${DateTime.now()}");
-            if (_prefs.getUseMobilConfig) {
-              mainController.saveActivityLog(
-                  DateTime.now(), "Movimiento normal");
-            }
+        if (accelerationMagnitude > 45) {
+          isMovRude = true;
 
-            _logActivityTimer = 0;
+          if (_prefs.getUserFree) return;
+          if (!enableIFF && !_prefs.getDetectedFall) return;
+          print('Movimiento brusco');
+          if (_logRudeMovementTimer >= _logRudeMovementTimerRefresh) {
+            mainController.saveDrop();
+            _logRudeMovementTimer = 0;
           }
-          ismove = false;
-          timerActive = true;
+        } else {
+          isMovRude = false;
+
+          if (accelerationMagnitude < 45 && accelerationMagnitude > 12) {
+            print('Movimiento normal');
+
+            if (enableIFF && _logActivityTimer >= _logActivityTimerRefresh) {
+              if (_prefs.getUseMobilConfig) {
+                print('Movimiento normal');
+                mainController.saveActivityLog(
+                    DateTime.now(), "Movimiento normal");
+              }
+              _logActivityTimer = 0;
+            }
+            ismove = false;
+            timerActive = true;
+          }
         }
-      }
-    }),
+      },
+    ),
   );
 }
 
@@ -593,17 +723,19 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   @override
   void initState() {
+    super.initState();
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
     ]).then((_) {
       DeviceOrientation.portraitUp;
     });
-    super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
+    Future.sync(() => RedirectViewNotifier.setStoredContext(context));
     return MaterialApp(
+      navigatorKey: navigatorKey,
       debugShowCheckedModeBanner: false,
       routes: appRoute,
       initialRoute: widget.initApp,

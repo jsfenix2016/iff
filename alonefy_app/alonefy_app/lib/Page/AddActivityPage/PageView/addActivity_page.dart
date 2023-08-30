@@ -87,7 +87,7 @@ class _AddActivityPageState extends State<AddActivityPage>
 
   bool allDay = false;
 
-  static const int _maxActivitiesNoPremium = 2;
+  static const int _maxActivitiesNoPremium = 3;
 
   Future<Widget> calculate(BuildContext context, Size size) {
     return Future<Widget>.delayed(
@@ -125,7 +125,7 @@ class _AddActivityPageState extends State<AddActivityPage>
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    RedirectViewNotifier.setContext(context);
+    RedirectViewNotifier.setStoredContext(context);
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.brown,
@@ -354,8 +354,9 @@ class _AddActivityPageState extends State<AddActivityPage>
                         MaterialPageRoute(
                             builder: (context) => const PremiumPage(
                                 isFreeTrial: false,
-                                img: 'pantalla3.png',
-                                title: Constant.premiumFallTitle,
+                                img: 'Pantalla5.jpg',
+                                title:
+                                    'Programa las actividades en las que tu smartphone estará inactivo',
                                 subtitle: '')),
                       ).then((value) {
                         if (value != null && value) {

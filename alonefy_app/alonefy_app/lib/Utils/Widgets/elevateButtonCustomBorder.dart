@@ -40,7 +40,7 @@ class _ElevateButtonCustomBorderState extends State<ElevateButtonCustomBorder> {
           border: Border.all(color: ColorPalette.principal, width: 1),
         ),
         height: 42,
-        width: 200,
+        width: 205,
         child: Center(
           child: Text(
             widget.mensaje,
