@@ -11,7 +11,6 @@ import '../../Geolocator/Controller/configGeolocatorController.dart';
 import '../../TermsAndConditions/Service/termsAndConditionsService.dart';
 
 class PermissionController extends GetxController {
-
   final _prefs = PreferenceUser();
   final _locationController = Get.put(ConfigGeolocatorController());
 
@@ -19,7 +18,7 @@ class PermissionController extends GetxController {
     final MainController mainController = Get.put(MainController());
     var user = await mainController.getUserData();
 
-    for (var i=0;i<permissionStatus.length;i++) {
+    for (var i = 0; i < permissionStatus.length; i++) {
       if (permissionStatus[i]) {
         PreferencePermission preferencePermission;
         preferencePermission = PreferencePermission.allow;
@@ -64,13 +63,16 @@ class PermissionController extends GetxController {
             break;
           case 3:
             if (_prefs.getAcceptedSendLocation == PreferencePermission.allow) {
-              _locationController.activateLocation(PreferencePermission.noAccepted);
+              _locationController
+                  .activateLocation(PreferencePermission.noAccepted);
               //_prefs.setAcceptedSendLocation = PreferencePermission.noAccepted;
             }
             break;
           case 4:
-            if (_prefs.getAcceptedScheduleExactAlarm == PreferencePermission.allow) {
-              _prefs.setAcceptedScheduleExactAlarm = PreferencePermission.noAccepted;
+            if (_prefs.getAcceptedScheduleExactAlarm ==
+                PreferencePermission.allow) {
+              _prefs.setAcceptedScheduleExactAlarm =
+                  PreferencePermission.noAccepted;
             }
             break;
           case 5:

@@ -1,13 +1,16 @@
 import 'package:get/get.dart';
+import 'package:ifeelefine/Data/hive_constant_adapterInit.dart';
 import 'package:ifeelefine/Data/hive_data.dart';
 import 'package:ifeelefine/Model/contact.dart';
 import 'package:ifeelefine/Page/Contact/Service/contactService.dart';
+import 'package:ifeelefine/main.dart';
 import 'package:notification_center/notification_center.dart';
 
 import '../../../../Controllers/mainController.dart';
 
 class ContactNoticeController extends GetxController {
   Future<List<ContactBD>> getAllContact() async {
+    await inicializeHiveBD();
     final listContact = await const HiveData().listUserContactbd;
     if (listContact.isNotEmpty) {
       return listContact;
@@ -25,12 +28,12 @@ class ContactNoticeController extends GetxController {
     await const HiveData().deleteUserContact(contact);
 
     final MainController mainController = Get.put(MainController());
-    var user = await mainController.getUserData();
+    user = await mainController.getUserData();
 
     await ContactService().deleteContact(
-        user.telephone.contains('+34')
-            ? user.telephone.replaceAll("+34", "")
-            : user.telephone,
+        user!.telephone.contains('+34')
+            ? user!.telephone.replaceAll("+34", "")
+            : user!.telephone,
         contact.phones.contains('+34')
             ? contact.phones.replaceAll("+34", "")
             : contact.phones);

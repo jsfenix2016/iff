@@ -19,10 +19,13 @@ import 'package:ifeelefine/Page/Premium/PageView/premium_moths_free.dart';
 import 'package:ifeelefine/Page/Premium/PageView/premium_page.dart';
 import 'package:ifeelefine/Page/Risk/DateRisk/Controller/editRiskController.dart';
 import 'package:ifeelefine/Page/Risk/DateRisk/Pageview/cancelDatePage.dart';
+import 'package:ifeelefine/Page/Risk/ZoneRisk/CancelAlert/PageView/cancelAlert.dart';
+import 'package:ifeelefine/Page/Risk/ZoneRisk/ListContactZoneRisk/Controller/listContactZoneController.dart';
 import 'package:ifeelefine/Provider/prefencesUser.dart';
 
 import 'package:ifeelefine/Views/help_page.dart';
 import 'package:ifeelefine/main.dart';
+import 'package:notification_center/notification_center.dart';
 
 PreferenceUser prefs = PreferenceUser();
 
@@ -55,11 +58,11 @@ class RedirectViewNotifier with ChangeNotifier {
 
   static Future<void> onTapNotification(
       NotificationResponse? response, List<String> taskIds, int id) async {
-    if (response?.payload == null && _storedContext == null) return;
-
+    if (response?.payload == null) return;
+    ContactRiskBD? contactRisk;
     await inicializeHiveBD();
-
-    var contactRisk = await const HiveDataRisk().getContactRiskBD(id);
+    Future.sync(() async =>
+        {contactRisk = await const HiveDataRisk().getContactRiskBD(id)});
 
     Future.delayed(const Duration(seconds: 2), () {
       Navigator.push(
@@ -72,6 +75,31 @@ class RedirectViewNotifier with ChangeNotifier {
         ),
       );
     });
+  }
+
+  static Future<void> onTapRedirectCancelZone() async {
+    if (_storedContext == null) return;
+    await inicializeHiveBD();
+    print(prefs.getIsSelectContactRisk);
+    if (prefs.getIsSelectContactRisk != -1) {
+      ListContactZoneController riskVC = ListContactZoneController();
+      var resp = await riskVC.getContactsZoneRisk();
+      print(resp);
+      int indexSelect =
+          resp.indexWhere((item) => item.id == prefs.getIsSelectContactRisk);
+      var contactSelect = resp[indexSelect];
+
+      // Future.delayed(const Duration(seconds: 3), () async {
+      //   await Navigator.push(
+      //     _storedContext!,
+      //     MaterialPageRoute(
+      //       builder: (context) => CancelAlertPage(
+      //           contactRisk: contactSelect,
+      //           taskdIds: prefs.getlistTaskIdsCancel),
+      //     ),
+      //   );
+      // });
+    }
   }
 
   static Future<void> onTapPremiumNotification(
@@ -129,7 +157,8 @@ class RedirectViewNotifier with ChangeNotifier {
     await inicializeHiveBD();
     // await prefs.initPrefs();
     if (data.containsValue(Constant.inactive) ||
-        data.containsValue(Constant.drop)) {
+        data.containsValue(Constant.drop) ||
+        data.containsValue("DROP_NOTIFY_SELF")) {
       final mainController = Get.put(MainController());
       if (data.containsValue(Constant.inactive)) {
         mainController.saveUserLog("Inactividad ", DateTime.now());
@@ -156,17 +185,14 @@ class RedirectViewNotifier with ChangeNotifier {
       String phoneNumber = data["phone_number"];
       String status = data['status'];
 
-      if (status == Constant.contactAccepted) {
-        if (phoneNumber.isNotEmpty) {
-          contactUserController.updateContactStatus(
-              phoneNumber, Constant.contactAcceptedLabel);
-        }
-      } else if (status == Constant.contactDenied) {
-        if (phoneNumber.isNotEmpty) {
-          contactUserController.updateContactStatus(
-              phoneNumber, Constant.contactDeniedLabel);
-        }
+      if (phoneNumber.isNotEmpty) {
+        await contactUserController.updateContactStatus(
+            phoneNumber,
+            status.contains("ACCEPTED")
+                ? Constant.contactAccepted
+                : Constant.contactDenied);
       }
+
       showContactResponseNotification(message);
     }
     if (data.isEmpty) {
@@ -181,11 +207,11 @@ class RedirectViewNotifier with ChangeNotifier {
     String? title = message.data['title'];
     String? body = message.data['body'];
     taskIds ??= "";
-
-    // String sound = prefs.getNotificationAudio;
+    await prefs.initPrefs();
+    String sound = prefs.getNotificationAudio;
 
     var androidPlatformChannelSpecifics = AndroidNotificationDetails(
-      "my_foreground", // id
+      sound, // id
 
       'AlertFriends – PERSONAL PROTECTION', // title
       icon: '@mipmap/logo_alertfriends_v2',
@@ -194,20 +220,19 @@ class RedirectViewNotifier with ChangeNotifier {
 
       priority: Priority.high,
 
-      // playSound: true,
+      playSound: true,
       ongoing: false,
       enableLights: true,
       groupKey: 'Inactive',
       enableVibration: true,
       channelShowBadge: true,
 
-      // fullScreenIntent: true,
       autoCancel: false,
 
       visibility: NotificationVisibility.public,
       largeIcon:
           const DrawableResourceAndroidBitmap('@drawable/splash_v2_screen'),
-      // sound: RawResourceAndroidNotificationSound(sound),
+      sound: RawResourceAndroidNotificationSound(sound),
 
       actions: <AndroidNotificationAction>[
         AndroidNotificationAction(
@@ -300,14 +325,17 @@ class RedirectViewNotifier with ChangeNotifier {
     String? body = message.data['body'];
     taskIds ??= "";
 
+    await prefs.initPrefs();
+    String sound = prefs.getNotificationAudio;
+
     var androidPlatformChannelSpecifics = AndroidNotificationDetails(
-      "my_foreground", // id
+      sound, // id
       'AlertFriends – PERSONAL PROTECTION', // title
       icon: '@mipmap/logo_alertfriends_v2',
       color: ColorPalette.principal,
       importance: Importance.high,
       autoCancel: false,
-      // styleInformation: bigPictureStyleInformation,
+
       priority: Priority.high,
 
       playSound: true,
@@ -316,12 +344,12 @@ class RedirectViewNotifier with ChangeNotifier {
       groupKey: 'Drop',
       enableVibration: true,
       channelShowBadge: false,
-      // fullScreenIntent: true,
+
       audioAttributesUsage: AudioAttributesUsage.notification,
       visibility: NotificationVisibility.public,
       largeIcon:
           const DrawableResourceAndroidBitmap('@drawable/splash_v2_screen'),
-      // sound: RawResourceAndroidNotificationSound(sound),
+      sound: RawResourceAndroidNotificationSound(sound),
 
       actions: <AndroidNotificationAction>[
         AndroidNotificationAction(
@@ -376,15 +404,17 @@ class RedirectViewNotifier with ChangeNotifier {
     //     InitializationSettings(android: initializationSettingsAndroid);
     // await notifications.initialize(initializationSettings);
 
-    var platformChannelSpecifics = const NotificationDetails(
+    await prefs.initPrefs();
+    String sound = prefs.getNotificationAudio;
+
+    var platformChannelSpecifics = NotificationDetails(
       android: AndroidNotificationDetails(
-        "my_foreground",
+        sound,
         'SendToContact',
         icon: '@mipmap/logo_alertfriends_v2',
         color: ColorPalette.principal,
         importance: Importance.max,
         styleInformation: const BigTextStyleInformation(''),
-
         groupKey: "SMS",
         visibility: NotificationVisibility.public,
         enableLights: true,
@@ -394,7 +424,7 @@ class RedirectViewNotifier with ChangeNotifier {
         priority: Priority.high,
         largeIcon:
             const DrawableResourceAndroidBitmap('@drawable/splash_v2_screen'),
-        // sound: RawResourceAndroidNotificationSound(sound),
+        sound: RawResourceAndroidNotificationSound(sound),
       ),
     );
 
@@ -425,8 +455,8 @@ class RedirectViewNotifier with ChangeNotifier {
     String? title = message.data['title'];
     String? body = message.data['body'];
 
-    // await prefs.initPrefs();
-    // String sound = prefs.getNotificationAudio;
+    await prefs.initPrefs();
+    String sound = prefs.getNotificationAudio;
 
     // FlutterLocalNotificationsPlugin notifications =
     //     FlutterLocalNotificationsPlugin();
@@ -438,29 +468,30 @@ class RedirectViewNotifier with ChangeNotifier {
     //     InitializationSettings(android: initializationSettingsAndroid);
     // await notifications.initialize(initializationSettings);
 
-    var platformChannelSpecifics = const NotificationDetails(
+    var platformChannelSpecifics = NotificationDetails(
       android: AndroidNotificationDetails(
-        "my_foreground",
+        sound,
         'DateNotifications',
         icon: '@mipmap/logo_alertfriends_v2',
         color: ColorPalette.principal,
         importance: Importance.max,
+        priority: Priority.high,
         // fullScreenIntent: true,
         autoCancel: false,
         audioAttributesUsage: AudioAttributesUsage.notificationRingtone,
         styleInformation: const BigTextStyleInformation(''),
-        ongoing: true,
+        ongoing: false,
         enableLights: true,
         // playSound: true,
+        groupKey: "DateNotifications",
         enableVibration: true,
         channelShowBadge: false,
         visibility: NotificationVisibility.public,
         //groupAlertBehavior: GroupAlertBehavior.children,
-        priority: Priority.high,
 
         largeIcon:
             const DrawableResourceAndroidBitmap('@drawable/splash_v2_screen'),
-        // sound: RawResourceAndroidNotificationSound(sound),
+        sound: RawResourceAndroidNotificationSound(sound),
       ),
     );
 
@@ -482,22 +513,12 @@ class RedirectViewNotifier with ChangeNotifier {
 
     taskIds ??= "";
 
-    // await prefs.initPrefs();
-    // String sound = prefs.getNotificationAudio;
-
-    // FlutterLocalNotificationsPlugin notifications =
-    //     FlutterLocalNotificationsPlugin();
-
-    // var initializationSettingsAndroid =
-    //     const AndroidInitializationSettings('@mipmap/logo_alertfriends_v2');
-
-    // var initializationSettings =
-    //     InitializationSettings(android: initializationSettingsAndroid);
-    // await notifications.initialize(initializationSettings);
+    await prefs.initPrefs();
+    String sound = prefs.getNotificationAudio;
 
     var platformChannelSpecifics = NotificationDetails(
       android: AndroidNotificationDetails(
-        "my_foreground",
+        sound,
         'DateFinish',
         icon: '@mipmap/logo_alertfriends_v2',
         color: ColorPalette.principal,
@@ -506,19 +527,20 @@ class RedirectViewNotifier with ChangeNotifier {
         audioAttributesUsage: AudioAttributesUsage.notificationRingtone,
         visibility: NotificationVisibility.public,
         styleInformation: const BigTextStyleInformation(''),
-        ongoing: true,
+        ongoing: false,
         enableLights: true,
         playSound: true,
         autoCancel: false,
         showWhen: false,
         enableVibration: true,
         channelShowBadge: false,
+        groupKey: "DateFinish",
         // groupAlertBehavior: GroupAlertBehavior.children,
         priority: Priority.high,
 
         largeIcon:
             const DrawableResourceAndroidBitmap('@drawable/splash_v2_screen'),
-        // sound: RawResourceAndroidNotificationSound(sound),
+        sound: RawResourceAndroidNotificationSound(sound),
         actions: <AndroidNotificationAction>[
           AndroidNotificationAction(
             "dateHelp_$taskIds",
@@ -555,33 +577,24 @@ class RedirectViewNotifier with ChangeNotifier {
     String? title = message.data['title'];
     String? body = message.data['body'];
 
-    // await prefs.initPrefs();
-    // String sound = prefs.getNotificationAudio;
+    await prefs.initPrefs();
+    String sound = prefs.getNotificationAudio;
 
-    // FlutterLocalNotificationsPlugin notifications =
-    //     FlutterLocalNotificationsPlugin();
-
-    // var initializationSettingsAndroid =
-    //     const AndroidInitializationSettings('@mipmap/logo_alertfriends_v2');
-
-    // var initializationSettings =
-    //     InitializationSettings(android: initializationSettingsAndroid);
-    // await notifications.initialize(initializationSettings);
-
-    var platformChannelSpecifics = const NotificationDetails(
+    var platformChannelSpecifics = NotificationDetails(
       android: AndroidNotificationDetails(
-        "my_foreground",
+        sound,
         'ContactResponse',
         icon: '@mipmap/logo_alertfriends_v2',
         color: ColorPalette.principal,
         importance: Importance.high,
         enableLights: true,
         playSound: true,
+        groupKey: "ContactResponse",
         enableVibration: true,
         channelShowBadge: false,
         priority: Priority.high,
         largeIcon: DrawableResourceAndroidBitmap('@drawable/splash_v2_screen'),
-        // sound: RawResourceAndroidNotificationSound(sound),
+        sound: RawResourceAndroidNotificationSound(sound),
       ),
     );
 

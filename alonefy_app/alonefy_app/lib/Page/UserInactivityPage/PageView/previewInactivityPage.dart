@@ -13,6 +13,7 @@ import 'package:ifeelefine/Utils/Widgets/containerTextEditAndTime.dart';
 import 'package:collection/collection.dart';
 import 'package:ifeelefine/Utils/Widgets/elevatedButtonFilling.dart';
 import 'package:ifeelefine/Common/decoration_custom.dart';
+import 'package:ifeelefine/main.dart';
 
 class PreviewInactivityPage extends StatefulWidget {
   const PreviewInactivityPage({super.key});
@@ -36,6 +37,7 @@ class _PreviewInactivityPageState extends State<PreviewInactivityPage> {
   void initState() {
     getInactivity();
     super.initState();
+    starTap();
   }
 
   Future<void> getInactivity() async {
@@ -67,10 +69,11 @@ class _PreviewInactivityPageState extends State<PreviewInactivityPage> {
     return ElevateButtonFilling(
       showIcon: false,
       onChanged: (value) async {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => const FallActivationPage()),
-        );
+        // Navigator.push(
+        //   context,
+        //   MaterialPageRoute(builder: (context) => const FallActivationPage()),
+        // );
+        Get.offAll(const FallActivationPage());
       },
       mensaje: Constant.nextTxt,
       img: '',
@@ -90,31 +93,34 @@ class _PreviewInactivityPageState extends State<PreviewInactivityPage> {
           style: textForTitleApp(),
         ),
       ),
-      body: Container(
-        decoration: decorationCustom(),
-        width: size.width,
-        height: size.height,
-        child: GroupedListView<ActivityDayBD, String>(
-          elements: lista,
-          groupBy: (ActivityDayBD event) => event.day,
-          groupSeparatorBuilder: (String day) => Padding(
-            padding: const EdgeInsets.all(16),
-            child: Text(day, style: Theme.of(context).textTheme.headline4),
+      body: MediaQuery(
+        data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
+        child: Container(
+          decoration: decorationCustom(),
+          width: size.width,
+          height: size.height,
+          child: GroupedListView<ActivityDayBD, String>(
+            elements: lista,
+            groupBy: (ActivityDayBD event) => event.day,
+            groupSeparatorBuilder: (String day) => Padding(
+              padding: const EdgeInsets.all(16),
+              child: Text(day, style: Theme.of(context).textTheme.headline4),
+            ),
+            itemBuilder: (BuildContext context, ActivityDayBD event) {
+              var select = ActivityDay();
+              select.activity = event.activity;
+              select.timeStart = event.timeStart;
+              select.timeFinish = event.timeFinish;
+              select.day = event.day;
+              return ContainerTextEditTime(
+                day: event.day,
+                acti: select,
+                onChanged: (value) {
+                  _selectOption(value);
+                },
+              );
+            },
           ),
-          itemBuilder: (BuildContext context, ActivityDayBD event) {
-            var select = ActivityDay();
-            select.activity = event.activity;
-            select.timeStart = event.timeStart;
-            select.timeFinish = event.timeFinish;
-            select.day = event.day;
-            return ContainerTextEditTime(
-              day: event.day,
-              acti: select,
-              onChanged: (value) {
-                _selectOption(value);
-              },
-            );
-          },
         ),
       ),
     );

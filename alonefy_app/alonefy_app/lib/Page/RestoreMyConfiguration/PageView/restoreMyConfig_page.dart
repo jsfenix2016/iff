@@ -10,7 +10,7 @@ import 'package:ifeelefine/Common/utils.dart';
 import 'package:ifeelefine/Page/HomePage/Pageview/home_page.dart';
 
 import 'package:ifeelefine/Page/RestoreMyConfiguration/Controller/restoreController.dart';
-import 'package:ifeelefine/Page/UserRest/Widgets/row_buttons_when_menu.dart';
+import 'package:ifeelefine/main.dart';
 
 import '../../../Common/colorsPalette.dart';
 
@@ -37,6 +37,7 @@ class _RestoreMyConfigPageState extends State<RestoreMyConfigPage> {
   @override
   void initState() {
     super.initState();
+    starTap();
   }
 
   @override
@@ -51,223 +52,234 @@ class _RestoreMyConfigPageState extends State<RestoreMyConfigPage> {
           style: textForTitleApp(),
         ),
       ),
-      body: SingleChildScrollView(
-        keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-        child: Container(
-          decoration: decorationCustom(),
-          width: size.width,
-          height: size.height,
-          child: Stack(
-            children: [
-              if (_isRestoreInProgress) ...[
-                const Align(
-                  alignment: Alignment.center,
-                  child: CircularProgressIndicator(
-                    color: ColorPalette.calendarNumber,
+      body: MediaQuery(
+        data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
+        child: SingleChildScrollView(
+          keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+          child: Container(
+            decoration: decorationCustom(),
+            width: size.width,
+            height: size.height,
+            child: Stack(
+              children: [
+                if (_isRestoreInProgress) ...[
+                  const Align(
+                    alignment: Alignment.center,
+                    child: CircularProgressIndicator(
+                      color: ColorPalette.calendarNumber,
+                    ),
+                  )
+                ] else ...[
+                  Column(
+                    mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      const SizedBox(height: 32),
+                      Center(
+                        child: Text('Restaurar mi configuración',
+                            textAlign: TextAlign.center,
+                            style: GoogleFonts.barlow(
+                              fontSize: 22.0,
+                              wordSpacing: 1,
+                              letterSpacing: 1.2,
+                              fontWeight: FontWeight.w500,
+                              color: Colors.white,
+                            )),
+                      ),
+                      const SizedBox(height: 32),
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: Container(
+                          padding: const EdgeInsets.fromLTRB(32, 0, 0, 0),
+                          child: Text('Teléfono',
+                              textAlign: TextAlign.left,
+                              style: GoogleFonts.barlow(
+                                fontSize: 20.0,
+                                wordSpacing: 1,
+                                letterSpacing: 1.2,
+                                fontWeight: FontWeight.w700,
+                                color: Colors.white,
+                              )),
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      Padding(
+                        padding:
+                            const EdgeInsets.fromLTRB(32.0, 0.0, 32.0, 0.0),
+                        child: TextField(
+                          cursorColor: Colors.white,
+                          decoration: InputDecoration(
+                            prefix: Text(
+                              '+34',
+                              style: textNormal16White(),
+                            ),
+                            contentPadding:
+                                const EdgeInsets.fromLTRB(8.0, 0.0, 8.0, 0.0),
+                            focusedBorder: const OutlineInputBorder(
+                              borderSide:
+                                  BorderSide(color: ColorPalette.principal),
+                            ),
+                            enabledBorder: const OutlineInputBorder(
+                              borderSide: BorderSide(
+                                  width: 1, color: ColorPalette.principal),
+                            ),
+                          ),
+                          keyboardType: TextInputType.number,
+                          style: textNormal16White(),
+                          onChanged: (valor) {
+                            if (valor.length == 9) {
+                              // Solicita el siguiente enfoque solo si la longitud del valor es 1
+                              // y el cuadro de texto actual no es el último en la lista
+                              phone = valor;
+                            }
+                          },
+                        ),
+                      ),
+                      const SizedBox(height: 56),
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: Container(
+                          padding: const EdgeInsets.fromLTRB(32, 0, 0, 0),
+                          child: Text('Email',
+                              textAlign: TextAlign.left,
+                              style: GoogleFonts.barlow(
+                                fontSize: 20.0,
+                                wordSpacing: 1,
+                                letterSpacing: 1.2,
+                                fontWeight: FontWeight.w700,
+                                color: Colors.white,
+                              )),
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      Padding(
+                        padding:
+                            const EdgeInsets.fromLTRB(32.0, 0.0, 32.0, 0.0),
+                        child: TextField(
+                          cursorColor: Colors.white,
+                          decoration: const InputDecoration(
+                            contentPadding:
+                                EdgeInsets.fromLTRB(8.0, 0.0, 8.0, 0.0),
+                            focusedBorder: OutlineInputBorder(
+                              borderSide:
+                                  BorderSide(color: ColorPalette.principal),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderSide: BorderSide(
+                                  width: 1, color: ColorPalette.principal),
+                            ),
+                          ),
+                          onChanged: (valor) {
+                            email = valor;
+                          },
+                          style: textNormal16White(),
+                        ),
+                      ),
+                    ],
                   ),
-                )
-              ] else ...[
-                Column(
-                  mainAxisSize: MainAxisSize.min,
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    const SizedBox(height: 32),
-                    Center(
-                      child: Text('Restaurar mi configuración',
-                          textAlign: TextAlign.center,
-                          style: GoogleFonts.barlow(
-                            fontSize: 22.0,
-                            wordSpacing: 1,
-                            letterSpacing: 1.2,
-                            fontWeight: FontWeight.w500,
-                            color: Colors.white,
-                          )),
-                    ),
-                    const SizedBox(height: 32),
-                    Align(
-                      alignment: Alignment.centerLeft,
-                      child: Container(
-                        padding: const EdgeInsets.fromLTRB(32, 0, 0, 0),
-                        child: Text('Teléfono',
-                            textAlign: TextAlign.left,
-                            style: GoogleFonts.barlow(
-                              fontSize: 20.0,
-                              wordSpacing: 1,
-                              letterSpacing: 1.2,
-                              fontWeight: FontWeight.w700,
-                              color: Colors.white,
-                            )),
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(32.0, 0.0, 32.0, 0.0),
-                      child: TextField(
-                        cursorColor: Colors.white,
-                        decoration: InputDecoration(
-                          prefix: Text(
-                            '+34',
-                            style: textNormal16White(),
+                  Positioned(
+                    bottom: 100,
+                    child: Container(
+                      height: 77,
+                      width: size.width,
+                      color: Colors.transparent,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        mainAxisSize: MainAxisSize.max,
+                        children: [
+                          Container(
+                            decoration: BoxDecoration(
+                              color: Colors.transparent,
+                              border: Border.all(
+                                  color: const Color.fromRGBO(219, 177, 42, 1)),
+                              borderRadius:
+                                  const BorderRadius.all(Radius.circular(8)),
+                            ),
+                            width: 138,
+                            height: 42,
+                            child: Center(
+                              child: TextButton(
+                                child: Text('Cancelar',
+                                    textAlign: TextAlign.center,
+                                    style: GoogleFonts.barlow(
+                                      fontSize: 16.0,
+                                      wordSpacing: 1,
+                                      letterSpacing: 1.2,
+                                      fontWeight: FontWeight.w700,
+                                      color: Colors.white,
+                                    )),
+                                onPressed: () => Navigator.of(context).pop(),
+                              ),
+                            ),
                           ),
-                          contentPadding:
-                              const EdgeInsets.fromLTRB(8.0, 0.0, 8.0, 0.0),
-                          focusedBorder: const OutlineInputBorder(
-                            borderSide:
-                                BorderSide(color: ColorPalette.principal),
-                          ),
-                          enabledBorder: const OutlineInputBorder(
-                            borderSide: BorderSide(
-                                width: 1, color: ColorPalette.principal),
-                          ),
-                        ),
-                        keyboardType: TextInputType.number,
-                        style: textNormal16White(),
-                        onChanged: (valor) {
-                          if (valor.length == 9) {
-                            // Solicita el siguiente enfoque solo si la longitud del valor es 1
-                            // y el cuadro de texto actual no es el último en la lista
-                            phone = valor;
-                          }
-                        },
-                      ),
-                    ),
-                    const SizedBox(height: 56),
-                    Align(
-                      alignment: Alignment.centerLeft,
-                      child: Container(
-                        padding: const EdgeInsets.fromLTRB(32, 0, 0, 0),
-                        child: Text('Email',
-                            textAlign: TextAlign.left,
-                            style: GoogleFonts.barlow(
-                              fontSize: 20.0,
-                              wordSpacing: 1,
-                              letterSpacing: 1.2,
-                              fontWeight: FontWeight.w700,
-                              color: Colors.white,
-                            )),
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(32.0, 0.0, 32.0, 0.0),
-                      child: TextField(
-                        cursorColor: Colors.white,
-                        decoration: const InputDecoration(
-                          contentPadding:
-                              EdgeInsets.fromLTRB(8.0, 0.0, 8.0, 0.0),
-                          focusedBorder: OutlineInputBorder(
-                            borderSide:
-                                BorderSide(color: ColorPalette.principal),
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide(
-                                width: 1, color: ColorPalette.principal),
-                          ),
-                        ),
-                        onChanged: (valor) {
-                          email = valor;
-                        },
-                        style: textNormal16White(),
-                      ),
-                    ),
-                  ],
-                ),
-                Positioned(
-                  bottom: 100,
-                  child: Container(
-                    height: 77,
-                    width: size.width,
-                    color: Colors.transparent,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      mainAxisSize: MainAxisSize.max,
-                      children: [
-                        Container(
-                          decoration: BoxDecoration(
-                            color: Colors.transparent,
-                            border: Border.all(
-                                color: const Color.fromRGBO(219, 177, 42, 1)),
-                            borderRadius:
-                                const BorderRadius.all(Radius.circular(8)),
-                          ),
-                          width: 138,
-                          height: 42,
-                          child: Center(
-                            child: TextButton(
-                              child: Text('Cancelar',
+                          Container(
+                            decoration: const BoxDecoration(
+                              color: Color.fromRGBO(219, 177, 42, 1),
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(8)),
+                            ),
+                            width: 138,
+                            height: 42,
+                            child: Center(
+                              child: TextButton(
+                                child: Text(
+                                  'Restaurar',
                                   textAlign: TextAlign.center,
                                   style: GoogleFonts.barlow(
                                     fontSize: 16.0,
                                     wordSpacing: 1,
                                     letterSpacing: 1.2,
                                     fontWeight: FontWeight.w700,
-                                    color: Colors.white,
-                                  )),
-                              onPressed: () => Navigator.of(context).pop(),
-                            ),
-                          ),
-                        ),
-                        Container(
-                          decoration: const BoxDecoration(
-                            color: Color.fromRGBO(219, 177, 42, 1),
-                            borderRadius: BorderRadius.all(Radius.circular(8)),
-                          ),
-                          width: 138,
-                          height: 42,
-                          child: Center(
-                            child: TextButton(
-                              child: Text(
-                                'Restaurar',
-                                textAlign: TextAlign.center,
-                                style: GoogleFonts.barlow(
-                                  fontSize: 16.0,
-                                  wordSpacing: 1,
-                                  letterSpacing: 1.2,
-                                  fontWeight: FontWeight.w700,
-                                  color: Colors.black,
+                                    color: Colors.black,
+                                  ),
                                 ),
-                              ),
-                              onPressed: () async {
-                                if (phone.length < 8 || phone.isEmpty) {
-                                  showSaveAlert(context, Constant.info,
-                                      Constant.validatePhoneNumber);
+                                onPressed: () async {
+                                  if (phone.length < 8 || phone.isEmpty) {
+                                    showSaveAlert(context, Constant.info,
+                                        Constant.validatePhoneNumber);
 
-                                  return;
-                                }
-                                if (email.isEmpty) {
-                                  return;
-                                }
-                                if (!validateEmail(email)) {
-                                  // El correo electrónico no es válido
-                                  showSaveAlert(context, Constant.info,
-                                      Constant.validateEmail);
-                                  return;
-                                }
+                                    return;
+                                  }
+                                  if (email.isEmpty) {
+                                    return;
+                                  }
+                                  if (!validateEmail(email)) {
+                                    // El correo electrónico no es válido
+                                    showSaveAlert(context, Constant.info,
+                                        Constant.validateEmail);
+                                    return;
+                                  }
 
-                                setState(() {
-                                  _isRestoreInProgress = true;
-                                });
-                                var result = await restVC.sendData(
-                                    context, phone, email);
-
-                                if (result) {
                                   setState(() {
-                                    Get.off(() => const HomePage());
+                                    _isRestoreInProgress = true;
                                   });
-                                }
-                                setState(() {
-                                  _isRestoreInProgress = false;
-                                });
-                              },
+                                  var result = await restVC.sendData(
+                                      context, phone, email);
+                                  setState(() {
+                                    _isRestoreInProgress = false;
+                                  });
+                                  if (result) {
+                                    Future.sync(
+                                      () => Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              const HomePage(),
+                                        ),
+                                      ),
+                                    );
+                                  }
+                                },
+                              ),
                             ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
-                ),
+                ],
               ],
-            ],
+            ),
           ),
         ),
       ),

@@ -43,25 +43,28 @@ class _CountryListScreenState extends State<CountryListScreen> {
               hintText: "Buscar país", hintStyle: textNomral18White()),
         ),
       ),
-      body: Container(
-        decoration: decorationCustom(),
-        padding: const EdgeInsets.only(left: 15.0, right: 15.0),
-        child: ListView.builder(
-          itemCount: filteredCountries.length,
-          itemBuilder: (context, index) {
-            String country = filteredCountries[index];
+      body: MediaQuery(
+        data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
+        child: Container(
+          decoration: decorationCustom(),
+          padding: const EdgeInsets.only(left: 15.0, right: 15.0),
+          child: ListView.builder(
+            itemCount: filteredCountries.length,
+            itemBuilder: (context, index) {
+              String country = filteredCountries[index];
 
-            return ListTile(
-              title: Text(
-                country,
-                style: textNomral18White(),
-              ),
-              onTap: () {
-                widget.onCountrySelected(country);
-                Navigator.pop(context); // Volver a la pantalla anterior
-              },
-            );
-          },
+              return ListTile(
+                title: Text(
+                  country,
+                  style: textNomral18White(),
+                ),
+                onTap: () {
+                  widget.onCountrySelected(country);
+                  Navigator.pop(context); // Volver a la pantalla anterior
+                },
+              );
+            },
+          ),
         ),
       ),
     );

@@ -97,6 +97,7 @@ class _SelectTimerCallSendSMSState extends State<SelectTimerCallSendSMS> {
                         prefs.setUserFree = false;
                         var premiumController = Get.put(PremiumController());
                         premiumController.updatePremiumAPI(true);
+                        setState(() {});
                       }
                     },
                   );
@@ -234,6 +235,7 @@ class _SelectTimerCallSendSMSState extends State<SelectTimerCallSendSMS> {
                     prefs.setUserPremium = true;
                     var premiumController = Get.put(PremiumController());
                     premiumController.updatePremiumAPI(true);
+                    setState(() {});
                   }
                 });
               },

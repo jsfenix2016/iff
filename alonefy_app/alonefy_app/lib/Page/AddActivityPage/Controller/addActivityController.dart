@@ -4,6 +4,7 @@ import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_state_manager/src/simple/get_controllers.dart';
 import 'package:ifeelefine/Model/ApiRest/activityDayApi.dart';
 import 'package:ifeelefine/Page/AddActivityPage/Service/activityService.dart';
+import 'package:ifeelefine/main.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:notification_center/notification_center.dart';
 import '../../../Common/Constant.dart';
@@ -116,8 +117,9 @@ class AddActivityController extends GetxController {
 
   Future<ActivityDayApiResponse?> saveActivityApi(ActivityDay activity) async {
     final MainController mainController = Get.put(MainController());
-    var user = await mainController.getUserData();
-    var activityApi = await _convertToApi(activity, user.telephone);
+    user = await mainController.getUserData();
+
+    var activityApi = await _convertToApi(activity, user!.telephone);
 
     var activityApiResponse = await ActivityService().saveData(activityApi);
     if (activityApiResponse != null) {
@@ -129,14 +131,15 @@ class AddActivityController extends GetxController {
       activityApiResponse.repeatType =
           Constant.daysFromApi[activityApiResponse.repeatType]!;
     }
-    NotificationCenter().notify('refreshPreviewActivities');
+
     return activityApiResponse;
   }
 
   Future<void> updateActivityApi(ActivityDay activity) async {
     final MainController mainController = Get.put(MainController());
-    var user = await mainController.getUserData();
-    var activityApi = await _convertToApi(activity, user.telephone);
+    user = await mainController.getUserData();
+
+    var activityApi = await _convertToApi(activity, user!.telephone);
     ActivityService().updateData(
         ActivityDayApiResponse.fromActivityDayApi(activityApi, activity.id));
   }
@@ -144,21 +147,23 @@ class AddActivityController extends GetxController {
   Future<ActivityDayApi> _convertToApi(
       ActivityDay activity, String phoneNumber) async {
     var startDate = await _convertDayToApi(activity.day);
-    var startTime = await _convertTimeToApi(activity.timeStart);
-    var endTime = await _convertTimeToApi(activity.timeFinish);
+    // var startTime = await _convertTimeToApi(activity.timeStart);
+    // var endTime = await _convertTimeToApi(activity.timeFinish);
+    var startTime = (activity.timeStart);
+    var endTime = (activity.timeFinish);
     var endDate = await _convertDayToApi(activity.dayFinish);
-    var disabledDates =
-        await _convertSpecificDaysToList(activity.specificDaysDeactivated);
+    var disabledDates = await _convertSpecificDaysToListString(
+        activity.specificDaysDeactivated);
     var removedDates =
-        await _convertSpecificDaysToList(activity.specificDaysRemoved);
+        await _convertSpecificDaysToListString(activity.specificDaysRemoved);
 
     var days = _convertDaysToList(activity.days!);
     days = _convertRepeatTypeDays(days);
 
     ActivityDayApi activityDayApi = ActivityDayApi(
         phoneNumber.replaceAll("+34", "").replaceAll(" ", ""),
-        startDate,
-        endDate,
+        startDate.toString().split(' ')[0],
+        endDate.toString().split(' ')[0],
         startTime,
         activity.activity,
         activity.allDay,
@@ -174,8 +179,13 @@ class AddActivityController extends GetxController {
 
   Future<DateTime> _convertDayToApi(String day) async {
     await Jiffy.locale('es');
-
-    var dateTime = Jiffy(day.toLowerCase(), getDefaultPattern()).dateTime;
+    var dayTemp = "";
+    if (day.contains('-')) {
+      dayTemp = Jiffy(day).format('EEEE, d MMMM yyyy');
+    } else {
+      dayTemp = day;
+    }
+    var dateTime = Jiffy(dayTemp, getDefaultPattern()).dateTime;
     return dateTime;
   }
 
@@ -211,6 +221,36 @@ class AddActivityController extends GetxController {
     }
   }
 
+  Future<List<String>> _convertSpecificDaysToListString(
+      String? specificDays) async {
+    await Jiffy.locale('es');
+
+    if (specificDays != null && specificDays.isNotEmpty) {
+      List<String> specificDaysDateTime = [];
+      var specifyDays = specificDays.split(';');
+
+      for (var specificDay in specifyDays) {
+        if (specificDay.contains('[]')) {
+          continue;
+        }
+        var dayTemp = "";
+        if (specificDay.contains('-')) {
+          dayTemp = Jiffy(specificDay).format('EEEE, d MMMM yyyy');
+        } else {
+          dayTemp = specificDay;
+        }
+        var specificDateTime =
+            Jiffy(dayTemp.toLowerCase(), getDefaultPattern()).dateTime;
+
+        specificDaysDateTime.add(specificDateTime.toString());
+      }
+
+      return specificDaysDateTime;
+    } else {
+      return [];
+    }
+  }
+
   Future<List<DateTime>> _convertSpecificDaysToList(
       String? specificDays) async {
     await Jiffy.locale('es');
@@ -220,8 +260,14 @@ class AddActivityController extends GetxController {
       var specifyDays = specificDays.split(';');
 
       for (var specificDay in specifyDays) {
+        var dayTemp = "";
+        if (specificDay.contains('-')) {
+          dayTemp = Jiffy(specificDay).format('EEEE, d MMMM yyyy');
+        } else {
+          dayTemp = specificDay;
+        }
         var specificDateTime =
-            Jiffy(specificDay.toLowerCase(), getDefaultPattern()).dateTime;
+            Jiffy(dayTemp.toLowerCase(), getDefaultPattern()).dateTime;
 
         specificDaysDateTime.add(specificDateTime);
       }
@@ -241,19 +287,20 @@ class AddActivityController extends GetxController {
       ActivityDay activityDay = ActivityDay();
 
       activityDay.id = activityApi.id;
-      activityDay.day = await _convertDayToApk(activityApi.startDate);
-      activityDay.timeStart = await _convertTimeToApk(activityApi.startTime);
-      activityDay.timeFinish = await _convertTimeToApk(activityApi.endTime);
+      activityDay.day = activityApi.startDate;
+      activityDay.timeStart = (activityApi.startTime);
+      activityDay.timeFinish = (activityApi.endTime);
+      // activityDay.timeStart = await _convertTimeToApk(activityApi.startTime);
+      // activityDay.timeFinish = await _convertTimeToApk(activityApi.endTime);
       activityDay.activity = activityApi.name;
       activityDay.allDay = activityApi.allDay;
-      activityDay.dayFinish = await _convertDayToApk(activityApi.endDate);
+      activityDay.dayFinish = activityApi.endDate;
       activityDay.days = _convertListToDays(activityApi.days);
       activityDay.repeatType = Constant.daysFromApi[activityApi.repeatType]!;
       activityDay.isDeactivate = activityApi.enabled;
       activityDay.specificDaysDeactivated =
-          await _convertListToSpecificDays(activityApi.disabledDates);
-      activityDay.specificDaysRemoved =
-          await _convertListToSpecificDays(activityApi.removedDates);
+          activityApi.disabledDates.toString();
+      activityDay.specificDaysRemoved = activityApi.removedDates.toString();
 
       activities.add(activityDay);
     }

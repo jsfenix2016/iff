@@ -11,6 +11,7 @@ import 'package:ifeelefine/Page/Premium/PageView/premium_page.dart';
 import 'package:ifeelefine/Page/TermsAndConditions/PageView/conditionGeneral_page.dart';
 import 'package:ifeelefine/Utils/Widgets/ImageGradient.dart';
 import 'package:ifeelefine/Utils/Widgets/elevatedButtonFilling.dart';
+import 'package:ifeelefine/main.dart';
 import 'package:slidable_button/slidable_button.dart';
 import '../../../Common/colorsPalette.dart';
 import '../../../Provider/prefencesUser.dart';
@@ -179,7 +180,7 @@ class _InitGeolocatorState extends State<InitGeolocator> {
   void initState() {
     super.initState();
     _prefs.saveLastScreenRoute("configGeo");
-
+    starTap();
     preferencePermission = _prefs.getAcceptedSendLocation;
     _isActivePermission();
   }
@@ -220,8 +221,16 @@ class _InitGeolocatorState extends State<InitGeolocator> {
                 var premiumController = Get.put(PremiumController());
                 premiumController.updatePremiumAPI(true);
                 isActive = true;
+                setState(() {});
                 await _checkPermission();
                 getCurrentPosition();
+
+                List<String>? temp = [];
+                Future.sync(() async => {
+                      temp = await _prefs.getlistConfigPage,
+                      temp!.add("configGeo"),
+                      _prefs.setlistConfigPage = temp!
+                    });
               }
             });
             return;
@@ -274,75 +283,78 @@ class _InitGeolocatorState extends State<InitGeolocator> {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
-        body: Container(
-          decoration: decorationCustom(),
-          width: size.width,
-          height: size.height,
-          child: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.max,
-              children: [
-                Stack(
-                  children: [
-                    getMapImageGradient(),
-                    Center(
-                      heightFactor: 2.2,
-                      child: SizedBox(
-                        child: Image.asset(
-                          fit: BoxFit.fill,
-                          scale: 0.65,
-                          'assets/images/Shape.png',
-                          height: 171.92,
-                          width: 133,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                SizedBox(
-                  child: Column(
-                    children: <Widget>[
-                      const SizedBox(
-                        height: 20,
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(
-                            left: 8.0, right: 8.0, bottom: 8.0),
-                        child: Text(
-                          Constant.casefallText,
-                          textAlign: TextAlign.center,
-                          style: GoogleFonts.barlow(
-                            fontSize: 24.0,
-                            wordSpacing: 1,
-                            letterSpacing: 1.2,
-                            fontWeight: FontWeight.w500,
-                            color: const Color.fromRGBO(255, 255, 255, 1),
+        body: MediaQuery(
+          data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
+          child: Container(
+            decoration: decorationCustom(),
+            width: size.width,
+            height: size.height,
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.max,
+                children: [
+                  Stack(
+                    children: [
+                      getMapImageGradient(),
+                      Center(
+                        heightFactor: 2.2,
+                        child: SizedBox(
+                          child: Image.asset(
+                            fit: BoxFit.fill,
+                            scale: 0.65,
+                            'assets/images/Shape.png',
+                            height: 171.92,
+                            width: 133,
                           ),
                         ),
                       ),
-                      // Add the image here
-                      const SizedBox(
-                        height: 20,
-                      ),
-                      getHorizontalSlide(),
-                      const SizedBox(
-                        height: 20,
-                      ),
                     ],
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: ElevateButtonFilling(
-                    showIcon: false,
-                    onChanged: (value) {
-                      Get.off(() => const ConditionGeneralPage());
-                    },
-                    mensaje: Constant.continueTxt,
-                    img: '',
+                  SizedBox(
+                    child: Column(
+                      children: <Widget>[
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(
+                              left: 8.0, right: 8.0, bottom: 8.0),
+                          child: Text(
+                            Constant.casefallText,
+                            textAlign: TextAlign.center,
+                            style: GoogleFonts.barlow(
+                              fontSize: 24.0,
+                              wordSpacing: 1,
+                              letterSpacing: 1.2,
+                              fontWeight: FontWeight.w500,
+                              color: const Color.fromRGBO(255, 255, 255, 1),
+                            ),
+                          ),
+                        ),
+                        // Add the image here
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        getHorizontalSlide(),
+                        const SizedBox(
+                          height: 20,
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-              ],
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: ElevateButtonFilling(
+                      showIcon: false,
+                      onChanged: (value) {
+                        Get.offAll(() => const ConditionGeneralPage());
+                      },
+                      mensaje: Constant.continueTxt,
+                      img: '',
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ),

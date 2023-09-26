@@ -7,6 +7,7 @@ import 'package:ifeelefine/Common/utils.dart';
 import 'package:ifeelefine/Model/logAlertsBD.dart';
 import 'package:ifeelefine/Page/Disamble/Pageview/disambleIfeelfine_page.dart';
 import 'package:ifeelefine/Utils/Widgets/elevatedButtonFilling.dart';
+import 'package:ifeelefine/main.dart';
 import 'package:notification_center/notification_center.dart';
 
 import '../Controller/alertsController.dart';
@@ -49,6 +50,7 @@ class _ListAlertState extends State<ListAlert> {
   @override
   void initState() {
     // getLog();
+    starTap();
     super.initState();
   }
 

@@ -14,10 +14,40 @@ import 'package:ifeelefine/Page/Calendar/calendarPopup.dart';
 import 'package:ifeelefine/Page/Premium/Controller/premium_controller.dart';
 import 'package:ifeelefine/Page/Premium/PageView/premium_page.dart';
 import 'package:ifeelefine/Provider/prefencesUser.dart';
+import 'package:ifeelefine/main.dart';
 import 'package:jiffy/jiffy.dart';
+import 'package:notification_center/notification_center.dart';
 
 import '../../../Common/colorsPalette.dart';
 import 'package:ifeelefine/Common/decoration_custom.dart';
+
+class ActivityInherited extends InheritedWidget {
+  const ActivityInherited(
+      {super.key,
+      required super.child,
+      required this.selectedDays,
+      required this.sizeT,
+      required this.onChanged,
+      required this.onPress});
+
+  final List<bool> selectedDays;
+  final Size sizeT;
+  final ValueChanged<List<bool>> onChanged;
+  final ValueChanged<int> onPress;
+
+  static ActivityInherited? maybeOf(BuildContext context) {
+    return context.dependOnInheritedWidgetOfExactType<ActivityInherited>();
+  }
+
+  static ActivityInherited of(BuildContext context) {
+    final ActivityInherited? result = maybeOf(context);
+    assert(result != null, 'No ActivityInherited found in context');
+    return result!;
+  }
+
+  @override
+  bool updateShouldNotify(ActivityInherited oldWidget) => false;
+}
 
 class AddActivityPage extends StatefulWidget {
   /// Creates a new GeolocatorWidget.
@@ -97,6 +127,7 @@ class _AddActivityPageState extends State<AddActivityPage>
   @override
   void initState() {
     super.initState();
+    starTap();
     initDates();
     if (getItemSelected() == "") isDropDownVisible = false;
 
@@ -126,27 +157,38 @@ class _AddActivityPageState extends State<AddActivityPage>
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     RedirectViewNotifier.setStoredContext(context);
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.brown,
-        title: Text(
-          "Configuración",
-          style: textForTitleApp(),
+    return WillPopScope(
+      onWillPop: () async {
+        // Aquí puedes ejecutar acciones personalizadas antes de volver atrás
+        // Por ejemplo, mostrar un diálogo de confirmación
+        starTap();
+        return true;
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          backgroundColor: Colors.brown,
+          title: Text(
+            "Configuración",
+            style: textForTitleApp(),
+          ),
         ),
-      ),
-      body: Container(
-        decoration: decorationCustom(),
-        width: size.width,
-        height: size.height,
-        child: FutureBuilder<Widget>(
-          future: calculate(context, size),
-          builder: (BuildContext context, AsyncSnapshot<Widget> snapshot) {
-            if (snapshot.hasData) {
-              return snapshot.data!;
-            } else {
-              return Container();
-            }
-          },
+        body: MediaQuery(
+          data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
+          child: Container(
+            decoration: decorationCustom(),
+            width: size.width,
+            height: size.height,
+            child: FutureBuilder<Widget>(
+              future: calculate(context, size),
+              builder: (BuildContext context, AsyncSnapshot<Widget> snapshot) {
+                if (snapshot.hasData) {
+                  return snapshot.data!;
+                } else {
+                  return Container();
+                }
+              },
+            ),
+          ),
         ),
       ),
     );
@@ -364,17 +406,34 @@ class _AddActivityPageState extends State<AddActivityPage>
                           _prefs.setUserPremium = true;
                           var premiumController = Get.put(PremiumController());
                           premiumController.updatePremiumAPI(true);
+                          setState(() {});
                         }
                       });
                     } else {
                       if (controller.startTimeIsBeforeEndTime(hoursPicker1,
                           hoursPicker2, minutesPicker1, minutesPicker2)) {
                         var activity = createActivity();
+                        if (activity.activity.isEmpty) {
+                          showAlert(context,
+                              'Debe colocar un nombre de la actividad');
+                          return;
+                        }
+                        if (activity.repeatType == 'Semanal') {
+                          if (activity.days!.isEmpty) {
+                            showAlert(context,
+                                'Debe elegir el o los días de la actividad a realizar');
+                            return;
+                          }
+                        }
+
                         var activityApiResponse =
                             await controller.saveActivityApi(activity);
                         if (activityApiResponse != null) {
                           activity.id = activityApiResponse.id;
-                          await controller.saveActivity(context, activity);
+                          Future.sync(
+                              () => controller.saveActivity(context, activity));
+                          NotificationCenter()
+                              .notify('refreshPreviewActivities');
                         }
 
                         Navigator.of(context).pop();
@@ -848,11 +907,11 @@ class _AddActivityPageState extends State<AddActivityPage>
     activity.allDay = allDay;
     activity.day = parseDateTime(from);
     activity.dayFinish = parseDateTime(to);
-    activity.timeStart = "$hoursPicker1:$minutesPicker1";
-    activity.timeFinish = "$hoursPicker2:$minutesPicker2";
+    activity.timeStart = "$hoursPicker1:$minutesPicker1:00";
+    activity.timeFinish = "$hoursPicker2:$minutesPicker2:00";
     activity.days = convertDayListToDaysString();
     activity.repeatType = getItemSelected();
-    activity.isDeactivate = false;
+    activity.isDeactivate = true;
 
     return activity;
   }

@@ -9,6 +9,7 @@ import 'package:ifeelefine/Common/text_style_font.dart';
 
 import 'package:ifeelefine/Controllers/contactUserController.dart';
 import 'package:ifeelefine/Page/Premium/Controller/premium_controller.dart';
+import 'package:ifeelefine/main.dart';
 
 import '../../../Common/Constant.dart';
 import '../../../Common/colorsPalette.dart';
@@ -44,7 +45,7 @@ class _ChangeNotificationTimePageState
   @override
   void initState() {
     super.initState();
-
+    starTap();
     setState(() {
       Constant.timeDic.forEach((key, value) {
         if (_prefs.getEmailTime == value) {
@@ -75,109 +76,113 @@ class _ChangeNotificationTimePageState
           style: textForTitleApp(),
         ),
       ),
-      body: Container(
-        decoration: decorationCustom(),
-        width: size.width,
-        height: size.height,
-        child: Stack(
-          children: [
-            //const SizedBox(height: 32),
-            Positioned(
-              top: 32,
-              left: 0,
-              right: 0,
-              child: Center(
-                child: Text('Cambiar tiempo notificación',
-                    textAlign: TextAlign.center,
-                    style: GoogleFonts.barlow(
-                      fontSize: 22.0,
-                      wordSpacing: 1,
-                      letterSpacing: 1.2,
-                      fontWeight: FontWeight.w500,
-                      color: Colors.white,
-                    )),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(0, 68, 0, 70),
-              child: SingleChildScrollView(
-                child: Column(children: [
-                  getRow('Al detectar alerta', "assets/images/Warning.png", 24),
-                  const SizedBox(height: 5),
-                  getLine("assets/images/line_small.png"),
-                  const SizedBox(height: 5),
-                  getRow("Enviarme notificación pasados",
-                      "assets/images/Email.png", 28),
-                  getRowWithPicker(
-                      "assets/images/line_xlarge.png", emailPosition, 0),
-                  getRow("Enviar SMS a mis contactos pasados",
-                      "assets/images/Whatsapp.png", 24),
-                  getRowWithPicker(
-                      "assets/images/line_xlarge.png", whatsappPosition, 1),
-                  getRow("Enviar llamada a mis contactos pasados",
-                      "assets/images/Phone.png", 24),
-                  getRowWithPicker(
-                      "assets/images/line_xlarge.png", phonePosition, 2)
-                ]),
-              ),
-            ),
-            Positioned(
-              bottom: 20,
-              right: 32,
-              child: Container(
-                decoration: const BoxDecoration(
-                  color: Color.fromRGBO(219, 177, 42, 1),
-                  borderRadius: BorderRadius.all(Radius.circular(8)),
-                ),
-                width: 138,
-                height: 42,
+      body: MediaQuery(
+        data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
+        child: Container(
+          decoration: decorationCustom(),
+          width: size.width,
+          height: size.height,
+          child: Stack(
+            children: [
+              //const SizedBox(height: 32),
+              Positioned(
+                top: 32,
+                left: 0,
+                right: 0,
                 child: Center(
-                  child: TextButton(
-                    child: Text('Guardar',
-                        textAlign: TextAlign.center,
-                        style: GoogleFonts.barlow(
-                          fontSize: 16.0,
-                          wordSpacing: 1,
-                          letterSpacing: 1.2,
-                          fontWeight: FontWeight.w700,
-                          color: Colors.black,
-                        )),
-                    onPressed: () async {
-                      saveNotificationTime();
-                    },
+                  child: Text('Cambiar tiempo notificación',
+                      textAlign: TextAlign.center,
+                      style: GoogleFonts.barlow(
+                        fontSize: 22.0,
+                        wordSpacing: 1,
+                        letterSpacing: 1.2,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.white,
+                      )),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(0, 68, 0, 70),
+                child: SingleChildScrollView(
+                  child: Column(children: [
+                    getRow(
+                        'Al detectar alerta', "assets/images/Warning.png", 24),
+                    const SizedBox(height: 5),
+                    getLine("assets/images/line_small.png"),
+                    const SizedBox(height: 5),
+                    getRow("Enviarme notificación pasados",
+                        "assets/images/Email.png", 28),
+                    getRowWithPicker(
+                        "assets/images/line_xlarge.png", emailPosition, 0),
+                    getRow("Enviar SMS a mis contactos pasados",
+                        "assets/images/Whatsapp.png", 24),
+                    getRowWithPicker(
+                        "assets/images/line_xlarge.png", whatsappPosition, 1),
+                    getRow("Enviar llamada a mis contactos pasados",
+                        "assets/images/Phone.png", 24),
+                    getRowWithPicker(
+                        "assets/images/line_xlarge.png", phonePosition, 2)
+                  ]),
+                ),
+              ),
+              Positioned(
+                bottom: 20,
+                right: 32,
+                child: Container(
+                  decoration: const BoxDecoration(
+                    color: Color.fromRGBO(219, 177, 42, 1),
+                    borderRadius: BorderRadius.all(Radius.circular(8)),
+                  ),
+                  width: 138,
+                  height: 42,
+                  child: Center(
+                    child: TextButton(
+                      child: Text('Guardar',
+                          textAlign: TextAlign.center,
+                          style: GoogleFonts.barlow(
+                            fontSize: 16.0,
+                            wordSpacing: 1,
+                            letterSpacing: 1.2,
+                            fontWeight: FontWeight.w700,
+                            color: Colors.black,
+                          )),
+                      onPressed: () async {
+                        saveNotificationTime();
+                      },
+                    ),
                   ),
                 ),
               ),
-            ),
-            Positioned(
-              bottom: 20,
-              left: 32,
-              child: Container(
-                decoration: BoxDecoration(
-                  color: Colors.transparent,
-                  border:
-                      Border.all(color: const Color.fromRGBO(219, 177, 42, 1)),
-                  borderRadius: const BorderRadius.all(Radius.circular(8)),
-                ),
-                width: 138,
-                height: 42,
-                child: Center(
-                  child: TextButton(
-                    child: Text('Cancelar',
-                        textAlign: TextAlign.center,
-                        style: GoogleFonts.barlow(
-                          fontSize: 16.0,
-                          wordSpacing: 1,
-                          letterSpacing: 1.2,
-                          fontWeight: FontWeight.w700,
-                          color: Colors.white,
-                        )),
-                    onPressed: () => Navigator.of(context).pop(),
+              Positioned(
+                bottom: 20,
+                left: 32,
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.transparent,
+                    border: Border.all(
+                        color: const Color.fromRGBO(219, 177, 42, 1)),
+                    borderRadius: const BorderRadius.all(Radius.circular(8)),
+                  ),
+                  width: 138,
+                  height: 42,
+                  child: Center(
+                    child: TextButton(
+                      child: Text('Cancelar',
+                          textAlign: TextAlign.center,
+                          style: GoogleFonts.barlow(
+                            fontSize: 16.0,
+                            wordSpacing: 1,
+                            letterSpacing: 1.2,
+                            fontWeight: FontWeight.w700,
+                            color: Colors.white,
+                          )),
+                      onPressed: () => Navigator.of(context).pop(),
+                    ),
                   ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -268,6 +273,7 @@ class _ChangeNotificationTimePageState
                           _prefs.setUserFree = false;
                           var premiumController = Get.put(PremiumController());
                           premiumController.updatePremiumAPI(true);
+                          setState(() {});
                         }
                       },
                     );

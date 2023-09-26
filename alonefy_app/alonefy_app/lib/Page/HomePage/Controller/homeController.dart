@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
+
 import 'package:get/get.dart';
 import 'package:ifeelefine/Data/hive_data.dart';
 import 'package:ifeelefine/Model/logAlertsBD.dart';
@@ -13,8 +13,6 @@ import 'package:ifeelefine/Model/userbd.dart';
 import 'package:ifeelefine/Page/UserConfig2/Controller/userConfig2Controller.dart';
 import 'package:ifeelefine/Page/UserEdit/Controller/editController.dart';
 import 'package:uuid/uuid.dart';
-import 'package:intl/intl.dart';
-import 'package:collection/collection.dart';
 
 class HomeController extends GetxController {
   final UserConfigCOntroller userVC = Get.put(UserConfigCOntroller());

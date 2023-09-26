@@ -1,12 +1,15 @@
 import 'dart:async';
 import 'dart:io';
-import 'dart:isolate';
 
 import 'dart:math';
 import 'dart:ui';
 
 import 'package:flutter/services.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
+import 'package:flutter_contacts/contact.dart';
+import 'package:ifeelefine/Data/hiveRisk_data.dart';
+import 'package:ifeelefine/Model/contactZoneRiskBD.dart';
+import 'package:ifeelefine/Views/menuconfig_page.dart';
 
 import 'package:notification_center/notification_center.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -48,6 +51,7 @@ import 'Page/Premium/Controller/premium_controller.dart';
 
 import 'Page/UserEdit/Controller/getUserController.dart';
 
+late ContactZoneRiskBD contactTemp;
 DateTime now = DateTime.now();
 late LogAlerts userMov;
 var accelerometerValues = <double>[];
@@ -77,25 +81,74 @@ List<String> listTask = [];
 RxList<String> rxlistTask = [''].obs;
 RxString rxIdTask = ''.obs;
 RxString name = "".obs;
+// RxInt countTimer = 30.obs;
+final countTimer = RxInt(60);
 Timer timerSendSMS = Timer(const Duration(seconds: 20), () {});
+Timer timerSendDropNotification = Timer(const Duration(minutes: 5), () {});
+Timer desactivedtimerSendDropNotification =
+    Timer(const Duration(seconds: 10), () {});
+Timer timerSendLocation = Timer(const Duration(seconds: 15), () {});
 
 final LogActivityController logActivityController =
     Get.put(LogActivityController());
 
 final MainController mainController = Get.put(MainController());
-int _logActivityTimer = 60;
+int _logActivityTimer = 0;
 int _logRudeMovementTimer = 20;
 const int _logActivityTimerRefresh = 60;
 const int _logRudeMovementTimerRefresh = 20;
-
+int increaceTimerDisamble = 0;
+int increaceSendLocations = 0;
+int increaceUpdateFirebase = 0;
 final _locationController = Get.put(ConfigGeolocatorController());
 
 String? device;
 String? initApp;
 UserBD? user;
 int time = 120;
-int timeUpdateFirebase = 36000;
+double timeUpdateFirebase = (36000);
+double timeSendlocation = (120);
+List<bool> menuConfig = [
+  true,
+  true,
+  true,
+  true,
+  true,
+  true,
+  true,
+  true,
+  true,
+  true,
+  true,
+  true
+];
 
+List<MenuConfigModel> permissionStatusI = [
+  MenuConfigModel(
+      "Configurar tus datos", 'assets/images/VectorUser.png', 22, 19.25, true),
+  MenuConfigModel("Configurar tiempo de sueño", 'assets/images/EllipseMenu.png',
+      22, 22, true),
+  MenuConfigModel(
+      "Configurar tiempo uso", 'assets/images/Group 1084.png', 22, 16.93, true),
+  MenuConfigModel(
+      "Actividades", 'assets/images/Group 1084.png', 22, 16.93, true),
+  MenuConfigModel("Seleccionar contacto de aviso",
+      'assets/images/Group 1083.png', 22, 25.52, true),
+  MenuConfigModel(
+      "Configurar caída", 'assets/images/Group 506.png', 26, 22.76, true),
+  MenuConfigModel(
+      "Cambiar envío ubicación", 'assets/images/Group 1082.png', 24, 24, true),
+  MenuConfigModel("Cambiar tiempo notificaciónes",
+      'assets/images/Group 1099.png', 22, 17.15, true),
+  MenuConfigModel("Cambiar sonido notificaciones",
+      'assets/images/Group 1102.png', 22, 22.08, false),
+  MenuConfigModel(
+      "Ajustes de mi smartphone", 'assets/images/mobile.png', 22, 19.66, false),
+  MenuConfigModel("Restaurar mi configuración", 'assets/images/Vector-2.png',
+      22, 22, false),
+  MenuConfigModel("Desactivar mi instalación", 'assets/images/Group 533.png',
+      21, 17, false),
+];
 final StreamController<ReceivedNotification> didReceiveLocalNotificationStream =
     StreamController<ReceivedNotification>.broadcast();
 
@@ -122,13 +175,23 @@ const String darwinNotificationCategoryText = 'textCategory';
 /// Defines a iOS/MacOS notification category for plain actions.
 const String darwinNotificationCategoryPlain = 'plainCategory';
 
+List<Contact> contactlist = [];
+List<String> taskdIds = [];
+bool isCancelZone = true;
+
+int secondsRemaining = 60; //5 minutes = 300 seconds
+
+Timer? timerCancelZone;
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  BackgroundIsolateBinaryMessenger.ensureInitialized;
 
   userMov = LogAlerts(mov: [], time: now);
 
   await _prefs.initPrefs();
-  _prefs.setProtected = 'AlertFriends no estás totalmente protegido.';
+  _prefs.setProtected =
+      'AlertFriends está activada y estamos comprobando que te encuentres bien';
   await inicializeHiveBD();
 
   await initializeFirebase();
@@ -143,6 +206,7 @@ Future<void> main() async {
             ? user!.telephone.replaceAll("+34", "")
             : user!.telephone);
     name.value = user!.name;
+
     // _prefs.setUserFree = true;
     // _prefs.setUserPremium = false;
     // var premiumController = Get.put(PremiumController());
@@ -166,10 +230,29 @@ Future<void> main() async {
 
   runApp(
     GetMaterialApp(
-      home: MyApp(initApp: initApp!),
       debugShowCheckedModeBanner: false,
+      home: GestureDetector(
+        onTap: () {
+          // Esta función se ejecutará cuando se toque cualquier parte de la aplicación.
+
+          starTap();
+        },
+        child: MyApp(initApp: initApp!),
+      ),
     ),
   );
+}
+
+void starTap() {
+  if (timerSendLocation.isActive) {
+    print('timer active ${timerSendLocation.isActive}');
+    timerSendLocation.cancel();
+  }
+  timerSendLocation = Timer(const Duration(seconds: 15), () {
+    print('Movimiento normal');
+    mainController.saveActivityLog(DateTime.now(), "Movimiento normal");
+    timerSendLocation.cancel();
+  });
 }
 
 ///Esta funcion se utiliza para activar los servicios en segundo plano
@@ -184,14 +267,14 @@ Future activateService() async {
 
   /// OPTIONAL, using custom notification channel id
 
-  var textDescrip = _prefs.getUserPremium
-      ? 'AlertFriends esta activado.'
-      : 'AlertFriends no estás totalmente protegido.';
+  var textDescrip =
+      'AlertFriends está activada y estamos comprobando que te encuentres bien';
 
   AndroidNotificationChannel channel = const AndroidNotificationChannel(
     "my_foreground", // id
-    'AlertFriends – PERSONAL PROTECTION', // title
-    description: 'AlertFriends esta activado.', // description
+    'AlertFriends – Personal Protection', // title
+    description:
+        'AlertFriends está activada y estamos comprobando que te encuentres bien.', // description
     importance: Importance.max, // importance must be at low or higher level
     playSound: true,
     showBadge: false,
@@ -212,7 +295,7 @@ Future activateService() async {
       autoStart: true,
       isForegroundMode: true,
       notificationChannelId: "my_foreground",
-      initialNotificationTitle: 'AlertFriends – PERSONAL PROTECTION',
+      initialNotificationTitle: 'AlertFriends – Personal Protection',
       initialNotificationContent: textDescrip,
       foregroundServiceNotificationId: 888,
     ),
@@ -318,74 +401,23 @@ Future activateService() async {
 
   if (details != null && details.didNotificationLaunchApp) {
     print("object ${details.notificationResponse!.payload}");
+    await inicializeHiveBD();
+    await _prefs.initPrefs();
     onDidReceiveBackgroundNotificationResponse(details.notificationResponse!);
   }
 }
 
-// Future<void> activateService2() async {
-//   // ... otras configuraciones ...
-
-//   final ReceivePort receivePort = ReceivePort();
-//   await Isolate.spawn(backgroundNotificationHandler, receivePort.sendPort);
-
-//   // Escucha los mensajes del aislamiento
-//   receivePort.listen((dynamic data) {
-//     if (data is SendPort) {
-//       final SendPort sendPort = data;
-//       // Envía el método para manejar las respuestas de notificaciones en segundo plano al aislamiento
-//       sendPort.send(onDidReceiveBackgroundNotificationResponse);
-//     }
-//   });
-
-//   // ... otras configuraciones ...
-// }
-
-// void backgroundNotificationHandler(SendPort sendPort) {
-//   final ReceivePort receivePort = ReceivePort();
-//   sendPort.send(receivePort.sendPort);
-
-//   // final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-//   //     FlutterLocalNotificationsPlugin(); // Crea una instancia del plugin aquí
-
-//   receivePort.listen((dynamic data) async {
-//     if (data is Map<String, dynamic>) {
-//       // Maneja las respuestas de las notificaciones en segundo plano aquí
-//       // final notificationResponse = NotificationResponse.fromMap(data);
-//       // print('Manejando notificación en segundo plano: $notificationResponse');
-//       String sound = prefs.getNotificationAudio;
-//       // Muestra la notificación local en segundo plano
-//       AndroidNotificationDetails androidDetails = AndroidNotificationDetails(
-//           sound.isEmpty ? "my_foreground" : sound, // id// channelId
-//           'AlertFriends – PERSONAL PROTECTION', // channelName
-//           importance: Importance.max,
-//           priority: Priority.high,
-//           showWhen: false,
-//           playSound: true,
-//           sound: RawResourceAndroidNotificationSound(sound));
-//       NotificationDetails platformChannelSpecifics =
-//           NotificationDetails(android: androidDetails);
-//       await flutterLocalNotificationsPlugin.show(
-//         1000,
-//         'Notificación en segundo plano',
-//         'Respuesta recibida: ',
-//         platformChannelSpecifics,
-//       );
-//     }
-//   });
-// }
-
-// void onDidReceiveNotificationResponse(
-//     NotificationResponse notificationResponse) async {
-//   // mainController.saveActivityLog(DateTime.now(), "Movimiento normal");
-//   // Maneja las respuestas de notificaciones en segundo plano aquí
-// }
 @pragma('vm:entry-point')
 void onDidReceiveBackgroundNotificationResponse(
     NotificationResponse notificationResponse) async {
   mainController.saveActivityLog(DateTime.now(), "Movimiento normal");
+  _logRudeMovementTimer = 0;
+
   switch (notificationResponse.notificationResponseType) {
     case NotificationResponseType.selectedNotification:
-      // selectNotificationStream.add(notificationResponse.payload);
+      if (notificationResponse.payload!.contains('ContactResponse')) {
+        NotificationCenter().notify('getContact');
+      }
       if (notificationResponse.payload!.contains("free")) {
         RedirectViewNotifier.onTapFreeNotification(notificationResponse);
       }
@@ -411,6 +443,9 @@ void onDidReceiveBackgroundNotificationResponse(
       if (notificationResponse.payload!.contains("Inactived_")) {
         ismove = false;
         timerActive = true;
+        _prefs.setEnableIFF = true;
+
+        _prefs.setDisambleIFF = "0 hora";
         String taskIds =
             notificationResponse.payload!.replaceAll("Inactived_", "");
         var taskIdList = getTaskIdList(taskIds);
@@ -435,19 +470,25 @@ void onDidReceiveBackgroundNotificationResponse(
 
         MainService().cancelAllNotifications(taskIdList);
       }
-      if (notificationResponse.actionId != null &&
-          notificationResponse.actionId!.contains("DateRisk")) {
-        String taskIds = notificationResponse.actionId!
-            .substring(0, notificationResponse.actionId!.indexOf('id='));
-        taskIds = taskIds.replaceAll("DateRisk_", "");
-        String id = notificationResponse.actionId!.substring(
-            notificationResponse.actionId!.indexOf('id='),
-            notificationResponse.actionId!.length);
-        id = id.replaceAll("id=", "");
+      if (notificationResponse.payload!.contains("DateRisk_")) {
+        String taskIds =
+            notificationResponse.payload!.replaceAll("DateRisk_", "");
+
         NotificationCenter().notify('getContactRisk');
         var taskIdList = getTaskIdList(taskIds);
-        RedirectViewNotifier.onTapNotification(
-            notificationResponse, taskIdList, int.parse(id));
+        idTask = taskIds;
+        listTask = taskIdList;
+        rxIdTask.value = taskIds;
+        rxlistTask.value = taskIdList;
+        notActionPush = true;
+        var contactRisk = await const HiveDataRisk().getcontactRiskbd;
+        for (var element in contactRisk) {
+          if (element.isActived) {
+            RedirectViewNotifier.onTapNotification(
+                notificationResponse, taskIdList, (element.id));
+          }
+        }
+        await flutterLocalNotificationsPlugin.cancel(notificationResponse.id!);
       }
 
       break;
@@ -460,6 +501,7 @@ void onDidReceiveBackgroundNotificationResponse(
 
         MainService().sendAlertToContactImmediately(taskIdList);
       }
+
       if (notificationResponse.actionId != null &&
           notificationResponse.actionId!.contains("imgoodId")) {
         String taskIds =
@@ -529,7 +571,6 @@ void onStart(ServiceInstance service) async {
   DartPluginRegistrant.ensureInitialized();
   await inicializeHiveBD();
   await _prefs.initPrefs();
-
   // For flutter prior to version 3.0.0
   // We have to register the plugin manually
   /// OPTIONAL when use custom notification
@@ -549,66 +590,79 @@ void onStart(ServiceInstance service) async {
 
   accelerometer();
 
-  int increaceTime = 0;
-  int increaceTimeUpdate = 0;
+  Timer.periodic(
+    const Duration(days: 30),
+    (timer) {
+      _prefs.refreshData();
+      if (_prefs.getUsedFreeDays == false &&
+          _prefs.getDayFree != "0" &&
+          _prefs.getUserFree) {
+        DateTime dateTime = DateTime.parse(_prefs.getDayFree);
 
-  // bring to foreground
-  Timer.periodic(const Duration(seconds: 5), (timer) async {
-    if (Platform.isAndroid) {
-      if (service is AndroidServiceInstance) {
-        if (await service.isForegroundService()) {
-          if (isMovRude) {
-            isMovRude = false;
-          }
+        DateTime fechaActual = DateTime.now();
+
+        // Calcular la diferencia entre las fechas en días
+        int diferenciaEnDias = fechaActual.difference(dateTime).inDays;
+
+        // Verificar si han pasado 30 días
+        bool hanPasado30Dias = diferenciaEnDias >= 30;
+
+        if (hanPasado30Dias) {
+          _prefs.setUsedFreeDays = true;
+          _prefs.setUserFree = true;
+          _prefs.setUserPremium = false;
+          _prefs.setDayFree = "0";
+          var premiumController = Get.put(PremiumController());
+          premiumController.updatePremiumAPI(false);
         }
       }
-    }
+    },
+  );
 
-    if (!_prefs.getUsedFreeDays &&
-        _prefs.getDayFree != "0" &&
-        _prefs.getUserFree) {
-      DateTime dateTime = DateTime.parse(_prefs.getDayFree);
-
-      DateTime fechaActual = DateTime.now();
-
-      // Calcular la diferencia entre las fechas en días
-      int diferenciaEnDias = fechaActual.difference(dateTime).inDays;
-
-      // Verificar si han pasado 30 días
-      bool hanPasado30Dias = diferenciaEnDias >= 30;
-
-      if (hanPasado30Dias) {
-        _prefs.setUsedFreeDays = true;
-        _prefs.setUserFree = true;
-        _prefs.setUserPremium = false;
-        _prefs.setDayFree = "0";
-        var premiumController = Get.put(PremiumController());
-        premiumController.updatePremiumAPI(false);
-      }
-    }
-
-    increaceTime += 5;
-    increaceTimeUpdate += 5;
-    if (_prefs.getUserFree && !_prefs.getUserPremium) {
-      if (increaceTime >= 259200) {
+  Timer.periodic(
+    const Duration(days: 3),
+    (timer) {
+      if (_prefs.getUserFree && !_prefs.getUserPremium) {
         if (_prefs.getUsedFreeDays) {
           RedirectViewNotifier.showPremiumNotification();
         } else {
           RedirectViewNotifier.showFreeeNotification();
         }
       }
+    },
+  );
+
+  Timer.periodic(const Duration(seconds: 5), (timer) async {
+    if (Platform.isAndroid) {
+      if (service is AndroidServiceInstance) {
+        if (await service.isForegroundService()) {
+          if (isMovRude) {}
+        }
+      }
     }
 
-    if (increaceTime >= time) {
-      sendLocation();
+    var timeGetDisamble = _prefs.getDisambleIFF;
+    var timeDisamble = deactivateTimeToMinutes(timeGetDisamble) * 60;
 
-      increaceTime = 0;
+    if (!timeDisamble.isEqual(0)) {
+      if (increaceTimerDisamble >= timeDisamble) {
+        _prefs.setEnableIFF = true;
+        increaceTimerDisamble = 0;
+        _prefs.setDisambleIFF = "0 hora";
+      }
     }
 
-    if (increaceTimeUpdate >= timeUpdateFirebase) {
+    if (increaceUpdateFirebase >= timeUpdateFirebase) {
       updateFirebaseToken();
+      increaceUpdateFirebase = 0;
     }
-
+    if (increaceSendLocations >= timeSendlocation) {
+      sendLocation();
+      increaceSendLocations = 0;
+    }
+    increaceUpdateFirebase += 5;
+    increaceSendLocations += 5;
+    increaceTimerDisamble += 5;
     _logActivityTimer += 5;
     _logRudeMovementTimer += 5;
   });
@@ -656,41 +710,103 @@ Future<bool> onIosBackground(ServiceInstance service) async {
 //   }
 // }
 
+List<double> accelerationHistory = [];
+Timer? fallDetectionTimer;
+
+void onData(double accelerationMagnitude) {
+  // Agregar el nuevo valor a la lista de historial
+  accelerationHistory.add(accelerationMagnitude);
+
+  // Mantener un límite en el tamaño del historial (por ejemplo, 10 elementos)
+  if (accelerationHistory.length > 10) {
+    accelerationHistory.removeAt(0);
+  }
+
+  // Verificar si se ha alcanzado el límite de aceleración para considerarlo una caída
+  if (accelerationMagnitude >= 45) {
+    print('Movimiento brusco');
+    // Iniciar el temporizador de detección de caídas
+    if (fallDetectionTimer == null) {
+      fallDetectionTimer = Timer(Duration(seconds: 15), () {
+        // Notificar la caída después del tiempo especificado
+        notifyFall();
+      });
+    }
+  } else if (fallDetectionTimer != null) {
+    // Si la aceleración ha disminuido después de una posible caída,
+    // cancelar el temporizador de detección de caídas
+    if (isAccelerationDecreasing()) {
+      fallDetectionTimer?.cancel();
+      fallDetectionTimer = null;
+    }
+  }
+}
+
+bool isAccelerationDecreasing() {
+  // Verificar si la aceleración está disminuyendo en los últimos valores del historial
+  if (accelerationHistory.length >= 2) {
+    final lastIndex = accelerationHistory.length - 1;
+    final secondToLastIndex = accelerationHistory.length - 2;
+    return accelerationHistory[lastIndex] <
+        accelerationHistory[secondToLastIndex];
+  }
+  return false;
+}
+
+void notifyFall() {
+  // Aquí puedes implementar la notificación de caída
+  // Restablecer el historial y el temporizador después de notificar
+  accelerationHistory.clear();
+  fallDetectionTimer = null;
+  mainController.saveDrop();
+}
+
 void accelerometer() async {
   //Initialization Settings for Android
   await _prefs.initPrefs();
 
-  var enableIFF = await getEnableIFF();
+  // var enableIFF = await getEnableIFF();
   _streamSubscriptions.add(
     accelerometerEvents.listen(
       (AccelerometerEvent event) {
         double accelerationMagnitude =
             sqrt(event.x * event.x + event.y * event.y + event.z * event.z);
-
+        _prefs.refreshData();
+        // onData(accelerationMagnitude);
         if (accelerationMagnitude > 45) {
           isMovRude = true;
-
+          print('_prefs.getUserFree ${_prefs.getUserFree}');
+          print('_prefs.getDetectedFall ${_prefs.getDetectedFall}');
+          print('_prefs.getEnableIFF ${_prefs.getEnableIFF}');
           if (_prefs.getUserFree) return;
-          if (!enableIFF && !_prefs.getDetectedFall) return;
-          print('Movimiento brusco');
+          if (_prefs.getDetectedFall == false) return;
+          if (_prefs.getEnableIFF == false) return;
+
           if (_logRudeMovementTimer >= _logRudeMovementTimerRefresh) {
             mainController.saveDrop();
             _logRudeMovementTimer = 0;
           }
         } else {
-          isMovRude = false;
-
+          if (isMovRude) {
+            desactivedtimerSendDropNotification =
+                Timer(const Duration(seconds: 10), () async {
+              isMovRude = false;
+              desactivedtimerSendDropNotification.cancel();
+            });
+            return;
+          }
           if (accelerationMagnitude < 45 && accelerationMagnitude > 12) {
-            print('Movimiento normal');
-
-            if (enableIFF && _logActivityTimer >= _logActivityTimerRefresh) {
+            if (_prefs.getEnableIFF &&
+                _logActivityTimer >= _logActivityTimerRefresh) {
               if (_prefs.getUseMobilConfig) {
                 print('Movimiento normal');
                 mainController.saveActivityLog(
                     DateTime.now(), "Movimiento normal");
+                isMovRude = false;
               }
               _logActivityTimer = 0;
             }
+
             ismove = false;
             timerActive = true;
           }
@@ -731,10 +847,24 @@ class _MyAppState extends State<MyApp> {
     });
   }
 
+  void getContactList(BuildContext context) async {
+    if (user != null && user!.idUser != '-1') {
+      contactlist = await getContacts(context);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     Future.sync(() => RedirectViewNotifier.setStoredContext(context));
+    getContactList(context);
     return MaterialApp(
+      builder: (context, child) {
+        // Configura el factor de escala de texto a 1.0 para evitar el escalado de texto
+        return MediaQuery(
+          data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
+          child: child!,
+        );
+      },
       navigatorKey: navigatorKey,
       debugShowCheckedModeBanner: false,
       routes: appRoute,

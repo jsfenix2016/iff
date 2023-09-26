@@ -29,6 +29,7 @@ import 'package:ifeelefine/Provider/prefencesUser.dart';
 
 import 'package:ifeelefine/Page/PermissionUser/Pageview/permission_page.dart';
 import 'package:ifeelefine/Views/ringtone_page.dart';
+import 'package:ifeelefine/main.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:slidable_button/slidable_button.dart';
 
@@ -41,8 +42,8 @@ class MenuConfigModel {
   late String icon;
   late double heigth;
   late double weigth;
-
-  MenuConfigModel(this.name, this.icon, this.heigth, this.weigth);
+  late bool config;
+  MenuConfigModel(this.name, this.icon, this.heigth, this.weigth, this.config);
 }
 
 class MenuConfigurationPage extends StatefulWidget {
@@ -53,37 +54,14 @@ class MenuConfigurationPage extends StatefulWidget {
 }
 
 class _MenuConfigurationPageState extends State<MenuConfigurationPage> {
-  List<MenuConfigModel> permissionStatusI = [
-    MenuConfigModel(
-        "Configurar tus datos", 'assets/images/VectorUser.png', 22, 19.25),
-    MenuConfigModel(
-        "Configurar horas de sueño", 'assets/images/EllipseMenu.png', 22, 22),
-    MenuConfigModel(
-        "Configurar tiempo uso", 'assets/images/Group 1084.png', 22, 16.93),
-    MenuConfigModel("Actividades", 'assets/images/Group 1084.png', 22, 16.93),
-    MenuConfigModel("Seleccionar contacto de aviso",
-        'assets/images/Group 1083.png', 22, 25.52),
-    MenuConfigModel(
-        "Configurar caída", 'assets/images/Group 506.png', 26, 22.76),
-    MenuConfigModel(
-        "Cambiar envío ubicación", 'assets/images/Group 1082.png', 24, 24),
-    MenuConfigModel("Cambiar tiempo notificaciónes",
-        'assets/images/Group 1099.png', 22, 17.15),
-    // MenuConfigModel("Cambiar sonido notificaciones",
-    //     'assets/images/Group 1102.png', 22, 22.08),
-    MenuConfigModel(
-        "Ajustes de mi smartphone", 'assets/images/mobile.png', 22, 19.66),
-    MenuConfigModel(
-        "Restaurar mi configuración", 'assets/images/Vector-2.png', 22, 22),
-    MenuConfigModel(
-        "Desactivar mi instalación", 'assets/images/Group 533.png', 21, 17),
-  ];
-
   final _prefs = PreferenceUser();
 
   @override
   void initState() {
+    print(permissionStatusI);
     super.initState();
+
+    // _prefs.setlistConfigPage = addList;
   }
 
   void redirectToConfigUser() {
@@ -204,20 +182,20 @@ class _MenuConfigurationPageState extends State<MenuConfigurationPage> {
             ));
 
         break;
-      // case 8:
-      //   if ((user.idUser == "-1") && _prefs.getUserFree) {
-      //     redirectToConfigUser();
-      //     return;
-      //   }
-
-      //   Future.sync(() => Navigator.push(
-      //         context,
-      //         MaterialPageRoute(
-      //           builder: (context) => const RingTonePage(),
-      //         ),
-      //       ));
-      //   break;
       case 8:
+        if ((user.idUser == "-1") && _prefs.getUserFree) {
+          redirectToConfigUser();
+          return;
+        }
+
+        Future.sync(() => Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const RingTonePage(),
+              ),
+            ));
+        break;
+      case 9:
         if ((user.idUser == "-1") && _prefs.getUserFree) {
           redirectToConfigUser();
           return;
@@ -230,7 +208,7 @@ class _MenuConfigurationPageState extends State<MenuConfigurationPage> {
               ),
             ));
         break;
-      case 9:
+      case 10:
         if (_prefs.getUserPremium) {
           Future.sync(
             () => Navigator.push(
@@ -271,7 +249,7 @@ class _MenuConfigurationPageState extends State<MenuConfigurationPage> {
           );
         }
         break;
-      case 10:
+      case 11:
         if ((user.idUser == "-1") && _prefs.getUserFree) {
           redirectToConfigUser();
           return;
@@ -288,13 +266,13 @@ class _MenuConfigurationPageState extends State<MenuConfigurationPage> {
         );
 
         break;
+
       default:
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    RedirectViewNotifier.setStoredContext(context);
     final Size size = MediaQuery.of(context).size;
     return Scaffold(
       extendBodyBehindAppBar: true,
@@ -306,76 +284,96 @@ class _MenuConfigurationPageState extends State<MenuConfigurationPage> {
           style: textForTitleApp(),
         ),
       ),
-      body: Container(
-        decoration: decorationCustom(),
-        width: size.width,
-        height: size.height,
-        child: Stack(
-          children: [
-            Padding(
-              padding: const EdgeInsets.fromLTRB(0, 0, 0, 100),
-              child: ListView.builder(
-                itemCount: permissionStatusI.length,
-                itemBuilder: (context, index) {
-                  return GestureDetector(
-                    onTap: () {
-                      routeIndexSelect(index);
-                    },
-                    child: Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Stack(
-                        children: [
-                          Container(
-                            decoration: const BoxDecoration(
-                              color: Colors.transparent,
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(8)),
-                            ),
-                            height: 50,
-                            width: 312,
-                            child: Row(
-                              mainAxisSize: MainAxisSize.max,
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.only(left: 8.0),
-                                  child: Container(
-                                    height: permissionStatusI[index].heigth,
-                                    width: permissionStatusI[index].weigth,
-                                    decoration: BoxDecoration(
-                                      image: DecorationImage(
-                                        image: AssetImage(
-                                            permissionStatusI[index].icon),
-                                        fit: BoxFit.fill,
+      body: MediaQuery(
+        data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
+        child: Container(
+          decoration: decorationCustom(),
+          width: size.width,
+          height: size.height,
+          child: SafeArea(
+            child: Stack(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(0, 50, 0, 100),
+                  child: ListView.builder(
+                    itemCount: permissionStatusI.length,
+                    itemBuilder: (context, index) {
+                      return GestureDetector(
+                        onTap: () {
+                          routeIndexSelect(index);
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Stack(
+                            children: [
+                              Container(
+                                decoration: const BoxDecoration(
+                                  color: Colors.transparent,
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(8)),
+                                ),
+                                height: 50,
+                                width: 312,
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.max,
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.only(left: 8.0),
+                                      child: Container(
+                                        height: permissionStatusI[index].heigth,
+                                        width: permissionStatusI[index].weigth,
+                                        decoration: BoxDecoration(
+                                          image: DecorationImage(
+                                            image: AssetImage(
+                                                permissionStatusI[index].icon),
+                                            fit: BoxFit.fill,
+                                          ),
+                                          color: Colors.transparent,
+                                        ),
                                       ),
-                                      color: Colors.transparent,
                                     ),
-                                  ),
+                                    const SizedBox(
+                                      width: 12,
+                                    ),
+                                    Expanded(
+                                      flex: 1,
+                                      child: Text(
+                                        permissionStatusI[index].name,
+                                        maxLines: 2,
+                                        textAlign: TextAlign.left,
+                                        style: textNormal16White(),
+                                      ),
+                                    ),
+                                    Visibility(
+                                      visible: permissionStatusI[index].config,
+                                      child: ClipRRect(
+                                        borderRadius: const BorderRadius.all(
+                                            Radius.circular(50)),
+                                        child: Container(
+                                          color: Colors.red,
+                                          width: 10,
+                                          height: 10,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                                const SizedBox(
-                                  width: 12,
-                                ),
-                                Expanded(
-                                  flex: 1,
-                                  child: Text(
-                                    permissionStatusI[index].name,
-                                    maxLines: 2,
-                                    textAlign: TextAlign.left,
-                                    style: textNormal16White(),
-                                  ),
-                                ),
-                              ],
-                            ),
+                              ),
+                            ],
                           ),
-                        ],
-                      ),
-                    ),
-                  );
-                },
-              ),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+                Positioned(
+                    bottom: 32,
+                    left: 32,
+                    right: 32,
+                    child: getHorizontalSlide()),
+              ],
             ),
-            Positioned(
-                bottom: 32, left: 32, right: 32, child: getHorizontalSlide())
-          ],
+          ),
         ),
       ),
     );
@@ -421,6 +419,7 @@ class _MenuConfigurationPageState extends State<MenuConfigurationPage> {
               _prefs.setUserPremium = true;
               var premiumController = Get.put(PremiumController());
               premiumController.updatePremiumAPI(true);
+              setState(() {});
             }
           });
         }

@@ -10,6 +10,7 @@ import 'package:ifeelefine/Common/utils.dart';
 import 'package:ifeelefine/Model/contact.dart';
 import 'package:ifeelefine/Page/Contact/ListContact/Controller/list_contact_controller.dart';
 import 'package:ifeelefine/Provider/prefencesUser.dart';
+import 'package:ifeelefine/main.dart';
 import 'package:notification_center/notification_center.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -32,6 +33,7 @@ class _ListContactState extends State<ListContact> {
   @override
   void initState() {
     super.initState();
+    starTap();
     NotificationCenter().subscribe('getContact', _getContacts);
     // Get the list of contacts from the device
     _checkPermissionIsEnabled();
@@ -75,6 +77,7 @@ class _ListContactState extends State<ListContact> {
     // Set the list of contacts in the state
     var contacts = await getContacts(context);
     setState(() {
+      _prefs.setAcceptedContacts = PreferencePermission.allow;
       _contacts = contacts;
     });
   }
@@ -229,9 +232,12 @@ class _ListContactState extends State<ListContact> {
     RedirectViewNotifier.setStoredContext(context);
     return Scaffold(
       backgroundColor: ColorPalette.secondView,
-      body: Container(
-        color: ColorPalette.secondView,
-        child: listviewContactRisk(),
+      body: MediaQuery(
+        data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
+        child: Container(
+          color: ColorPalette.secondView,
+          child: listviewContactRisk(),
+        ),
       ),
     );
   }

@@ -11,10 +11,14 @@ class WidgetContact extends StatelessWidget {
       required this.displayName,
       required this.img,
       required this.delete,
-      required this.onDelete});
+      required this.onDelete,
+      required this.isFilter,
+      required this.isExpanded});
   final String displayName;
   final Uint8List? img;
   final bool delete;
+  final bool isFilter;
+  final bool isExpanded;
   final void Function(bool) onDelete;
   Widget _mostrarFoto() {
     return GestureDetector(
@@ -52,6 +56,8 @@ class WidgetContact extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print(isFilter);
+    print(isExpanded);
     return Container(
       decoration: const BoxDecoration(
         color: Color.fromRGBO(169, 146, 125, 0.5),
@@ -60,7 +66,7 @@ class WidgetContact extends StatelessWidget {
             ),
       ),
       height: 89,
-      width: 290,
+      width: 320,
       child: Stack(
         children: [
           _mostrarFoto(),
@@ -75,7 +81,7 @@ class WidgetContact extends StatelessWidget {
                 ),
               ),
               height: 89,
-              width: 190,
+              width: 210,
               child: Row(
                 children: [
                   Container(
@@ -83,7 +89,11 @@ class WidgetContact extends StatelessWidget {
                       color: Colors.transparent,
                     ),
                     height: 79,
-                    width: 150,
+                    width: isFilter
+                        ? 170
+                        : isExpanded
+                            ? 130
+                            : 130,
                     child: Center(
                       child: Text(
                         displayName,
@@ -98,38 +108,103 @@ class WidgetContact extends StatelessWidget {
                       ),
                     ),
                   ),
-                  Container(
-                    decoration: const BoxDecoration(
-                      color: Colors.transparent,
-                      borderRadius: BorderRadius.only(
-                        bottomRight: Radius.circular(100),
-                        topRight: Radius.circular(100),
-                      ),
-                    ),
-                    height: 30,
-                    width: 30,
-                    child: IconButton(
-                      iconSize: 30,
-                      color: ColorPalette.principal,
-                      onPressed: () {
-                        if (delete) {
-                          onDelete(delete);
-                        }
-                      },
-                      icon: Container(
-                        height: 28,
-                        width: 28,
-                        decoration: BoxDecoration(
-                          image: DecorationImage(
-                            image: delete
-                                ? const AssetImage('assets/images/Error.png')
-                                : const AssetImage(
-                                    'assets/images/plussWhite.png'),
-                            fit: BoxFit.cover,
-                          ),
-                          color: Colors.transparent,
+                  Visibility(
+                    visible: isFilter || isExpanded,
+                    child: Container(
+                      decoration: const BoxDecoration(
+                        color: Colors.transparent,
+                        borderRadius: BorderRadius.only(
+                          bottomRight: Radius.circular(100),
+                          topRight: Radius.circular(100),
                         ),
                       ),
+                      height: 40,
+                      width: 40,
+                      child: IconButton(
+                        iconSize: 60,
+                        color: ColorPalette.principal,
+                        onPressed: () {
+                          if (delete) {
+                            onDelete(delete);
+                          }
+                        },
+                        icon: Container(
+                          height: 30,
+                          width: 30,
+                          decoration: BoxDecoration(
+                            image: DecorationImage(
+                              image: delete
+                                  ? const AssetImage('assets/images/Error.png')
+                                  : const AssetImage(
+                                      'assets/images/plussWhite.png'),
+                              fit: BoxFit.cover,
+                            ),
+                            color: Colors.transparent,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  Visibility(
+                    visible: !isFilter && !isExpanded,
+                    child: Row(
+                      children: [
+                        Container(
+                          decoration: const BoxDecoration(
+                            color: Colors.transparent,
+                          ),
+                          height: 35,
+                          width: 35,
+                          child: IconButton(
+                            iconSize: 30,
+                            color: ColorPalette.principal,
+                            onPressed: () {
+                              if (delete) {}
+                            },
+                            icon: Container(
+                              height: 30,
+                              width: 30,
+                              decoration: const BoxDecoration(
+                                image: DecorationImage(
+                                  image: AssetImage(
+                                      'assets/images/Path (Stroke).png'),
+                                  fit: BoxFit.cover,
+                                ),
+                                color: Colors.transparent,
+                              ),
+                            ),
+                          ),
+                        ),
+                        Container(
+                          decoration: const BoxDecoration(
+                            color: Colors.transparent,
+                            borderRadius: BorderRadius.only(
+                              bottomRight: Radius.circular(100),
+                              topRight: Radius.circular(100),
+                            ),
+                          ),
+                          height: 30,
+                          width: 36,
+                          child: IconButton(
+                            iconSize: 30,
+                            color: ColorPalette.principal,
+                            onPressed: () {
+                              if (delete) {}
+                            },
+                            icon: Container(
+                              height: 30,
+                              width: 36,
+                              decoration: const BoxDecoration(
+                                image: DecorationImage(
+                                  image: AssetImage('assets/images/Email.png'),
+                                  fit: BoxFit.cover,
+                                ),
+                                color: Colors.transparent,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   )
                 ],

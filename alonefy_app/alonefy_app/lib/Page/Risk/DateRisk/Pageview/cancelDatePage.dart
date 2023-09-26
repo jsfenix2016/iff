@@ -40,9 +40,10 @@ class _CancelDatePageState extends State<CancelDatePage> {
   var code = CodeModel();
   late ContactRiskBD contactRiskTemp;
 
-  int _secondsRemaining = 180; //5 minutes = 300 seconds
+  int _secondsRemaining = 60; //5 minutes = 300 seconds
   Timer? _timer;
   bool isLoading = false;
+
   @override
   void dispose() {
     stopTimer();
@@ -56,6 +57,7 @@ class _CancelDatePageState extends State<CancelDatePage> {
 
     startTimer();
     super.initState();
+    starTap();
   }
 
   void saveDate(BuildContext context) async {
@@ -141,113 +143,116 @@ class _CancelDatePageState extends State<CancelDatePage> {
             style: textForTitleApp(),
           ),
         ),
-        body: Container(
-          height: size.height,
-          decoration: decorationCustom(),
-          child: SingleChildScrollView(
-            keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-            child: Stack(
-              children: [
-                SafeArea(
-                  child: Container(
-                    height: 20.0,
+        body: MediaQuery(
+          data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
+          child: Container(
+            height: size.height,
+            decoration: decorationCustom(),
+            child: SingleChildScrollView(
+              keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+              child: Stack(
+                children: [
+                  SafeArea(
+                    child: Container(
+                      height: 20.0,
+                    ),
                   ),
-                ),
-                const SizedBox(
-                  height: 30,
-                ),
-                SizedBox(
-                  child: Column(
-                    children: [
-                      Padding(
-                        padding:
-                            const EdgeInsets.only(top: 25.0, left: 8, right: 8),
-                        child: Center(
-                          child: Text(
-                            "La hora programada para la finalización de tu cita de riesgo ha terminado",
-                            textAlign: TextAlign.center,
-                            style: GoogleFonts.barlow(
-                              fontSize: 24.0,
-                              wordSpacing: 1,
-                              letterSpacing: 1,
-                              fontWeight: FontWeight.normal,
-                              color: Colors.white,
-                            ),
-                          ),
-                        ),
-                      ),
-                      SizedBox(
-                        child: Column(
-                          children: [
-                            Center(
-                              child: Padding(
-                                padding: const EdgeInsets.only(
-                                    left: 8.0, top: 20, right: 8),
-                                child: Text(
-                                  "Introduce tú clave de cancelación",
-                                  textAlign: TextAlign.center,
-                                  style: textNomral18White(),
-                                ),
+                  const SizedBox(
+                    height: 30,
+                  ),
+                  SizedBox(
+                    child: Column(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(
+                              top: 25.0, left: 8, right: 8),
+                          child: Center(
+                            child: Text(
+                              "La hora programada para la finalización de tu cita de riesgo ha terminado",
+                              textAlign: TextAlign.center,
+                              style: GoogleFonts.barlow(
+                                fontSize: 24.0,
+                                wordSpacing: 1,
+                                letterSpacing: 1,
+                                fontWeight: FontWeight.normal,
+                                color: Colors.white,
                               ),
                             ),
-                            const SizedBox(
-                              height: 12,
-                            ),
-                          ],
+                          ),
                         ),
-                      ),
-                      ContentCode(
-                        code: code,
-                        onChanged: (value) {
-                          code = value;
-                          codeTemp =
-                              '${value.textCode1},${value.textCode2},${value.textCode3},${value.textCode4}';
-                        },
-                      ),
-                      const SizedBox(
-                        height: 20,
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: ElevateButtonFilling(
-                          showIcon: false,
+                        SizedBox(
+                          child: Column(
+                            children: [
+                              Center(
+                                child: Padding(
+                                  padding: const EdgeInsets.only(
+                                      left: 8.0, top: 20, right: 8),
+                                  child: Text(
+                                    "Introduce tú clave de cancelación",
+                                    textAlign: TextAlign.center,
+                                    style: textNomral18White(),
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(
+                                height: 12,
+                              ),
+                            ],
+                          ),
+                        ),
+                        ContentCode(
+                          code: code,
                           onChanged: (value) {
-                            saveDate(context);
+                            code = value;
+                            codeTemp =
+                                '${value.textCode1},${value.textCode2},${value.textCode3},${value.textCode4}';
                           },
-                          mensaje: 'Cancelar alerta',
-                          img: '',
                         ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Center(
-                          child: Text(
-                            timerText,
-                            textAlign: TextAlign.center,
-                            style: GoogleFonts.barlow(
-                              fontSize: 74.0,
-                              wordSpacing: 1,
-                              letterSpacing: 1,
-                              fontWeight: FontWeight.normal,
-                              color: ColorPalette.principal,
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: ElevateButtonFilling(
+                            showIcon: false,
+                            onChanged: (value) {
+                              saveDate(context);
+                            },
+                            mensaje: 'Cancelar alerta',
+                            img: '',
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Center(
+                            child: Text(
+                              timerText,
+                              textAlign: TextAlign.center,
+                              style: GoogleFonts.barlow(
+                                fontSize: 74.0,
+                                wordSpacing: 1,
+                                letterSpacing: 1,
+                                fontWeight: FontWeight.normal,
+                                color: ColorPalette.principal,
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(20.0),
-                        child: Center(
-                          child: Text(
-                            "Aunque se apague el smartphone, el servidor de AlertFriends ha registrado tu última ubicación y emitirá una alerta a tu contacto",
-                            textAlign: TextAlign.center,
-                            style: textNormal14White(),
+                        Padding(
+                          padding: const EdgeInsets.all(20.0),
+                          child: Center(
+                            child: Text(
+                              "Aunque se apague el smartphone, el servidor de AlertFriends ha registrado tu última ubicación y emitirá una alerta a tu contacto",
+                              textAlign: TextAlign.center,
+                              style: textNormal14White(),
+                            ),
                           ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),

@@ -4,10 +4,13 @@ import 'package:get/get.dart';
 import 'package:ifeelefine/Common/Constant.dart';
 import 'package:ifeelefine/Common/manager_alerts.dart';
 import 'package:ifeelefine/Common/utils.dart';
+import 'package:ifeelefine/Data/hive_constant_adapterInit.dart';
 import 'package:ifeelefine/Data/hive_data.dart';
 import 'package:ifeelefine/Model/ApiRest/ContactApi.dart';
 import 'package:ifeelefine/Model/contact.dart';
 import 'package:ifeelefine/Page/Contact/Service/contactService.dart';
+import 'package:ifeelefine/main.dart';
+import 'package:notification_center/notification_center.dart';
 import 'mainController.dart';
 
 class ContactUserController extends GetxController {
@@ -28,10 +31,13 @@ class ContactUserController extends GetxController {
   }
 
   RxList<ContactBD> listContactDb = <ContactBD>[].obs;
+
   Future<List<ContactBD>> getAllContact() async {
+    await inicializeHiveBD();
     final listContact = await const HiveData().listUserContactbd;
     if (listContact.isNotEmpty) {
       listContactDb.value = listContact;
+
       return listContact;
     } else {
       return [];
@@ -45,7 +51,7 @@ class ContactUserController extends GetxController {
       String timeCall,
       String timeWhatsapp) async {
     try {
-      var contactBD = ContactBD("", null, "", "", "", "", "", "Pendiente");
+      var contactBD = ContactBD("", null, "", "", "", "", "", "PENDING");
 
       for (var element in listContact) {
         contactBD.displayName = element.displayName;
@@ -73,14 +79,15 @@ class ContactUserController extends GetxController {
     contextTemp = context;
     try {
       final MainController mainController = Get.put(MainController());
-      var user = await mainController.getUserData();
+      user = await mainController.getUserData();
+
       var response = await contactServ
-          .saveContact(convertToApi(contactBD, user.telephone));
+          .saveContact(convertToApi(contactBD, user!.telephone));
 
       var url = await contactServ.getUrlPhoto(
-          user.telephone.contains('+34')
-              ? user.telephone.replaceAll("+34", "").replaceAll(" ", "")
-              : user.telephone.replaceAll(" ", ""),
+          user!.telephone.contains('+34')
+              ? user!.telephone.replaceAll("+34", "").replaceAll(" ", "")
+              : user!.telephone.replaceAll(" ", ""),
           contactBD.phones.contains('+34')
               ? contactBD.phones.replaceAll("+34", "").replaceAll(" ", "")
               : contactBD.phones.replaceAll(" ", ""));
@@ -111,8 +118,9 @@ class ContactUserController extends GetxController {
       contact.timeWhatsapp = smsTime;
 
       final MainController mainController = Get.put(MainController());
-      var user = await mainController.getUserData();
-      ContactApi contactApi = convertToApi(contact, user.telephone);
+      user = await mainController.getUserData();
+
+      ContactApi contactApi = convertToApi(contact, user!.telephone);
 
       var response = await contactServ.updateContact(contactApi);
 
@@ -123,11 +131,13 @@ class ContactUserController extends GetxController {
   }
 
   Future<void> updateContactStatus(String phones, String status) async {
+    await inicializeHiveBD();
     var contact = await const HiveData().getContactBD(phones);
 
     if (contact != null) {
       contact.requestStatus = status;
       await const HiveData().updateContact(contact);
+      NotificationCenter().notify('getContact');
     }
   }
 

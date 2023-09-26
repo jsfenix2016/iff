@@ -264,15 +264,21 @@ class _RowContactState extends State<RowContact> {
                         ),
                       ),
                     ),
-                    Text(
-                      widget.contactRisk.name,
-                      textAlign: TextAlign.center,
-                      style: GoogleFonts.barlow(
-                        fontSize: 16.0,
-                        wordSpacing: 1,
-                        letterSpacing: 0.001,
-                        fontWeight: FontWeight.w700,
-                        color: Colors.white,
+                    Container(
+                      width: 200,
+                      child: Text(
+                        widget.contactRisk.name,
+                        textAlign: TextAlign.left,
+                        overflow: TextOverflow.ellipsis,
+                        softWrap: true,
+                        maxLines: 1,
+                        style: GoogleFonts.barlow(
+                          fontSize: 16.0,
+                          wordSpacing: 1,
+                          letterSpacing: 0.001,
+                          fontWeight: FontWeight.w700,
+                          color: Colors.white,
+                        ),
                       ),
                     ),
                   ],

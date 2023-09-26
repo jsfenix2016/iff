@@ -6,6 +6,7 @@ import 'package:ifeelefine/Page/LogActivity/PageView/logActivity_page.dart';
 
 import 'package:ifeelefine/Page/Risk/DateRisk/ListDateRisk/PageView/riskDatePage.dart';
 import 'package:ifeelefine/Page/Risk/ZoneRisk/ListContactZoneRisk/PageView/zoneRisk.dart';
+import 'package:ifeelefine/main.dart';
 
 class CustomNavbar extends StatefulWidget {
   const CustomNavbar({super.key});
@@ -19,7 +20,7 @@ class _CustomNavbarState extends State<CustomNavbar> {
   Widget build(BuildContext context) {
     final Size size = MediaQuery.of(context).size;
     return Positioned(
-      bottom: -1,
+      bottom: -5,
       left: 0,
       child: Container(
         color: Colors.transparent,

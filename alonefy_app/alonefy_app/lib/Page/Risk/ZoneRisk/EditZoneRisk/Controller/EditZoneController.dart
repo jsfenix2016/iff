@@ -46,7 +46,6 @@ class EditZoneController extends GetxController {
       if (contactZoneRiskApi != null) {
         contact.id = contactZoneRiskApi.id;
         await const HiveDataRisk().saveContactZoneRisk(contact);
-        NotificationCenter().notify('getContactZoneRisk');
 
         return true;
       } else {
@@ -76,7 +75,6 @@ class EditZoneController extends GetxController {
       }
 
       var save = await const HiveDataRisk().updateContactZoneRisk(contact);
-      NotificationCenter().notify('getContactZoneRisk');
 
       return true;
     } catch (error) {

@@ -42,24 +42,27 @@ class _StatesListScreenState extends State<StatesListScreen> {
               hintText: "Buscar estado", hintStyle: textNomral18White()),
         ),
       ),
-      body: Container(
-        decoration: decorationCustom(),
-        padding: const EdgeInsets.only(left: 15.0, right: 15.0),
-        child: ListView.builder(
-          itemCount: filteredCountries.length,
-          itemBuilder: (context, index) {
-            String states = filteredCountries[index];
-            return ListTile(
-              title: Text(
-                states,
-                style: textNomral18White(),
-              ),
-              onTap: () {
-                widget.onStatesSelected(states);
-                Navigator.pop(context); // Volver a la pantalla anterior
-              },
-            );
-          },
+      body: MediaQuery(
+        data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
+        child: Container(
+          decoration: decorationCustom(),
+          padding: const EdgeInsets.only(left: 15.0, right: 15.0),
+          child: ListView.builder(
+            itemCount: filteredCountries.length,
+            itemBuilder: (context, index) {
+              String states = filteredCountries[index];
+              return ListTile(
+                title: Text(
+                  states,
+                  style: textNomral18White(),
+                ),
+                onTap: () {
+                  widget.onStatesSelected(states);
+                  Navigator.pop(context); // Volver a la pantalla anterior
+                },
+              );
+            },
+          ),
         ),
       ),
     );

@@ -17,6 +17,38 @@ class PreferenceUser {
     _prefs.reload();
   }
 
+  get getlistConfigPage {
+    return _prefs.getStringList('listConfigPage') ?? [];
+  }
+
+  set setlistConfigPage(List<String> value) {
+    _prefs.setStringList('listConfigPage', value);
+  }
+
+  get getTimerCancelZone {
+    return _prefs.getInt('timerCancelZone') ?? 30;
+  }
+
+  set setTimerCancelZone(int value) {
+    _prefs.setInt('timerCancelZone', value);
+  }
+
+  get getlistTaskIdsCancel {
+    return _prefs.getStringList('listTaskIdsCancel') ?? [];
+  }
+
+  set setlistTaskIdsCancel(List<String> value) {
+    _prefs.setStringList('listTaskIdsCancel', value);
+  }
+
+  get getIsSelectContactRisk {
+    return _prefs.getInt('idContactRisk') ?? -1;
+  }
+
+  set setSelectContactRisk(int value) {
+    _prefs.setInt('idContactRisk', value);
+  }
+
   get onBoarding {
     return _prefs.getBool('onboard') ?? false;
   }
@@ -281,7 +313,7 @@ class PreferenceUser {
   }
 
   get getNotificationAudio {
-    return _prefs.getString('NotificationAudio') ?? '';
+    return _prefs.getString('NotificationAudio') ?? 'notification9158194';
   }
 
   Future<void> saveLastScreenRoute(String routeName) async {

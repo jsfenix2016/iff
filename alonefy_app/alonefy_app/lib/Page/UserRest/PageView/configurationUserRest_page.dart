@@ -1,11 +1,12 @@
 import 'package:get/get.dart';
-import 'package:google_fonts/google_fonts.dart';
+
 import 'package:ifeelefine/Common/Constant.dart';
-import 'package:ifeelefine/Common/colorsPalette.dart';
+
 import 'package:ifeelefine/Common/manager_alerts.dart';
 import 'package:ifeelefine/Common/text_style_font.dart';
 
 import 'package:ifeelefine/Model/restdaybd.dart';
+import 'package:ifeelefine/Page/PreviewActivitiesFilteredByDate/PageView/previewActivitiesByDate_page.dart';
 
 import 'package:ifeelefine/Page/UserRest/Controller/userRestController.dart';
 
@@ -17,6 +18,7 @@ import 'package:ifeelefine/Utils/Widgets/elevatedButtonFilling.dart';
 import 'package:ifeelefine/Utils/Widgets/listDayweekCustom.dart';
 import 'package:ifeelefine/Utils/Widgets/widgetLogo.dart';
 import 'package:ifeelefine/Common/decoration_custom.dart';
+import 'package:ifeelefine/main.dart';
 
 class UserRestPage extends StatefulWidget {
   const UserRestPage({super.key});
@@ -28,8 +30,8 @@ class UserRestPage extends StatefulWidget {
 class _UserRestPageState extends State<UserRestPage> {
   final UserRestController userRestVC = Get.put(UserRestController());
 
-  late String timeLblAM = "00:00"; //AM
-  late String timeLblPM = "00:00"; //PM
+  late String timeLblAM = "00:00:00"; //AM
+  late String timeLblPM = "00:00:00"; //PM
 
   int indexFile = 0;
   int noSelectDay = 1;
@@ -45,6 +47,7 @@ class _UserRestPageState extends State<UserRestPage> {
     // restDays.add(tempDicRest);
     _prefs.saveLastScreenRoute("restDay");
     super.initState();
+    starTap();
     if (tempRestDays.isEmpty) {
       for (var element in Constant.tempListShortDay) {
         restDay = RestDayBD(
@@ -64,144 +67,148 @@ class _UserRestPageState extends State<UserRestPage> {
     final size = MediaQuery.of(context).size;
 
     return Scaffold(
-      body: Container(
-        decoration: decorationCustom(),
-        width: size.width,
-        height: size.height,
-        child: SizedBox(
-          child: SafeArea(
-            child: Stack(
-              children: <Widget>[
-                Container(
-                  color: Colors.transparent,
-                  width: size.width,
-                  height: size.height - 140,
-                  child: ListView(
-                    children: [
-                      Column(
-                        children: const [
-                          SizedBox(
-                            height: 36,
-                          ),
-                          WidgetLogoApp(),
-                        ],
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(
-                            top: 32.0, left: 54, right: 54, bottom: 20),
-                        child: Container(
-                          color: Colors.transparent,
-                          width: 252,
-                          height: 75,
-                          child: Text(
-                            Constant.hoursSleepAndWakeup,
-                            textAlign: TextAlign.center,
-                            style: textBold24PrincipalColor(),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      Container(
-                        color: Colors.transparent,
-                        width: size.width,
-                        height: 230 * noSelectDay.toDouble(),
-                        child: ListView.builder(
-                          physics: const NeverScrollableScrollPhysics(),
-                          shrinkWrap: true,
-                          itemCount: noSelectDay,
-                          itemBuilder: (BuildContext context, int index) {
-                            return Column(
-                              mainAxisSize: MainAxisSize.max,
-                              key: Key(index.toString()),
-                              children: [
-                                ListDayWeek(
-                                  listRest: tempRestDays,
-                                  newIndex: index,
-                                  onChanged: (value) {
-                                    var temp = tempRestDays[value];
-                                    temp.selection = index;
-
-                                    temp.isSelect =
-                                        (temp.isSelect == false) ? true : false;
-
-                                    tempRestDays.remove(temp);
-                                    tempRestDays.insert(value, temp);
-
-                                    indexFile = index;
-                                    setState(() {});
-                                  },
-                                ),
-                                RowSelectTimer(
-                                  index: index,
-                                  timeLblAM: timeLblAM, //AM
-                                  timeLblPM: timeLblPM, //PM
-                                  onChanged: (value) {
-                                    timeLblAM = value.timeWakeup;
-                                    timeLblPM = value.timeSleep;
-                                    indexFile = index;
-
-                                    for (var element in tempRestDays) {
-                                      if (element.selection == index) {
-                                        element.timeWakeup = timeLblAM;
-                                        element.timeSleep = timeLblPM;
-                                        tempRestDays[index].timeWakeup =
-                                            timeLblAM;
-                                        tempRestDays[index].timeSleep =
-                                            timeLblPM;
-                                      }
-                                    }
-                                    setState(() {});
-                                  },
-                                ),
-                                const SizedBox(
-                                  height: 30,
-                                ),
-                              ],
-                            );
-                          },
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                Positioned(
-                  bottom: 55,
-                  child: SizedBox(
+      body: MediaQuery(
+        data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
+        child: Container(
+          decoration: decorationCustom(),
+          width: size.width,
+          height: size.height,
+          child: SizedBox(
+            child: SafeArea(
+              child: Stack(
+                children: <Widget>[
+                  Container(
+                    color: Colors.transparent,
                     width: size.width,
-                    child: Center(
-                      child: ElevateButtonFilling(
-                        showIcon: false,
-                        onChanged: (value) {
-                          btnAdd();
-                        },
-                        mensaje: "Agregar",
-                        img: '',
-                      ),
+                    height: size.height - 140,
+                    child: ListView(
+                      children: [
+                        const Column(
+                          children: [
+                            SizedBox(
+                              height: 36,
+                            ),
+                            WidgetLogoApp(),
+                          ],
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(
+                              top: 32.0, left: 54, right: 54, bottom: 20),
+                          child: Container(
+                            color: Colors.transparent,
+                            width: 252,
+                            height: 75,
+                            child: Text(
+                              Constant.hoursSleepAndWakeup,
+                              textAlign: TextAlign.center,
+                              style: textBold24PrincipalColor(),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        Container(
+                          color: Colors.transparent,
+                          width: size.width,
+                          height: 230 * noSelectDay.toDouble(),
+                          child: ListView.builder(
+                            physics: const NeverScrollableScrollPhysics(),
+                            shrinkWrap: true,
+                            itemCount: noSelectDay,
+                            itemBuilder: (BuildContext context, int index) {
+                              return Column(
+                                mainAxisSize: MainAxisSize.max,
+                                key: Key(index.toString()),
+                                children: [
+                                  ListDayWeek(
+                                    listRest: tempRestDays,
+                                    newIndex: index,
+                                    onChanged: (value) {
+                                      var temp = tempRestDays[value];
+                                      temp.selection = index;
+
+                                      temp.isSelect = (temp.isSelect == false)
+                                          ? true
+                                          : false;
+
+                                      tempRestDays.remove(temp);
+                                      tempRestDays.insert(value, temp);
+
+                                      indexFile = index;
+                                      setState(() {});
+                                    },
+                                  ),
+                                  RowSelectTimer(
+                                    index: index,
+                                    timeLblAM: timeLblAM, //AM
+                                    timeLblPM: timeLblPM, //PM
+                                    onChanged: (value) {
+                                      timeLblAM = value.timeWakeup;
+                                      timeLblPM = value.timeSleep;
+                                      indexFile = index;
+
+                                      for (var element in tempRestDays) {
+                                        if (element.selection == index) {
+                                          element.timeWakeup = timeLblAM;
+                                          element.timeSleep = timeLblPM;
+                                          tempRestDays[index].timeWakeup =
+                                              timeLblAM;
+                                          tempRestDays[index].timeSleep =
+                                              timeLblPM;
+                                        }
+                                      }
+                                      setState(() {});
+                                    },
+                                  ),
+                                  const SizedBox(
+                                    height: 30,
+                                  ),
+                                ],
+                              );
+                            },
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                ),
-                Positioned(
-                  bottom: 5,
-                  child: Visibility(
-                    visible: (isVisibleBtn) ? true : false,
+                  Positioned(
+                    bottom: 55,
                     child: SizedBox(
                       width: size.width,
                       child: Center(
                         child: ElevateButtonFilling(
                           showIcon: false,
                           onChanged: (value) {
-                            btnContinue();
+                            btnAdd();
                           },
-                          mensaje: Constant.continueTxt,
+                          mensaje: "Agregar",
                           img: '',
                         ),
                       ),
                     ),
                   ),
-                ),
-              ],
+                  Positioned(
+                    bottom: 5,
+                    child: Visibility(
+                      visible: (isVisibleBtn) ? true : false,
+                      child: SizedBox(
+                        width: size.width,
+                        child: Center(
+                          child: ElevateButtonFilling(
+                            showIcon: false,
+                            onChanged: (value) {
+                              btnContinue();
+                            },
+                            mensaje: Constant.continueTxt,
+                            img: '',
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ),
@@ -260,15 +267,14 @@ class _UserRestPageState extends State<UserRestPage> {
     int id = await userRestVC.saveUserListRestTime(context, tempRestDays);
 
     if (id != -1) {
+      List<String>? temp = [];
+      Future.sync(() async => {
+            temp = await _prefs.getlistConfigPage,
+            temp!.add("restDay"),
+            _prefs.setlistConfigPage = temp!
+          });
       // ignore: use_build_context_synchronously
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => const PreviewRestTimePage(
-            isMenu: false,
-          ),
-        ),
-      );
+      Get.offAll(const PreviewActivitiesByDate(isMenu: false));
     }
   }
 

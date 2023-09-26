@@ -12,6 +12,7 @@ import 'package:ifeelefine/Page/Disamble/Pageview/disambleIfeelfine_page.dart';
 
 import 'package:ifeelefine/Utils/Widgets/elevatedButtonFilling.dart';
 import 'package:ifeelefine/Utils/Widgets/loading_page.dart';
+import 'package:ifeelefine/main.dart';
 
 import 'package:notification_center/notification_center.dart';
 
@@ -57,6 +58,7 @@ class _AlertsPageState extends State<AlertsPage> {
   @override
   void initState() {
     getLog();
+    starTap();
     super.initState();
   }
 
@@ -67,24 +69,35 @@ class _AlertsPageState extends State<AlertsPage> {
     RedirectViewNotifier.setStoredContext(context);
     return LoadingIndicator(
       isLoading: _isLoading,
-      child: Scaffold(
-        key: scaffoldKey,
-        appBar: AppBar(
-          backgroundColor: Colors.brown,
-          title: Text(
-            "Alertas",
-            style: textForTitleApp(),
+      child: WillPopScope(
+        onWillPop: () async {
+          // Aquí puedes ejecutar acciones personalizadas antes de volver atrás
+          // Por ejemplo, mostrar un diálogo de confirmación
+          starTap();
+          return true;
+        },
+        child: Scaffold(
+          key: scaffoldKey,
+          appBar: AppBar(
+            backgroundColor: Colors.brown,
+            title: Text(
+              "Alertas",
+              style: textForTitleApp(),
+            ),
           ),
-        ),
-        body: Container(
-          decoration: decorationCustom(),
-          width: size.width,
-          height: size.height,
-          child: ListAlert(
-            listData: listData,
-            onChangedDelete: (List<LogAlertsBD> value) {
-              deleteForDayMov(context, value);
-            },
+          body: MediaQuery(
+            data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
+            child: Container(
+              decoration: decorationCustom2(),
+              width: size.width,
+              height: size.height,
+              child: ListAlert(
+                listData: listData,
+                onChangedDelete: (List<LogAlertsBD> value) {
+                  deleteForDayMov(context, value);
+                },
+              ),
+            ),
           ),
         ),
       ),

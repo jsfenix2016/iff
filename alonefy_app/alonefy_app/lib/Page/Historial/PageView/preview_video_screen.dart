@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:ifeelefine/Common/notificationService.dart';
 import 'package:ifeelefine/Common/text_style_font.dart';
 import 'package:ifeelefine/Utils/Widgets/video_player.dart';
+import 'package:ifeelefine/main.dart';
 import 'package:video_player/video_player.dart';
 
 class PreviewVideoPage extends StatefulWidget {
@@ -24,6 +25,7 @@ class _PreviewVideoState extends State<PreviewVideoPage>
   @override
   void initState() {
     super.initState();
+    starTap();
   }
 
   @override
@@ -37,11 +39,14 @@ class _PreviewVideoState extends State<PreviewVideoPage>
         backgroundColor: Colors.black26,
       ),
       extendBodyBehindAppBar: true,
-      body: VideoPlayerCustom(
-          filePath: File(widget.filePath).path,
-          initPlay: true,
-          isVisibleControl: true,
-          isLocalVideo: true),
+      body: MediaQuery(
+        data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
+        child: VideoPlayerCustom(
+            filePath: File(widget.filePath).path,
+            initPlay: true,
+            isVisibleControl: true,
+            isLocalVideo: true),
+      ),
     );
   }
 }

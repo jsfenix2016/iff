@@ -21,13 +21,14 @@ class DisambleController extends GetxController {
 
     await prefs.initPrefs();
     prefs.setStartDateTimeDisambleIFF = datetime;
+
     final MainController mainController = Get.put(MainController());
-    var user = await mainController.getUserData();
+    user = await mainController.getUserData();
 
     var response = await DeactivateService().saveData(
-        user.telephone.contains('+34')
-            ? user.telephone.replaceAll("+34", "").replaceAll(" ", "")
-            : user.telephone.replaceAll(" ", ""),
+        user!.telephone.contains('+34')
+            ? user!.telephone.replaceAll("+34", "").replaceAll(" ", "")
+            : user!.telephone.replaceAll(" ", ""),
         deactivateTimeToMinutes(deactivateTime));
 
     if (response) {

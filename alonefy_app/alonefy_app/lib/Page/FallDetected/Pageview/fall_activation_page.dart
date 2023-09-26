@@ -17,6 +17,7 @@ import 'package:ifeelefine/Utils/Widgets/elevatedButtonFilling.dart';
 import 'package:ifeelefine/Utils/Widgets/widgetLogo.dart';
 
 import 'package:ifeelefine/Common/decoration_custom.dart';
+import 'package:ifeelefine/main.dart';
 import 'package:slidable_button/slidable_button.dart';
 
 class FallActivationPage extends StatefulWidget {
@@ -38,6 +39,8 @@ class _FallActivationPageState extends State<FallActivationPage> {
   @override
   void initState() {
     super.initState();
+    _prefs.saveLastScreenRoute("fallActivation");
+    starTap();
   }
 
   Widget getHorizontalSlide() {
@@ -74,6 +77,14 @@ class _FallActivationPageState extends State<FallActivationPage> {
                 _prefs.setUserPremium = true;
                 var premiumController = Get.put(PremiumController());
                 premiumController.updatePremiumAPI(true);
+                List<String>? temp = [];
+                Future.sync(() async => {
+                      temp = await _prefs.getlistConfigPage,
+                      temp!.add("fallActivation"),
+                      _prefs.setlistConfigPage = temp!
+                    });
+
+                setState(() {});
               }
             });
 
@@ -124,7 +135,7 @@ class _FallActivationPageState extends State<FallActivationPage> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    double he = size.height;
+
     return Scaffold(
       appBar: isMenu
           ? AppBar(
@@ -135,70 +146,74 @@ class _FallActivationPageState extends State<FallActivationPage> {
               ),
             )
           : null,
-      body: Container(
-        decoration: decorationCustom(),
-        height: size.height,
-        width: size.width,
-        child: SingleChildScrollView(
-          child: SafeArea(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const SizedBox(
-                  height: 36,
-                ),
-                Column(
-                  mainAxisSize: MainAxisSize.min,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const WidgetLogoApp(),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 20.0),
-                      child: Text(
-                        'Detectar caídas.',
-                        textAlign: TextAlign.center,
-                        style: GoogleFonts.barlow(
-                          fontSize: 24.0,
-                          wordSpacing: 1,
-                          letterSpacing: 0.001,
-                          fontWeight: FontWeight.w500,
-                          color: Colors.white,
+      body: MediaQuery(
+        data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
+        child: Container(
+          decoration: decorationCustom(),
+          height: size.height,
+          width: size.width,
+          child: SingleChildScrollView(
+            child: SafeArea(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const SizedBox(
+                    height: 36,
+                  ),
+                  Column(
+                    mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const WidgetLogoApp(),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 20.0),
+                        child: Text(
+                          'Detectar caídas.',
+                          textAlign: TextAlign.center,
+                          style: GoogleFonts.barlow(
+                            fontSize: 24.0,
+                            wordSpacing: 1,
+                            letterSpacing: 0.001,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.white,
+                          ),
                         ),
                       ),
-                    ),
-                    Container(
-                      color: Colors.transparent,
-                      height: 330,
-                      width: 330,
-                      child: Image.asset(
-                        fit: BoxFit.fill,
-                        'assets/images/Group 1006.png',
+                      Container(
+                        color: Colors.transparent,
+                        height: 301,
+                        width: 315,
+                        child: Image.asset(
+                          fit: BoxFit.cover,
+                          'assets/images/Group 1006.png',
+                        ),
                       ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
-                      child: getHorizontalSlide(),
-                    ),
-                  ],
-                ),
-                const SizedBox(
-                  height: 10,
-                ),
-                ElevateButtonFilling(
-                  showIcon: false,
-                  onChanged: (value) {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const AddContactPage(),
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
+                        child: getHorizontalSlide(),
                       ),
-                    );
-                  },
-                  mensaje: 'Continuar',
-                  img: '',
-                ),
-              ],
+                    ],
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  ElevateButtonFilling(
+                    showIcon: false,
+                    onChanged: (value) {
+                      Get.offAll(const AddContactPage());
+                      // Navigator.push(
+                      //   context,
+                      //   MaterialPageRoute(
+                      //     builder: (context) => const AddContactPage(),
+                      //   ),
+                      // );
+                    },
+                    mensaje: 'Continuar',
+                    img: '',
+                  ),
+                ],
+              ),
             ),
           ),
         ),

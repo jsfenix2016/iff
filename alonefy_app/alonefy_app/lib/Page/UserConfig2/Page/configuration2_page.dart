@@ -35,6 +35,7 @@ import 'package:country_state_city_picker/model/select_status_model.dart'
     as StatusModel;
 
 import 'package:ifeelefine/Common/decoration_custom.dart';
+import 'package:ifeelefine/main.dart';
 
 class UserConfigPage2 extends StatefulWidget {
   const UserConfigPage2({super.key, required this.userbd});
@@ -75,13 +76,19 @@ class _UserConfigPageState2 extends State<UserConfigPage2> {
 
     _prefs.saveLastScreenRoute("config2");
     super.initState();
-
+    contactList();
     _getAge();
+    starTap();
   }
 
   Future<UserBD> _getUserData() async {
     userbd = await userConfigVC.getUserData();
+
     return userbd!;
+  }
+
+  void contactList() async {
+    contactlist = await getContacts(context);
   }
 
   Future<Map<String, String>> _getAge() async {
@@ -176,173 +183,176 @@ class _UserConfigPageState2 extends State<UserConfigPage2> {
   Widget build(BuildContext context) {
     RedirectViewNotifier.setStoredContext(context);
     return Scaffold(
-      body: Container(
-        decoration: decorationCustom(),
-        padding: const EdgeInsets.only(left: 15.0, right: 15.0),
-        child: SizedBox.expand(
-          child: SingleChildScrollView(
-            keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-            child: SafeArea(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  SizedBox(height: 34),
-                  const WidgetLogoApp(),
-                  SizedBox(height: 34),
-                  CustomDropdownMaritalState(
-                    instance: Constant.gender,
-                    mensaje: Constant.selectGender,
-                    isVisible: true,
-                    onChanged: (value) {
-                      user?.gender = value;
-                    },
-                  ),
-                  const SizedBox(height: 10),
-                  CustomDropdownMaritalState(
-                    instance: ages,
-                    mensaje: Constant.age,
-                    isVisible: true,
-                    onChanged: (value) {
-                      user?.age = value;
-                    },
-                  ),
-                  const SizedBox(height: 10),
-                  CustomDropdownMaritalState(
-                    instance: Constant.maritalState,
-                    mensaje: Constant.maritalStatus,
-                    isVisible: true,
-                    onChanged: (value) {
-                      user?.maritalStatus = value;
-                    },
-                  ),
-                  const SizedBox(height: 10),
-                  CustomDropdownStylelive(
-                    instance: Constant.lifeStyle,
-                    mensaje: Constant.styleLive,
-                    isVisible: true,
-                    onChanged: (value) {
-                      user?.styleLife = value;
-                    },
-                  ),
+      body: MediaQuery(
+        data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
+        child: Container(
+          decoration: decorationCustom(),
+          padding: const EdgeInsets.only(left: 15.0, right: 15.0),
+          child: SizedBox.expand(
+            child: SingleChildScrollView(
+              keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+              child: SafeArea(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    SizedBox(height: 34),
+                    const WidgetLogoApp(),
+                    SizedBox(height: 34),
+                    CustomDropdownMaritalState(
+                      instance: Constant.gender,
+                      mensaje: Constant.selectGender,
+                      isVisible: true,
+                      onChanged: (value) {
+                        user?.gender = value;
+                      },
+                    ),
+                    const SizedBox(height: 10),
+                    CustomDropdownMaritalState(
+                      instance: ages,
+                      mensaje: Constant.age,
+                      isVisible: true,
+                      onChanged: (value) {
+                        user?.age = value;
+                      },
+                    ),
+                    const SizedBox(height: 10),
+                    CustomDropdownMaritalState(
+                      instance: Constant.maritalState,
+                      mensaje: Constant.maritalStatus,
+                      isVisible: true,
+                      onChanged: (value) {
+                        user?.maritalStatus = value;
+                      },
+                    ),
+                    const SizedBox(height: 10),
+                    CustomDropdownStylelive(
+                      instance: Constant.lifeStyle,
+                      mensaje: Constant.styleLive,
+                      isVisible: true,
+                      onChanged: (value) {
+                        user?.styleLife = value;
+                      },
+                    ),
 
-                  // LocationCustom(
-                  //   title: "Coloca tu dirección",
-                  //   isVisible: true,
-                  //   onChange: (String value) {
-                  //     print(value);
-                  //     user?.country = value != '' ? value : '';
-                  //     // userModel.localizacion = value != '' ? value : '';
-                  //   },
-                  // ),
-                  const SizedBox(height: 10),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: DecoratedBox(
-                      decoration: BoxDecoration(
-                        border: Border.all(
-                          color: ColorPalette.principal,
-                          width: 1,
+                    // LocationCustom(
+                    //   title: "Coloca tu dirección",
+                    //   isVisible: true,
+                    //   onChange: (String value) {
+                    //     print(value);
+                    //     user?.country = value != '' ? value : '';
+                    //     // userModel.localizacion = value != '' ? value : '';
+                    //   },
+                    // ),
+                    const SizedBox(height: 10),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: DecoratedBox(
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                            color: ColorPalette.principal,
+                            width: 1,
+                          ),
+                          borderRadius: BorderRadius.circular(100),
                         ),
-                        borderRadius: BorderRadius.circular(100),
-                      ),
-                      child: GestureDetector(
-                        onTap: () => _showCountryListScreen(context),
-                        child: SizedBox(
-                          width: 350,
-                          height: 52,
-                          child: Padding(
-                            padding: const EdgeInsets.only(
-                                left: 8.0, right: 16, top: 14),
-                            child: Text(
-                              selectCountry.isEmpty
-                                  ? "Selecciona el país"
-                                  : selectCountry.obs.value,
-                              style: textNormal16White(),
+                        child: GestureDetector(
+                          onTap: () => _showCountryListScreen(context),
+                          child: SizedBox(
+                            width: 350,
+                            height: 52,
+                            child: Padding(
+                              padding: const EdgeInsets.only(
+                                  left: 8.0, right: 16, top: 14),
+                              child: Text(
+                                selectCountry.isEmpty
+                                    ? "Selecciona el país"
+                                    : selectCountry.obs.value,
+                                style: textNormal16White(),
+                              ),
                             ),
                           ),
                         ),
                       ),
                     ),
-                  ),
-                  const SizedBox(height: 10),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: DecoratedBox(
-                      decoration: BoxDecoration(
-                        border: Border.all(
-                          color: ColorPalette.principal,
-                          width: 1,
+                    const SizedBox(height: 10),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: DecoratedBox(
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                            color: ColorPalette.principal,
+                            width: 1,
+                          ),
+                          borderRadius: BorderRadius.circular(100),
                         ),
-                        borderRadius: BorderRadius.circular(100),
-                      ),
-                      child: GestureDetector(
-                        onTap: () => _showStateListScreen(context),
-                        child: SizedBox(
-                          width: 350,
-                          height: 52,
-                          child: Padding(
-                            padding: const EdgeInsets.only(
-                                left: 8.0, right: 16, top: 14),
-                            child: Text(
-                              selectState.isEmpty
-                                  ? "Selecciona la ciudad"
-                                  : selectState,
-                              style: textNormal16White(),
+                        child: GestureDetector(
+                          onTap: () => _showStateListScreen(context),
+                          child: SizedBox(
+                            width: 350,
+                            height: 52,
+                            child: Padding(
+                              padding: const EdgeInsets.only(
+                                  left: 8.0, right: 16, top: 14),
+                              child: Text(
+                                selectState.isEmpty
+                                    ? "Selecciona la ciudad"
+                                    : selectState,
+                                style: textNormal16White(),
+                              ),
                             ),
                           ),
                         ),
                       ),
                     ),
-                  ),
 
-                  const SizedBox(height: 10),
+                    const SizedBox(height: 10),
 
-                  const SizedBox(height: 20),
-                  // ElevateButtonCustomBorder(
-                  //     onChanged: ((value) {
-                  //       // free(false);
+                    const SizedBox(height: 20),
+                    // ElevateButtonCustomBorder(
+                    //     onChanged: ((value) {
+                    //       // free(false);
 
-                  //     }),
-                  //     mensaje: "Gratuito 30 días"),
-                  // const SizedBox(height: 20),
-                  // _createButtonPremium(),
-                  ElevatedButton(
-                    style: styleColorClear(),
-                    onPressed: (() {
-                      _submit(false);
-                    }),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: Colors.transparent,
-                        borderRadius:
-                            const BorderRadius.all(Radius.circular(100)),
-                        border: Border.all(color: ColorPalette.principal),
-                      ),
-                      height: 42,
-                      width: 250,
-                      child: Center(
-                        child: Text(
-                          "Prueba Premium gratis 30 días",
-                          style: GoogleFonts.barlow(
-                            fontSize: 16.0,
-                            wordSpacing: 1,
-                            letterSpacing: 0.005,
-                            fontWeight: FontWeight.w700,
-                            color: Colors.white,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                  ElevateButtonCustomBorder(
-                      onChanged: ((value) {
-                        free(true);
+                    //     }),
+                    //     mensaje: "Gratuito 30 días"),
+                    // const SizedBox(height: 20),
+                    // _createButtonPremium(),
+                    ElevatedButton(
+                      style: styleColorClear(),
+                      onPressed: (() {
+                        _submit(false);
                       }),
-                      mensaje: "Continuar"),
-                ],
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Colors.transparent,
+                          borderRadius:
+                              const BorderRadius.all(Radius.circular(100)),
+                          border: Border.all(color: ColorPalette.principal),
+                        ),
+                        height: 42,
+                        width: 250,
+                        child: Center(
+                          child: Text(
+                            "Prueba Premium gratis 30 días",
+                            style: GoogleFonts.barlow(
+                              fontSize: 16.0,
+                              wordSpacing: 1,
+                              letterSpacing: 0.005,
+                              fontWeight: FontWeight.w700,
+                              color: Colors.white,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    ElevateButtonCustomBorder(
+                        onChanged: ((value) {
+                          free(true);
+                        }),
+                        mensaje: "Continuar"),
+                  ],
+                ),
               ),
             ),
           ),
@@ -381,6 +391,12 @@ class _UserConfigPageState2 extends State<UserConfigPage2> {
     if (await updateUser()) {
       updateFirebaseToken();
 
+      List<String>? temp = [];
+      Future.sync(() async => {
+            temp = await _prefs.getlistConfigPage,
+            temp!.add("config2"),
+            _prefs.setlistConfigPage = temp!
+          });
       var premiumController = Get.put(PremiumController());
       premiumController.updatePremiumAPI(!isFree);
       _prefs.setUserFree = true;
@@ -410,6 +426,9 @@ class _UserConfigPageState2 extends State<UserConfigPage2> {
     if (await updateUser()) {
       updateFirebaseToken();
       _prefs.setUserPremium = true;
+      List<String> addList = ["config2"];
+      _prefs.setlistConfigPage = addList;
+
       Future.sync(
         () async => await Navigator.push(
           context,
@@ -427,7 +446,8 @@ class _UserConfigPageState2 extends State<UserConfigPage2> {
               _prefs.setUserFree = false;
               var premiumController = Get.put(PremiumController());
               premiumController.updatePremiumAPI(true);
-              Get.off(
+
+              Get.offAll(
                 () => UseMobilePage(userbd: userbd!),
               );
             }

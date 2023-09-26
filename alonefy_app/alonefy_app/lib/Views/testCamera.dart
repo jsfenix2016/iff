@@ -159,116 +159,119 @@ class _TestCameraPageState extends State<TestCameraPage> {
     final size = MediaQuery.of(context).size;
 
     return Scaffold(
-      body: Container(
-        decoration: decorationCustom(),
-        width: size.width,
-        height: size.height,
-        child: SizedBox(
-          child: Stack(
-            children: <Widget>[
-              SizedBox(
-                width: size.width,
-                height: size.height - 120,
-                child: ListView(
-                  children: [
-                    Positioned(
-                      top: 0,
-                      child: Padding(
-                        padding: const EdgeInsets.only(
-                            top: 128.0, left: 50, right: 50, bottom: 30),
-                        child: Container(
-                          color: Colors.transparent,
-                          width: size.width,
-                          child: Text(
-                            Constant.hoursSleepAndWakeup,
-                            textAlign: TextAlign.center,
-                            style: GoogleFonts.barlow(
-                              fontSize: 24.0,
-                              wordSpacing: 1,
-                              letterSpacing: 1.2,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
+      body: MediaQuery(
+        data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
+        child: Container(
+          decoration: decorationCustom(),
+          width: size.width,
+          height: size.height,
+          child: SizedBox(
+            child: Stack(
+              children: <Widget>[
+                SizedBox(
+                  width: size.width,
+                  height: size.height - 120,
+                  child: ListView(
+                    children: [
+                      Positioned(
+                        top: 0,
+                        child: Padding(
+                          padding: const EdgeInsets.only(
+                              top: 128.0, left: 50, right: 50, bottom: 30),
+                          child: Container(
+                            color: Colors.transparent,
+                            width: size.width,
+                            child: Text(
+                              Constant.hoursSleepAndWakeup,
+                              textAlign: TextAlign.center,
+                              style: GoogleFonts.barlow(
+                                fontSize: 24.0,
+                                wordSpacing: 1,
+                                letterSpacing: 1.2,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
                             ),
                           ),
                         ),
                       ),
-                    ),
-                    //                 if (_isLoading) {
-                    //    ;
-                    // } else {
-                    //    Center(
-                    //     child: Stack(
-                    //       alignment: Alignment.bottomCenter,
-                    //       children: [
-                    //         CameraPreview(_cameraController),
-                    //         Padding(
-                    //           padding: const EdgeInsets.all(0),
-                    //           child: FloatingActionButton(
-                    //             backgroundColor: Colors.red,
-                    //             child: Icon(_isRecording ? Icons.stop : Icons.circle),
-                    //             onPressed: () => _recordVideo(),
-                    //           ),
-                    //         ),
-                    //       ],
-                    //     ),
-                    //   );
-                    // },
-                    _isLoading
-                        ? Container(
-                            color: Colors.white,
-                            child: const Center(
-                              child: CircularProgressIndicator(),
-                            ),
-                          )
-                        : CameraPreview(firstCameraController),
-                    Container(
-                      height: 20,
-                      color: Colors.amber,
-                    ),
-                    _isLoading
-                        ? Container(
-                            color: Colors.white,
-                            child: const Center(
-                              child: CircularProgressIndicator(),
-                            ),
-                          )
-                        : CameraPreview(secondCameraController),
-                  ],
+                      //                 if (_isLoading) {
+                      //    ;
+                      // } else {
+                      //    Center(
+                      //     child: Stack(
+                      //       alignment: Alignment.bottomCenter,
+                      //       children: [
+                      //         CameraPreview(_cameraController),
+                      //         Padding(
+                      //           padding: const EdgeInsets.all(0),
+                      //           child: FloatingActionButton(
+                      //             backgroundColor: Colors.red,
+                      //             child: Icon(_isRecording ? Icons.stop : Icons.circle),
+                      //             onPressed: () => _recordVideo(),
+                      //           ),
+                      //         ),
+                      //       ],
+                      //     ),
+                      //   );
+                      // },
+                      _isLoading
+                          ? Container(
+                              color: Colors.white,
+                              child: const Center(
+                                child: CircularProgressIndicator(),
+                              ),
+                            )
+                          : CameraPreview(firstCameraController),
+                      Container(
+                        height: 20,
+                        color: Colors.amber,
+                      ),
+                      _isLoading
+                          ? Container(
+                              color: Colors.white,
+                              child: const Center(
+                                child: CircularProgressIndicator(),
+                              ),
+                            )
+                          : CameraPreview(secondCameraController),
+                    ],
+                  ),
                 ),
-              ),
-              Positioned(
-                bottom: 70,
-                child: SizedBox(
-                  width: size.width,
-                  child: Center(
-                    child: ElevateButtonFilling(
-                      onChanged: (value) {
-                        initCameras();
-                      },
-                      showIcon: false,
-                      mensaje: "Agregar",
-                      img: '',
+                Positioned(
+                  bottom: 70,
+                  child: SizedBox(
+                    width: size.width,
+                    child: Center(
+                      child: ElevateButtonFilling(
+                        onChanged: (value) {
+                          initCameras();
+                        },
+                        showIcon: false,
+                        mensaje: "Agregar",
+                        img: '',
+                      ),
                     ),
                   ),
                 ),
-              ),
-              Positioned(
-                bottom: 10,
-                child: SizedBox(
-                  width: size.width,
-                  child: Center(
-                    child: ElevateButtonFilling(
-                      onChanged: (value) {
-                        stopCameras();
-                      },
-                      mensaje: Constant.continueTxt,
-                      showIcon: false,
-                      img: '',
+                Positioned(
+                  bottom: 10,
+                  child: SizedBox(
+                    width: size.width,
+                    child: Center(
+                      child: ElevateButtonFilling(
+                        onChanged: (value) {
+                          stopCameras();
+                        },
+                        mensaje: Constant.continueTxt,
+                        showIcon: false,
+                        img: '',
+                      ),
                     ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

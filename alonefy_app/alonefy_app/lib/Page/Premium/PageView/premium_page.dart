@@ -10,6 +10,7 @@ import 'package:ifeelefine/Common/text_style_font.dart';
 import 'package:ifeelefine/Page/Premium/Controller/premium_controller.dart';
 import 'package:ifeelefine/Provider/prefencesUser.dart';
 import 'package:ifeelefine/Utils/Widgets/ImageGradient.dart';
+import 'package:ifeelefine/main.dart';
 import 'package:slidable_button/slidable_button.dart';
 
 import '../../../Common/colorsPalette.dart';
@@ -48,6 +49,7 @@ class _PremiumPageState extends State<PremiumPage> {
   @override
   void initState() {
     super.initState();
+    starTap();
     initPlatformState();
   }
 
@@ -85,140 +87,145 @@ class _PremiumPageState extends State<PremiumPage> {
           style: textForTitleApp(),
         ),
       ),
-      body: Container(
-        height: size.height,
-        decoration: decorationCustom(),
-        child: SingleChildScrollView(
-          child: Stack(
-            children: [
-              Container(
-                height: size.height,
-                width: size.width,
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: const Alignment(0, 1),
-                    colors: <Color>[
-                      Colors.black,
-                      Colors.black.withAlpha(450),
-                      Colors.transparent,
-                    ],
-                    tileMode: TileMode.mirror,
+      body: MediaQuery(
+        data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
+        child: Container(
+          height: size.height,
+          decoration: decorationCustom(),
+          child: SingleChildScrollView(
+            child: Stack(
+              children: [
+                Container(
+                  height: size.height,
+                  width: size.width,
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: const Alignment(0, 1),
+                      colors: <Color>[
+                        Colors.black,
+                        Colors.black.withAlpha(450),
+                        Colors.transparent,
+                      ],
+                      tileMode: TileMode.mirror,
+                    ),
                   ),
                 ),
-              ),
-              Positioned(
-                  top: 0,
+                Positioned(
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    //child: SizedBox(
+                    //  child: Image.asset(
+                    //    fit: BoxFit.fitWidth,
+                    //    'assets/images/${widget.img}',
+                    //    height: 360,
+                    //  ),
+                    //),
+                    child: getPremiumImageGradient(widget.img)),
+                Positioned(
+                  top: 24,
+                  left: 32,
+                  right: 32,
+                  child: Center(
+                    child: RichText(
+                      textAlign: TextAlign.center,
+                      text: TextSpan(
+                        text: widget.title,
+                        style: GoogleFonts.barlow(
+                          fontSize: 26.0,
+                          wordSpacing: 1,
+                          letterSpacing: 1.2,
+                          fontWeight: FontWeight.bold,
+                          color: ColorPalette.principal,
+                        ),
+                        children: <TextSpan>[
+                          TextSpan(
+                            text: widget.subtitle,
+                            style: GoogleFonts.barlow(
+                              fontSize: 24.0,
+                              wordSpacing: 1,
+                              letterSpacing: 0.001,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+
+                Positioned(
+                  top: 250,
                   left: 0,
                   right: 0,
-                  //child: SizedBox(
-                  //  child: Image.asset(
-                  //    fit: BoxFit.fitWidth,
-                  //    'assets/images/${widget.img}',
-                  //    height: 360,
-                  //  ),
-                  //),
-                  child: getPremiumImageGradient(widget.img)),
-              Positioned(
-                top: 24,
-                left: 32,
-                right: 32,
-                child: Center(
-                  child: RichText(
-                    textAlign: TextAlign.center,
-                    text: TextSpan(
-                      text: widget.title,
-                      style: GoogleFonts.barlow(
-                        fontSize: 26.0,
-                        wordSpacing: 1,
-                        letterSpacing: 1.2,
-                        fontWeight: FontWeight.bold,
-                        color: ColorPalette.principal,
-                      ),
-                      children: <TextSpan>[
-                        TextSpan(
-                          text: widget.subtitle,
-                          style: GoogleFonts.barlow(
-                            fontSize: 24.0,
-                            wordSpacing: 1,
-                            letterSpacing: 0.001,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
+                  child: Align(
+                    alignment: Alignment.center,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Container(
+                          width: 180,
+                          height: 111,
+                          decoration: const BoxDecoration(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(20)),
+                              color: ColorPalette.backgroundDarkGrey2),
+                          child: Column(
+                            children: [
+                              Padding(
+                                padding:
+                                    const EdgeInsets.fromLTRB(16, 12, 16, 0),
+                                child: Text(
+                                  'Seguridad ilimitada',
+                                  textAlign: TextAlign.center,
+                                  style: GoogleFonts.barlow(
+                                    fontSize: 22.0,
+                                    wordSpacing: 1,
+                                    letterSpacing: 1.2,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.black,
+                                  ),
+                                ),
+                              ),
+                              Padding(
+                                padding: EdgeInsets.fromLTRB(16, 8, 16, 0),
+                                child: Text(
+                                  _prefs.getPremiumPrice,
+                                  textAlign: TextAlign.center,
+                                  style: GoogleFonts.barlow(
+                                    fontSize: 24.0,
+                                    wordSpacing: 1,
+                                    letterSpacing: 1.2,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              )
+                            ],
                           ),
                         ),
+                        SizedBox(
+                          height: 40,
+                        ),
+                        getListOfComments(),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        Positioned(
+                            bottom: 30,
+                            left: 32,
+                            right: 32,
+                            child: getHorizontalSlide())
                       ],
                     ),
                   ),
                 ),
-              ),
-
-              Positioned(
-                top: 250,
-                left: 0,
-                right: 0,
-                child: Align(
-                  alignment: Alignment.center,
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Container(
-                        width: 180,
-                        height: 111,
-                        decoration: const BoxDecoration(
-                            borderRadius: BorderRadius.all(Radius.circular(20)),
-                            color: ColorPalette.backgroundDarkGrey2),
-                        child: Column(
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
-                              child: Text(
-                                'Seguridad ilimitada',
-                                textAlign: TextAlign.center,
-                                style: GoogleFonts.barlow(
-                                  fontSize: 22.0,
-                                  wordSpacing: 1,
-                                  letterSpacing: 1.2,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.black,
-                                ),
-                              ),
-                            ),
-                            Padding(
-                              padding: EdgeInsets.fromLTRB(16, 8, 16, 0),
-                              child: Text(
-                                _prefs.getPremiumPrice,
-                                textAlign: TextAlign.center,
-                                style: GoogleFonts.barlow(
-                                  fontSize: 24.0,
-                                  wordSpacing: 1,
-                                  letterSpacing: 1.2,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.white,
-                                ),
-                              ),
-                            )
-                          ],
-                        ),
-                      ),
-                      SizedBox(
-                        height: 40,
-                      ),
-                      getListOfComments(),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      Positioned(
-                          bottom: 30,
-                          left: 32,
-                          right: 32,
-                          child: getHorizontalSlide())
-                    ],
-                  ),
-                ),
-              ),
-              //getListOfComments(),
-            ],
+                //getListOfComments(),
+              ],
+            ),
           ),
         ),
       ),

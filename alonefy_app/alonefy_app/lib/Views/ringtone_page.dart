@@ -1,15 +1,12 @@
 import 'dart:io';
 
-import 'package:audioplayers/audioplayers.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
+
 import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:flutter_ringtone_player/flutter_ringtone_player.dart';
 
 import 'package:flutter_system_ringtones/flutter_system_ringtones_platform_interface.dart';
-import 'package:geolocator/geolocator.dart';
 
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ifeelefine/Common/colorsPalette.dart';
@@ -69,7 +66,6 @@ class _RingTonePageState extends State<RingTonePage>
     'biohazardalarm143105',
     'civildefensesiren128262',
     'clockalarm',
-    'clockalarm8761',
     'fanfaretrumpets6185',
     'friendrequest14878',
     'glockenspieltreasurevideogame6346',
@@ -86,7 +82,6 @@ class _RingTonePageState extends State<RingTonePage>
   ];
   List<bool> ringtonesEnabled = [];
 
-  AudioPlayer audioPlayer = AudioPlayer();
   bool isAudioPlayerPlaying = false;
   int indexAudioPlayer = -1;
 
@@ -95,14 +90,14 @@ class _RingTonePageState extends State<RingTonePage>
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     checkStoragePermission();
-
+    starTap();
     getRingtones();
   }
 
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
-    audioPlayer.pause();
+
     super.dispose();
   }
 
@@ -112,10 +107,8 @@ class _RingTonePageState extends State<RingTonePage>
       case AppLifecycleState.resumed:
         break;
       case AppLifecycleState.inactive:
-        audioPlayer.pause();
         break;
       case AppLifecycleState.paused:
-        audioPlayer.pause();
         break;
       case AppLifecycleState.detached:
         break;
@@ -178,6 +171,7 @@ class _RingTonePageState extends State<RingTonePage>
           ringtonesEnabled.add(false);
         }
         ringtonesTemp.add(element);
+        // ringtones.add(element);
         count++;
 
         if (count == 10 && !_prefs.getUserPremium) break;
@@ -206,15 +200,20 @@ class _RingTonePageState extends State<RingTonePage>
       soundResource, soundResource,
       playSound: true,
       visibility: NotificationVisibility.public,
-      // fullScreenIntent: true,
+      importance: Importance.max,
+      priority: Priority.high,
+
       groupKey: "testAudio",
+      enableVibration: true,
+      channelShowBadge: false,
       styleInformation: const BigTextStyleInformation(''),
-      fullScreenIntent: true,
+      // fullScreenIntent: false,
       largeIcon:
           const DrawableResourceAndroidBitmap('@drawable/splash_v2_screen'),
       ticker: 'Nuevo mensaje recibido',
       audioAttributesUsage: AudioAttributesUsage.notificationRingtone,
       sound: RawResourceAndroidNotificationSound(soundResource),
+      // sound: UriAndroidNotificationSound(soundResource),
     );
 
     var platformChannelSpecifics =
@@ -238,130 +237,136 @@ class _RingTonePageState extends State<RingTonePage>
           style: textForTitleApp(),
         ),
       ),
-      body: Container(
-        decoration: decorationCustom(),
-        width: size.width,
-        height: size.height,
-        child: Stack(
-          children: <Widget>[
-            Positioned(
-              top: 32,
-              width: size.width,
-              child: Center(
-                child: Text(
-                  'Cambiar sonido notificación',
-                  textAlign: TextAlign.center,
-                  style: GoogleFonts.barlow(
-                    fontSize: 22.0,
-                    wordSpacing: 1,
-                    letterSpacing: 1.2,
-                    fontWeight: FontWeight.w500,
-                    color: Colors.white,
+      body: MediaQuery(
+        data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
+        child: Container(
+          decoration: decorationCustom(),
+          width: size.width,
+          height: size.height,
+          child: Stack(
+            children: <Widget>[
+              Positioned(
+                top: 32,
+                width: size.width,
+                child: Center(
+                  child: Text(
+                    'Cambiar sonido notificación',
+                    textAlign: TextAlign.center,
+                    style: GoogleFonts.barlow(
+                      fontSize: 22.0,
+                      wordSpacing: 1,
+                      letterSpacing: 1.2,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.white,
+                    ),
                   ),
                 ),
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(0, 70, 0, 100),
-              child: ListView.builder(
-                itemCount: ringtonesTemp.length,
-                itemBuilder: (BuildContext context, int index) {
-                  return ListTile(
-                    contentPadding: const EdgeInsets.fromLTRB(40.0, 0, 40.0, 0),
-                    leading: Transform.scale(
-                      scale: 0.7,
-                      child: const Image(
-                        image: AssetImage("assets/images/audio_on.png"),
-                        fit: BoxFit.fill,
-                      ),
-                    ),
-                    trailing: Transform.scale(
-                      scale: 0.8,
-                      child: CupertinoSwitch(
-                        value: ringtonesEnabled[index],
-                        activeColor: ColorPalette.activeSwitch,
-                        trackColor: CupertinoColors.inactiveGray,
-                        onChanged: (bool? value) {
-                          setState(() {
-                            var count = 0;
-                            for (var ringtoneEnabled in ringtonesEnabled) {
-                              ringtonesEnabled[count] = false;
-                              count++;
-                            }
-                            ringtonesEnabled[index] = value!;
-                          });
-                        },
-                      ),
-                    ),
-                    title: Text(
-                        style: GoogleFonts.barlow(
-                          fontSize: 18.0,
-                          fontWeight: FontWeight.w700,
-                          color: CupertinoColors.white,
+              Padding(
+                padding: const EdgeInsets.fromLTRB(0, 70, 0, 100),
+                child: ListView.builder(
+                  itemCount: ringtonesTemp.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    return ListTile(
+                      contentPadding:
+                          const EdgeInsets.fromLTRB(40.0, 0, 40.0, 0),
+                      leading: Transform.scale(
+                        scale: 0.7,
+                        child: const Image(
+                          image: AssetImage("assets/images/audio_on.png"),
+                          fit: BoxFit.fill,
                         ),
-                        ringtonesTemp[index]),
-                    //subtitle: Text(ringtones[index].uri),
-                    onTap: () async {
-                      if (indexAudioPlayer == index) {
-                        // audioPlayer.pause();
-                        indexAudioPlayer = -1;
-                      } else {
-                        Future.delayed(const Duration(seconds: 8), () {
-                          playNotificationSound(ringtonesTemp[index]);
-                        });
-                        setState(() {});
+                      ),
+                      trailing: Transform.scale(
+                        scale: 0.8,
+                        child: CupertinoSwitch(
+                          value: ringtonesEnabled[index],
+                          activeColor: ColorPalette.activeSwitch,
+                          trackColor: CupertinoColors.inactiveGray,
+                          onChanged: (bool? value) {
+                            setState(() {
+                              var count = 0;
+                              for (var ringtoneEnabled in ringtonesEnabled) {
+                                ringtonesEnabled[count] = false;
+                                count++;
+                              }
+                              ringtonesEnabled[index] = value!;
+                            });
+                          },
+                        ),
+                      ),
+                      title: Text(
+                          style: GoogleFonts.barlow(
+                            fontSize: 18.0,
+                            fontWeight: FontWeight.w700,
+                            color: CupertinoColors.white,
+                          ),
+                          ringtonesTemp[index]),
+                      //subtitle: Text(ringtones[index].uri),
+                      onTap: () async {
+                        if (indexAudioPlayer == index) {
+                          // audioPlayer.pause();
+                          indexAudioPlayer = -1;
+                        } else {
+                          Future.delayed(const Duration(seconds: 1), () {
+                            // playNotificationSound(ringtones[index].uri);
+                            playNotificationSound(ringtonesTemp[index]);
+                          });
+                          setState(() {});
 
-                        indexAudioPlayer = index;
-                      }
-                    },
-                  );
-                },
-              ),
-            ),
-            Positioned(
-              bottom: 20,
-              right: 32,
-              child: Container(
-                decoration: const BoxDecoration(
-                  color: Color.fromRGBO(219, 177, 42, 1),
-                  borderRadius: BorderRadius.all(Radius.circular(8)),
+                          indexAudioPlayer = index;
+                        }
+                      },
+                    );
+                  },
                 ),
-                width: 138,
-                height: 42,
-                child: Center(
-                  child: TextButton(
-                    child: Text('Guardar',
-                        textAlign: TextAlign.center, style: textBold16Black()),
-                    onPressed: () async {
-                      saveNotificationAudio();
-                    },
+              ),
+              Positioned(
+                bottom: 20,
+                right: 32,
+                child: Container(
+                  decoration: const BoxDecoration(
+                    color: Color.fromRGBO(219, 177, 42, 1),
+                    borderRadius: BorderRadius.all(Radius.circular(8)),
+                  ),
+                  width: 138,
+                  height: 42,
+                  child: Center(
+                    child: TextButton(
+                      child: Text('Guardar',
+                          textAlign: TextAlign.center,
+                          style: textBold16Black()),
+                      onPressed: () async {
+                        saveNotificationAudio();
+                      },
+                    ),
                   ),
                 ),
               ),
-            ),
-            Positioned(
-              bottom: 20,
-              left: 32,
-              child: Container(
-                decoration: BoxDecoration(
-                  color: Colors.transparent,
-                  border:
-                      Border.all(color: const Color.fromRGBO(219, 177, 42, 1)),
-                  borderRadius: const BorderRadius.all(Radius.circular(8)),
-                ),
-                width: 138,
-                height: 42,
-                child: Center(
-                  child: TextButton(
-                    child: Text('Cancelar',
-                        textAlign: TextAlign.center,
-                        style: textNormal16White()),
-                    onPressed: () => Navigator.of(context).pop(),
+              Positioned(
+                bottom: 20,
+                left: 32,
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.transparent,
+                    border: Border.all(
+                        color: const Color.fromRGBO(219, 177, 42, 1)),
+                    borderRadius: const BorderRadius.all(Radius.circular(8)),
+                  ),
+                  width: 138,
+                  height: 42,
+                  child: Center(
+                    child: TextButton(
+                      child: Text('Cancelar',
+                          textAlign: TextAlign.center,
+                          style: textNormal16White()),
+                      onPressed: () => Navigator.of(context).pop(),
+                    ),
                   ),
                 ),
-              ),
-            )
-          ],
+              )
+            ],
+          ),
         ),
       ),
     );
@@ -383,7 +388,7 @@ class _RingTonePageState extends State<RingTonePage>
       }
 
       if (i == ringtonesTemp.length - 1) {
-        _prefs.setNotificationAudio = '';
+        _prefs.setNotificationAudio = 'my_foreground';
       }
     }
     // showSaveAlert(context, "Sonido notificación guardada",

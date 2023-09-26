@@ -21,6 +21,7 @@ import 'package:ifeelefine/Utils/Widgets/listDayweekCustom.dart';
 import 'package:collection/collection.dart';
 import 'package:ifeelefine/Utils/Widgets/widgetLogo.dart';
 import 'package:ifeelefine/Common/decoration_custom.dart';
+import 'package:ifeelefine/main.dart';
 
 class PreviewRestTimePage extends StatefulWidget {
   const PreviewRestTimePage({super.key, required this.isMenu});
@@ -33,8 +34,8 @@ class _PreviewRestTimePageState extends State<PreviewRestTimePage> {
   final scaffoldKey = GlobalKey<ScaffoldState>();
   final UserRestController restVC = Get.put(UserRestController());
   final PreferenceUser _prefs = PreferenceUser();
-  late String timeLblAM = "00:00"; //AM
-  late String timeLblPM = "00:00"; //PM
+  late String timeLblAM = "00:00:00"; //AM
+  late String timeLblPM = "00:00:00"; //PM
 
   List<RestDayBD> selecDicActivity = <RestDayBD>[];
   List<RestDayBD> selecDicActivityTemp = <RestDayBD>[];
@@ -50,6 +51,8 @@ class _PreviewRestTimePageState extends State<PreviewRestTimePage> {
     getInactivity();
     if (!widget.isMenu) _prefs.saveLastScreenRoute("previewRestDay");
     super.initState();
+
+    starTap();
   }
 
   Future<void> getInactivity() async {
@@ -124,12 +127,7 @@ class _PreviewRestTimePageState extends State<PreviewRestTimePage> {
         showSaveAlert(context, Constant.info, Constant.saveCorrectly);
         return;
       }
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (context) => const PreviewActivitiesByDate(isMenu: false),
-        ),
-      );
+      Get.offAll(const PreviewActivitiesByDate(isMenu: false));
     }
   }
 
@@ -183,203 +181,210 @@ class _PreviewRestTimePageState extends State<PreviewRestTimePage> {
           ? AppBar(
               backgroundColor: Colors.brown,
               title: Text(
-                widget.isMenu ? "Configuración" : "Horas de sueño",
+                widget.isMenu ? "Configuración" : "tiempo de sueño",
                 style: textForTitleApp(),
               ),
             )
           : null,
-      body: Container(
-        decoration: decorationCustom(),
-        width: size.width,
-        height: size.height,
+      body: MediaQuery(
+        data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
         child: Container(
-          color: Colors.transparent,
+          decoration: decorationCustom(),
           width: size.width,
           height: size.height,
-          child: Stack(
-            children: [
-              Container(
-                color: Colors.transparent,
-                height: size.height - 80,
-                child: ListView(
-                  children: [
-                    if (!widget.isMenu) ...[
-                      Column(
-                        children: const [
-                          SizedBox(height: 34),
-                          const WidgetLogoApp(),
-                          SizedBox(height: 34),
+          child: Container(
+            color: Colors.transparent,
+            width: size.width,
+            height: size.height,
+            child: SafeArea(
+              child: Stack(
+                children: [
+                  Container(
+                    color: Colors.transparent,
+                    height: size.height - 90,
+                    child: ListView(
+                      children: [
+                        if (!widget.isMenu) ...[
+                          Column(
+                            children: const [
+                              SizedBox(height: 34),
+                              const WidgetLogoApp(),
+                              SizedBox(height: 34),
+                            ],
+                          ),
+                        ] else ...[
+                          Column(
+                            children: [
+                              const SizedBox(
+                                height: 90,
+                              ),
+                              Text(
+                                "Tiempo de sueño",
+                                style: textNormal24White(),
+                              ),
+                              const SizedBox(
+                                height: 20,
+                              ),
+                            ],
+                          ),
                         ],
-                      ),
-                    ] else ...[
-                      Column(
-                        children: [
-                          const SizedBox(
-                            height: 30,
-                          ),
-                          Text(
-                            "Horas de sueño",
-                            style: textNormal24White(),
-                          ),
-                          const SizedBox(
-                            height: 20,
-                          ),
-                        ],
-                      ),
-                    ],
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    for (var i = 0; i <= groupedProducts.length - 1; i++)
-                      Container(
-                        key: Key(i.toString()),
-                        color: Colors.transparent,
-                        width: size.width,
-                        height: 210,
-                        child: ListView.builder(
-                          key: Key(i.toString()),
-                          shrinkWrap: true,
-                          scrollDirection: Axis.vertical,
-                          physics: const NeverScrollableScrollPhysics(),
-                          itemCount: 1,
-                          itemBuilder: (context, index) {
-                            return Column(
-                              mainAxisSize: MainAxisSize.max,
-                              key: Key(index.toString()),
-                              children: [
-                                ListDayWeek(
-                                  listRest: selecDicActivity,
-                                  newIndex: i,
-                                  onChanged: (value) async {
-                                    indexFile = value;
-                                    var temp = selecDicActivity[value];
-                                    temp.isSelect =
-                                        (temp.isSelect == false) ? true : false;
-                                    temp.selection = i;
-
-                                    selecDicActivity.removeAt(value);
-                                    selecDicActivity.insert(value, temp);
-
-                                    setState(() {});
-                                  },
-                                ),
-                                RowSelectTimer(
-                                  index: i,
-                                  timeLblAM:
-                                      selecDicActivityTemp[i].timeWakeup, //AM
-                                  timeLblPM:
-                                      selecDicActivityTemp[i].timeSleep, //PM
-                                  onChanged: (value) {
-                                    timeLblAM = value.timeWakeup;
-                                    timeLblPM = value.timeSleep;
-                                    indexFile = i;
-                                    var listgroup =
-                                        groupedProducts[i.toString()];
-                                    for (var ic = 0;
-                                        ic < listgroup!.length;
-                                        ic++) {
-                                      var temp = listgroup[ic];
-                                      if (temp.selection == indexFile) {
-                                        selecDicActivity.remove(temp);
-                                        temp.timeSleep = timeLblPM;
-                                        temp.timeWakeup = timeLblAM;
-                                        selecDicActivity.add(temp);
-                                      }
-                                    }
-                                  },
-                                ),
-                              ],
-                            );
-                          },
+                        const SizedBox(
+                          height: 10,
                         ),
-                      ),
-                    const SizedBox(
-                      height: 20,
+                        for (var i = 0; i <= groupedProducts.length - 1; i++)
+                          Container(
+                            key: Key(i.toString()),
+                            color: Colors.transparent,
+                            width: size.width,
+                            height: 210,
+                            child: ListView.builder(
+                              key: Key(i.toString()),
+                              shrinkWrap: true,
+                              scrollDirection: Axis.vertical,
+                              physics: const NeverScrollableScrollPhysics(),
+                              itemCount: 1,
+                              itemBuilder: (context, index) {
+                                return Column(
+                                  mainAxisSize: MainAxisSize.max,
+                                  key: Key(index.toString()),
+                                  children: [
+                                    ListDayWeek(
+                                      listRest: selecDicActivity,
+                                      newIndex: i,
+                                      onChanged: (value) async {
+                                        indexFile = value;
+                                        var temp = selecDicActivity[value];
+                                        temp.isSelect = (temp.isSelect == false)
+                                            ? true
+                                            : false;
+                                        temp.selection = i;
+
+                                        selecDicActivity.removeAt(value);
+                                        selecDicActivity.insert(value, temp);
+
+                                        setState(() {});
+                                      },
+                                    ),
+                                    RowSelectTimer(
+                                      index: i,
+                                      timeLblAM: selecDicActivityTemp[i]
+                                          .timeWakeup, //AM
+                                      timeLblPM: selecDicActivityTemp[i]
+                                          .timeSleep, //PM
+                                      onChanged: (value) {
+                                        timeLblAM = value.timeWakeup;
+                                        timeLblPM = value.timeSleep;
+                                        indexFile = i;
+                                        var listgroup =
+                                            groupedProducts[i.toString()];
+                                        for (var ic = 0;
+                                            ic < listgroup!.length;
+                                            ic++) {
+                                          var temp = listgroup[ic];
+                                          if (temp.selection == indexFile) {
+                                            selecDicActivity.remove(temp);
+                                            temp.timeSleep = timeLblPM;
+                                            temp.timeWakeup = timeLblAM;
+                                            selecDicActivity.add(temp);
+                                          }
+                                        }
+                                      },
+                                    ),
+                                  ],
+                                );
+                              },
+                            ),
+                          ),
+                        const SizedBox(
+                          height: 20,
+                        ),
+                      ],
                     ),
-                  ],
-                ),
-              ),
-              Positioned(
-                bottom: 20,
-                child: (widget.isMenu)
-                    ? RowButtonsWhenMenu(
-                        onCancel: (bool) {
-                          setState(() {
-                            Navigator.of(context).pop();
-                          });
-                        },
-                        onSave: (bool) async {
-                          if (await validateAllDaySelect()) {
-                            showSaveAlert(context, Constant.info,
-                                "Debes seleccionar los días restantes antes de continuar");
-                            return;
-                          } else {
-                            await processSelectedInfo();
-                            updateRestDay(context);
-                          }
+                  ),
+                  Positioned(
+                    bottom: 20,
+                    child: (widget.isMenu)
+                        ? RowButtonsWhenMenu(
+                            onCancel: (bool) {
+                              setState(() {
+                                Navigator.of(context).pop();
+                              });
+                            },
+                            onSave: (bool) async {
+                              if (await validateAllDaySelect()) {
+                                showSaveAlert(context, Constant.info,
+                                    "Debes seleccionar los días restantes antes de continuar");
+                                return;
+                              } else {
+                                await processSelectedInfo();
+                                updateRestDay(context);
+                              }
 
-                          if (widget.isMenu) return;
-                        },
-                      )
-                    : Row(
-                        children: [
-                          Container(
-                            color: Colors.transparent,
-                            height: 50,
-                            width: size.width / 2,
-                            child: SizedBox(
-                              width: size.width,
-                              child: Center(
-                                child: ElevateButtonCustomBorder(
-                                  onChanged: (value) async {
-                                    int id = await restVC.saveUserListRestTime(
-                                        context, tempSave);
+                              if (widget.isMenu) return;
+                            },
+                          )
+                        : Row(
+                            children: [
+                              Container(
+                                color: Colors.transparent,
+                                height: 50,
+                                width: size.width / 2,
+                                child: SizedBox(
+                                  width: size.width,
+                                  child: Center(
+                                    child: ElevateButtonCustomBorder(
+                                      onChanged: (value) async {
+                                        int id =
+                                            await restVC.saveUserListRestTime(
+                                                context, tempSave);
 
-                                    if (id == -1) {
-                                      showSaveAlert(context, Constant.info,
-                                          Constant.errorGeneric);
-                                      return;
-                                    }
-                                    setState(() {
-                                      Navigator.of(context).pop();
-                                    });
-                                  },
-                                  mensaje: "Cancelar",
+                                        if (id == -1) {
+                                          showSaveAlert(context, Constant.info,
+                                              Constant.errorGeneric);
+                                          return;
+                                        }
+                                        setState(() {
+                                          Navigator.of(context).pop();
+                                        });
+                                      },
+                                      mensaje: "Cancelar",
+                                    ),
+                                  ),
                                 ),
                               ),
-                            ),
-                          ),
-                          Container(
-                            color: Colors.transparent,
-                            height: 50,
-                            width: size.width / 2,
-                            child: SizedBox(
-                              width: size.width,
-                              child: Center(
-                                child: ElevateButtonFilling(
-                                  onChanged: (value) async {
-                                    if (await validateAllDaySelect()) {
-                                      showSaveAlert(context, Constant.info,
-                                          "Debes seleccionar los días restantes antes de continuar");
-                                      return;
-                                    } else {
-                                      await processSelectedInfo();
-                                      updateRestDay(context);
-                                    }
+                              Container(
+                                color: Colors.transparent,
+                                height: 50,
+                                width: size.width / 2,
+                                child: SizedBox(
+                                  width: size.width,
+                                  child: Center(
+                                    child: ElevateButtonFilling(
+                                      onChanged: (value) async {
+                                        if (await validateAllDaySelect()) {
+                                          showSaveAlert(context, Constant.info,
+                                              "Debes seleccionar los días restantes antes de continuar");
+                                          return;
+                                        } else {
+                                          await processSelectedInfo();
+                                          updateRestDay(context);
+                                        }
 
-                                    if (widget.isMenu) return;
-                                  },
-                                  mensaje: Constant.saveBtn,
-                                  showIcon: false,
-                                  img: '',
+                                        if (widget.isMenu) return;
+                                      },
+                                      mensaje: Constant.saveBtn,
+                                      showIcon: false,
+                                      img: '',
+                                    ),
+                                  ),
                                 ),
                               ),
-                            ),
+                            ],
                           ),
-                        ],
-                      ),
+                  ),
+                ],
               ),
-            ],
+            ),
           ),
         ),
       ),

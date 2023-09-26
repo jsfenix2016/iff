@@ -140,6 +140,7 @@ class _ContentCodeState extends State<ContentCode> {
                 widget.code.textCode4 == null ? "" : widget.code.textCode4!,
                 ((value) {
               code.textCode4 = value.toString();
+              FocusScope.of(context).unfocus();
               widget.onChanged(code);
             }), _focusNodes[3]),
           ],

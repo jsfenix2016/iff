@@ -20,6 +20,7 @@ import 'package:flutter/material.dart';
 import 'package:collection/collection.dart';
 import 'package:ifeelefine/Utils/Widgets/elevatedButtonFilling.dart';
 import 'package:ifeelefine/Common/decoration_custom.dart';
+import 'package:ifeelefine/main.dart';
 
 class UserInactivityPage extends StatefulWidget {
   const UserInactivityPage({super.key});
@@ -54,6 +55,7 @@ class _UserInactivityPageState extends State<UserInactivityPage> {
     temp.activity = "";
     getInactivity();
     super.initState();
+    starTap();
   }
 
   List<ActivityDayBD> lista = [];
@@ -225,106 +227,109 @@ class _UserInactivityPageState extends State<UserInactivityPage> {
           textAlign: TextAlign.center,
         ),
       ),
-      body: Container(
-        decoration: decorationCustom(),
-        width: size.width,
-        height: size.height,
-        child: Padding(
-          padding: const EdgeInsets.all(18.0),
-          child: Stack(
-            children: [
-              Column(
-                children: <Widget>[
-                  Padding(
-                    padding:
-                        const EdgeInsets.only(top: 60.0, left: 8.0, right: 8.0),
-                    child: Text(
-                      '¿Tienes actividades culturales en la semana?',
-                      textAlign: TextAlign.center,
-                      style: GoogleFonts.barlow(
-                        fontSize: 22.0,
-                        wordSpacing: 1,
-                        letterSpacing: 1.2,
-                        fontWeight: FontWeight.bold,
-                        color: const Color.fromRGBO(219, 177, 42, 1),
+      body: MediaQuery(
+        data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
+        child: Container(
+          decoration: decorationCustom(),
+          width: size.width,
+          height: size.height,
+          child: Padding(
+            padding: const EdgeInsets.all(18.0),
+            child: Stack(
+              children: [
+                Column(
+                  children: <Widget>[
+                    Padding(
+                      padding: const EdgeInsets.only(
+                          top: 60.0, left: 8.0, right: 8.0),
+                      child: Text(
+                        '¿Tienes actividades culturales en la semana?',
+                        textAlign: TextAlign.center,
+                        style: GoogleFonts.barlow(
+                          fontSize: 22.0,
+                          wordSpacing: 1,
+                          letterSpacing: 1.2,
+                          fontWeight: FontWeight.bold,
+                          color: const Color.fromRGBO(219, 177, 42, 1),
+                        ),
                       ),
                     ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 12.0, right: 12.0),
-                    child: CustomDropdownButtonWidgetWithDictionary(
-                      instance: Constant.weekend,
-                      mensaje: "Seleccionar dia de la actividad",
-                      isVisible: true,
-                      onChanged: (value) {
-                        daySelect = value.day;
-                      },
-                    ),
-                  ),
-                  _createButtonAddActivity(),
-                  Visibility(
-                    visible: isVisible,
-                    child: Expanded(
-                      child: ListView.builder(
-                        padding: const EdgeInsets.all(8),
-                        itemCount: selecDicActivity.length,
-                        itemBuilder: (BuildContext context, int index) {
-                          selecDicActivity[index].id = index;
-                          selecDicActivity[index].activity == ""
-                              ? "Actividad"
-                              : selecDicActivity[index].activity;
-
-                          selecDicActivity[index].timeStart == "00: 00 PM"
-                              ? "00: 00 PM"
-                              : selecDicActivity[index].timeStart;
-
-                          selecDicActivity[index].timeFinish == "00: 00 AM"
-                              ? "00: 00 AM"
-                              : selecDicActivity[index].timeFinish;
-                          return InkWell(
-                            onTap: () {},
-                            child: Dismissible(
-                              onDismissed: ((direction) => {
-                                    setState(() {
-                                      indexInsert -= 1;
-                                      expandHeigth = expandHeigth - 70;
-                                      var act = selecDicActivity[index];
-                                      selecDicActivity.removeAt(index);
-                                      removeActivity(context, act, index);
-                                    })
-                                  }),
-                              key: Key(selecDicActivity.length.toString()),
-                              child: ContainerTextEditTime(
-                                day: selecDicActivity[index].day,
-                                acti: selecDicActivity[index],
-                                onChanged: (value) {
-                                  value.id = index;
-                                  selecDicActivity[index].id = index;
-                                  selecDicActivity[index].day = value.day;
-                                  selecDicActivity[index].activity =
-                                      value.activity;
-                                  selecDicActivity[index].timeStart =
-                                      value.timeStart;
-                                  selecDicActivity[index].timeFinish =
-                                      value.timeFinish;
-
-                                  _selectOption(value);
-                                },
-                              ),
-                            ),
-                          );
+                    Padding(
+                      padding: const EdgeInsets.only(left: 12.0, right: 12.0),
+                      child: CustomDropdownButtonWidgetWithDictionary(
+                        instance: Constant.weekend,
+                        mensaje: "Seleccionar dia de la actividad",
+                        isVisible: true,
+                        onChanged: (value) {
+                          daySelect = value.day;
                         },
                       ),
                     ),
-                  ),
-                ],
-              ),
-              Positioned(
-                bottom: 0,
-                right: 20,
-                child: _createButtonNext(),
-              ),
-            ],
+                    _createButtonAddActivity(),
+                    Visibility(
+                      visible: isVisible,
+                      child: Expanded(
+                        child: ListView.builder(
+                          padding: const EdgeInsets.all(8),
+                          itemCount: selecDicActivity.length,
+                          itemBuilder: (BuildContext context, int index) {
+                            selecDicActivity[index].id = index;
+                            selecDicActivity[index].activity == ""
+                                ? "Actividad"
+                                : selecDicActivity[index].activity;
+
+                            selecDicActivity[index].timeStart == "00: 00 PM"
+                                ? "00: 00 PM"
+                                : selecDicActivity[index].timeStart;
+
+                            selecDicActivity[index].timeFinish == "00: 00 AM"
+                                ? "00: 00 AM"
+                                : selecDicActivity[index].timeFinish;
+                            return InkWell(
+                              onTap: () {},
+                              child: Dismissible(
+                                onDismissed: ((direction) => {
+                                      setState(() {
+                                        indexInsert -= 1;
+                                        expandHeigth = expandHeigth - 70;
+                                        var act = selecDicActivity[index];
+                                        selecDicActivity.removeAt(index);
+                                        removeActivity(context, act, index);
+                                      })
+                                    }),
+                                key: Key(selecDicActivity.length.toString()),
+                                child: ContainerTextEditTime(
+                                  day: selecDicActivity[index].day,
+                                  acti: selecDicActivity[index],
+                                  onChanged: (value) {
+                                    value.id = index;
+                                    selecDicActivity[index].id = index;
+                                    selecDicActivity[index].day = value.day;
+                                    selecDicActivity[index].activity =
+                                        value.activity;
+                                    selecDicActivity[index].timeStart =
+                                        value.timeStart;
+                                    selecDicActivity[index].timeFinish =
+                                        value.timeFinish;
+
+                                    _selectOption(value);
+                                  },
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                Positioned(
+                  bottom: 0,
+                  right: 20,
+                  child: _createButtonNext(),
+                ),
+              ],
+            ),
           ),
         ),
       ),

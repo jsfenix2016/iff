@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:get/get.dart';
 import 'package:ifeelefine/Common/initialize_models_bd.dart';
 import 'package:ifeelefine/Data/hive_constant_adapterInit.dart';
@@ -28,10 +30,10 @@ class MainController extends GetxController {
     LogAlertsBD mov = LogAlertsBD(id: -1, type: messaje, time: time);
 
     final MainController mainController = Get.put(MainController());
-    var user = await mainController.getUserData();
+    user = await mainController.getUserData();
 
     var alertApi = await AlertsService()
-        .saveAlert(AlertApi.fromAlert(mov, user.telephone));
+        .saveAlert(AlertApi.fromAlert(mov, user!.telephone));
 
     if (alertApi != null) {
       mov.id = alertApi.id;
@@ -56,16 +58,25 @@ class MainController extends GetxController {
   Future<void> saveActivityLog(DateTime dateTime, String movementType) async {
     LogActivityBD activityBD =
         LogActivityBD(time: dateTime, movementType: movementType);
-
+    timerSendDropNotification.cancel();
     await logActivityController.saveLogActivity(activityBD);
     await logActivityController.saveLastMovement();
+    print(" ----timerSendDropNotification.cancel----");
+  }
+
+  void activeTimerSendDropNotification() {
+    print("inicializado el timer");
+    timerSendDropNotification = Timer(const Duration(seconds: 30), () async {
+      await inicializeHiveBD();
+
+      var user = await getUserData();
+      print("cancelado el timer");
+      MainService().saveDrop(user);
+      timerSendDropNotification.cancel();
+    });
   }
 
   Future<void> saveDrop() async {
-    await inicializeHiveBD();
-
-    var user = await getUserData();
-
-    MainService().saveDrop(user);
+    activeTimerSendDropNotification();
   }
 }

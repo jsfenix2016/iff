@@ -32,84 +32,95 @@ class OnboardingPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     RedirectViewNotifier.setStoredContext(context);
-    return Scaffold(
-      body: Container(
-        decoration: decorationCustom(),
-        child: SafeArea(
-          child: Stack(
-            children: [
-              // the page view
-              PageView.builder(
-                controller: _controller,
-                onPageChanged: (int page) {
-                  _activePage = page;
-                  (context as Element).markNeedsBuild();
-                },
-                itemCount: _pages.length,
-                itemBuilder: (BuildContext context, int index) {
-                  return _pages[index % _pages.length];
-                },
-              ),
-              // Display the dots indicator
-              Positioned(
-                bottom: 70,
-                left: 0,
-                right: 0,
-                height: 8,
-                child: SizedBox(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: List<Widget>.generate(
-                      _pages.length,
-                      (index) => Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 0),
-                        child: InkWell(
-                          onTap: () {
-                            _controller.animateToPage(index,
-                                duration: const Duration(milliseconds: 300),
-                                curve: Curves.easeIn);
-                          },
-                          child: CircleAvatar(
-                            radius: 8,
-                            // check if a dot is connected to the current page
-                            // if true, give it a different color
-                            backgroundColor: _activePage == index
-                                ? ColorPalette.principal
-                                : ColorPalette.dotbackground,
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      builder: (context, child) {
+        // Configura el factor de escala de texto a 1.0 para evitar el escalado de texto
+        return MediaQuery(
+          data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
+          child: child!,
+        );
+      },
+      home: Scaffold(
+        body: Container(
+          decoration: decorationCustom(),
+          child: SafeArea(
+            child: Stack(
+              children: [
+                // the page view
+                PageView.builder(
+                  controller: _controller,
+                  onPageChanged: (int page) {
+                    _activePage = page;
+                    (context as Element).markNeedsBuild();
+                  },
+                  itemCount: _pages.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    return _pages[index % _pages.length];
+                  },
+                ),
+                // Display the dots indicator
+                Positioned(
+                  bottom: 70,
+                  left: 0,
+                  right: 0,
+                  height: 8,
+                  child: SizedBox(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: List<Widget>.generate(
+                        _pages.length,
+                        (index) => Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 0),
+                          child: InkWell(
+                            onTap: () {
+                              _controller.animateToPage(index,
+                                  duration: const Duration(milliseconds: 300),
+                                  curve: Curves.easeIn);
+                            },
+                            child: CircleAvatar(
+                              radius: 8,
+                              // check if a dot is connected to the current page
+                              // if true, give it a different color
+                              backgroundColor: _activePage == index
+                                  ? ColorPalette.principal
+                                  : ColorPalette.dotbackground,
+                            ),
                           ),
                         ),
                       ),
                     ),
                   ),
                 ),
-              ),
-              Positioned(
-                bottom: 10,
-                left: 0,
-                right: 0,
-                height: 50,
-                child: SizedBox(
-                  width: double.infinity,
-                  child: Center(
-                    child: ElevateButtonFilling(
-                      showIcon: false,
-                      onChanged: (value) {
-                        if (_controller.page!.toInt() < 4) {
-                          _controller.animateToPage(_activePage + 1,
-                              duration: const Duration(milliseconds: 300),
-                              curve: Curves.easeInOut);
-                        } else {
-                          Get.off(() => const AlternativePage());
-                        }
-                      },
-                      mensaje:
-                          _activePage < 4 ? 'Siguiente' : Constant.continueTxt,
-                      img: '',
+                Positioned(
+                  bottom: 10,
+                  left: 0,
+                  right: 0,
+                  height: 50,
+                  child: SizedBox(
+                    width: double.infinity,
+                    child: Center(
+                      child: ElevateButtonFilling(
+                        showIcon: false,
+                        onChanged: (value) {
+                          if (_controller.page!.toInt() < 4) {
+                            _controller.animateToPage(_activePage + 1,
+                                duration: const Duration(milliseconds: 300),
+                                curve: Curves.easeInOut);
+                          } else {
+                            Get.off(() => const AlternativePage());
+                          }
+                        },
+                        mensaje: _activePage < 4
+                            ? 'Siguiente'
+                            : Constant.continueTxt,
+                        img: '',
+                      ),
                     ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

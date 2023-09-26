@@ -5,6 +5,7 @@ import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:get/get.dart';
 import 'package:ifeelefine/Common/Constant.dart';
 import 'package:ifeelefine/Data/hiveRisk_data.dart';
+import 'package:ifeelefine/Data/hive_constant_adapterInit.dart';
 import 'package:ifeelefine/Data/hive_data.dart';
 import 'package:ifeelefine/Model/contactRiskBD.dart';
 import 'package:ifeelefine/Page/Risk/DateRisk/ListDateRisk/Controller/riskPageController.dart';
@@ -118,11 +119,13 @@ class EditRiskController extends GetxController {
   }
 
   Future<void> updateContactRiskWhenDateStarted(int id) async {
+    await inicializeHiveBD();
     var contactRisk = await const HiveDataRisk().getContactRiskBD(id);
 
     if (contactRisk != null) {
       contactRisk.isActived = true;
       contactRisk.isprogrammed = false;
+
       await const HiveDataRisk().updateContactRisk(contactRisk);
 
       final MainController mainController = Get.put(MainController());
@@ -203,6 +206,20 @@ class EditRiskController extends GetxController {
           createDate: DateTime.now(),
           taskIds: []);
       await const HiveDataRisk().saveContactRisk(contact);
+    }
+  }
+
+  Future<bool> updateNewContactRisk(
+      BuildContext context, ContactRiskBD contact) async {
+    try {
+      // Map info
+      await const HiveDataRisk().deleteDate(contact);
+      Future.sync(() => ContactRiskService().deleteContactsRisk(contact.id));
+
+      saveContactRisk(context, contact);
+      return true;
+    } catch (error) {
+      return false;
     }
   }
 

@@ -6,6 +6,8 @@ import 'package:ifeelefine/Common/utils.dart';
 import 'package:ifeelefine/Data/hive_data.dart';
 import 'package:ifeelefine/Model/useMobilbd.dart';
 import 'package:ifeelefine/Page/EditUseMobil/Service/editUseMobilService.dart';
+import 'package:ifeelefine/Provider/prefencesUser.dart';
+import 'package:ifeelefine/main.dart';
 
 import '../../../Controllers/mainController.dart';
 
@@ -38,9 +40,9 @@ class EditUseMobilController extends GetxController {
 
   Future<void> saveTimeUseMobilApi(List<UseMobilBD> listMobilBD) async {
     final MainController mainController = Get.put(MainController());
-    var user = await mainController.getUserData();
+    user = await mainController.getUserData();
 
-    var listUseMobilApi = _convertToApi(listMobilBD, user.telephone);
+    var listUseMobilApi = _convertToApi(listMobilBD, user!.telephone);
 
     EditUseMobilService().saveUseMobil(listUseMobilApi);
   }

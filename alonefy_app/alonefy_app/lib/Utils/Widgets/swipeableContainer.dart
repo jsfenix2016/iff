@@ -1,11 +1,9 @@
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:hive_flutter/hive_flutter.dart';
+
 import 'package:ifeelefine/Common/colorsPalette.dart';
 import 'package:ifeelefine/Common/text_style_font.dart';
 import 'package:ifeelefine/Model/logAlertsBD.dart';
+import 'package:intl/intl.dart';
 
 class SwipeableContainer extends StatefulWidget {
   const SwipeableContainer({super.key, required this.temp});
@@ -30,16 +28,22 @@ class _SwipeableContainerState extends State<SwipeableContainer> {
       behavior: HitTestBehavior.translucent,
       onPanUpdate: (DragUpdateDetails details) {
         setState(() {
-          _dragPosition = details.globalPosition;
+          if (details.globalPosition.dy >=
+              MediaQuery.of(context).size.height / 2.1) {
+            _dragPosition = details.globalPosition;
+          }
+          // if (size.width / 2 >= 320) {
+          //   _dragPosition = Offset(0, size.width / 2);
+          // } else {
+          //   _dragPosition = details.globalPosition;
+          // }
         });
       },
       child: Stack(
         children: [
           Positioned(
             bottom: 0,
-            top: _dragPosition.dy == 0
-                ? size.height - 200
-                : _dragPosition.dy, //_dragPosition.dy,
+            top: size.height / 2, //_dragPosition.dy,
             child: Padding(
               padding: const EdgeInsets.only(left: 8.0, right: 8.0),
               child: Container(
@@ -56,17 +60,16 @@ class _SwipeableContainerState extends State<SwipeableContainer> {
                   children: [
                     Padding(
                       padding:
-                          const EdgeInsets.only(top: 28.0, left: 8, right: 8),
+                          const EdgeInsets.only(top: 8.0, left: 8, right: 8),
                       child: ListView.builder(
-                        shrinkWrap: false,
-                        physics: const NeverScrollableScrollPhysics(),
-                        itemCount: widget.temp.length,
+                        itemCount:
+                            widget.temp.length < 10 ? widget.temp.length : 10,
                         itemBuilder: (context, index) {
                           return Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: Container(
                               width: 312,
-                              height: 88,
+                              height: 70,
                               decoration: const BoxDecoration(
                                 color: Color.fromRGBO(11, 11, 10, 0.6),
                                 borderRadius:
@@ -96,7 +99,9 @@ class _SwipeableContainerState extends State<SwipeableContainer> {
                                   style: textNormal16White(),
                                 ),
                                 subtitle: Text(
-                                  widget.temp[index].time.toString(),
+                                  DateFormat('yyyy-MM-dd HH:mm:ss')
+                                      .format(widget.temp[index].time)
+                                      .toString(),
                                   textAlign: TextAlign.left,
                                   style: textNormal16White(),
                                 ),

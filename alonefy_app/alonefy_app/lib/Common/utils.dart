@@ -14,6 +14,8 @@ import 'package:ifeelefine/Model/ApiRest/ContactApi.dart';
 import 'package:ifeelefine/Model/ApiRest/ZoneRiskApi.dart';
 import 'package:ifeelefine/Page/Geolocator/Controller/configGeolocatorController.dart';
 import 'package:ifeelefine/Provider/prefencesUser.dart';
+import 'package:ifeelefine/Views/menuconfig_page.dart';
+import 'package:ifeelefine/main.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:path_provider/path_provider.dart';
@@ -49,6 +51,79 @@ Map<String, String> getAge() {
   }
 
   return ages;
+}
+
+Future<List<MenuConfigModel>> validateConfig() async {
+  List<String>? temp = await _prefs.getlistConfigPage;
+
+  if (temp!.isEmpty) {
+    return permissionStatusI;
+  }
+
+  for (var element in await _prefs.getlistConfigPage) {
+    switch (element) {
+      case "config2":
+        menuConfig.insert(0, false);
+        break;
+      case "restDay":
+        menuConfig.insert(1, false);
+        break;
+      case "useMobil":
+        menuConfig.insert(2, false);
+        break;
+      case "previewActivity":
+        menuConfig.insert(3, false);
+        break;
+
+      case "addContact":
+        menuConfig.insert(4, false);
+        break;
+      case "fallActivation":
+        menuConfig.insert(5, false);
+        break;
+      case "configGeo":
+        menuConfig.insert(6, false);
+        break;
+      case "inactivityDay":
+        menuConfig.insert(7, false);
+        break;
+      case "config2":
+        menuConfig.insert(8, false);
+        break;
+      default:
+    }
+  }
+
+  permissionStatusI = [
+    MenuConfigModel("Configurar tus datos", 'assets/images/VectorUser.png', 22,
+        19.25, menuConfig[0]),
+    MenuConfigModel("Configurar tiempo de sueño",
+        'assets/images/EllipseMenu.png', 22, 22, menuConfig[1]),
+    MenuConfigModel("Configurar tiempo uso", 'assets/images/Group 1084.png', 22,
+        16.93, menuConfig[2]),
+    MenuConfigModel("Actividades", 'assets/images/Group 1084.png', 22, 16.93,
+        menuConfig[3]),
+    MenuConfigModel("Seleccionar contacto de aviso",
+        'assets/images/Group 1083.png', 22, 25.52, menuConfig[4]),
+    MenuConfigModel("Configurar caída", 'assets/images/Group 506.png', 26,
+        22.76, menuConfig[5]),
+    MenuConfigModel("Cambiar envío ubicación", 'assets/images/Group 1082.png',
+        24, 24, menuConfig[6]),
+    MenuConfigModel("Cambiar tiempo notificaciónes",
+        'assets/images/Group 1099.png', 22, 17.15, menuConfig[4]),
+    MenuConfigModel("Cambiar sonido notificaciones",
+        'assets/images/Group 1102.png', 22, 22.08, false),
+    MenuConfigModel("Ajustes de mi smartphone", 'assets/images/mobile.png', 22,
+        19.66, false),
+    MenuConfigModel("Restaurar mi configuración", 'assets/images/Vector-2.png',
+        22, 22, false),
+    MenuConfigModel("Desactivar mi instalación", 'assets/images/Group 533.png',
+        21, 17, false),
+    // MenuConfigModel("Cambiar sonido notificaciones",
+    //     'assets/images/Group 1102.png', 22, 22.08),
+  ];
+
+  return permissionStatusI;
 }
 
 void diveceInfo() async {
@@ -233,9 +308,9 @@ DateTime parseDurationRow(String s) {
 
   // Obtener la zona horaria de Madrid
   tz.Location madridLocation = tz.getLocation(_prefs.getNameZone);
-
-  return dateTimed
+  var tine = dateTimed
       .subtract(Duration(milliseconds: madridLocation.currentTimeZone.offset));
+  return tine;
 }
 
 Future<String> localizeStringName() async {
@@ -293,10 +368,16 @@ DateTime parseContactRiskDate(String contactRiskDate) {
       contactRiskDate.indexOf(':') + 1, contactRiskDate.length);
 
   var minutes = contactRiskDate.substring(0, 2);
+  // Obtener una zona horaria específica, por ejemplo, la zona horaria de Nueva York
 
-  return DateTime(int.parse(year), int.parse(month), int.parse(day),
-          int.parse(hour), int.parse(minutes))
-      .toUtc();
+  // Obtener la zona horaria de Madrid
+  tz.Location madridLocation = tz.getLocation(_prefs.getNameZone);
+
+// Crear un TZDateTime con información de zona horaria
+  final datetime = tz.TZDateTime(madridLocation, int.parse(year),
+      int.parse(month), int.parse(day), int.parse(hour), int.parse(minutes));
+
+  return datetime;
 }
 
 String parseTimeString(String s) {
@@ -654,9 +735,9 @@ Future<List<Contact>> getContacts(BuildContext context) async {
     return [];
   } else {
     // Retrieve the list of contacts from the device
-    var contacts = await FlutterContacts.getContacts();
+    // var contacts = await FlutterContacts.getContacts();
     // Set the list of contacts in the state
-    contacts = await FlutterContacts.getContacts(
+    var contacts = await FlutterContacts.getContacts(
         withProperties: true, withPhoto: true);
 
     return contacts;
@@ -694,11 +775,11 @@ Future<String> dateTimeToString(DateTime dateTime) async {
 
   var date = Jiffy(dateTime).format(getDatePattern());
 
-  return '$date $hour:$minute:$second';
+  return '$date ${hour.padLeft(2, '0')}:${minute.padLeft(2, '0')}:$second';
 }
 
 String rangeTimeToString(String from, String to) {
-  var rangeTime = '$from-$to';
+  var rangeTime = '$to-$from';
   rangeTime = rangeTime.replaceAll(' ', '');
   return rangeTime;
 }
@@ -829,6 +910,13 @@ String convertMinutesToHourAndMinutes(int minutes) {
   var min = minutes % 60;
 
   return '${hours.toInt()} hora y $min min';
+}
+
+String jsonToString(String json, String format) {
+  Jiffy.locale('es');
+
+  var date = DateTime.parse(json);
+  return date.toString();
 }
 
 DateTime jsonToDatetime(String json, String format) {

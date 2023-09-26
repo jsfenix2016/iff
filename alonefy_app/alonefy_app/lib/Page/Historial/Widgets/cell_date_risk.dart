@@ -83,9 +83,8 @@ class _CellDateRiskState extends State<CellDateRisk> {
   Widget build(BuildContext context) {
     return Container(
       color: Colors.transparent,
+      height: 120,
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        mainAxisSize: MainAxisSize.max,
         children: [
           Row(
             children: [
@@ -99,7 +98,7 @@ class _CellDateRiskState extends State<CellDateRisk> {
                 width: 200,
                 color: Colors.transparent,
                 child: Text(
-                  "Cita - ${widget.logAlert.time.day}-${widget.logAlert.time.month}-${widget.logAlert.time.year} | ${widget.logAlert.time.hour}-${widget.logAlert.time.minute}",
+                  "Cita - ${widget.logAlert.time.day}-${widget.logAlert.time.month}-${widget.logAlert.time.year} | ${widget.logAlert.time.hour.toString().padLeft(2, '0')}-${widget.logAlert.time.minute.toString().padLeft(2, '0')}",
                   textAlign: TextAlign.left,
                   style: GoogleFonts.barlow(
                     fontSize: 14.0,

@@ -26,6 +26,7 @@ class _AlternativePagePageState extends State<AlternativePage> {
   @override
   void initState() {
     initPref();
+    starTap();
     super.initState();
   }
 
@@ -36,6 +37,13 @@ class _AlternativePagePageState extends State<AlternativePage> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      builder: (context, child) {
+        // Configura el factor de escala de texto a 1.0 para evitar el escalado de texto
+        return MediaQuery(
+          data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
+          child: child!,
+        );
+      },
       debugShowCheckedModeBanner: false,
       home: Scaffold(
         body: Container(

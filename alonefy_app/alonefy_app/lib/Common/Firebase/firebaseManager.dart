@@ -7,6 +7,7 @@ import 'package:ifeelefine/Common/Firebase/FirebaseService.dart';
 
 import 'package:ifeelefine/Common/notificationService.dart';
 import 'package:ifeelefine/Model/ApiRest/FirebaseTokenApi.dart';
+import 'package:ifeelefine/main.dart';
 
 import '../../Controllers/mainController.dart';
 
@@ -77,13 +78,13 @@ Future<void> onActionSelected(String value) async {
           String? token = await FirebaseMessaging.instance.getToken();
 
           final MainController mainController = Get.put(MainController());
-          var user = await mainController.getUserData();
+          user = await mainController.getUserData();
 
-          if (user.telephone != "" && token != null) {
+          if (user!.telephone != "" && token != null) {
             var firebaseTokenApi = FirebaseTokenApi(
-                phoneNumber: user.telephone.contains("+34")
-                    ? user.telephone.replaceAll("+34", "")
-                    : user.telephone,
+                phoneNumber: user!.telephone.contains("+34")
+                    ? user!.telephone.replaceAll("+34", "")
+                    : user!.telephone,
                 fcmToken: token);
             FirebaseService().saveData(firebaseTokenApi);
           }

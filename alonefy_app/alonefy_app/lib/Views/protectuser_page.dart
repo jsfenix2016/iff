@@ -48,7 +48,7 @@
 //           state:
 //               _activeCurrentStep <= 0 ? StepState.editing : StepState.complete,
 //           isActive: _activeCurrentStep >= 0,
-//           title: const Text('Horas de uso del movil'),
+//           title: const Text('tiempo de uso del movil'),
 //           content: Center(
 //             child: Column(
 //               children: <Widget>[
@@ -70,7 +70,7 @@
 //           state:
 //               _activeCurrentStep <= 1 ? StepState.editing : StepState.complete,
 //           isActive: _activeCurrentStep >= 1,
-//           title: const Text('Horas descanzo'),
+//           title: const Text('tiempo descanzo'),
 //           content: Center(
 //             child: Column(
 //               children: <Widget>[
@@ -106,7 +106,7 @@
 //           state:
 //               _activeCurrentStep <= 2 ? StepState.editing : StepState.complete,
 //           isActive: _activeCurrentStep >= 2,
-//           title: const Text('Confirmar horas de descanzo'),
+//           title: const Text('Confirmar tiempo de descanzo'),
 //           content: Center(
 //             child: Column(
 //               children: [

@@ -7,6 +7,7 @@ import 'package:ifeelefine/Model/restday.dart';
 import 'package:ifeelefine/Model/restdaybd.dart';
 import 'package:ifeelefine/Model/userbd.dart';
 import 'package:ifeelefine/Page/UserRest/Service/userRestService.dart';
+import 'package:ifeelefine/Provider/prefencesUser.dart';
 import 'package:jiffy/jiffy.dart';
 
 import '../../../Common/Constant.dart';
@@ -50,8 +51,14 @@ class UserRestController extends GetxController {
     List<UserRestApi> listRestApi = [];
 
     for (var restDayBD in listRest) {
-      var wakeUpHour = parseDurationRow(restDayBD.timeWakeup);
-      var retireHour = parseDurationRow(restDayBD.timeSleep);
+      // var wakeUpHour = parseDurationRow(restDayBD.timeWakeup);
+      // var retireHour = parseDurationRow(restDayBD.timeSleep);
+      var wakeUpHour = (restDayBD.timeWakeup.length <= 5)
+          ? ("${restDayBD.timeWakeup}:00")
+          : restDayBD.timeWakeup;
+      var retireHour = (restDayBD.timeSleep.length <= 5)
+          ? ("${restDayBD.timeSleep}:00")
+          : restDayBD.timeSleep;
 
       listRestApi.add(UserRestApi(
           phoneNumber: user.telephone.contains('+34')
@@ -115,10 +122,12 @@ class UserRestController extends GetxController {
     for (var userRestApi in userRestApiList) {
       var restDay = RestDayBD(
           day: Constant.tempMapDayReverseApi[userRestApi.dayOfWeek]!,
-          timeWakeup: await _convertDateTimeToStringTime(
-              userRestApi.wakeUpHour.toLocal()),
-          timeSleep: await _convertDateTimeToStringTime(
-              userRestApi.retireHour.toLocal()),
+          timeWakeup: userRestApi.wakeUpHour,
+          timeSleep: userRestApi.retireHour,
+          // timeWakeup: await _convertDateTimeToStringTime(
+          //     userRestApi.wakeUpHour.toLocal()),
+          // timeSleep: await _convertDateTimeToStringTime(
+          //     userRestApi.retireHour.toLocal()),
           selection: userRestApi.index,
           isSelect: userRestApi.isSelect);
 

@@ -14,6 +14,7 @@ import 'package:ifeelefine/Common/text_style_font.dart';
 import 'package:ifeelefine/Common/utils.dart';
 import 'package:ifeelefine/Page/PermissionUser/Controller/permission_controller.dart';
 import 'package:ifeelefine/Provider/prefencesUser.dart';
+import 'package:ifeelefine/main.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import '../../Geolocator/Controller/configGeolocatorController.dart';
@@ -146,6 +147,7 @@ class _PermitionUserPageState extends State<PermitionUserPage> {
     // TODO: implement initState
     super.initState();
     getPermissions();
+    starTap();
     // _getContacts();
     //showPermition();
   }
@@ -163,118 +165,122 @@ class _PermitionUserPageState extends State<PermitionUserPage> {
           style: textForTitleApp(),
         ),
       ),
-      body: Container(
-        decoration: decorationCustom(),
-        child: Stack(
-          children: [
-            Positioned(
-              top: 32,
-              width: size.width,
-              child: Center(
-                child: Text('Ajustar mi Smartphone',
-                    textAlign: TextAlign.center,
-                    style: GoogleFonts.barlow(
-                      fontSize: 22.0,
-                      wordSpacing: 1,
-                      letterSpacing: 1.2,
-                      fontWeight: FontWeight.w500,
-                      color: Colors.white,
-                    )),
+      body: MediaQuery(
+        data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
+        child: Container(
+          decoration: decorationCustom(),
+          child: Stack(
+            children: [
+              Positioned(
+                top: 32,
+                width: size.width,
+                child: Center(
+                  child: Text('Ajustar mi Smartphone',
+                      textAlign: TextAlign.center,
+                      style: GoogleFonts.barlow(
+                        fontSize: 22.0,
+                        wordSpacing: 1,
+                        letterSpacing: 1.2,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.white,
+                      )),
+                ),
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(0, 90, 0, 0),
-              child: ListView.builder(
-                itemCount: permissionsName.length,
-                itemBuilder: (context, index) {
-                  String permission = permissionsName[index];
-                  return ListTile(
-                    contentPadding: const EdgeInsets.fromLTRB(32.0, 0, 32.0, 0),
-                    trailing: Transform.scale(
-                      scale: 0.8,
-                      child: CupertinoSwitch(
-                        value: permissionStatus[index],
-                        activeColor: ColorPalette.activeSwitch,
-                        trackColor: CupertinoColors.inactiveGray,
-                        onChanged: (bool value) {
-                          if (value) {
-                            requestPermission(index);
-                          } else {
-                            setState(() {
-                              permissionStatus[index] = value;
-                            });
-                            //savePermission(index, value);
-                          }
-                        },
-                      ),
-                    ),
-                    title: Text(
-                        style: GoogleFonts.barlow(
-                          fontSize: 18.0,
-                          fontWeight: FontWeight.w500,
-                          color: CupertinoColors.white,
+              Padding(
+                padding: const EdgeInsets.fromLTRB(0, 90, 0, 0),
+                child: ListView.builder(
+                  itemCount: permissionsName.length,
+                  itemBuilder: (context, index) {
+                    String permission = permissionsName[index];
+                    return ListTile(
+                      contentPadding:
+                          const EdgeInsets.fromLTRB(32.0, 0, 32.0, 0),
+                      trailing: Transform.scale(
+                        scale: 0.8,
+                        child: CupertinoSwitch(
+                          value: permissionStatus[index],
+                          activeColor: ColorPalette.activeSwitch,
+                          trackColor: CupertinoColors.inactiveGray,
+                          onChanged: (bool value) {
+                            if (value) {
+                              requestPermission(index);
+                            } else {
+                              setState(() {
+                                permissionStatus[index] = value;
+                              });
+                              //savePermission(index, value);
+                            }
+                          },
                         ),
-                        permissionsName[index]),
-                  );
-                },
-              ),
-            ),
-            Positioned(
-              bottom: 20,
-              right: 32,
-              child: Container(
-                decoration: const BoxDecoration(
-                  color: ColorPalette.principal,
-                  borderRadius: BorderRadius.all(Radius.circular(8)),
+                      ),
+                      title: Text(
+                          style: GoogleFonts.barlow(
+                            fontSize: 18.0,
+                            fontWeight: FontWeight.w500,
+                            color: CupertinoColors.white,
+                          ),
+                          permissionsName[index]),
+                    );
+                  },
                 ),
-                width: 138,
-                height: 42,
-                child: Center(
-                  child: TextButton(
-                    child: Text('Guardar',
-                        textAlign: TextAlign.center,
-                        style: GoogleFonts.barlow(
-                          fontSize: 16.0,
-                          wordSpacing: 1,
-                          letterSpacing: 1.2,
-                          fontWeight: FontWeight.w700,
-                          color: Colors.black,
-                        )),
-                    onPressed: () async {
-                      savePermissions();
-                    },
+              ),
+              Positioned(
+                bottom: 20,
+                right: 32,
+                child: Container(
+                  decoration: const BoxDecoration(
+                    color: ColorPalette.principal,
+                    borderRadius: BorderRadius.all(Radius.circular(8)),
+                  ),
+                  width: 138,
+                  height: 42,
+                  child: Center(
+                    child: TextButton(
+                      child: Text('Guardar',
+                          textAlign: TextAlign.center,
+                          style: GoogleFonts.barlow(
+                            fontSize: 16.0,
+                            wordSpacing: 1,
+                            letterSpacing: 1.2,
+                            fontWeight: FontWeight.w700,
+                            color: Colors.black,
+                          )),
+                      onPressed: () async {
+                        savePermissions();
+                      },
+                    ),
                   ),
                 ),
               ),
-            ),
-            Positioned(
-              bottom: 20,
-              left: 32,
-              child: Container(
-                decoration: BoxDecoration(
-                  color: Colors.transparent,
-                  border: Border.all(color: ColorPalette.principal),
-                  borderRadius: BorderRadius.all(Radius.circular(8)),
-                ),
-                width: 138,
-                height: 42,
-                child: Center(
-                  child: TextButton(
-                    child: Text('Cancelar',
-                        textAlign: TextAlign.center,
-                        style: GoogleFonts.barlow(
-                          fontSize: 16.0,
-                          wordSpacing: 1,
-                          letterSpacing: 1.2,
-                          fontWeight: FontWeight.w700,
-                          color: Colors.white,
-                        )),
-                    onPressed: () => Navigator.of(context).pop(),
+              Positioned(
+                bottom: 20,
+                left: 32,
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.transparent,
+                    border: Border.all(color: ColorPalette.principal),
+                    borderRadius: BorderRadius.all(Radius.circular(8)),
+                  ),
+                  width: 138,
+                  height: 42,
+                  child: Center(
+                    child: TextButton(
+                      child: Text('Cancelar',
+                          textAlign: TextAlign.center,
+                          style: GoogleFonts.barlow(
+                            fontSize: 16.0,
+                            wordSpacing: 1,
+                            letterSpacing: 1.2,
+                            fontWeight: FontWeight.w700,
+                            color: Colors.white,
+                          )),
+                      onPressed: () => Navigator.of(context).pop(),
+                    ),
                   ),
                 ),
-              ),
-            )
-          ],
+              )
+            ],
+          ),
         ),
       ),
     );

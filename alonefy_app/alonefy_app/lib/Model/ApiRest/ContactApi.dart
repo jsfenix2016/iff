@@ -36,6 +36,7 @@ class ContactApi {
     this.timeSendSms = stringTimeToInt(contact.timeSendSMS);
     this.timeCall = stringTimeToInt(contact.timeCall);
     this.timeWhatsapp = stringTimeToInt(contact.timeWhatsapp);
+    status = contact.requestStatus;
   }
 
   Map<String, dynamic> toJson() => {
@@ -46,6 +47,7 @@ class ContactApi {
         'timeSendSms': timeSendSms,
         'timeCall': timeCall,
         'timeWhatsapp': timeWhatsapp,
+        'status': status
       };
 
   factory ContactApi.fromJson(Map<String, dynamic> json) {

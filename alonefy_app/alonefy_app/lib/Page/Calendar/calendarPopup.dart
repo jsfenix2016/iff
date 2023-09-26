@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ifeelefine/Common/colorsPalette.dart';
+import 'package:ifeelefine/main.dart';
 
 import 'package:jiffy/jiffy.dart';
 import 'package:ifeelefine/Common/decoration_custom.dart';
@@ -195,6 +196,7 @@ class CalendarPopupState extends State<CalendarPopup> {
   @override
   void initState() {
     super.initState();
+    starTap();
     _currentDate = DateTime.now();
     _from = null;
     _to = null;

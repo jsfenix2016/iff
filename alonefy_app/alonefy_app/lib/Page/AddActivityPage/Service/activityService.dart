@@ -30,14 +30,14 @@ class ActivityService {
           headers: Constant.headers,
           body: json);
 
-      return response.statusCode == 200;
+      if (response.statusCode == 200) {
+        return response.statusCode == 200;
+      } else {
+        return false;
+      }
     } catch (e) {
       return false;
     }
-
-    //var decodedResponse = jsonDecode(utf8.decode(resp.bodyBytes)) as Map;
-//
-    //print(decodedResponse['id'] as int);
   }
 
   Future<ActivityDayApiResponse?> getActivities(String phoneNumber) async {

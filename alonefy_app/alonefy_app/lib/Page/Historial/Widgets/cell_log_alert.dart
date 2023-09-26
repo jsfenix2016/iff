@@ -51,7 +51,7 @@ class _CellLogAlertsState extends State<CellLogAlerts> {
                   Positioned(
                     top: 40,
                     child: Text(
-                      '${widget.logAlert.time.day}-${widget.logAlert.time.month}-${widget.logAlert.time.year} | ${widget.logAlert.time.hour}:${widget.logAlert.time.minute}',
+                      '${widget.logAlert.time.day}-${widget.logAlert.time.month}-${widget.logAlert.time.year} | ${widget.logAlert.time.hour.toString().padLeft(2, '0')}:${widget.logAlert.time.minute.toString().padLeft(2, '0')}',
                       textAlign: TextAlign.left,
                       style: GoogleFonts.barlow(
                         fontSize: 16.0,

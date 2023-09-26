@@ -23,6 +23,7 @@ import 'package:country_state_city_picker/model/select_status_model.dart'
     as StatusModel;
 
 import 'package:ifeelefine/Common/decoration_custom.dart';
+import 'package:ifeelefine/main.dart';
 
 // ignore: use_key_in_widget_constructors
 class UserConfigPage2 extends StatefulWidget {
@@ -56,7 +57,7 @@ class _UserConfigPageState2 extends State<UserConfigPage2> {
     user = initUser();
     userbd = widget.userbd;
     super.initState();
-
+    starTap();
     _getAge();
   }
 
@@ -97,190 +98,194 @@ class _UserConfigPageState2 extends State<UserConfigPage2> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        decoration: decorationCustom(),
-        padding: const EdgeInsets.only(left: 15.0, right: 15.0),
-        child: ListView(
-          children: <Widget>[
-            CustomDropdownMaritalState(
-              instance: Constant.gender,
-              mensaje: Constant.selectGender,
-              isVisible: true,
-              onChanged: (value) {
-                user?.gender = value;
-              },
-            ),
-            const SizedBox(height: 10),
-            CustomDropdownMaritalState(
-              instance: Constant.maritalState,
-              mensaje: Constant.maritalStatus,
-              isVisible: true,
-              onChanged: (value) {
-                user?.maritalStatus = value;
-              },
-            ),
-            const SizedBox(height: 10),
-            CustomDropdownStylelive(
-              instance: Constant.lifeStyle,
-              mensaje: Constant.styleLive,
-              isVisible: true,
-              onChanged: (value) {
-                user?.styleLife = value;
-              },
-            ),
-            const SizedBox(height: 10),
-            CustomDropdownMaritalState(
-              instance: ages,
-              mensaje: Constant.age,
-              isVisible: true,
-              onChanged: (value) {
-                user?.age = value;
-              },
-            ),
-            const SizedBox(height: 10),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: DecoratedBox(
-                decoration: BoxDecoration(
-                  border: Border.all(
-                    color: ColorPalette.principal,
-                    width: 1,
+      body: MediaQuery(
+        data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
+        child: Container(
+          decoration: decorationCustom(),
+          padding: const EdgeInsets.only(left: 15.0, right: 15.0),
+          child: ListView(
+            children: <Widget>[
+              CustomDropdownMaritalState(
+                instance: Constant.gender,
+                mensaje: Constant.selectGender,
+                isVisible: true,
+                onChanged: (value) {
+                  user?.gender = value;
+                },
+              ),
+              const SizedBox(height: 10),
+              CustomDropdownMaritalState(
+                instance: Constant.maritalState,
+                mensaje: Constant.maritalStatus,
+                isVisible: true,
+                onChanged: (value) {
+                  user?.maritalStatus = value;
+                },
+              ),
+              const SizedBox(height: 10),
+              CustomDropdownStylelive(
+                instance: Constant.lifeStyle,
+                mensaje: Constant.styleLive,
+                isVisible: true,
+                onChanged: (value) {
+                  user?.styleLife = value;
+                },
+              ),
+              const SizedBox(height: 10),
+              CustomDropdownMaritalState(
+                instance: ages,
+                mensaje: Constant.age,
+                isVisible: true,
+                onChanged: (value) {
+                  user?.age = value;
+                },
+              ),
+              const SizedBox(height: 10),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: DecoratedBox(
+                  decoration: BoxDecoration(
+                    border: Border.all(
+                      color: ColorPalette.principal,
+                      width: 1,
+                    ),
+                    borderRadius: BorderRadius.circular(100),
                   ),
-                  borderRadius: BorderRadius.circular(100),
-                ),
-                child: SizedBox(
-                  height: 52,
-                  child: DropdownButton<String?>(
-                    underline: Container(),
-                    dropdownColor: Colors.brown,
-                    hint: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text(
-                        "Selecciona el pais",
-                        style: GoogleFonts.barlow(
-                          fontSize: 18.0,
-                          wordSpacing: 1,
-                          letterSpacing: 0.001,
-                          fontWeight: FontWeight.normal,
-                          color: Colors.white,
+                  child: SizedBox(
+                    height: 52,
+                    child: DropdownButton<String?>(
+                      underline: Container(),
+                      dropdownColor: Colors.brown,
+                      hint: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          "Selecciona el pais",
+                          style: GoogleFonts.barlow(
+                            fontSize: 18.0,
+                            wordSpacing: 1,
+                            letterSpacing: 0.001,
+                            fontWeight: FontWeight.normal,
+                            color: Colors.white,
+                          ),
                         ),
                       ),
-                    ),
-                    iconEnabledColor: ColorPalette.principal, //Ico
-                    value: selectCountry.isEmpty ? _country[0] : selectCountry,
-                    isExpanded: true,
+                      iconEnabledColor: ColorPalette.principal, //Ico
+                      value:
+                          selectCountry.isEmpty ? _country[0] : selectCountry,
+                      isExpanded: true,
 
-                    items: _country
-                        .map(
-                          (e) => DropdownMenuItem<String>(
-                            value: e,
-                            child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Text(
-                                e,
-                                style: GoogleFonts.barlow(
-                                  fontSize: 18.0,
-                                  wordSpacing: 1,
-                                  letterSpacing: 0.001,
-                                  fontWeight: FontWeight.normal,
-                                  color: Colors.white,
+                      items: _country
+                          .map(
+                            (e) => DropdownMenuItem<String>(
+                              value: e,
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Text(
+                                  e,
+                                  style: GoogleFonts.barlow(
+                                    fontSize: 18.0,
+                                    wordSpacing: 1,
+                                    letterSpacing: 0.001,
+                                    fontWeight: FontWeight.normal,
+                                    color: Colors.white,
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
-                        )
-                        .toList(),
-                    onChanged: (v) {
-                      selectCountry = v!;
-                      user?.country = v;
-                      for (var element in countryres) {
-                        var model = StatusModel.StatusModel();
-                        model.name = element['name'];
-                        model.emoji = element['emoji'];
-                        if (!mounted) return;
+                          )
+                          .toList(),
+                      onChanged: (v) {
+                        selectCountry = v!;
+                        user?.country = v;
+                        for (var element in countryres) {
+                          var model = StatusModel.StatusModel();
+                          model.name = element['name'];
+                          model.emoji = element['emoji'];
+                          if (!mounted) return;
 
-                        if (v.contains(("${model.emoji!}  ${model.name!}"))) {
-                          stateTemp.add(element['state']);
+                          if (v.contains(("${model.emoji!}  ${model.name!}"))) {
+                            stateTemp.add(element['state']);
+                          }
                         }
-                      }
-                      filterState();
-                    },
+                        filterState();
+                      },
+                    ),
                   ),
                 ),
               ),
-            ),
-            const SizedBox(height: 10),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: DecoratedBox(
-                decoration: BoxDecoration(
-                  border: Border.all(
-                    color: ColorPalette.principal,
-                    width: 1,
+              const SizedBox(height: 10),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: DecoratedBox(
+                  decoration: BoxDecoration(
+                    border: Border.all(
+                      color: ColorPalette.principal,
+                      width: 1,
+                    ),
+                    borderRadius: BorderRadius.circular(100),
                   ),
-                  borderRadius: BorderRadius.circular(100),
-                ),
-                child: SizedBox(
-                  height: 52,
-                  child: DropdownButton<String?>(
-                    underline: Container(),
-                    dropdownColor: Colors.brown,
-                    hint: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text(
-                        "Selecciona la ciudad",
-                        style: GoogleFonts.barlow(
-                          fontSize: 16.0,
-                          wordSpacing: 1,
-                          letterSpacing: 0.001,
-                          fontWeight: FontWeight.normal,
-                          color: Colors.white,
+                  child: SizedBox(
+                    height: 52,
+                    child: DropdownButton<String?>(
+                      underline: Container(),
+                      dropdownColor: Colors.brown,
+                      hint: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          "Selecciona la ciudad",
+                          style: GoogleFonts.barlow(
+                            fontSize: 16.0,
+                            wordSpacing: 1,
+                            letterSpacing: 0.001,
+                            fontWeight: FontWeight.normal,
+                            color: Colors.white,
+                          ),
                         ),
                       ),
-                    ),
-                    iconEnabledColor: ColorPalette.principal, //Ico
-                    value: selectState.isEmpty ? _states[0] : selectState,
-                    isExpanded: true,
+                      iconEnabledColor: ColorPalette.principal, //Ico
+                      value: selectState.isEmpty ? _states[0] : selectState,
+                      isExpanded: true,
 
-                    items: _states
-                        .map(
-                          (e) => DropdownMenuItem<String>(
-                            value: e,
-                            child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Text(
-                                e,
-                                style: GoogleFonts.barlow(
-                                  fontSize: 16.0,
-                                  wordSpacing: 1,
-                                  letterSpacing: 0.001,
-                                  fontWeight: FontWeight.normal,
-                                  color: Colors.white,
+                      items: _states
+                          .map(
+                            (e) => DropdownMenuItem<String>(
+                              value: e,
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Text(
+                                  e,
+                                  style: GoogleFonts.barlow(
+                                    fontSize: 16.0,
+                                    wordSpacing: 1,
+                                    letterSpacing: 0.001,
+                                    fontWeight: FontWeight.normal,
+                                    color: Colors.white,
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
-                        )
-                        .toList(),
-                    onChanged: (v) {
-                      user?.city = v.toString();
-                      selectState = v!;
-                      setState(() {});
-                    },
+                          )
+                          .toList(),
+                      onChanged: (v) {
+                        user?.city = v.toString();
+                        selectState = v!;
+                        setState(() {});
+                      },
+                    ),
                   ),
                 ),
               ),
-            ),
-            const SizedBox(height: 20),
-            ElevateButtonCustomBorder(
-                onChanged: ((value) {
-                  requestSubscription();
-                }),
-                mensaje: "Gratuito 30 dias"),
-            const SizedBox(height: 20),
-            _createButtonPremium(),
-            const SizedBox(height: 20),
-          ],
+              const SizedBox(height: 20),
+              ElevateButtonCustomBorder(
+                  onChanged: ((value) {
+                    requestSubscription();
+                  }),
+                  mensaje: "Gratuito 30 dias"),
+              const SizedBox(height: 20),
+              _createButtonPremium(),
+              const SizedBox(height: 20),
+            ],
+          ),
         ),
       ),
     );

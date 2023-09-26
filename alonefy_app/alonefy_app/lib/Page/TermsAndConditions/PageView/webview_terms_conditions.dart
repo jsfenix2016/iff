@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:ifeelefine/Common/Constant.dart';
 import 'package:ifeelefine/Common/text_style_font.dart';
+import 'package:ifeelefine/main.dart';
 
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:webview_flutter_wkwebview/webview_flutter_wkwebview.dart';
@@ -71,7 +72,7 @@ class _WebViewTermsConditionsState extends State<WebViewTermsConditions> {
       onWillPop: () async {
         // Aquí puedes ejecutar acciones personalizadas antes de volver atrás
         // Por ejemplo, mostrar un diálogo de confirmación
-
+        starTap();
         var confirmExit = await showDialog(
           context: context,
           builder: (BuildContext context) => AlertDialog(

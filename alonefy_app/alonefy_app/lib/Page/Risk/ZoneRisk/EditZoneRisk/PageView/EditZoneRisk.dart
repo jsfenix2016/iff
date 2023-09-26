@@ -25,6 +25,7 @@ import 'package:ifeelefine/Provider/prefencesUser.dart';
 import 'package:ifeelefine/Utils/Widgets/elevateButtonCustomBorder.dart';
 import 'package:ifeelefine/Common/decoration_custom.dart';
 import 'package:ifeelefine/Utils/Widgets/loading_page.dart';
+import 'package:ifeelefine/main.dart';
 
 class EditZoneRiskPage extends StatefulWidget {
   const EditZoneRiskPage(
@@ -53,14 +54,15 @@ class _EditZoneRiskPageState extends State<EditZoneRiskPage> {
   bool isSelectContact = true;
   String name = 'Selecciona un contacto';
 
-  List<Contact> contactlist = [];
+  // List<Contact> contactlist = [];
   late Contact contactSelect;
   var indexSelect = -1;
   var code = CodeModel();
   late bool isActive = false;
+  bool isLoadingContactList = false;
   @override
   void initState() {
-    getContact();
+    // getContact();
     List<String> parts = [];
     if (widget.contactRisk.code != "") {
       parts = widget.contactRisk.code.split(',');
@@ -77,19 +79,20 @@ class _EditZoneRiskPageState extends State<EditZoneRiskPage> {
       code.textCode4 = '';
     }
     preferencePermission = _prefs.getAcceptedSendLocation;
-    _isActivePermission();
+    // _isActivePermission();
     if (widget.contactRisk.id != -1) {
       saveConfig = widget.contactRisk.save;
+      getContact();
     }
 
     super.initState();
+    starTap();
   }
 
   Future getContact() async {
     setState(() {
-      isLoading = true;
+      isLoadingContactList = true;
     });
-    contactlist = await getContacts(context);
 
     for (var element in contactlist) {
       if (widget.contactRisk.name == element.displayName) {
@@ -98,7 +101,7 @@ class _EditZoneRiskPageState extends State<EditZoneRiskPage> {
       }
     }
     setState(() {
-      isLoading = false;
+      isLoadingContactList = false;
     });
     setState(() {});
   }
@@ -213,8 +216,9 @@ class _EditZoneRiskPageState extends State<EditZoneRiskPage> {
         id: widget.contactRisk.id,
         photo: contactSelect.photo,
         name: widget.contactRisk.name,
-        phones:
-            contactSelect.phones.first.normalizedNumber.replaceAll("+34", ""),
+        phones: contactSelect.phones.first.normalizedNumber.contains("+34")
+            ? contactSelect.phones.first.normalizedNumber.replaceAll("+34", "")
+            : contactSelect.phones.first.normalizedNumber,
         sendLocation: widget.contactRisk.sendLocation,
         sendWhatsapp: widget.contactRisk.sendWhatsapp,
         code: widget.contactRisk.code,
@@ -254,27 +258,25 @@ class _EditZoneRiskPageState extends State<EditZoneRiskPage> {
         var update =
             await editZoneVC.updateContactZoneRisk(context, contactRisk);
         if (update) {
-          Future.sync(
-            () async => await showDialog(
-              context: context,
-              builder: (context) {
-                return AlertDialog(
-                  title: const Text(Constant.info),
-                  content: const Text(Constant.saveCorrectly),
-                  actions: <Widget>[
-                    TextButton(
-                      onPressed: () {
-                        setState(() {
-                          Navigator.of(context).pop();
-                        });
-                        goToPush(contactRisk);
-                      },
-                      child: const Text("Ok"),
-                    )
-                  ],
-                );
-              },
-            ),
+          await showDialog(
+            context: context,
+            builder: (context) {
+              return AlertDialog(
+                title: const Text(Constant.info),
+                content: const Text(Constant.saveCorrectly),
+                actions: <Widget>[
+                  TextButton(
+                    onPressed: () {
+                      setState(() {
+                        Navigator.of(context).pop();
+                      });
+                      goToPush(contactRisk);
+                    },
+                    child: const Text("Ok"),
+                  )
+                ],
+              );
+            },
           );
         }
       }
@@ -284,7 +286,7 @@ class _EditZoneRiskPageState extends State<EditZoneRiskPage> {
   }
 
   void goToPush(ContactZoneRiskBD contactRisk) async {
-    await Navigator.pushReplacement(
+    await Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => PushAlertPage(
@@ -306,7 +308,7 @@ class _EditZoneRiskPageState extends State<EditZoneRiskPage> {
       context,
       MaterialPageRoute(
         builder: (context) =>
-            FilterContactListScreen(onCountrySelected: (contact) {
+            FilterContactListScreen(oncontactSelected: (contact) {
           setState(() {
             cont = contact;
           });
@@ -318,6 +320,7 @@ class _EditZoneRiskPageState extends State<EditZoneRiskPage> {
       setState(() {
         contactSelect = cont!;
         widget.contactRisk.name = contactSelect.displayName;
+        widget.contactRisk.photo = contactSelect.photo;
         isSelectContact = true;
         indexSelect =
             contactlist.indexWhere((item) => item.id == contactSelect.id);
@@ -349,111 +352,446 @@ class _EditZoneRiskPageState extends State<EditZoneRiskPage> {
             style: textForTitleApp(),
           ),
         ),
-        body: Container(
-          height: size.height,
-          width: size.width,
-          decoration: decorationCustom(),
-          child: SingleChildScrollView(
-            keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-            child: Center(
-              child: Column(
-                children: [
-                  const SafeArea(
-                    child: SizedBox(
-                      height: 30.0,
+        body: MediaQuery(
+          data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
+          child: Container(
+            height: size.height,
+            width: size.width,
+            decoration: decorationCustom(),
+            child: SingleChildScrollView(
+              keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+              child: Center(
+                child: Column(
+                  children: [
+                    const SafeArea(
+                      child: SizedBox(
+                        height: 30.0,
+                      ),
                     ),
-                  ),
-                  space(20),
-                  SizedBox(
-                    child: Column(
-                      children: [
-                        Center(
-                          child: Padding(
-                            padding:
-                                const EdgeInsets.only(left: 12.0, right: 12),
-                            child: Text(
-                              "En caso de no pulsar botón de alerta",
-                              textAlign: TextAlign.center,
-                              style: GoogleFonts.barlow(
-                                fontSize: 18.0,
-                                wordSpacing: 1,
-                                letterSpacing: 1,
-                                fontWeight: FontWeight.w700,
-                                color: Color.fromRGBO(222, 222, 222, 1),
-                              ),
-                            ),
-                          ),
-                        ),
-                        Column(
-                          mainAxisSize: MainAxisSize.max,
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          children: [
-                            SizedBox(
-                              height: 60.0,
-                              child: Padding(
-                                padding: const EdgeInsets.all(12.0),
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.max,
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    SizedBox(
-                                      width: 270,
-                                      child: Text(
-                                        "Enviar Whatsapp a",
-                                        textAlign: TextAlign.right,
-                                        style: GoogleFonts.barlow(
-                                          fontSize: 14.0,
-                                          wordSpacing: 1,
-                                          letterSpacing: 1,
-                                          fontWeight: FontWeight.w600,
-                                          color: const Color.fromRGBO(
-                                              222, 222, 222, 1),
-                                        ),
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      width: size.width / 6,
-                                      child: Transform.scale(
-                                        scale: 0.8,
-                                        child: CupertinoSwitch(
-                                          value:
-                                              widget.contactRisk.sendWhatsapp,
-                                          activeColor:
-                                              ColorPalette.activeSwitch,
-                                          trackColor:
-                                              CupertinoColors.inactiveGray,
-                                          onChanged: (bool value) {
-                                            setState(() {
-                                              sendWhatsappSMS = value;
-                                              widget.contactRisk.sendWhatsapp =
-                                                  value;
-                                            });
-                                          },
-                                        ),
-                                      ),
-                                    ),
-                                  ],
+                    space(20),
+                    SizedBox(
+                      child: Column(
+                        children: [
+                          Center(
+                            child: Padding(
+                              padding:
+                                  const EdgeInsets.only(left: 12.0, right: 12),
+                              child: Text(
+                                "En caso de no pulsar botón de alerta",
+                                textAlign: TextAlign.center,
+                                style: GoogleFonts.barlow(
+                                  fontSize: 18.0,
+                                  wordSpacing: 1,
+                                  letterSpacing: 1,
+                                  fontWeight: FontWeight.w700,
+                                  color: Color.fromRGBO(222, 222, 222, 1),
                                 ),
                               ),
                             ),
-                            Container(
-                              color: Colors.transparent,
-                              height: 50.0,
-                              child: Padding(
-                                padding: const EdgeInsets.all(12.0),
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.max,
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    SizedBox(
-                                      width: 270,
+                          ),
+                          Column(
+                            mainAxisSize: MainAxisSize.max,
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            children: [
+                              SizedBox(
+                                height: 60.0,
+                                child: Padding(
+                                  padding: const EdgeInsets.all(12.0),
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.max,
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      SizedBox(
+                                        width: 270,
+                                        child: Text(
+                                          "Enviar Whatsapp a",
+                                          textAlign: TextAlign.right,
+                                          style: GoogleFonts.barlow(
+                                            fontSize: 14.0,
+                                            wordSpacing: 1,
+                                            letterSpacing: 1,
+                                            fontWeight: FontWeight.w600,
+                                            color: const Color.fromRGBO(
+                                                222, 222, 222, 1),
+                                          ),
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        width: size.width / 6,
+                                        child: Transform.scale(
+                                          scale: 0.8,
+                                          child: CupertinoSwitch(
+                                            value:
+                                                widget.contactRisk.sendWhatsapp,
+                                            activeColor:
+                                                ColorPalette.activeSwitch,
+                                            trackColor:
+                                                CupertinoColors.inactiveGray,
+                                            onChanged: (bool value) {
+                                              setState(() {
+                                                sendWhatsappSMS = value;
+                                                widget.contactRisk
+                                                    .sendWhatsapp = value;
+                                              });
+                                            },
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                              Container(
+                                color: Colors.transparent,
+                                height: 50.0,
+                                child: Padding(
+                                  padding: const EdgeInsets.all(12.0),
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.max,
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      SizedBox(
+                                        width: 270,
+                                        child: Text(
+                                          "Hacer llamada a",
+                                          textAlign: TextAlign.right,
+                                          style: GoogleFonts.barlow(
+                                            fontSize: 14.0,
+                                            wordSpacing: 1,
+                                            letterSpacing: 1,
+                                            fontWeight: FontWeight.w600,
+                                            color: Color.fromRGBO(
+                                                222, 222, 222, 1),
+                                          ),
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        width: size.width / 6,
+                                        child: Transform.scale(
+                                          scale: 0.8,
+                                          child: CupertinoSwitch(
+                                            value: widget.contactRisk.callme,
+                                            activeColor:
+                                                ColorPalette.activeSwitch,
+                                            trackColor:
+                                                CupertinoColors.inactiveGray,
+                                            onChanged: (bool value) async {
+                                              if (_prefs.getUserFree &&
+                                                  !_prefs.getUserPremium) {
+                                                await Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          const PremiumPage(
+                                                              isFreeTrial:
+                                                                  false,
+                                                              img:
+                                                                  'Mask group-6.png',
+                                                              title:
+                                                                  "Protege tu Seguridad Personal las 24h:\n\n",
+                                                              subtitle:
+                                                                  'Activa para que alertfriends les llame por teléfono')),
+                                                ).then((value) {
+                                                  if (value != null && value) {
+                                                    _prefs.setUserFree = false;
+                                                    _prefs.setUserPremium =
+                                                        true;
+                                                    var premiumController =
+                                                        Get.put(
+                                                            PremiumController());
+                                                    premiumController
+                                                        .updatePremiumAPI(true);
+                                                    _checkPermission();
+                                                    setState(() {});
+                                                  }
+                                                });
+
+                                                return;
+                                              }
+                                              callme = value;
+                                              widget.contactRisk.callme = value;
+                                              setState(() {});
+                                            },
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                    space(20),
+                    SizedBox(
+                      child: Column(
+                        children: [
+                          space(0),
+                          Stack(
+                            children: [
+                              CardContact(
+                                isSelect: isSelectContact,
+                                visible: true,
+                                photo: (indexSelect != -1 &&
+                                        contactlist.isNotEmpty &&
+                                        contactlist[indexSelect].photo != null)
+                                    ? contactlist[indexSelect].photo
+                                    : widget.contactRisk.photo,
+                                name: (indexSelect != -1 &&
+                                            contactlist.isNotEmpty &&
+                                            contactlist[indexSelect]
+                                                    .displayName !=
+                                                '' ||
+                                        widget.contactRisk.name != '')
+                                    ? (indexSelect == -1)
+                                        ? widget.contactRisk.name
+                                        : contactlist[indexSelect].displayName
+                                    : name,
+                                onChanged: (value) {
+                                  _showContactListScreen(context);
+                                },
+                              ),
+                              if (isLoadingContactList)
+                                Container(
+                                  height: 79,
+                                  width: 320,
+                                  decoration: BoxDecoration(
+                                    color: Colors.black.withOpacity(0.5),
+                                    borderRadius: const BorderRadius.all(
+                                      Radius.circular(
+                                          100.0), //                 <--- border radius here
+                                    ),
+                                  ),
+                                  child: const Center(
+                                    child: CircularProgressIndicator(),
+                                  ),
+                                ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                    space(20),
+                    Column(
+                      mainAxisSize: MainAxisSize.max,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Container(
+                          color: Colors.transparent,
+                          height: 60.0,
+                          child: Padding(
+                            padding: const EdgeInsets.all(12.0),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.max,
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                SizedBox(
+                                  width: 270,
+                                  child: Text(
+                                    "Enviar Whatsapp a mi contacto predefinido",
+                                    textAlign: TextAlign.right,
+                                    style: GoogleFonts.barlow(
+                                      fontSize: 14.0,
+                                      wordSpacing: 1,
+                                      letterSpacing: 1,
+                                      fontWeight: FontWeight.w600,
+                                      color: const Color.fromRGBO(
+                                          222, 222, 222, 1),
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(
+                                  width: size.width / 6,
+                                  child: Transform.scale(
+                                    scale: 0.8,
+                                    child: CupertinoSwitch(
+                                      value: widget
+                                          .contactRisk.sendWhatsappContact,
+                                      activeColor: ColorPalette.activeSwitch,
+                                      trackColor: CupertinoColors.inactiveGray,
+                                      onChanged: (bool value) {
+                                        sendWhatsappContact = value;
+                                        widget.contactRisk.sendWhatsappContact =
+                                            value;
+                                        setState(() {});
+                                      },
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        Container(
+                          color: Colors.transparent,
+                          height: 60.0,
+                          child: Padding(
+                            padding: const EdgeInsets.all(12.0),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.max,
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                SizedBox(
+                                  width: 270,
+                                  child: Text(
+                                    "Enviar mi última ubicación registrada",
+                                    textAlign: TextAlign.right,
+                                    style: GoogleFonts.barlow(
+                                      fontSize: 14.0,
+                                      wordSpacing: 1,
+                                      letterSpacing: 1,
+                                      fontWeight: FontWeight.w600,
+                                      color: const Color.fromRGBO(
+                                          222, 222, 222, 1),
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(
+                                  width: size.width / 6,
+                                  child: Transform.scale(
+                                    scale: 0.8,
+                                    child: CupertinoSwitch(
+                                      value: widget.contactRisk.sendLocation,
+                                      activeColor: ColorPalette.activeSwitch,
+                                      trackColor: CupertinoColors.inactiveGray,
+                                      onChanged: (bool value) async {
+                                        if (_prefs.getUserFree &&
+                                            !_prefs.getUserPremium) {
+                                          await Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) => const PremiumPage(
+                                                  isFreeTrial: false,
+                                                  img: 'Pantalla4.jpg',
+                                                  title:
+                                                      'Protege tu Seguridad Personal las 24h:\n\n',
+                                                  subtitle:
+                                                      'Activa para enviar tu última ubicación'),
+                                            ),
+                                          ).then((value) async {
+                                            if (value != null && value) {
+                                              _prefs.setUserFree = false;
+                                              _prefs.setUserPremium = true;
+                                              var premiumController =
+                                                  Get.put(PremiumController());
+                                              premiumController
+                                                  .updatePremiumAPI(true);
+                                              isActive = true;
+                                              setState(() {});
+                                              await _checkPermission();
+                                              getCurrentPosition();
+                                            }
+                                          });
+                                          ;
+                                          return;
+                                        }
+                                        sendLocation = value;
+                                        widget.contactRisk.sendLocation = value;
+                                        setState(() {});
+                                      },
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    Container(
+                      color: Colors.transparent,
+                      width: size.width,
+                      height: 50,
+                      child: Padding(
+                        padding: const EdgeInsets.all(12.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          mainAxisSize: MainAxisSize.max,
+                          children: [
+                            SizedBox(
+                              width: 270,
+                              child: Text(
+                                "Guardar esta configuración",
+                                textAlign: TextAlign.right,
+                                style: GoogleFonts.barlow(
+                                  fontSize: 14.0,
+                                  wordSpacing: 1,
+                                  letterSpacing: 1,
+                                  fontWeight: FontWeight.w600,
+                                  color: const Color.fromRGBO(222, 222, 222, 1),
+                                ),
+                              ),
+                            ),
+                            SizedBox(
+                              width: size.width / 6,
+                              child: Transform.scale(
+                                scale: 0.8,
+                                child: CupertinoSwitch(
+                                  value: widget.contactRisk.save,
+                                  activeColor: ColorPalette.activeSwitch,
+                                  trackColor: CupertinoColors.inactiveGray,
+                                  onChanged: (value) async {
+                                    if (_prefs.getUserFree &&
+                                        !_prefs.getUserPremium) {
+                                      await Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) => const PremiumPage(
+                                                isFreeTrial: false,
+                                                img: 'Pantalla4.jpg',
+                                                title:
+                                                    'Protege tu Seguridad Personal las 24h:\n\n',
+                                                subtitle:
+                                                    'Guarda la configuración de las zonas de riesgo, en caso de que quieras volverles a utilizar ')),
+                                      ).then((value) {
+                                        if (value != null && value) {
+                                          _prefs.setUserFree = false;
+                                          _prefs.setUserPremium = true;
+                                          var premiumController =
+                                              Get.put(PremiumController());
+                                          premiumController
+                                              .updatePremiumAPI(true);
+                                          setState(() {});
+                                        }
+                                      });
+
+                                      return;
+                                    }
+                                    saveConfig = value;
+                                    widget.contactRisk.save = value;
+                                    setState(() {});
+                                  },
+                                ),
+                              ),
+                            )
+                          ],
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      flex: 0,
+                      child: Container(
+                        color: Colors.transparent,
+                        child: Column(
+                          mainAxisSize: MainAxisSize.max,
+                          children: [
+                            space(20),
+                            SizedBox(
+                              child: Column(
+                                children: [
+                                  Center(
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(
+                                          left: 8.0, right: 8),
                                       child: Text(
-                                        "Hacer llamada a",
-                                        textAlign: TextAlign.right,
+                                        "Establece tu clave de cancelación",
+                                        textAlign: TextAlign.center,
                                         style: GoogleFonts.barlow(
-                                          fontSize: 14.0,
+                                          fontSize: 18.0,
                                           wordSpacing: 1,
                                           letterSpacing: 1,
                                           fontWeight: FontWeight.w600,
@@ -462,342 +800,35 @@ class _EditZoneRiskPageState extends State<EditZoneRiskPage> {
                                         ),
                                       ),
                                     ),
-                                    SizedBox(
-                                      width: size.width / 6,
-                                      child: Transform.scale(
-                                        scale: 0.8,
-                                        child: CupertinoSwitch(
-                                          value: widget.contactRisk.callme,
-                                          activeColor:
-                                              ColorPalette.activeSwitch,
-                                          trackColor:
-                                              CupertinoColors.inactiveGray,
-                                          onChanged: (bool value) async {
-                                            if (_prefs.getUserFree &&
-                                                !_prefs.getUserPremium) {
-                                              await Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        const PremiumPage(
-                                                            isFreeTrial: false,
-                                                            img:
-                                                                'Mask group-6.png',
-                                                            title:
-                                                                "Protege tu Seguridad Personal las 24h:\n\n",
-                                                            subtitle:
-                                                                'Activa para que alertfriends les llame por teléfono')),
-                                              ).then((value) {
-                                                if (value != null && value) {
-                                                  _prefs.setUserFree = false;
-                                                  _prefs.setUserPremium = true;
-                                                  var premiumController =
-                                                      Get.put(
-                                                          PremiumController());
-                                                  premiumController
-                                                      .updatePremiumAPI(true);
-                                                  _checkPermission();
-                                                  setState(() {});
-                                                }
-                                              });
-
-                                              return;
-                                            }
-                                            callme = value;
-                                            widget.contactRisk.callme = value;
-                                            setState(() {});
-                                          },
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
+                                  ),
+                                  space(10),
+                                  ContentCode(
+                                    code: code,
+                                    onChanged: (value) {
+                                      code = value;
+                                      widget.contactRisk.code =
+                                          '${value.textCode1},${value.textCode2},${value.textCode3},${value.textCode4}';
+                                    },
+                                  ),
+                                ],
                               ),
                             ),
                           ],
                         ),
-                      ],
-                    ),
-                  ),
-                  space(20),
-                  SizedBox(
-                    child: Column(
-                      children: [
-                        space(0),
-                        CardContact(
-                          isSelect: isSelectContact,
-                          visible: true,
-                          photo: (indexSelect != -1 &&
-                                  contactlist.isNotEmpty &&
-                                  contactlist[indexSelect].photo != null)
-                              ? contactlist[indexSelect].photo
-                              : widget.contactRisk.photo,
-                          name: (indexSelect != -1 &&
-                                      contactlist.isNotEmpty &&
-                                      contactlist[indexSelect].displayName !=
-                                          '' ||
-                                  widget.contactRisk.name != '')
-                              ? (indexSelect == -1)
-                                  ? widget.contactRisk.name
-                                  : contactlist[indexSelect].displayName
-                              : name,
-                          onChanged: (value) {
-                            _showContactListScreen(context);
-                          },
-                        ),
-                      ],
-                    ),
-                  ),
-                  space(20),
-                  Column(
-                    mainAxisSize: MainAxisSize.max,
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Container(
-                        color: Colors.transparent,
-                        height: 60.0,
-                        child: Padding(
-                          padding: const EdgeInsets.all(12.0),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.max,
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              SizedBox(
-                                width: 270,
-                                child: Text(
-                                  "Enviar Whatsapp a mi contacto predefinido",
-                                  textAlign: TextAlign.right,
-                                  style: GoogleFonts.barlow(
-                                    fontSize: 14.0,
-                                    wordSpacing: 1,
-                                    letterSpacing: 1,
-                                    fontWeight: FontWeight.w600,
-                                    color:
-                                        const Color.fromRGBO(222, 222, 222, 1),
-                                  ),
-                                ),
-                              ),
-                              SizedBox(
-                                width: size.width / 6,
-                                child: Transform.scale(
-                                  scale: 0.8,
-                                  child: CupertinoSwitch(
-                                    value:
-                                        widget.contactRisk.sendWhatsappContact,
-                                    activeColor: ColorPalette.activeSwitch,
-                                    trackColor: CupertinoColors.inactiveGray,
-                                    onChanged: (bool value) {
-                                      sendWhatsappContact = value;
-                                      widget.contactRisk.sendWhatsappContact =
-                                          value;
-                                      setState(() {});
-                                    },
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      Container(
-                        color: Colors.transparent,
-                        height: 60.0,
-                        child: Padding(
-                          padding: const EdgeInsets.all(12.0),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.max,
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              SizedBox(
-                                width: 270,
-                                child: Text(
-                                  "Enviar mi última ubicación registrada",
-                                  textAlign: TextAlign.right,
-                                  style: GoogleFonts.barlow(
-                                    fontSize: 14.0,
-                                    wordSpacing: 1,
-                                    letterSpacing: 1,
-                                    fontWeight: FontWeight.w600,
-                                    color:
-                                        const Color.fromRGBO(222, 222, 222, 1),
-                                  ),
-                                ),
-                              ),
-                              SizedBox(
-                                width: size.width / 6,
-                                child: Transform.scale(
-                                  scale: 0.8,
-                                  child: CupertinoSwitch(
-                                    value: widget.contactRisk.sendLocation,
-                                    activeColor: ColorPalette.activeSwitch,
-                                    trackColor: CupertinoColors.inactiveGray,
-                                    onChanged: (bool value) async {
-                                      if (_prefs.getUserFree &&
-                                          !_prefs.getUserPremium) {
-                                        await Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (context) => const PremiumPage(
-                                                isFreeTrial: false,
-                                                img: 'Pantalla4.jpg',
-                                                title:
-                                                    'Protege tu Seguridad Personal las 24h:\n\n',
-                                                subtitle:
-                                                    'Activa para enviar tu última ubicación'),
-                                          ),
-                                        ).then((value) async {
-                                          if (value != null && value) {
-                                            _prefs.setUserFree = false;
-                                            _prefs.setUserPremium = true;
-                                            var premiumController =
-                                                Get.put(PremiumController());
-                                            premiumController
-                                                .updatePremiumAPI(true);
-                                            isActive = true;
-                                            await _checkPermission();
-                                            getCurrentPosition();
-                                          }
-                                        });
-                                        ;
-                                        return;
-                                      }
-                                      sendLocation = value;
-                                      widget.contactRisk.sendLocation = value;
-                                      setState(() {});
-                                    },
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  Container(
-                    color: Colors.transparent,
-                    width: size.width,
-                    height: 50,
-                    child: Padding(
-                      padding: const EdgeInsets.all(12.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        mainAxisSize: MainAxisSize.max,
-                        children: [
-                          SizedBox(
-                            width: 270,
-                            child: Text(
-                              "Guardar esta configuración",
-                              textAlign: TextAlign.right,
-                              style: GoogleFonts.barlow(
-                                fontSize: 14.0,
-                                wordSpacing: 1,
-                                letterSpacing: 1,
-                                fontWeight: FontWeight.w600,
-                                color: const Color.fromRGBO(222, 222, 222, 1),
-                              ),
-                            ),
-                          ),
-                          SizedBox(
-                            width: size.width / 6,
-                            child: Transform.scale(
-                              scale: 0.8,
-                              child: CupertinoSwitch(
-                                value: widget.contactRisk.save,
-                                activeColor: ColorPalette.activeSwitch,
-                                trackColor: CupertinoColors.inactiveGray,
-                                onChanged: (value) async {
-                                  if (_prefs.getUserFree &&
-                                      !_prefs.getUserPremium) {
-                                    await Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) => const PremiumPage(
-                                              isFreeTrial: false,
-                                              img: 'Pantalla4.jpg',
-                                              title:
-                                                  'Protege tu Seguridad Personal las 24h:\n\n',
-                                              subtitle:
-                                                  'Guarda la configuración de las zonas de riesgo, en caso de que quieras volverles a utilizar ')),
-                                    ).then((value) {
-                                      if (value != null && value) {
-                                        _prefs.setUserFree = false;
-                                        _prefs.setUserPremium = true;
-                                        var premiumController =
-                                            Get.put(PremiumController());
-                                        premiumController
-                                            .updatePremiumAPI(true);
-                                      }
-                                    });
-
-                                    return;
-                                  }
-                                  saveConfig = value;
-                                  widget.contactRisk.save = value;
-                                  setState(() {});
-                                },
-                              ),
-                            ),
-                          )
-                        ],
                       ),
                     ),
-                  ),
-                  Expanded(
-                    flex: 0,
-                    child: Container(
-                      color: Colors.transparent,
-                      child: Column(
-                        mainAxisSize: MainAxisSize.max,
-                        children: [
-                          space(20),
-                          SizedBox(
-                            child: Column(
-                              children: [
-                                Center(
-                                  child: Padding(
-                                    padding: const EdgeInsets.only(
-                                        left: 8.0, right: 8),
-                                    child: Text(
-                                      "Establece tu clave de cancelación",
-                                      textAlign: TextAlign.center,
-                                      style: GoogleFonts.barlow(
-                                        fontSize: 18.0,
-                                        wordSpacing: 1,
-                                        letterSpacing: 1,
-                                        fontWeight: FontWeight.w600,
-                                        color: Color.fromRGBO(222, 222, 222, 1),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                space(10),
-                                ContentCode(
-                                  code: code,
-                                  onChanged: (value) {
-                                    code = value;
-                                    widget.contactRisk.code =
-                                        '${value.textCode1},${value.textCode2},${value.textCode3},${value.textCode4}';
-                                  },
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
+                    space(20),
+                    ElevateButtonCustomBorder(
+                      onChanged: (value) {
+                        // if (saveConfig) {
+                        saveContactZoneRisk(context);
+                        // }
+                      },
+                      mensaje: 'Iniciar',
                     ),
-                  ),
-                  space(20),
-                  ElevateButtonCustomBorder(
-                    onChanged: (value) {
-                      // if (saveConfig) {
-                      saveContactZoneRisk(context);
-                      // }
-                    },
-                    mensaje: 'Iniciar',
-                  ),
-                  space(20),
-                ],
+                    space(20),
+                  ],
+                ),
               ),
             ),
           ),

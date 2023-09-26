@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:ifeelefine/Common/Constant.dart';
 import 'package:ifeelefine/Common/Firebase/firebaseManager.dart';
 import 'package:ifeelefine/Common/manager_alerts.dart';
+import 'package:ifeelefine/Common/notificationService.dart';
 import 'package:ifeelefine/Common/utils.dart';
 import 'package:ifeelefine/Controllers/contactUserController.dart';
 
@@ -47,23 +48,22 @@ class RestoreController extends GetxController {
       if (isRunning) {
         service.invoke("stopService");
       }
+      Future.sync(() => _saveNotifications(userApi));
+      Future.sync(() => _saveUserFromAPI(userApi));
+      Future.sync(() => _saveTimeUseMobile(userApi.inactivityTimes));
+      Future.sync(() => _saveRestDays(userApi.sleepHours));
+      Future.sync(() => _saveActivities(userApi.activities));
+      Future.sync(() => _saveContacts(userApi.contact));
+      Future.sync(() => _saveContactRisk(userApi.contactRisk));
+      Future.sync(() => _saveContactZoneRisk(userApi.zoneRisk));
+      Future.sync(() => _saveLogAlerts(userApi.logAlert));
+      Future.sync(() => _saveLocation(userApi));
+      Future.sync(() => _saveTermsAndConditions(userApi));
+      Future.sync(() => _saveFall(userApi));
+      Future.sync(() => _saveContactPermission(userApi));
+      Future.sync(() => _saveScheduleExactAlarm(userApi));
+      Future.sync(() => _saveCameraPermission(userApi));
 
-      await _saveNotifications(userApi);
-      await _saveUserFromAPI(userApi);
-      await _saveTimeUseMobile(userApi.inactivityTimes);
-      await _saveRestDays(userApi.sleepHours);
-      await _saveActivities(userApi.activities);
-      await _saveContacts(userApi.contact);
-      await _saveContactRisk(userApi.contactRisk);
-      await _saveContactZoneRisk(userApi.zoneRisk);
-      await _saveLogAlerts(userApi.logAlert);
-      await _saveLocation(userApi);
-      await _saveTermsAndConditions(userApi);
-      await _saveFall(userApi);
-      await _saveContactPermission(userApi);
-
-      await _saveScheduleExactAlarm(userApi);
-      await _saveCameraPermission(userApi);
       await onActionSelected("get_apns_token");
       _saveConfig();
       _prefs.setUserPremium = true;
@@ -87,6 +87,14 @@ class RestoreController extends GetxController {
     }
   }
 
+  void getContactList(BuildContext context) async {
+    if (user != null && user!.idUser != '-1') {
+      Future.delayed(const Duration(seconds: 4), () async {
+        contactlist = await getContacts(context);
+      });
+    }
+  }
+
   Future<void> _saveUserFromAPI(UserApi? userApi) async {
     if (userApi != null) {
       var bytes = await GetUserController()
@@ -103,6 +111,12 @@ class RestoreController extends GetxController {
       }
 
       var userBD = GetUserController().userApiToUserBD(userApi, pathImage);
+      user = userBD;
+      if (userApi.activateContacts ||
+          userApi.contact.isNotEmpty ||
+          userApi.contactRisk.isNotEmpty) {
+        getContactList(RedirectViewNotifier.storedContext!);
+      }
 
       var existsUser = await const HiveData().getuserbd;
       if (existsUser.idUser == "-1") {
@@ -113,32 +127,79 @@ class RestoreController extends GetxController {
 
       await EditUserService().updateUser(userBD);
 
+      List<String>? temp = [];
+      Future.sync(() async => {
+            temp = await _prefs.getlistConfigPage,
+            temp!.add("config2"),
+            _prefs.setlistConfigPage = temp!
+          });
+
       NotificationCenter().notify('getUserData');
     }
   }
 
   Future<void> _saveTimeUseMobile(List<UseMobilApi> useMobilApiList) async {
     await EditUseMobilController().saveUseMobilFromApi(useMobilApiList);
+    if (prefs.getUserPremium) {
+      List<String>? temp = [];
+      Future.sync(() async => {
+            temp = await prefs.getlistConfigPage,
+            temp!.add("useMobil"),
+            prefs.setlistConfigPage = temp!
+          });
+    }
   }
 
   Future<void> _saveRestDays(List<UserRestApi> userRestApiList) async {
     await UserRestController().saveFromApi(userRestApiList);
+
+    List<String>? temp = [];
+    Future.sync(() async => {
+          temp = await _prefs.getlistConfigPage,
+          temp!.add("restDay"),
+          _prefs.setlistConfigPage = temp!
+        });
   }
 
   Future<void> _saveActivities(
       List<ActivityDayApiResponse> activitiesApi) async {
     await AddActivityController().saveFromApi(activitiesApi);
+    if (activitiesApi.isNotEmpty) {
+      List<String>? temp = [];
+      Future.sync(() async => {
+            temp = await _prefs.getlistConfigPage,
+            temp!.add("previewActivity"),
+            _prefs.setlistConfigPage = temp!
+          });
+    }
   }
 
   Future<void> _saveFall(UserApi? userApi) async {
     if (userApi != null) {
       _prefs.setDetectedFall = userApi.activateFalls;
       _prefs.setFallTime = minutesToString(userApi.fallTime);
+
+      if (userApi.activateFalls) {
+        List<String>? temp = [];
+        Future.sync(() async => {
+              temp = await _prefs.getlistConfigPage,
+              temp!.add("fallActivation"),
+              _prefs.setlistConfigPage = temp!
+            });
+      }
     }
   }
 
   Future<void> _saveContacts(List<ContactApi> contactsApi) async {
     await ContactUserController().saveFromApi(contactsApi);
+    if (contactsApi.isNotEmpty) {
+      List<String>? temp = [];
+      Future.sync(() async => {
+            temp = await _prefs.getlistConfigPage,
+            temp!.add("addContact"),
+            _prefs.setlistConfigPage = temp!
+          });
+    }
   }
 
   Future<void> _saveLocation(UserApi? userApi) async {
@@ -147,6 +208,13 @@ class RestoreController extends GetxController {
 
       if (isAccepted) {
         _prefs.setAcceptedSendLocation = PreferencePermission.allow;
+
+        List<String>? temp = [];
+        Future.sync(() async => {
+              temp = await _prefs.getlistConfigPage,
+              temp!.add("configGeo"),
+              _prefs.setlistConfigPage = temp!
+            });
       }
     }
   }
@@ -160,7 +228,9 @@ class RestoreController extends GetxController {
 
   Future<void> _saveContactPermission(UserApi? userApi) async {
     if (userApi != null && userApi.activateContacts) {
-      var isAccepted = await requestPermission(Permission.contacts);
+      var isAccepted;
+      Future.sync(() async =>
+          isAccepted = await requestPermission(Permission.contacts));
 
       if (isAccepted) {
         _prefs.setAcceptedContacts = PreferencePermission.allow;
@@ -190,7 +260,8 @@ class RestoreController extends GetxController {
       if (_prefs.getAcceptedNotification == PreferencePermission.allow ||
           _prefs.getDetectedFall ||
           _prefs.getAcceptedSendLocation == PreferencePermission.allow) {
-        _prefs.setProtected = "AlertFriends está activado";
+        _prefs.setProtected =
+            "AlertFriends está activada y estamos comprobando que te encuentres bien.";
       }
     }
   }

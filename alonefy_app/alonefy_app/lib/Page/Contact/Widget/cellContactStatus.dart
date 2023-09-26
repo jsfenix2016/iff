@@ -45,10 +45,10 @@ class _CellContactStatusState extends State<CellContactStatus> {
 
   Color getColorStatus(String status) {
     switch (status) {
-      case "Pendiente":
+      case "PENDING":
         return ColorPalette.pendingContact;
 
-      case "Aceptado":
+      case "ACCEPTED":
         return ColorPalette.aceptedContact;
 
       case "Rechazado":
@@ -145,7 +145,12 @@ class _CellContactStatusState extends State<CellContactStatus> {
                                   padding: const EdgeInsets.only(left: 0.0),
                                   child: Center(
                                     child: Text(
-                                      widget.contact.requestStatus,
+                                      widget.contact.requestStatus == 'PENDING'
+                                          ? 'Pendiente'
+                                          : widget.contact.requestStatus ==
+                                                  'ACCEPTED'
+                                              ? 'Aceptado'
+                                              : widget.contact.requestStatus,
                                       textAlign: TextAlign.center,
                                       style: GoogleFonts.barlow(
                                         fontSize: 14.0,
@@ -230,6 +235,7 @@ class _CellContactStatusState extends State<CellContactStatus> {
                                       MaterialPageRoute(
                                         builder: (context) => EditContact(
                                           contact: widget.contact,
+                                          isEdit: true,
                                         ),
                                       ),
                                     );

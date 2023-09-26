@@ -5,6 +5,7 @@ import 'package:ifeelefine/Common/colorsPalette.dart';
 import 'package:ifeelefine/Common/utils.dart';
 import 'package:ifeelefine/Model/logAlertsBD.dart';
 import 'package:ifeelefine/Page/Historial/PageView/preview_video_screen.dart';
+import 'package:intl/intl.dart';
 
 import 'package:video_player/video_player.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
@@ -83,7 +84,7 @@ class _CellZoneRiskState extends State<CellZoneRisk> {
                 width: 200,
                 color: Colors.transparent,
                 child: Text(
-                  "Zona - ${widget.logAlert.time}",
+                  "Zona - ${DateFormat('dd-MM-yyyy HH:mm:ss').format(widget.logAlert.time).toString()}",
                   textAlign: TextAlign.left,
                   style: GoogleFonts.barlow(
                     fontSize: 14.0,
@@ -117,8 +118,8 @@ class _CellZoneRiskState extends State<CellZoneRisk> {
                         }
                       },
                       child: SizedBox(
-                        width: 200,
-                        height: 70,
+                        width: 150,
+                        height: 110,
                         child: VideoPlayer(_videoPlayerController),
                       ),
                     );

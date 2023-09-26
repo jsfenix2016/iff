@@ -87,19 +87,6 @@ class HistorialController extends GetxController {
         var ar = getFormatedDate(dateTem.createDate);
         var dateTime1 = DateFormat('dd-MM-yyyy').parse(ar);
 
-        // var format = DateFormat('yMd');
-        // var t = DateTime(dateTem.createDate.day, dateTem.createDate.month,
-        //     dateTem.createDate.year);
-
-        // var a =
-        //     format.parse(dateTem.createDate.microsecondsSinceEpoch.toString());
-        // var inputFormat = DateFormat('dd/MM/yyyy HH:mm');
-        // var inputDate = inputFormat
-        //     .parse(dateTem.createDate.toString()); // <-- dd/MM 24H format
-
-        // var outputFormat = DateFormat('MM/dd/yyyy hh:mm a');
-        // var outputDate = outputFormat.format(inputDate);
-        // print(outputDate);
         var tempAct = LogAlertsBD(
             id: 0, time: dateTime1, type: "Cita", photoDate: dateTem.photoDate);
         tempDynamic.add(tempAct);
@@ -108,9 +95,11 @@ class HistorialController extends GetxController {
     if (zoneRisk.isNotEmpty) {
       for (var date in zoneRisk) {
         convertDateTimeToString(date.createDate);
-
+        var ar = getFormatedDate(date.createDate);
+        var dateTime1 = DateFormat('dd-MM-yyyy').parse(ar);
+        // var datenew = DateFormat('dd-MM-yyyy HH:mm:ss').format(date.createDate);
         var tempAct = LogAlertsBD(
-            id: 0, time: (date.createDate), type: "Zona", video: date.video);
+            id: 0, time: (dateTime1), type: "Zona", video: date.video);
         tempDynamic.add(tempAct);
       }
     }
@@ -129,7 +118,6 @@ class HistorialController extends GetxController {
       }
 
       allMovTime.sort((a, b) {
-        //sorting in descending order
         return b.time.compareTo(a.time);
       });
 
@@ -145,10 +133,31 @@ class HistorialController extends GetxController {
       print(tempDynamic);
     }
 
-    groupedAlerts = groupBy(tempDynamic,
-        (product) => format.parse(product.time.toString()).toString());
+// Formatea las fechas para que coincidan con el formato de agrupación
+    groupedAlerts = groupBy(
+      tempDynamic,
+      (product) => DateFormat('dd-MM-yyyy').format(product.time),
+    );
 
-    return groupedAlerts;
+    groupedAlerts.forEach((key, group) {
+      group.sort((a, b) {
+        return b.time.compareTo(a.time);
+      });
+    });
+
+    // Ordena los grupos por fecha en orden descendente
+    final sortedKeys = groupedAlerts.keys.toList()
+      ..sort((a, b) {
+        final dateTimeA = DateFormat('dd-MM-yyyy').parse(a);
+        final dateTimeB = DateFormat('dd-MM-yyyy').parse(b);
+        return dateTimeB.compareTo(dateTimeA);
+      });
+
+    final sortedGroupedAlerts = Map<String, List<dynamic>>.fromEntries(
+      sortedKeys.map((key) => MapEntry(key, groupedAlerts[key]!)),
+    );
+
+    return sortedGroupedAlerts;
   }
 
   Future<void> convertDateTimeToString(DateTime time) async {

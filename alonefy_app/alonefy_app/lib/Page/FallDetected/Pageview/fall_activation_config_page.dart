@@ -11,6 +11,7 @@ import 'package:ifeelefine/Page/FallDetected/Controller/fall_detectedController.
 import 'package:ifeelefine/Page/Premium/Controller/premium_controller.dart';
 
 import 'package:ifeelefine/Provider/prefencesUser.dart';
+import 'package:ifeelefine/main.dart';
 
 import 'package:slidable_button/slidable_button.dart';
 
@@ -40,7 +41,7 @@ class _FallActivationConfigPageState extends State<FallActivationConfigPage> {
   @override
   void initState() {
     super.initState();
-
+    starTap();
     setState(() {
       isActive = _prefs.getDetectedFall;
 
@@ -66,111 +67,114 @@ class _FallActivationConfigPageState extends State<FallActivationConfigPage> {
           style: textForTitleApp(),
         ),
       ),
-      body: Container(
-        decoration: decorationCustom(),
-        width: size.width,
-        height: size.height,
-        child: Stack(
-          children: [
-            Positioned(
-              top: 32,
-              left: 0,
-              right: 0,
-              child: Center(
-                child: Text('Activar caídas',
-                    textAlign: TextAlign.center,
-                    style: GoogleFonts.barlow(
-                      fontSize: 22.0,
-                      wordSpacing: 1,
-                      letterSpacing: 0.001,
-                      fontWeight: FontWeight.w500,
-                      color: Colors.white,
-                    )),
-              ),
-            ),
-            Center(
-              child: Column(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(top: 94.0),
-                    child: Text(
-                      'Tiempo sin reacción',
+      body: MediaQuery(
+        data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
+        child: Container(
+          decoration: decorationCustom(),
+          width: size.width,
+          height: size.height,
+          child: Stack(
+            children: [
+              Positioned(
+                top: 32,
+                left: 0,
+                right: 0,
+                child: Center(
+                  child: Text('Activar caídas',
                       textAlign: TextAlign.center,
                       style: GoogleFonts.barlow(
-                        fontSize: 20.0,
+                        fontSize: 22.0,
                         wordSpacing: 1,
-                        letterSpacing: 1.2,
-                        fontWeight: FontWeight.w700,
+                        letterSpacing: 0.001,
+                        fontWeight: FontWeight.w500,
                         color: Colors.white,
-                      ),
-                    ),
-                  ),
-                  Padding(
-                      padding: const EdgeInsets.only(top: 50.0),
-                      child: getPicker(fallPosition)),
-                  Padding(
-                      padding: const EdgeInsets.only(top: 70.0),
-                      child: getSlideableActivate()),
-                ],
-              ),
-            ),
-            Positioned(
-              bottom: 20,
-              right: 32,
-              child: Container(
-                decoration: const BoxDecoration(
-                  color: Color.fromRGBO(219, 177, 42, 1),
-                  borderRadius: BorderRadius.all(Radius.circular(8)),
-                ),
-                width: 138,
-                height: 42,
-                child: Center(
-                  child: TextButton(
-                    child: Text('Guardar',
-                        textAlign: TextAlign.center,
-                        style: GoogleFonts.barlow(
-                          fontSize: 16.0,
-                          wordSpacing: 1,
-                          letterSpacing: 1.2,
-                          fontWeight: FontWeight.w700,
-                          color: Colors.black,
-                        )),
-                    onPressed: () async {
-                      saveFall();
-                    },
-                  ),
+                      )),
                 ),
               ),
-            ),
-            Positioned(
-              bottom: 20,
-              left: 32,
-              child: Container(
-                decoration: BoxDecoration(
-                  color: Colors.transparent,
-                  border:
-                      Border.all(color: const Color.fromRGBO(219, 177, 42, 1)),
-                  borderRadius: const BorderRadius.all(Radius.circular(8)),
-                ),
-                width: 138,
-                height: 42,
-                child: Center(
-                  child: TextButton(
-                    child: Text('Cancelar',
+              Center(
+                child: Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(top: 94.0),
+                      child: Text(
+                        'Tiempo sin reacción',
                         textAlign: TextAlign.center,
                         style: GoogleFonts.barlow(
-                          fontSize: 16.0,
+                          fontSize: 20.0,
                           wordSpacing: 1,
                           letterSpacing: 1.2,
                           fontWeight: FontWeight.w700,
                           color: Colors.white,
-                        )),
-                    onPressed: () => Navigator.of(context).pop(),
+                        ),
+                      ),
+                    ),
+                    Padding(
+                        padding: const EdgeInsets.only(top: 50.0),
+                        child: getPicker(fallPosition)),
+                    Padding(
+                        padding: const EdgeInsets.only(top: 70.0),
+                        child: getSlideableActivate()),
+                  ],
+                ),
+              ),
+              Positioned(
+                bottom: 20,
+                right: 32,
+                child: Container(
+                  decoration: const BoxDecoration(
+                    color: Color.fromRGBO(219, 177, 42, 1),
+                    borderRadius: BorderRadius.all(Radius.circular(8)),
+                  ),
+                  width: 138,
+                  height: 42,
+                  child: Center(
+                    child: TextButton(
+                      child: Text('Guardar',
+                          textAlign: TextAlign.center,
+                          style: GoogleFonts.barlow(
+                            fontSize: 16.0,
+                            wordSpacing: 1,
+                            letterSpacing: 1.2,
+                            fontWeight: FontWeight.w700,
+                            color: Colors.black,
+                          )),
+                      onPressed: () async {
+                        saveFall();
+                      },
+                    ),
                   ),
                 ),
               ),
-            ),
-          ],
+              Positioned(
+                bottom: 20,
+                left: 32,
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.transparent,
+                    border: Border.all(
+                        color: const Color.fromRGBO(219, 177, 42, 1)),
+                    borderRadius: const BorderRadius.all(Radius.circular(8)),
+                  ),
+                  width: 138,
+                  height: 42,
+                  child: Center(
+                    child: TextButton(
+                      child: Text('Cancelar',
+                          textAlign: TextAlign.center,
+                          style: GoogleFonts.barlow(
+                            fontSize: 16.0,
+                            wordSpacing: 1,
+                            letterSpacing: 1.2,
+                            fontWeight: FontWeight.w700,
+                            color: Colors.white,
+                          )),
+                      onPressed: () => Navigator.of(context).pop(),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -261,6 +265,7 @@ class _FallActivationConfigPageState extends State<FallActivationConfigPage> {
                 _prefs.setUserFree = false;
                 var premiumController = Get.put(PremiumController());
                 premiumController.updatePremiumAPI(true);
+                setState(() {});
               }
             },
           );

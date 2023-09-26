@@ -1,5 +1,5 @@
 import 'package:hive/hive.dart';
-import 'package:ifeelefine/Common/Constant.dart';
+
 import 'package:ifeelefine/Data/hive_constant_adapterInit.dart';
 
 part 'Adapters/userbd.g.dart';

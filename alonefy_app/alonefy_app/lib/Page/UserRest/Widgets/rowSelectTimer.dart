@@ -176,13 +176,13 @@ class _RowSelectTimerState extends State<RowSelectTimer> {
             minutesPicker2 = selectedValue;
           }
           if (pickerId == 0) {
-            // restDay.timeSleep = "$hoursPicker1:$minutesPicker1";
-            restDay.timeWakeup =
-                "${initialDateTime.year}-${initialDateTime.month}-${initialDateTime.day} $hoursPicker1:$minutesPicker1";
+            restDay.timeWakeup = "$hoursPicker1:$minutesPicker1:00";
+            // restDay.timeWakeup =
+            //     "${initialDateTime.year}-${initialDateTime.month}-${initialDateTime.day} $hoursPicker1:$minutesPicker1";
           } else {
-            restDay.timeSleep =
-                "${initialDateTime.year}-${initialDateTime.month}-${initialDateTime.day} $hoursPicker2:$minutesPicker2";
-            // restDay.timeWakeup = "$hoursPicker2:$minutesPicker2";
+            // restDay.timeSleep =
+            //     "${initialDateTime.year}-${initialDateTime.month}-${initialDateTime.day} $hoursPicker2:$minutesPicker2";
+            restDay.timeSleep = "$hoursPicker2:$minutesPicker2:00";
           }
           widget.onChanged(restDay);
         },
@@ -220,7 +220,6 @@ class _RowSelectTimerState extends State<RowSelectTimer> {
 
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
     return Padding(
       padding: const EdgeInsets.only(top: 12.0),
       child: Row(
@@ -228,37 +227,6 @@ class _RowSelectTimerState extends State<RowSelectTimer> {
         mainAxisSize: MainAxisSize.max,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Expanded(
-            flex: 1,
-            child: Container(
-              key: Key(widget.index.toString()),
-              color: Colors.transparent,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  SizedBox(
-                    child: Image.asset(
-                      scale: 1,
-                      fit: BoxFit.fill,
-                      'assets/images/Group 979.png',
-                      height: 30,
-                      width: 54,
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      getFutureColumnPicker(
-                          hoursPositionPicker1, minutesPositionPicker1, 0),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          ),
           Expanded(
             child: Container(
               color: Colors.transparent,
@@ -270,7 +238,7 @@ class _RowSelectTimerState extends State<RowSelectTimer> {
                     child: Image.asset(
                       scale: 1,
                       fit: BoxFit.fill,
-                      'assets/images/Ellipse 185.png',
+                      'assets/images/dormir (6).png',
                       height: 30,
                       width: 29,
                     ),
@@ -283,6 +251,37 @@ class _RowSelectTimerState extends State<RowSelectTimer> {
                     children: [
                       getFutureColumnPicker(
                           hoursPositionPicker2, minutesPositionPicker2, 1),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+          Expanded(
+            flex: 1,
+            child: Container(
+              key: Key(widget.index.toString()),
+              color: Colors.transparent,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  SizedBox(
+                    child: Image.asset(
+                      scale: 1,
+                      fit: BoxFit.cover,
+                      'assets/images/reloj (3).png',
+                      height: 30,
+                      width: 30,
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      getFutureColumnPicker(
+                          hoursPositionPicker1, minutesPositionPicker1, 0),
                     ],
                   ),
                 ],

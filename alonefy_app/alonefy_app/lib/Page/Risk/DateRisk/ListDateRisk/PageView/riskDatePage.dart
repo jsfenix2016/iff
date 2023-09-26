@@ -14,6 +14,7 @@ import 'package:flutter/material.dart';
 import 'package:ifeelefine/Page/UserConfig/PageView/userconfig_page.dart';
 import 'package:ifeelefine/Utils/Widgets/elevatedButtonFilling.dart';
 import 'package:ifeelefine/Views/space_heidht_custom.dart';
+import 'package:ifeelefine/main.dart';
 import 'package:notification_center/notification_center.dart';
 import 'package:ifeelefine/Common/decoration_custom.dart';
 
@@ -32,7 +33,9 @@ class _RiskPageState extends State<RiskPage> {
   void initState() {
     NotificationCenter().subscribe('getContactRisk', refreshView);
     initContact();
+    Future.sync(() => RedirectViewNotifier.setStoredContext(context));
     super.initState();
+    starTap();
   }
 
   void refreshView() {
@@ -46,7 +49,7 @@ class _RiskPageState extends State<RiskPage> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    RedirectViewNotifier.setStoredContext(context);
+    Future.sync(() => RedirectViewNotifier.setStoredContext(context));
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.brown,
@@ -56,84 +59,87 @@ class _RiskPageState extends State<RiskPage> {
         ),
       ),
       backgroundColor: Colors.transparent,
-      body: Container(
-        decoration: decorationCustom(),
-        child: Stack(
-          children: [
-            const SafeArea(
-              child: SpaceHeightCustom(heightTemp: 20),
-            ),
-            SizedBox(
-              height: size.height,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const SpaceHeightCustom(heightTemp: 50),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 32.0, right: 32),
-                    child: Text(
-                      "Utilizar una configuración guardada o crear una nueva",
-                      textAlign: TextAlign.center,
-                      style: GoogleFonts.barlow(
-                        fontSize: 20.0,
-                        wordSpacing: 1,
-                        letterSpacing: 0.001,
-                        fontWeight: FontWeight.w700,
-                        color: const Color.fromRGBO(222, 222, 222, 1),
+      body: MediaQuery(
+        data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
+        child: Container(
+          decoration: decorationCustom(),
+          child: Stack(
+            children: [
+              const SafeArea(
+                child: SpaceHeightCustom(heightTemp: 20),
+              ),
+              SizedBox(
+                height: size.height,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const SpaceHeightCustom(heightTemp: 50),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 32.0, right: 32),
+                      child: Text(
+                        "Utilizar una configuración guardada o crear una nueva",
+                        textAlign: TextAlign.center,
+                        style: GoogleFonts.barlow(
+                          fontSize: 20.0,
+                          wordSpacing: 1,
+                          letterSpacing: 0.001,
+                          fontWeight: FontWeight.w700,
+                          color: const Color.fromRGBO(222, 222, 222, 1),
+                        ),
                       ),
                     ),
-                  ),
-                  const SpaceHeightCustom(heightTemp: 20),
-                  Expanded(
-                    flex: 1,
-                    child: Container(
-                      width: size.width,
-                      color: Colors.transparent,
-                      child: const ListContactRisk(),
-                    ),
-                  )
-                ],
-              ),
-            ),
-            Positioned(
-              bottom: 10,
-              child: Container(
-                height: 50,
-                width: size.width,
-                color: Colors.transparent,
-                child: ElevateButtonFilling(
-                  showIcon: true,
-                  onChanged: (value) async {
-                    initContact();
-
-                    MainController mainController = Get.put(MainController());
-                    var user = await mainController.getUserData();
-
-                    if (user.idUser == "-1") {
-                      Route route = MaterialPageRoute(
-                        builder: (context) =>
-                            const UserConfigPage(isMenu: false),
-                      );
-                      Future.sync(
-                          () => Navigator.pushReplacement(context, route));
-                      return;
-                    }
-                    Future.sync(() => Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => EditRiskPage(
-                              contactRisk: contactTemp,
-                              index: riskVC.contactList.obs.value.length,
-                            ),
-                          ),
-                        ));
-                  },
-                  mensaje: Constant.newDate,
-                  img: 'assets/images/plussWhite.png',
+                    const SpaceHeightCustom(heightTemp: 20),
+                    Expanded(
+                      flex: 1,
+                      child: Container(
+                        width: size.width,
+                        color: Colors.transparent,
+                        child: const ListContactRisk(),
+                      ),
+                    )
+                  ],
                 ),
               ),
-            ),
-          ],
+              Positioned(
+                bottom: 10,
+                child: Container(
+                  height: 50,
+                  width: size.width,
+                  color: Colors.transparent,
+                  child: ElevateButtonFilling(
+                    showIcon: true,
+                    onChanged: (value) async {
+                      initContact();
+
+                      MainController mainController = Get.put(MainController());
+                      var user = await mainController.getUserData();
+
+                      if (user.idUser == "-1") {
+                        Route route = MaterialPageRoute(
+                          builder: (context) =>
+                              const UserConfigPage(isMenu: false),
+                        );
+                        Future.sync(
+                            () => Navigator.pushReplacement(context, route));
+                        return;
+                      }
+                      Future.sync(() => Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => EditRiskPage(
+                                contactRisk: contactTemp,
+                                index: riskVC.contactList.obs.value.length,
+                              ),
+                            ),
+                          ));
+                    },
+                    mensaje: Constant.newDate,
+                    img: 'assets/images/plussWhite.png',
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

@@ -1,7 +1,6 @@
 import 'dart:typed_data';
 
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:ifeelefine/Data/hive_constant_adapterInit.dart';
 
 part 'Adapters/logAlertsBD.g.dart';
 

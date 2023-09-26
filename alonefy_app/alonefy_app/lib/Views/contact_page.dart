@@ -21,6 +21,7 @@ import 'package:ifeelefine/Provider/prefencesUser.dart';
 import 'package:ifeelefine/Utils/Widgets/elevateButtonCustomBorder.dart';
 import 'package:ifeelefine/Utils/Widgets/selectTimerCallSendSMS.dart';
 import 'package:ifeelefine/Utils/Widgets/widgedContact.dart';
+import 'package:ifeelefine/main.dart';
 import 'package:notification_center/notification_center.dart';
 import 'package:slidable_button/slidable_button.dart';
 import 'package:ifeelefine/Common/decoration_custom.dart';
@@ -36,19 +37,46 @@ class ContactList extends StatefulWidget {
 class _ContactListState extends State<ContactList> {
   final ContactUserController contactVC = Get.put(ContactUserController());
   final PreferenceUser _prefs = PreferenceUser();
-  final List<Contact> _selectedContacts = [];
-  var indexSelect = -1;
 
+  late List<Contact> contactlist = [];
+  var indexSelect = 0;
+  List<bool> listContactVisible = [];
   bool isPremium = true;
   bool isDeleteContact = false;
   late String timeSMS = "20 min";
   late String timeCall = "20 min";
   bool isAutorice = false;
+  List<ContactBD> listContact = [];
+  Contact? cont;
   @override
   void initState() {
     if (!widget.isMenu) _prefs.saveLastScreenRoute("contact");
 
     super.initState();
+    starTap();
+    getContactBD();
+  }
+
+  void getContactBD() async {
+    listContact = await contactVC.getAllContact();
+    if (listContact.isNotEmpty) {
+      if (listContactVisible.isNotEmpty) {
+        listContactVisible.clear();
+      }
+      listContact.forEach((element) {
+        if (cont == null) {
+          listContactVisible.add(false);
+          return;
+        }
+        if (element.displayName == cont!.displayName) {
+          listContactVisible.add(true);
+        } else {
+          listContactVisible.add(false);
+        }
+      });
+    }
+
+    setState(() {});
   }
 
   Widget getHorizontalSlide() {
@@ -70,7 +98,7 @@ class _ContactListState extends State<ContactList> {
       ),
       onChanged: (SlidableButtonPosition value) async {
         if (value == SlidableButtonPosition.end) {
-          if (_prefs.getUserPremium || _selectedContacts.isEmpty) {
+          if (_prefs.getUserPremium || listContact.isEmpty) {
             _showContactListScreen(context);
           } else {
             Navigator.push(
@@ -78,7 +106,7 @@ class _ContactListState extends State<ContactList> {
               MaterialPageRoute(
                   builder: (context) => const PremiumPage(
                       isFreeTrial: false,
-                      img: 'Pantalla5.jpg',
+                      img: 'Mask group-7.png',
                       title: Constant.premiumContactsTitle,
                       subtitle: '')),
             ).then(
@@ -106,7 +134,7 @@ class _ContactListState extends State<ContactList> {
                 child: Text(
                   (_prefs.getUserPremium)
                       ? 'Agregar contactos'
-                      : _prefs.getUserFree && _selectedContacts.isNotEmpty
+                      : _prefs.getUserFree && listContact.isNotEmpty
                           ? "Obtener Premium"
                           : "Agregar contacto",
                   textAlign: TextAlign.center,
@@ -127,12 +155,11 @@ class _ContactListState extends State<ContactList> {
   }
 
   void _showContactListScreen(BuildContext context) async {
-    Contact? cont;
-    await Navigator.push(
+    cont = await Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) =>
-            FilterContactListScreen(onCountrySelected: (contact) async {
+            FilterContactListScreen(oncontactSelected: (contact) async {
           ContactBD contactBDt = ContactBD(
               contact.displayName,
               contact.photo == null ? null : contact.photo,
@@ -145,167 +172,169 @@ class _ContactListState extends State<ContactList> {
                       .replaceAll("+34", "")
                       .replaceAll(" ", "")
                   : contact.phones.first.normalizedNumber,
-              "Pendiente");
+              "PENDING");
 
           await const HiveData().saveUserContact(contactBDt);
 
           setState(() {
-            _selectedContacts.add(contact);
+            cont = contact;
           });
         }),
       ),
     );
 
     if (cont!.name.first.isNotEmpty) {
-      setState(() {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            settings: RouteSettings(arguments: cont),
-            builder: (context) => const ContactList(
-              isMenu: false,
-            ),
-          ),
-        );
-        // Opcional: También puedes actualizar la variable user?.country aquí
-      });
+      getContactBD();
     }
   }
 
+  bool isvisible = false;
   Widget listviewContact() {
-    return FutureBuilder<List<ContactBD>>(
-      future: contactVC.getAllContact(),
-      builder: (context, snapshot) {
-        if (snapshot.hasData) {
-          final listContact = snapshot.data!;
-          return ListView.separated(
-            separatorBuilder: (context, index) {
-              return const SizedBox(
-                height: 10,
-              );
-            },
-            scrollDirection: Axis.vertical,
-            padding: const EdgeInsets.only(top: 0.0, bottom: 50),
-            shrinkWrap: true,
-            itemCount: listContact.length,
-            itemBuilder: (context, index) {
-              return GestureDetector(
-                onTap: () {
-                  indexSelect = index;
-
-                  setState(() {});
-                },
-                child: Container(
+    return ListView.separated(
+      separatorBuilder: (context, index) {
+        return const SizedBox(
+          height: 10,
+        );
+      },
+      scrollDirection: Axis.vertical,
+      padding: EdgeInsets.only(
+          top: 0.0,
+          bottom: listContactVisible.isNotEmpty
+              ? (listContactVisible[indexSelect] == false ? 10 : 50)
+              : 10),
+      shrinkWrap: true,
+      itemCount: listContact.length,
+      itemBuilder: (context, index) {
+        indexSelect = index;
+        return GestureDetector(
+          onTap: () {
+            indexSelect = index;
+            if (listContactVisible[index] == true) {
+              listContactVisible[index] = false;
+            } else {
+              listContactVisible[index] = true;
+            }
+            setState(() {});
+          },
+          child: Container(
+            color: Colors.transparent,
+            height: listContactVisible.isNotEmpty
+                ? (listContactVisible[index] == false ? 110 : 400)
+                : 0,
+            width: double.infinity,
+            margin: const EdgeInsets.all(2),
+            child: Center(
+              child: Container(
+                margin: const EdgeInsets.all(5),
+                width: double.infinity,
+                height: listContactVisible.isNotEmpty
+                    ? (listContactVisible[index] == false ? 110 : 400)
+                    : 0,
+                decoration: BoxDecoration(
                   color: Colors.transparent,
-                  height: 400,
-                  width: double.infinity,
-                  margin: const EdgeInsets.all(2),
-                  child: Center(
-                    child: Container(
-                      margin: const EdgeInsets.all(5),
-                      width: double.infinity,
-                      height: 400,
-                      decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(5.0),
+                  boxShadow: const <BoxShadow>[
+                    BoxShadow(
                         color: Colors.transparent,
-                        borderRadius: BorderRadius.circular(5.0),
-                        boxShadow: const <BoxShadow>[
-                          BoxShadow(
-                              color: Colors.transparent,
-                              blurRadius: 3.0,
-                              offset: Offset(0.0, 5.0),
-                              spreadRadius: 3.0),
-                        ],
+                        blurRadius: 3.0,
+                        offset: Offset(0.0, 5.0),
+                        spreadRadius: 3.0),
+                  ],
+                ),
+                child: Column(
+                  children: [
+                    Container(
+                      decoration: const BoxDecoration(
+                        color: Color.fromRGBO(169, 146, 125, 0.5),
+                        borderRadius: BorderRadius.all(Radius.circular(
+                                100.0) //                 <--- border radius here
+                            ),
                       ),
-                      child: Column(
+                      height: 89,
+                      width: 320,
+                      child: Stack(
                         children: [
-                          Container(
-                            decoration: const BoxDecoration(
-                              color: Color.fromRGBO(169, 146, 125, 0.5),
-                              borderRadius: BorderRadius.all(Radius.circular(
-                                      100.0) //                 <--- border radius here
-                                  ),
-                            ),
-                            height: 89,
-                            width: 280,
-                            child: Stack(
-                              children: [
-                                WidgetContact(
-                                  displayName: listContact[index].displayName,
-                                  img: listContact[index].photo,
-                                  delete: true,
-                                  onDelete: (bool) {
-                                    isAutorice = false;
-                                    isDeleteContact = true;
-                                    contactVC.deleteContact(listContact[index]);
-                                    listContact.removeAt(index);
-                                    _selectedContacts.removeAt(index);
-                                    setState(() {});
-                                  },
-                                ),
-                              ],
-                            ),
-                          ),
-                          Container(
-                            height: 10,
-                          ),
-                          Container(
-                            height: 230,
-                            color: Colors.transparent,
-                            child: SelectTimerCallSendSMS(
-                              onChanged: (TimerCallSendSmsModel value) async {
-                                timeSMS = value.sendSMS;
-                                timeCall = value.call;
-                                listContact[index].timeSendSMS = value.sendSMS;
-                                listContact[index].timeCall = value.call;
-                                await const HiveData()
-                                    .updateContact(listContact[index]);
-                              },
-                              sendSm: listContact[index].timeSendSMS,
-                              timeCall: listContact[index].timeCall,
-                            ),
-                          ),
-                          ElevateButtonCustomBorder(
-                            onChanged: (value) async {
-                              timeSMS = listContact[index].timeSendSMS;
-                              timeCall = listContact[index].timeCall;
-                              var save = await contactVC.saveListContact(
-                                  context,
-                                  listContact[index],
-                                  timeSMS,
-                                  timeCall,
-                                  "20 min");
-                              if (save) {
-                                isAutorice = true;
-                                Future.sync(() =>
-                                    contactVC.authoritationContact(context));
-                              }
+                          WidgetContact(
+                            displayName: listContact[index].name,
+                            img: listContact[index].photo,
+                            delete: true,
+                            onDelete: (bool) {
+                              isAutorice = false;
+                              isDeleteContact = true;
+                              contactVC.deleteContact(listContact[index]);
+                              listContact.removeAt(index);
+                              listContactVisible.removeAt(index);
+                              // _selectedContacts.removeAt(index);
+                              indexSelect = 0;
+                              setState(() {});
                             },
-                            mensaje: "Solicitar autorización",
+                            isFilter: false,
+                            isExpanded: listContactVisible[index],
                           ),
                         ],
                       ),
                     ),
-                  ),
+                    Container(
+                      height: 10,
+                    ),
+                    Visibility(
+                      visible: listContactVisible[index],
+                      child: Container(
+                        height: listContactVisible.isNotEmpty
+                            ? (listContactVisible[indexSelect] == false
+                                ? 0
+                                : 230)
+                            : 0,
+                        color: Colors.transparent,
+                        child: SelectTimerCallSendSMS(
+                          onChanged: (TimerCallSendSmsModel value) async {
+                            timeSMS = value.sendSMS;
+                            timeCall = value.call;
+                            listContact[index].timeSendSMS = value.sendSMS;
+                            listContact[index].timeCall = value.call;
+                            await const HiveData()
+                                .updateContact(listContact[index]);
+                          },
+                          sendSm: listContact[index].timeSendSMS,
+                          timeCall: listContact[index].timeCall,
+                        ),
+                      ),
+                    ),
+                    Visibility(
+                      visible: listContactVisible[index],
+                      child: ElevateButtonCustomBorder(
+                        onChanged: (value) async {
+                          timeSMS = listContact[index].timeSendSMS;
+                          timeCall = listContact[index].timeCall;
+                          var save = await contactVC.saveListContact(context,
+                              listContact[index], timeSMS, timeCall, "20 min");
+                          if (save) {
+                            isAutorice = true;
+                            Future.sync(
+                                () => contactVC.authoritationContact(context));
+                          }
+                        },
+                        mensaje: "Solicitar autorización",
+                      ),
+                    ),
+                  ],
                 ),
-              );
-            },
-          );
-        } else if (snapshot.hasError) {
-          return const Text("");
-        } else {
-          return const Center(child: CircularProgressIndicator());
-        }
+              ),
+            ),
+          ),
+        );
       },
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    var temp = ModalRoute.of(context)!.settings.arguments;
-    if (_selectedContacts.isEmpty && isDeleteContact == false && temp != null) {
-      final parametro = temp as Contact;
-      _selectedContacts.add(parametro);
-    }
+    // var temp = ModalRoute.of(context)!.settings.arguments;
+    // if (_selectedContacts.isEmpty && isDeleteContact == false && temp != null) {
+    //   final parametro = temp as Contact;
+    //   _selectedContacts.add(parametro);
+
+    // }
 
     return Scaffold(
       appBar: widget.isMenu
@@ -317,65 +346,75 @@ class _ContactListState extends State<ContactList> {
               ),
             )
           : null,
-      body: Container(
-        width: double.infinity,
-        height: double.infinity,
-        decoration: decorationCustom(),
-        child: Column(
-          children: [
-            const SafeArea(
-              child: SizedBox(
-                height: 20,
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(
-                  top: 20.0, left: 46.0, right: 62.0, bottom: 30),
-              child: Text(
-                "Selecciona quien debe ser contactado en caso de inactividad",
-                textAlign: TextAlign.center,
-                style: GoogleFonts.barlow(
-                  fontSize: 16.0,
-                  wordSpacing: 1,
-                  letterSpacing: 1,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
+      body: MediaQuery(
+        data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
+        child: Container(
+          width: double.infinity,
+          height: double.infinity,
+          decoration: decorationCustom(),
+          child: Column(
+            children: [
+              const SafeArea(
+                child: SizedBox(
+                  height: 20,
                 ),
               ),
-            ),
-            Expanded(
-              child: listviewContact(),
-            ),
-            getHorizontalSlide(),
-            const SizedBox(
-              height: 20,
-            ),
-            ElevateButtonCustomBorder(
-              onChanged: (value) async {
-                if (value) {
-                  if (!isAutorice) {
-                    showSaveAlert(context, Constant.info,
-                        "Antes de continuar debe solicitar la autorización del contacto");
-                    return;
-                  }
+              Padding(
+                padding: const EdgeInsets.only(
+                    top: 20.0, left: 46.0, right: 62.0, bottom: 30),
+                child: Text(
+                  "Selecciona quien debe ser contactado en caso de inactividad",
+                  textAlign: TextAlign.center,
+                  style: GoogleFonts.barlow(
+                    fontSize: 16.0,
+                    wordSpacing: 1,
+                    letterSpacing: 1,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+              Expanded(
+                child: listviewContact(),
+              ),
+              getHorizontalSlide(),
+              const SizedBox(
+                height: 20,
+              ),
+              ElevateButtonCustomBorder(
+                onChanged: (value) async {
+                  if (value) {
+                    if (!isAutorice) {
+                      showSaveAlert(context, Constant.info,
+                          "Antes de continuar debe solicitar la autorización del contacto");
+                      return;
+                    }
 
-                  if (widget.isMenu == false) {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const InitGeolocator()),
-                    );
-                  } else {
-                    NotificationCenter().notify('getContact');
+                    List<String>? temp = [];
+                    Future.sync(() async => {
+                          temp = await _prefs.getlistConfigPage,
+                          temp!.add("addContact"),
+                          _prefs.setlistConfigPage = temp!
+                        });
+                    if (widget.isMenu == false) {
+                      Get.offAll(const InitGeolocator());
+                      // Navigator.push(
+                      //   context,
+                      //   MaterialPageRoute(
+                      //       builder: (context) => const InitGeolocator()),
+                      // );
+                    } else {
+                      NotificationCenter().notify('getContact');
+                    }
                   }
-                }
-              },
-              mensaje: widget.isMenu == true ? "Guardar" : "Continuar",
-            ),
-            const SizedBox(
-              height: 20,
-            ),
-          ],
+                },
+                mensaje: widget.isMenu == true ? "Guardar" : "Continuar",
+              ),
+              const SizedBox(
+                height: 20,
+              ),
+            ],
+          ),
         ),
       ),
     );

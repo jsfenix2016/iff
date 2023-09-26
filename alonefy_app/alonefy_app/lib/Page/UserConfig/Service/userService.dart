@@ -95,12 +95,19 @@ class UserService {
   }
 
   Future<Map<String, dynamic>> verificateSMS(int num) async {
-    final authData = {"recipient": "$num", "originator": "$num"};
-    final headersData = {
-      "Authorization": "AccessKey ${Constant.codeMessageBird}",
-      "timeout": "240",
+    final authData = {
+      "recipient": "$num",
+      "originator": "$num",
+      "type": "sms",
+      "timeout": "180",
       "language": "es-es",
-      "country": "ES"
+      "country": "ES",
+      "template": "Token de verificación: %token",
+      "datacoding": "auto",
+      "subject": "Solicitud de token"
+    };
+    final headersData = {
+      "Authorization": "AccessKey ${Constant.codeMessageBird}"
     };
 
     try {
@@ -133,7 +140,10 @@ class UserService {
       "type": "email",
       "timeout": "180",
       "language": "es-es",
-      "country": "ES"
+      "country": "ES",
+      "template": "Token de verificación: %token",
+      "datacoding": "auto",
+      "subject": "Solicitud de token"
     };
     final headersData = {
       "Authorization": "AccessKey ${Constant.codeMessageBird}"

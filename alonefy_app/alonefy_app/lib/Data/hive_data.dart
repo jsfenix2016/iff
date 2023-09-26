@@ -98,11 +98,14 @@ class HiveData {
     var index = 0;
     for (var contactBD in box.values) {
       if (contact.phones == contactBD.phones) {
-        box.putAt(index, contact);
+        await box.putAt(index, contact);
         break;
       }
       index++;
     }
+
+    var listContact = box.values.toList();
+    print(listContact);
   }
 
   Future<bool> saveUserContact(ContactBD user) async {

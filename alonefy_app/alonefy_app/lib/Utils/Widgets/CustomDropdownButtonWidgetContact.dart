@@ -61,8 +61,9 @@ class _ContactDropdownButtonState extends State<ContactDropdownButton> {
     var contacts = await getContacts(context);
     // Set the list of contacts in the state
     // contacts = await FlutterContacts.getContacts(
-    //     withProperties: true, withPhoto: true);
+    // withProperties: true, withPhoto: true);
     setState(() {
+      _prefs.setAcceptedContacts = PreferencePermission.allow;
       _contacts = contacts;
     });
   }
