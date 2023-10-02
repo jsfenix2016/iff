@@ -1,7 +1,7 @@
 class Constant {
   static const baseApi = 'https://dev.alertfriends.app';
   static const baseApiMessageBird = 'https://rest.messagebird.com/';
-  static const codeMessageBird = 'ZT2ppb4ZzUr86eaM3irsDolpc';
+  static const codeMessageBird = '';
   static const urlTerms = 'https://alertfriends.app/politica_privacidad/';
   static const personalInformation = 'Datos personales';
   static const selectGender = 'Selecciona el género';
