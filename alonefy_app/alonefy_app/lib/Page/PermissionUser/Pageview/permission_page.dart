@@ -157,11 +157,12 @@ class _PermitionUserPageState extends State<PermitionUserPage> {
     final Size size = MediaQuery.of(context).size;
     RedirectViewNotifier.setStoredContext(context);
     return Scaffold(
+      backgroundColor: Colors.black,
       extendBodyBehindAppBar: false,
       appBar: AppBar(
         backgroundColor: Colors.brown,
         title: Text(
-          "Configuración",
+          Constant.titleNavBar,
           style: textForTitleApp(),
         ),
       ),

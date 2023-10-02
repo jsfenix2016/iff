@@ -4,6 +4,7 @@ import 'package:ifeelefine/Common/Constant.dart';
 
 import 'package:ifeelefine/Common/manager_alerts.dart';
 import 'package:ifeelefine/Common/text_style_font.dart';
+import 'package:ifeelefine/Common/utils.dart';
 
 import 'package:ifeelefine/Model/restdaybd.dart';
 import 'package:ifeelefine/Page/PreviewActivitiesFilteredByDate/PageView/previewActivitiesByDate_page.dart';
@@ -19,6 +20,7 @@ import 'package:ifeelefine/Utils/Widgets/listDayweekCustom.dart';
 import 'package:ifeelefine/Utils/Widgets/widgetLogo.dart';
 import 'package:ifeelefine/Common/decoration_custom.dart';
 import 'package:ifeelefine/main.dart';
+import 'package:notification_center/notification_center.dart';
 
 class UserRestPage extends StatefulWidget {
   const UserRestPage({super.key});
@@ -41,11 +43,9 @@ class _UserRestPageState extends State<UserRestPage> {
   final List<String> _selectedDays = [];
 
   List<RestDayBD> tempRestDays = [];
-  final PreferenceUser _prefs = PreferenceUser();
+
   @override
   void initState() {
-    // restDays.add(tempDicRest);
-    _prefs.saveLastScreenRoute("restDay");
     super.initState();
     starTap();
     if (tempRestDays.isEmpty) {
@@ -67,6 +67,7 @@ class _UserRestPageState extends State<UserRestPage> {
     final size = MediaQuery.of(context).size;
 
     return Scaffold(
+      backgroundColor: Colors.black,
       body: MediaQuery(
         data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
         child: Container(
@@ -243,9 +244,10 @@ class _UserRestPageState extends State<UserRestPage> {
     if (val == false) {
       await processSelectedInfo();
 
-      showSaveAlert(context, Constant.info,
-          "Todos los días ya fueron asignados puedes continuar con la configuración");
-      setState(() {});
+      setState(() {
+        showSaveAlert(context, Constant.info,
+            "Todos los días ya fueron asignados puedes continuar con la configuración");
+      });
       return;
     }
     if (_selectedDays.length < 7) {
@@ -257,7 +259,7 @@ class _UserRestPageState extends State<UserRestPage> {
       }
       // ignore: use_build_context_synchronously
       showSaveAlert(context, Constant.info,
-          "debes seleccionar los días restantes antes de continuar");
+          "Debes seleccionar los días restantes antes de continuar");
 
       setState(() {});
     }
@@ -267,14 +269,19 @@ class _UserRestPageState extends State<UserRestPage> {
     int id = await userRestVC.saveUserListRestTime(context, tempRestDays);
 
     if (id != -1) {
-      List<String>? temp = [];
-      Future.sync(() async => {
-            temp = await _prefs.getlistConfigPage,
-            temp!.add("restDay"),
-            _prefs.setlistConfigPage = temp!
-          });
-      // ignore: use_build_context_synchronously
-      Get.offAll(const PreviewActivitiesByDate(isMenu: false));
+      refreshMenu('restDay');
+
+      Future.sync(
+        () async => {
+          await Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) =>
+                  const PreviewActivitiesByDate(isMenu: false),
+            ),
+          ),
+        },
+      );
     }
   }
 

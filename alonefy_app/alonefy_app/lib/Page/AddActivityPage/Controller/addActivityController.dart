@@ -73,7 +73,7 @@ class AddActivityController extends GetxController {
         timeFinish: activity.timeFinish,
         days: activity.days ?? "",
         repeatType: activity.repeatType,
-        isDeactivate: activity.isDeactivate,
+        enabled: activity.enabled,
         specificDaysDeactivated: activity.specificDaysDeactivated ?? "",
         specificDaysRemoved: activity.specificDaysRemoved ?? "");
 
@@ -93,7 +93,7 @@ class AddActivityController extends GetxController {
     activity.timeFinish = activityBD.timeFinish;
     activity.days = activityBD.days;
     activity.repeatType = activityBD.repeatType;
-    activity.isDeactivate = activityBD.isDeactivate;
+    activity.enabled = activityBD.enabled;
     activity.specificDaysDeactivated = activityBD.specificDaysDeactivated;
     activity.specificDaysRemoved = activityBD.specificDaysRemoved;
 
@@ -170,7 +170,7 @@ class AddActivityController extends GetxController {
         endTime,
         days,
         Constant.daysToApi[activity.repeatType]!,
-        activity.isDeactivate,
+        activity.enabled,
         disabledDates,
         removedDates);
 
@@ -297,7 +297,7 @@ class AddActivityController extends GetxController {
       activityDay.dayFinish = activityApi.endDate;
       activityDay.days = _convertListToDays(activityApi.days);
       activityDay.repeatType = Constant.daysFromApi[activityApi.repeatType]!;
-      activityDay.isDeactivate = activityApi.enabled;
+      activityDay.enabled = activityApi.enabled;
       activityDay.specificDaysDeactivated =
           activityApi.disabledDates.toString();
       activityDay.specificDaysRemoved = activityApi.removedDates.toString();
@@ -383,7 +383,7 @@ class AddActivityController extends GetxController {
     activity.timeFinish = activityDay.timeFinish;
     activity.days = activityDay.days;
     activity.repeatType = activityDay.repeatType;
-    activity.isDeactivate = activityDay.isDeactivate;
+    activity.enabled = activityDay.enabled;
     activity.specificDaysDeactivated = activityDay.specificDaysDeactivated;
     activity.specificDaysRemoved = activityDay.specificDaysRemoved;
 

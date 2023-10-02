@@ -46,14 +46,12 @@ class _WebViewTermsConditionsState extends State<WebViewTermsConditions> {
         NavigationDelegate(
           onProgress: (int progress) {
             // Update loading bar.
-            Center(
+            const Center(
               child: CircularProgressIndicator(),
             );
           },
           onPageStarted: (String url) {},
-          onPageFinished: (String url) {
-            print("algo");
-          },
+          onPageFinished: (String url) {},
           onWebResourceError: (WebResourceError error) {},
           onNavigationRequest: (NavigationRequest request) {
             if (request.url.startsWith(Constant.urlTerms)) {
@@ -76,8 +74,8 @@ class _WebViewTermsConditionsState extends State<WebViewTermsConditions> {
         var confirmExit = await showDialog(
           context: context,
           builder: (BuildContext context) => AlertDialog(
-            title: const Text('Confirmar'),
-            content: const Text('¿Se han leido los términos y condiciones?'),
+            title: const Text(Constant.confirmTitleAlert),
+            content: const Text(Constant.alertBody),
             actions: <Widget>[
               IconButton(
                   icon: const Icon(
@@ -106,7 +104,7 @@ class _WebViewTermsConditionsState extends State<WebViewTermsConditions> {
         appBar: AppBar(
           backgroundColor: Colors.brown,
           title: Text(
-            "Términos y condiciones",
+            Constant.termsAndConditionTitle,
             style: textForTitleApp(),
           ),
         ),

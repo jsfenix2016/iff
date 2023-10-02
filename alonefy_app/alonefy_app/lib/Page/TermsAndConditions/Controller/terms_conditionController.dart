@@ -35,13 +35,13 @@ class TermsAndConditionsController extends GetxController {
     if (resp) {
       Future.sync(() => showAlertTemp(context, Constant.saveCorrectly));
 
-      goTO();
+      goToFinishPage();
     } else {
       Future.sync(() => showAlertTemp(context, Constant.errorGeneric));
     }
   }
 
-  void goTO() {
+  void goToFinishPage() {
     Get.offAll(() => const FinishConfigPage());
   }
 

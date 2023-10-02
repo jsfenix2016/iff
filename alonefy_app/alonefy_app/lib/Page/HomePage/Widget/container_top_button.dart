@@ -8,10 +8,12 @@ class ContainerTopButton extends StatefulWidget {
       {super.key,
       required this.onOpenMenu,
       required this.goToAlert,
-      required this.pref});
+      required this.pref,
+      required this.isconfig});
   final ValueChanged<bool> onOpenMenu;
   final ValueChanged<bool> goToAlert;
   final PreferenceUser pref;
+  final bool isconfig;
   @override
   State<ContainerTopButton> createState() => _ContainerTopButtonState();
 }
@@ -53,7 +55,7 @@ class _ContainerTopButtonState extends State<ContainerTopButton> {
             left: 57,
             top: 13,
             child: Visibility(
-              visible: widget.pref.getUserFree && !widget.pref.getUserPremium,
+              visible: !widget.pref.getUserPremium || !widget.isconfig,
               child: Container(
                 decoration: const BoxDecoration(
                     borderRadius: BorderRadius.all(Radius.circular(

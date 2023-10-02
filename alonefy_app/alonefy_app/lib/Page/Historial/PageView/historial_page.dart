@@ -137,6 +137,7 @@ class _HistorialPageState extends State<HistorialPage> {
         groupedAlert.entries.toList();
     RedirectViewNotifier.setStoredContext(context);
     return Scaffold(
+      backgroundColor: Colors.black,
       key: scaffoldKey,
       appBar: AppBar(
         backgroundColor: Colors.brown,

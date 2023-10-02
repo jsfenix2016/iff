@@ -18,6 +18,7 @@ import 'package:ifeelefine/Views/menuconfig_page.dart';
 import 'package:ifeelefine/main.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:jiffy/jiffy.dart';
+import 'package:notification_center/notification_center.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:intl/intl.dart';
@@ -51,6 +52,25 @@ Map<String, String> getAge() {
   }
 
   return ages;
+}
+
+void refreshMenu(String menu) async {
+  List<String>? temp = [];
+
+  temp = await _prefs.getlistConfigPage;
+  if (temp!.isEmpty) {
+    temp.add(menu);
+  } else {
+    for (var element in temp) {
+      if (element.contains(menu) == false) {
+        temp.insert(0, menu);
+        print(menu);
+        break;
+      }
+    }
+  }
+  _prefs.setlistConfigPage = temp;
+  NotificationCenter().notify('refreshMenu');
 }
 
 Future<List<MenuConfigModel>> validateConfig() async {
@@ -122,6 +142,17 @@ Future<List<MenuConfigModel>> validateConfig() async {
     // MenuConfigModel("Cambiar sonido notificaciones",
     //     'assets/images/Group 1102.png', 22, 22.08),
   ];
+
+  var contieneTrue = permissionStatusI.any((element) => element.config == true);
+
+  // Verifica el resultado
+  if (contieneTrue) {
+    print('La lista contiene al menos un true.');
+    _prefs.config = false;
+  } else {
+    print('La lista no contiene ningún true.');
+    _prefs.config = true;
+  }
 
   return permissionStatusI;
 }
@@ -369,7 +400,7 @@ DateTime parseContactRiskDate(String contactRiskDate) {
 
   var minutes = contactRiskDate.substring(0, 2);
   // Obtener una zona horaria específica, por ejemplo, la zona horaria de Nueva York
-
+  Future.sync(() async => {await _prefs.initPrefs()});
   // Obtener la zona horaria de Madrid
   tz.Location madridLocation = tz.getLocation(_prefs.getNameZone);
 
@@ -851,6 +882,9 @@ int stringTimeToInt(String strTime) {
 int deactivateTimeToMinutes(String strTime) {
   if (strTime.isEmpty) {
     strTime = '0 horas';
+  }
+  if (strTime.contains('Siempre')) {
+    return 2 * 60 * 24 * 365 * 10;
   }
   var time = strTime.replaceAll("hora", "");
   time = strTime.replaceAll(" horas", "");

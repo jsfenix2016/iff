@@ -5,10 +5,12 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:ifeelefine/Common/Constant.dart';
 import 'package:ifeelefine/Common/notificationService.dart';
 import 'package:ifeelefine/Common/text_style_font.dart';
+import 'package:ifeelefine/Common/utils.dart';
 
 import 'package:ifeelefine/Page/Geolocator/Controller/configGeolocatorController.dart';
 import 'package:ifeelefine/Page/Premium/Controller/premium_controller.dart';
 import 'package:ifeelefine/main.dart';
+import 'package:notification_center/notification_center.dart';
 
 import 'package:slidable_button/slidable_button.dart';
 
@@ -110,7 +112,7 @@ class _ConfigGeolocatorState extends State<ConfigGeolocator> {
         }
       } else {
         //_prefs.setAcceptedSendLocation = PreferencePermission.allow;
-
+        refreshMenu('configGeo');
         setState(() {
           isActive = true;
         });
@@ -133,6 +135,7 @@ class _ConfigGeolocatorState extends State<ConfigGeolocator> {
     setState(() {});
     showSaveAlert(context, "Permiso guardado",
         "El permiso del mapa se ha guardado correctamente.");
+    NotificationCenter().notify('refreshMenu');
   }
 
   Future _isActivePermission() async {
@@ -164,10 +167,11 @@ class _ConfigGeolocatorState extends State<ConfigGeolocator> {
     final size = MediaQuery.of(context).size;
     RedirectViewNotifier.setStoredContext(context);
     return Scaffold(
+      backgroundColor: Colors.black,
       appBar: AppBar(
         backgroundColor: Colors.brown,
         title: Text(
-          "Configuración",
+          Constant.titleNavBar,
           style: textForTitleApp(),
         ),
       ),
@@ -261,6 +265,7 @@ class _ConfigGeolocatorState extends State<ConfigGeolocator> {
                                   Get.put(PremiumController());
                               premiumController.updatePremiumAPI(true);
                               setState(() {});
+                              refreshMenu('configGeo');
                             }
                           },
                         );
@@ -372,7 +377,7 @@ class _ConfigGeolocatorState extends State<ConfigGeolocator> {
           _prefs.setUserPremium = true;
           var premiumController = Get.put(PremiumController());
           premiumController.updatePremiumAPI(true);
-
+          refreshMenu('configGeo');
           savePermission();
         }
       });

@@ -1,17 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_contacts/flutter_contacts.dart';
-import 'package:ifeelefine/Common/Constant.dart';
+
 import 'package:ifeelefine/Common/decoration_custom.dart';
-import 'package:ifeelefine/Common/manager_alerts.dart';
+
 import 'package:ifeelefine/Common/text_style_font.dart';
-import 'package:ifeelefine/Common/utils.dart';
-import 'package:ifeelefine/Model/contact.dart';
-import 'package:ifeelefine/Provider/prefencesUser.dart';
+
 import 'package:ifeelefine/Utils/Widgets/loading_page.dart';
 import 'package:ifeelefine/Utils/Widgets/widgedContact.dart';
 import 'package:ifeelefine/main.dart';
-import 'package:notification_center/notification_center.dart';
-import 'package:permission_handler/permission_handler.dart';
 
 class FilterContactListScreen extends StatefulWidget {
   final void Function(Contact) oncontactSelected;
@@ -26,7 +22,7 @@ class FilterContactListScreen extends StatefulWidget {
 class _FilterContactListScreenState extends State<FilterContactListScreen> {
   String searchQuery = "";
   List<Contact> contactlistTemp = [];
-  final _prefs = PreferenceUser();
+
   bool isLoading = false;
   @override
   void initState() {
@@ -50,7 +46,7 @@ class _FilterContactListScreenState extends State<FilterContactListScreen> {
     return LoadingIndicator(
       isLoading: isLoading,
       child: Scaffold(
-        backgroundColor: Colors.transparent,
+        backgroundColor: Colors.black,
         appBar: AppBar(
           backgroundColor: Colors.brown,
           title: TextField(
@@ -86,7 +82,7 @@ class _FilterContactListScreenState extends State<FilterContactListScreen> {
                       displayName: contact.displayName,
                       img: contact.photo,
                       delete: false,
-                      onDelete: (bool) {},
+                      onDelete: (bool value) {},
                       isFilter: true,
                       isExpanded: false,
                     ),

@@ -51,6 +51,7 @@ class _RiskPageState extends State<RiskPage> {
     final size = MediaQuery.of(context).size;
     Future.sync(() => RedirectViewNotifier.setStoredContext(context));
     return Scaffold(
+      backgroundColor: Colors.black,
       appBar: AppBar(
         backgroundColor: Colors.brown,
         title: Text(
@@ -58,7 +59,6 @@ class _RiskPageState extends State<RiskPage> {
           style: textForTitleApp(),
         ),
       ),
-      backgroundColor: Colors.transparent,
       body: MediaQuery(
         data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
         child: Container(

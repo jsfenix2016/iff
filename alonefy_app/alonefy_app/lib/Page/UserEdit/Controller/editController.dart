@@ -16,8 +16,6 @@ import 'package:ifeelefine/Provider/prefencesUser.dart';
 import 'package:notification_center/notification_center.dart';
 
 class EditConfigController extends GetxController {
-  // final usuarioProvider = UsuarioProvider();
-
   final _prefs = PreferenceUser();
   final List<String> _states = ["Seleccionar estado"];
   final List<String> _country = ["Seleccionar pais"];

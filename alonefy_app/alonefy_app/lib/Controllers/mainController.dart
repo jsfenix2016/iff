@@ -64,9 +64,9 @@ class MainController extends GetxController {
     print(" ----timerSendDropNotification.cancel----");
   }
 
-  void activeTimerSendDropNotification() {
+  Future<void> saveDrop() async {
     print("inicializado el timer");
-    timerSendDropNotification = Timer(const Duration(seconds: 30), () async {
+    timerSendDropNotification = Timer(const Duration(minutes: 5), () async {
       await inicializeHiveBD();
 
       var user = await getUserData();
@@ -74,9 +74,5 @@ class MainController extends GetxController {
       MainService().saveDrop(user);
       timerSendDropNotification.cancel();
     });
-  }
-
-  Future<void> saveDrop() async {
-    activeTimerSendDropNotification();
   }
 }

@@ -38,6 +38,7 @@ class _FinishConfigPageState extends State<FinishConfigPage> {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
+        backgroundColor: Colors.black,
         body: MediaQuery(
           data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
           child: Container(

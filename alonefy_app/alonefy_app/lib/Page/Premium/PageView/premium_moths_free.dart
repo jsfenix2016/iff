@@ -80,6 +80,7 @@ class _PremiumMothFreeState extends State<PremiumMothFree> {
     final size = MediaQuery.of(context).size;
     RedirectViewNotifier.setStoredContext(context);
     return Scaffold(
+      backgroundColor: Colors.black,
       appBar: AppBar(
         backgroundColor: Colors.brown,
         title: Text(

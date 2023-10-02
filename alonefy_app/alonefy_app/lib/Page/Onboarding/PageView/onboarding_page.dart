@@ -42,6 +42,7 @@ class OnboardingPage extends StatelessWidget {
         );
       },
       home: Scaffold(
+        backgroundColor: Colors.black,
         body: Container(
           decoration: decorationCustom(),
           child: SafeArea(

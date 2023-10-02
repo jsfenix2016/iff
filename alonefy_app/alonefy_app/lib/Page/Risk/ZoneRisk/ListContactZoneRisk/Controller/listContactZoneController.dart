@@ -26,7 +26,6 @@ class ListContactZoneController extends GetxController {
       var delete = await const HiveDataRisk().deleteContactZone(contact);
       await ZoneRiskService().deleteZoneRisk(contact.id);
 
-      showSaveAlert(context, Constant.info, Constant.deletectGeneric);
       NotificationCenter().notify('getContactZoneRisk');
       return true;
     } catch (error) {

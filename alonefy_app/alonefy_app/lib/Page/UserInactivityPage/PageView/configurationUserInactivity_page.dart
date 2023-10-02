@@ -216,6 +216,7 @@ class _UserInactivityPageState extends State<UserInactivityPage> {
     final size = MediaQuery.of(context).size;
 
     return Scaffold(
+      backgroundColor: Colors.black,
       extendBodyBehindAppBar: true,
       appBar: AppBar(
         elevation: 0,

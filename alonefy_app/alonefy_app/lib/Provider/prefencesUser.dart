@@ -26,7 +26,7 @@ class PreferenceUser {
   }
 
   get getTimerCancelZone {
-    return _prefs.getInt('timerCancelZone') ?? 30;
+    return _prefs.getInt('timerCancelZone') ?? 60;
   }
 
   set setTimerCancelZone(int value) {

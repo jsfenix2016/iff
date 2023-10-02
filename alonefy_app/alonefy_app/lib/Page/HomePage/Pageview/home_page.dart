@@ -63,6 +63,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   @override
   void initState() {
     super.initState();
+    validateConfig();
     WidgetsBinding.instance.addObserver(this);
     starTap();
     getUserData();
@@ -75,6 +76,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     NotificationCenter().subscribe('getUserData', getUserData);
     Future.sync(() => RedirectViewNotifier.setStoredContext(context));
     RedirectViewNotifier.onTapRedirectCancelZone();
+    NotificationCenter().notify('refreshMenu');
   }
 
   @override
@@ -120,23 +122,6 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
 
   void redirectCancel() async {
     print(prefs.getIsSelectContactRisk);
-    // if (prefs.getIsSelectContactRisk != -1) {
-    //   var resp = await riskVC.getContactsZoneRisk();
-    //   int indexSelect =
-    //       resp.indexWhere((item) => item.id == prefs.getIsSelectContactRisk);
-    //   var contactSelect = resp[indexSelect];
-
-    //   Future.delayed(const Duration(seconds: 3), () async {
-    //     await Navigator.push(
-    //       context,
-    //       MaterialPageRoute(
-    //         builder: (context) => CancelAlertPage(
-    //             contactRisk: contactSelect,
-    //             taskdIds: prefs.getlistTaskIdsCancel),
-    //       ),
-    //     );
-    //   });
-    // }
   }
 
   Future getAlerts() async {
@@ -175,6 +160,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     if (androidInfo.version.sdkInt >= 33) {}
   }
 
+  bool notCofingAll = false;
   @override
   Widget build(BuildContext context) {
     final Size size = MediaQuery.of(context).size;
@@ -183,7 +169,15 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     } else {
       nameComplete = "Usuario";
     }
+    permissionStatusI.forEach(
+      (element) {
+        if (element.config) {
+          notCofingAll = true;
+        }
+      },
+    );
     return Scaffold(
+      backgroundColor: Colors.black,
       drawer: const MenuConfigurationPage(),
       extendBodyBehindAppBar: true,
       key: _scaffoldKey,
@@ -220,6 +214,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                         _scaffoldKey.currentState!.openDrawer();
                       },
                       pref: _prefs,
+                      isconfig: notCofingAll,
                     ),
                   ],
                 ),

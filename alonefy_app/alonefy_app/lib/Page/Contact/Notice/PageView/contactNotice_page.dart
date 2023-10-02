@@ -3,13 +3,13 @@ import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ifeelefine/Common/Constant.dart';
-import 'package:ifeelefine/Common/manager_alerts.dart';
+
 import 'package:ifeelefine/Common/notificationService.dart';
 import 'package:ifeelefine/Common/text_style_font.dart';
-import 'package:ifeelefine/Common/utils.dart';
+
 import 'package:ifeelefine/Model/contact.dart';
 import 'package:ifeelefine/Page/Contact/EditContact/PageView/editContact.dart';
-import 'package:ifeelefine/Page/Contact/ListContact/PageView/list_contact_page.dart';
+
 import 'package:ifeelefine/Page/Contact/Notice/Controller/contactNoticeController.dart';
 import 'package:ifeelefine/Page/Contact/Widget/cellContactStatus.dart';
 import 'package:ifeelefine/Page/Contact/Widget/filter_contact.dart';
@@ -21,7 +21,6 @@ import 'package:ifeelefine/main.dart';
 
 import 'package:notification_center/notification_center.dart';
 import 'package:ifeelefine/Common/decoration_custom.dart';
-import 'package:permission_handler/permission_handler.dart';
 
 class ContactNoticePage extends StatefulWidget {
   const ContactNoticePage({super.key});
@@ -107,7 +106,7 @@ class _ContactNoticePageState extends State<ContactNoticePage> {
       appBar: AppBar(
         backgroundColor: Colors.brown,
         title: Text(
-          "Configuración",
+          Constant.titleNavBar,
           style: textForTitleApp(),
         ),
       ),

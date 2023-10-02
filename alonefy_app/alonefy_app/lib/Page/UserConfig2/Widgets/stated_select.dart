@@ -29,6 +29,7 @@ class _StatesListScreenState extends State<StatesListScreen> {
         .toList();
 
     return Scaffold(
+      backgroundColor: Colors.black,
       appBar: AppBar(
         backgroundColor: Colors.brown,
         title: TextField(

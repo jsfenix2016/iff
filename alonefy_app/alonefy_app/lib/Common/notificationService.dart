@@ -221,7 +221,7 @@ class RedirectViewNotifier with ChangeNotifier {
       priority: Priority.high,
 
       playSound: true,
-      ongoing: false,
+      ongoing: true,
       enableLights: true,
       groupKey: 'Inactive',
       enableVibration: true,
@@ -339,7 +339,7 @@ class RedirectViewNotifier with ChangeNotifier {
       priority: Priority.high,
 
       playSound: true,
-
+      ongoing: true,
       enableLights: true,
       groupKey: 'Drop',
       enableVibration: true,

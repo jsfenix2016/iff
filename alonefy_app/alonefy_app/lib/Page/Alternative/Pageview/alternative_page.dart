@@ -46,6 +46,7 @@ class _AlternativePagePageState extends State<AlternativePage> {
       },
       debugShowCheckedModeBanner: false,
       home: Scaffold(
+        backgroundColor: Colors.black,
         body: Container(
           decoration: decorationCustom(),
           child: Center(

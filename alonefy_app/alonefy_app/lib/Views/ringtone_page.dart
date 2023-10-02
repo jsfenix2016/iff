@@ -9,6 +9,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_system_ringtones/flutter_system_ringtones_platform_interface.dart';
 
 import 'package:google_fonts/google_fonts.dart';
+import 'package:ifeelefine/Common/Constant.dart';
 import 'package:ifeelefine/Common/colorsPalette.dart';
 
 import 'package:ifeelefine/Common/notificationService.dart';
@@ -55,6 +56,31 @@ class _RingTonePageState extends State<RingTonePage>
       const MethodChannel('dexterx.dev/flutter_local_notifications_example');
   List<Ringtone> ringtones = [];
   List<String> ringtonesTemp = [];
+  // Map<String, String> ringTonesMap = {
+  //   "el padrino peliculas": "elpadrinopeliculas",
+  //   'rocky': "rocky",
+  //   'freddy krueger viene porti': "freddykruegervieneporti1",
+  //   'alarm with reverberation 30031': 'alarm1withreverberation30031',
+  //   'alarm carorhome 62554': 'alarmcarorhome62554',
+  //   'rocky': 'alarmclockshort6402',
+  //   'ringtonespinkpanther',
+  //   'biohazardalarm143105',
+  //   'civildefensesiren128262',
+  //   'clockalarm',
+  //   'fanfaretrumpets6185',
+  //   'friendrequest14878',
+  //   'glockenspieltreasurevideogame6346',
+  //   'indianajonesseriestv',
+  //   'killbillsirena',
+  //   'misionimposiblepeliculas',
+  //   'notificationssound127856',
+  //   'prettywoman',
+  //   'psicosischuichuin',
+  //   'psicosissuspenso',
+  //   'puncharock161647',
+  //   'ringtoneskillbillwhistle',
+  //   'ringtonespinkpanther',
+  // };
   List<String> ringtonesRaw = [
     "elpadrinopeliculas",
     "rocky",
@@ -99,20 +125,6 @@ class _RingTonePageState extends State<RingTonePage>
     WidgetsBinding.instance.removeObserver(this);
 
     super.dispose();
-  }
-
-  @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    switch (state) {
-      case AppLifecycleState.resumed:
-        break;
-      case AppLifecycleState.inactive:
-        break;
-      case AppLifecycleState.paused:
-        break;
-      case AppLifecycleState.detached:
-        break;
-    }
   }
 
   checkStoragePermission() async {
@@ -228,12 +240,13 @@ class _RingTonePageState extends State<RingTonePage>
     final Size size = MediaQuery.of(context).size;
     RedirectViewNotifier.setStoredContext(context);
     return Scaffold(
+      backgroundColor: Colors.black,
       extendBodyBehindAppBar: false,
       key: scaffoldKey,
       appBar: AppBar(
         backgroundColor: Colors.brown,
         title: Text(
-          "Configuración",
+          Constant.titleNavBar,
           style: textForTitleApp(),
         ),
       ),
@@ -286,7 +299,8 @@ class _RingTonePageState extends State<RingTonePage>
                           onChanged: (bool? value) {
                             setState(() {
                               var count = 0;
-                              for (var ringtoneEnabled in ringtonesEnabled) {
+                              for (var ringtoneEnableditem
+                                  in ringtonesEnabled) {
                                 ringtonesEnabled[count] = false;
                                 count++;
                               }
@@ -333,7 +347,7 @@ class _RingTonePageState extends State<RingTonePage>
                   height: 42,
                   child: Center(
                     child: TextButton(
-                      child: Text('Guardar',
+                      child: Text(Constant.saveBtn,
                           textAlign: TextAlign.center,
                           style: textBold16Black()),
                       onPressed: () async {
@@ -357,7 +371,7 @@ class _RingTonePageState extends State<RingTonePage>
                   height: 42,
                   child: Center(
                     child: TextButton(
-                      child: Text('Cancelar',
+                      child: Text(Constant.cancelBtn,
                           textAlign: TextAlign.center,
                           style: textNormal16White()),
                       onPressed: () => Navigator.of(context).pop(),
@@ -391,7 +405,5 @@ class _RingTonePageState extends State<RingTonePage>
         _prefs.setNotificationAudio = 'my_foreground';
       }
     }
-    // showSaveAlert(context, "Sonido notificación guardada",
-    //     "El sonido para la notificación se ha guardado correctamente.");
   }
 }

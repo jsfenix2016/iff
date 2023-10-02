@@ -26,7 +26,7 @@ class ActivityDayBDAdapter extends TypeAdapter<ActivityDayBD> {
         timeFinish: fields[1] as String,
         days: fields[7] as String,
         repeatType: fields[8] as String,
-        isDeactivate: fields[9] as bool,
+        enabled: fields[9] as bool,
         specificDaysDeactivated: fields[10] as String,
         specificDaysRemoved: fields[11] as String);
   }
@@ -54,7 +54,7 @@ class ActivityDayBDAdapter extends TypeAdapter<ActivityDayBD> {
       ..writeByte(8)
       ..write(obj.repeatType)
       ..writeByte(9)
-      ..write(obj.isDeactivate)
+      ..write(obj.enabled)
       ..writeByte(10)
       ..write(obj.specificDaysDeactivated)
       ..writeByte(11)

@@ -59,6 +59,7 @@ class _UserConfigPageState extends State<UserConfigPage> {
     final size = MediaQuery.of(context).size;
 
     return Scaffold(
+      backgroundColor: Colors.black,
       body: MediaQuery(
         data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
         child: Container(

@@ -219,8 +219,8 @@ class Habits {
           activityDay.activity +
           "   " +
           activityDay.repeatType +
-          activityDay.isDeactivate.toString());
-      if (!activityDay.isDeactivate) {
+          activityDay.enabled.toString());
+      if (!activityDay.enabled) {
         var startDate =
             Jiffy(activityDay.day.toLowerCase(), 'EEEE, d MMMM yyyy').dateTime;
         var endDate =

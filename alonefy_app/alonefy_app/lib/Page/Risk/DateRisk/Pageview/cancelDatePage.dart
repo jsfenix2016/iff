@@ -136,6 +136,7 @@ class _CancelDatePageState extends State<CancelDatePage> {
     return LoadingIndicator(
       isLoading: isLoading,
       child: Scaffold(
+        backgroundColor: Colors.black,
         appBar: AppBar(
           backgroundColor: Colors.brown,
           title: Text(

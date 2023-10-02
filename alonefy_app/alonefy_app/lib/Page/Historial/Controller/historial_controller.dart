@@ -84,8 +84,11 @@ class HistorialController extends GetxController {
     var format = DateFormat('dd-MM-yyyy');
     if (dateRisk.isNotEmpty) {
       for (var dateTem in dateRisk) {
-        var ar = getFormatedDate(dateTem.createDate);
-        var dateTime1 = DateFormat('dd-MM-yyyy').parse(ar);
+        var inputFormat = DateFormat('yyyy-MM-dd HH:mm');
+        var inputDate = inputFormat.parse(dateTem.createDate.toString());
+        var outputFormat = DateFormat('dd-MM-yyyy HH:mm');
+        var ar = outputFormat.format(inputDate);
+        var dateTime1 = DateFormat('dd-MM-yyyy HH:mm').parse(ar);
 
         var tempAct = LogAlertsBD(
             id: 0, time: dateTime1, type: "Cita", photoDate: dateTem.photoDate);
@@ -95,8 +98,12 @@ class HistorialController extends GetxController {
     if (zoneRisk.isNotEmpty) {
       for (var date in zoneRisk) {
         convertDateTimeToString(date.createDate);
-        var ar = getFormatedDate(date.createDate);
-        var dateTime1 = DateFormat('dd-MM-yyyy').parse(ar);
+        // var ar = getFormatedDate(date.createDate);
+        var inputFormat = DateFormat('yyyy-MM-dd HH:mm');
+        var inputDate = inputFormat.parse(date.createDate.toString());
+        var outputFormat = DateFormat('dd-MM-yyyy HH:mm');
+        var ar = outputFormat.format(inputDate);
+        var dateTime1 = DateFormat('dd-MM-yyyy HH:mm').parse(ar);
         // var datenew = DateFormat('dd-MM-yyyy HH:mm:ss').format(date.createDate);
         var tempAct = LogAlertsBD(
             id: 0, time: (dateTime1), type: "Zona", video: date.video);

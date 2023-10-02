@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ifeelefine/Common/Constant.dart';
 import 'package:ifeelefine/Common/manager_alerts.dart';
+import 'package:ifeelefine/Common/utils.dart';
 import 'package:ifeelefine/Page/Geolocator/Controller/configGeolocatorController.dart';
 import 'package:ifeelefine/Page/Premium/Controller/premium_controller.dart';
 import 'package:ifeelefine/Page/Premium/PageView/premium_page.dart';
@@ -12,6 +13,7 @@ import 'package:ifeelefine/Page/TermsAndConditions/PageView/conditionGeneral_pag
 import 'package:ifeelefine/Utils/Widgets/ImageGradient.dart';
 import 'package:ifeelefine/Utils/Widgets/elevatedButtonFilling.dart';
 import 'package:ifeelefine/main.dart';
+import 'package:notification_center/notification_center.dart';
 import 'package:slidable_button/slidable_button.dart';
 import '../../../Common/colorsPalette.dart';
 import '../../../Provider/prefencesUser.dart';
@@ -179,7 +181,7 @@ class _InitGeolocatorState extends State<InitGeolocator> {
   @override
   void initState() {
     super.initState();
-    _prefs.saveLastScreenRoute("configGeo");
+
     starTap();
     preferencePermission = _prefs.getAcceptedSendLocation;
     _isActivePermission();
@@ -224,13 +226,7 @@ class _InitGeolocatorState extends State<InitGeolocator> {
                 setState(() {});
                 await _checkPermission();
                 getCurrentPosition();
-
-                List<String>? temp = [];
-                Future.sync(() async => {
-                      temp = await _prefs.getlistConfigPage,
-                      temp!.add("configGeo"),
-                      _prefs.setlistConfigPage = temp!
-                    });
+                refreshMenu('configGeo');
               }
             });
             return;
@@ -283,6 +279,7 @@ class _InitGeolocatorState extends State<InitGeolocator> {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
+        backgroundColor: Colors.black,
         body: MediaQuery(
           data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
           child: Container(
@@ -347,7 +344,15 @@ class _InitGeolocatorState extends State<InitGeolocator> {
                     child: ElevateButtonFilling(
                       showIcon: false,
                       onChanged: (value) {
-                        Get.offAll(() => const ConditionGeneralPage());
+                        // Get.offAll(() => const ConditionGeneralPage());
+                        Future.sync(() async => {
+                              await Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        const ConditionGeneralPage()),
+                              )
+                            });
                       },
                       mensaje: Constant.continueTxt,
                       img: '',

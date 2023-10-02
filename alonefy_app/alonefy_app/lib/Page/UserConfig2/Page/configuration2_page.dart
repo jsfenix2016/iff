@@ -183,6 +183,7 @@ class _UserConfigPageState2 extends State<UserConfigPage2> {
   Widget build(BuildContext context) {
     RedirectViewNotifier.setStoredContext(context);
     return Scaffold(
+      backgroundColor: Colors.black,
       body: MediaQuery(
         data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
         child: Container(
@@ -390,13 +391,8 @@ class _UserConfigPageState2 extends State<UserConfigPage2> {
   void free(bool isFree) async {
     if (await updateUser()) {
       updateFirebaseToken();
+      refreshMenu('config2');
 
-      List<String>? temp = [];
-      Future.sync(() async => {
-            temp = await _prefs.getlistConfigPage,
-            temp!.add("config2"),
-            _prefs.setlistConfigPage = temp!
-          });
       var premiumController = Get.put(PremiumController());
       premiumController.updatePremiumAPI(!isFree);
       _prefs.setUserFree = true;
@@ -405,8 +401,12 @@ class _UserConfigPageState2 extends State<UserConfigPage2> {
         _prefs.setUserPremium = true;
         _prefs.setDayFree = DateTime.now().toString();
       }
-
-      Get.off(() => UseMobilePage(userbd: userbd!));
+      await Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => UseMobilePage(userbd: userbd!),
+        ),
+      );
     }
   }
 
@@ -447,7 +447,7 @@ class _UserConfigPageState2 extends State<UserConfigPage2> {
               var premiumController = Get.put(PremiumController());
               premiumController.updatePremiumAPI(true);
 
-              Get.offAll(
+              Get.off(
                 () => UseMobilePage(userbd: userbd!),
               );
             }

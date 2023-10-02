@@ -211,54 +211,19 @@ class _EditZoneRiskPageState extends State<EditZoneRiskPage> {
     }
   }
 
-  void saveContactZoneRisk(BuildContext context) async {
-    var contactRisk = ContactZoneRiskBD(
-        id: widget.contactRisk.id,
-        photo: contactSelect.photo,
-        name: widget.contactRisk.name,
-        phones: contactSelect.phones.first.normalizedNumber.contains("+34")
-            ? contactSelect.phones.first.normalizedNumber.replaceAll("+34", "")
-            : contactSelect.phones.first.normalizedNumber,
-        sendLocation: widget.contactRisk.sendLocation,
-        sendWhatsapp: widget.contactRisk.sendWhatsapp,
-        code: widget.contactRisk.code,
-        isActived: true,
-        sendWhatsappContact: widget.contactRisk.sendWhatsappContact,
-        callme: widget.contactRisk.callme,
-        save: widget.contactRisk.save,
-        createDate: DateTime.now());
+  void createZone(ContactZoneRiskBD contactRisk) async {
+    setState(() {
+      isLoading = true;
+    });
+    var update = false;
+    if (contactRisk.id == -1) {
+      update = await editZoneVC.saveContactZoneRisk(context, contactRisk);
+    } else {
+      update = await editZoneVC.updateContactZoneRisk(context, contactRisk);
+    }
 
-    if (saveConfig && widget.contactRisk.save == true) {
-      if (widget.contactRisk.id == -1) {
-        var save = await editZoneVC.saveContactZoneRisk(context, contactRisk);
-        if (save) {
-          Future.sync(() => showDialog(
-                context: context,
-                builder: (context) {
-                  return AlertDialog(
-                    title: const Text(Constant.info),
-                    content: const Text(Constant.saveCorrectly),
-                    actions: <Widget>[
-                      TextButton(
-                        onPressed: () {
-                          setState(() {
-                            Navigator.of(context).pop();
-                          });
-                          goToPush(contactRisk);
-                        },
-                        child: const Text("Ok"),
-                      )
-                    ],
-                  );
-                },
-              ));
-        }
-      } else {
-        // contactRisk.id = widget.index;
-        var update =
-            await editZoneVC.updateContactZoneRisk(context, contactRisk);
-        if (update) {
-          await showDialog(
+    if (update) {
+      Future.sync(() => showDialog(
             context: context,
             builder: (context) {
               return AlertDialog(
@@ -277,12 +242,32 @@ class _EditZoneRiskPageState extends State<EditZoneRiskPage> {
                 ],
               );
             },
-          );
-        }
-      }
-    } else {
-      goToPush(contactRisk);
+          ));
     }
+
+    setState(() {
+      isLoading = true;
+    });
+  }
+
+  void saveContactZoneRisk(BuildContext context) async {
+    var contactRisk = ContactZoneRiskBD(
+        id: widget.contactRisk.id,
+        photo: contactSelect.photo,
+        name: widget.contactRisk.name,
+        phones: contactSelect.phones.first.normalizedNumber.contains("+34")
+            ? contactSelect.phones.first.normalizedNumber.replaceAll("+34", "")
+            : contactSelect.phones.first.normalizedNumber,
+        sendLocation: widget.contactRisk.sendLocation,
+        sendWhatsapp: widget.contactRisk.sendWhatsapp,
+        code: widget.contactRisk.code,
+        isActived: true,
+        sendWhatsappContact: widget.contactRisk.sendWhatsappContact,
+        callme: widget.contactRisk.callme,
+        save: widget.contactRisk.save,
+        createDate: DateTime.now());
+
+    createZone(contactRisk);
   }
 
   void goToPush(ContactZoneRiskBD contactRisk) async {
@@ -345,6 +330,7 @@ class _EditZoneRiskPageState extends State<EditZoneRiskPage> {
     return LoadingIndicator(
       isLoading: isLoading,
       child: Scaffold(
+        backgroundColor: Colors.black,
         appBar: AppBar(
           backgroundColor: Colors.brown,
           title: Text(

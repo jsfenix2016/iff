@@ -16,7 +16,7 @@ class ActivityDayBD extends HiveObject {
       required this.timeFinish,
       this.days = "",
       this.repeatType = "",
-      this.isDeactivate = false,
+      this.enabled = false,
       this.specificDaysDeactivated = "",
       this.specificDaysRemoved = ""});
 
@@ -48,7 +48,7 @@ class ActivityDayBD extends HiveObject {
   final String repeatType;
 
   @HiveField(9)
-  final bool isDeactivate;
+  final bool enabled;
 
   @HiveField(10)
   final String specificDaysDeactivated;

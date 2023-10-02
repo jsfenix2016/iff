@@ -230,12 +230,13 @@ class _EditUseMobilPageState extends State<EditUseMobilPage> {
     final size = MediaQuery.of(context).size;
     RedirectViewNotifier.setStoredContext(context);
     return Scaffold(
+      backgroundColor: Colors.black,
       key: scaffoldKey,
       extendBodyBehindAppBar: true,
       appBar: AppBar(
         backgroundColor: Colors.brown,
         title: Text(
-          "Configuración",
+          Constant.titleNavBar,
           style: textForTitleApp(),
         ),
       ),

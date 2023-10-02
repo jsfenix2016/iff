@@ -555,6 +555,7 @@ class _EditRiskPageState extends State<EditRiskPage> {
     return LoadingIndicator(
       isLoading: isLoading,
       child: Scaffold(
+        backgroundColor: Colors.black,
         appBar: AppBar(
           backgroundColor: Colors.brown,
           title: Text(
@@ -562,7 +563,6 @@ class _EditRiskPageState extends State<EditRiskPage> {
             style: textForTitleApp(),
           ),
         ),
-        backgroundColor: Colors.transparent,
         body: MediaQuery(
           data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
           child: Container(

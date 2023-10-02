@@ -30,6 +30,7 @@ class _CountryListScreenState extends State<CountryListScreen> {
         .toList();
 
     return Scaffold(
+      backgroundColor: Colors.black,
       appBar: AppBar(
         backgroundColor: Colors.brown,
         title: TextField(

@@ -58,6 +58,7 @@ class _LogActivityPageState extends State<LogActivityPage> {
     final Size size = MediaQuery.of(context).size;
 
     return Scaffold(
+      backgroundColor: Colors.black,
       extendBodyBehindAppBar: false,
       key: scaffoldKey,
       appBar: AppBar(

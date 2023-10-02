@@ -1,10 +1,10 @@
 import 'package:flutter/cupertino.dart';
 
 import 'package:google_fonts/google_fonts.dart';
+import 'package:ifeelefine/Common/Constant.dart';
 import 'package:ifeelefine/Common/notificationService.dart';
 import 'package:ifeelefine/Common/text_style_font.dart';
 
-import 'package:ifeelefine/Model/restday.dart';
 import 'package:ifeelefine/Page/Disamble/Controller/disambleController.dart';
 
 import 'package:flutter/material.dart';
@@ -24,9 +24,6 @@ class DesactivePage extends StatefulWidget {
 }
 
 class _DesactivePageState extends State<DesactivePage> {
-  //final DisambleController disambleVC = Get.put(DisambleController());
-
-  final List<RestDay> tempDicRest = [];
   final List<String> listDisamble = <String>[
     "1 hora",
     "2 horas",
@@ -56,7 +53,6 @@ class _DesactivePageState extends State<DesactivePage> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     starTap();
     getDisamble();
@@ -80,11 +76,12 @@ class _DesactivePageState extends State<DesactivePage> {
     final size = MediaQuery.of(context).size;
     RedirectViewNotifier.setStoredContext(context);
     return Scaffold(
+      backgroundColor: Colors.black,
       extendBodyBehindAppBar: false,
       appBar: AppBar(
         backgroundColor: Colors.brown,
         title: Text(
-          "Configuración",
+          Constant.titleNavBar,
           style: textForTitleApp(),
         ),
       ),

@@ -165,10 +165,11 @@ class _AddActivityPageState extends State<AddActivityPage>
         return true;
       },
       child: Scaffold(
+        backgroundColor: Colors.black,
         appBar: AppBar(
           backgroundColor: Colors.brown,
           title: Text(
-            "Configuración",
+            Constant.titleNavBar,
             style: textForTitleApp(),
           ),
         ),
@@ -911,7 +912,7 @@ class _AddActivityPageState extends State<AddActivityPage>
     activity.timeFinish = "$hoursPicker2:$minutesPicker2:00";
     activity.days = convertDayListToDaysString();
     activity.repeatType = getItemSelected();
-    activity.isDeactivate = true;
+    activity.enabled = true;
 
     return activity;
   }

@@ -43,7 +43,7 @@ class _UseMobilePageState extends State<UseMobilePage> {
     } else {
       userbd = widget.userbd;
     }
-    _prefs.saveLastScreenRoute("useMobil");
+    // _prefs.saveLastScreenRoute("useMobil");
     getpermission();
     super.initState();
   }
@@ -69,6 +69,7 @@ class _UseMobilePageState extends State<UseMobilePage> {
     final size = MediaQuery.of(context).size;
     RedirectViewNotifier.setStoredContext(context);
     return Scaffold(
+      backgroundColor: Colors.black,
       body: MediaQuery(
         data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
         child: Container(
@@ -334,7 +335,13 @@ class _UseMobilePageState extends State<UseMobilePage> {
                               userbd!);
 
                           if (result) {
-                            Get.offAll(() => const UserRestPage());
+                            // Get.off(() => const UserRestPage());
+                            await Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const UserRestPage(),
+                              ),
+                            );
                           }
                         },
                         mensaje: 'Continuar',

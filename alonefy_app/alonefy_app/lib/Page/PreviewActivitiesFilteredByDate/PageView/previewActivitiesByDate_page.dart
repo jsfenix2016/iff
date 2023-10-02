@@ -64,16 +64,9 @@ class _PreviewActivitiesByDateState extends State<PreviewActivitiesByDate>
   void initState() {
     super.initState();
     if (widget.isMenu == false) {
-      _prefs.saveLastScreenRoute("previewActivity");
-
-      List<String>? temp = [];
-      Future.sync(() async => {
-            temp = await _prefs.getlistConfigPage,
-            temp!.add("previewActivity"),
-            _prefs.setlistConfigPage = temp!
-          });
+      // _prefs.saveLastScreenRoute("previewActivity");
     }
-
+    refreshMenu('previewActivity');
     starTap();
     WidgetsBinding.instance.addObserver(this);
     _from = DateTime(_from.year, _from.month, _from.day);
@@ -503,7 +496,8 @@ class _PreviewActivitiesByDateState extends State<PreviewActivitiesByDate>
     var response = true;
 
     if (activityDay.specificDaysDeactivated != null &&
-        activityDay.specificDaysDeactivated!.isNotEmpty) {
+        activityDay.specificDaysDeactivated!.isNotEmpty &&
+        activityDay.specificDaysDeactivated != '[]') {
       var specifyDaysDeactivated =
           activityDay.specificDaysDeactivated!.split(';');
 
@@ -622,12 +616,13 @@ class _PreviewActivitiesByDateState extends State<PreviewActivitiesByDate>
     final size = MediaQuery.of(context).size;
     RedirectViewNotifier.setStoredContext(context);
     return Scaffold(
+      backgroundColor: Colors.black,
       key: scaffoldKey,
       appBar: widget.isMenu
           ? AppBar(
               backgroundColor: Colors.brown,
               title: Text(
-                "Configuración",
+                Constant.titleNavBar,
                 style: textForTitleApp(),
               ),
             )
@@ -878,7 +873,7 @@ class _PreviewActivitiesByDateState extends State<PreviewActivitiesByDate>
                                                     top: 16,
                                                     left: 16,
                                                     child: Text(
-                                                      "${activi.timeStart.substring(0, activi.timeStart.length - 3)}-${activi.timeFinish.substring(0, activi.timeFinish.length - 3)}",
+                                                      "${activi.timeStart}-${activi.timeFinish}",
                                                       // rangeTimeToString(
                                                       // activi.timeStart,
                                                       // activi.timeFinish),
@@ -981,7 +976,7 @@ class _PreviewActivitiesByDateState extends State<PreviewActivitiesByDate>
                                                             _activitiesByDay[
                                                                         index]![
                                                                     indexActivity]
-                                                                .isDeactivate = value;
+                                                                .enabled = value;
                                                             if (value) {
                                                               addIsDeactivated(
                                                                   _activitiesByDay[
@@ -1002,22 +997,16 @@ class _PreviewActivitiesByDateState extends State<PreviewActivitiesByDate>
                                                                     .length <=
                                                                 5) {
                                                               _activitiesByDay[
-                                                                          index]![
-                                                                      indexActivity]
-                                                                  .timeStart = _activitiesByDay[
                                                                               index]![
                                                                           indexActivity]
-                                                                      .timeStart +
-                                                                  ":00";
+                                                                      .timeStart =
+                                                                  "${_activitiesByDay[index]![indexActivity].timeStart}:00";
 
                                                               _activitiesByDay[
-                                                                          index]![
-                                                                      indexActivity]
-                                                                  .timeFinish = _activitiesByDay[
                                                                               index]![
                                                                           indexActivity]
-                                                                      .timeFinish +
-                                                                  ":00";
+                                                                      .timeFinish =
+                                                                  "${_activitiesByDay[index]![indexActivity].timeFinish}:00";
                                                             }
 
                                                             controller.updateActivity(
@@ -1107,14 +1096,13 @@ class _PreviewActivitiesByDateState extends State<PreviewActivitiesByDate>
                           onChanged: (bool value) async {
                             print(value);
 
-                            Get.offAll(const FallActivationPage());
-                            // await Navigator.push(
-                            //   context,
-                            //   MaterialPageRoute(
-                            //     builder: (context) =>
-                            //         const FallActivationPage(),
-                            //   ),
-                            // );
+                            await Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    const FallActivationPage(),
+                              ),
+                            );
                           },
                           img: '',
                         ),

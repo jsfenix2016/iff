@@ -77,6 +77,7 @@ class _AlertsPageState extends State<AlertsPage> {
           return true;
         },
         child: Scaffold(
+          backgroundColor: Colors.black,
           key: scaffoldKey,
           appBar: AppBar(
             backgroundColor: Colors.brown,

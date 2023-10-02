@@ -12,7 +12,6 @@ import 'package:ifeelefine/Page/Premium/Controller/premium_controller.dart';
 import 'package:ifeelefine/main.dart';
 
 import '../../../Common/Constant.dart';
-import '../../../Common/colorsPalette.dart';
 
 import '../../../Data/hive_data.dart';
 import '../../../Provider/prefencesUser.dart';
@@ -69,10 +68,11 @@ class _ChangeNotificationTimePageState
     final size = MediaQuery.of(context).size;
     RedirectViewNotifier.setStoredContext(context);
     return Scaffold(
+      backgroundColor: Colors.black,
       appBar: AppBar(
         backgroundColor: Colors.brown,
         title: Text(
-          "Configuración",
+          Constant.titleNavBar,
           style: textForTitleApp(),
         ),
       ),

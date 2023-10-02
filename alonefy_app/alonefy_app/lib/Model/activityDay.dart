@@ -10,7 +10,7 @@ class ActivityDay {
   late String dayFinish;
   String? days;
   late String repeatType;
-  late bool isDeactivate;
+  late bool enabled;
   String? specificDaysDeactivated;
   String? specificDaysRemoved;
 }

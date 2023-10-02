@@ -175,6 +175,7 @@ class _PreviewRestTimePageState extends State<PreviewRestTimePage> {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     return Scaffold(
+      backgroundColor: Colors.black,
       key: scaffoldKey,
       extendBodyBehindAppBar: true,
       appBar: widget.isMenu

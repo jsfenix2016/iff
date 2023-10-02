@@ -35,33 +35,35 @@ class UserEditPage extends StatefulWidget {
 
 class _UserEditPageState extends State<UserEditPage> {
   final EditConfigController editVC = Get.put(EditConfigController());
-
-  bool isCheck = false;
-  late bool selectImage = false;
-  User? user;
-
-  List<String> _country = ["Seleccionar pais"];
-  Map<String, String> ages = {};
-
-  late bool istrayed;
-
-  late bool selectOther = false;
-
-  late Image imgNew;
-
   final formKey = GlobalKey<FormState>();
   final formKeyName = GlobalKey<FormState>();
   final formKeyLastName = GlobalKey<FormState>();
-
   final scaffoldKey = GlobalKey<ScaffoldState>();
-  late File? foto = File("");
-  late int indexState = 0;
-  late int indexCountry = 0;
-  late String selectState = "";
-  late String selectCountry = "";
+
+  User? user;
+
+  bool isloading = true;
+  bool isCheck = false;
+  late bool selectImage = false;
+  late bool istrayed;
+  late bool selectOther = false;
+
+  List<String> _country = ["Seleccionar pais"];
   List<dynamic> countryres = [];
   List<dynamic> stateTemp = [];
-  bool isloading = true;
+
+  Map<String, String> ages = {};
+
+  late Image imgNew;
+
+  late File? foto = File("");
+
+  late int indexState = 0;
+  late int indexCountry = 0;
+
+  late String selectState = "";
+  late String selectCountry = "";
+
   @override
   void initState() {
     user = initUser();
@@ -168,8 +170,6 @@ class _UserEditPageState extends State<UserEditPage> {
           onStatesSelected: (country) {
             setState(() {
               selectState = country;
-
-              // Opcional: También puedes actualizar la variable user?.country aquí
               user?.city = selectState;
             });
           },
@@ -181,8 +181,6 @@ class _UserEditPageState extends State<UserEditPage> {
       setState(() {
         selectState = selectedStateTemp;
         user?.city = selectState;
-
-        // Opcional: También puedes actualizar la variable user?.country aquí
       });
     }
   }
@@ -199,7 +197,7 @@ class _UserEditPageState extends State<UserEditPage> {
             style: textForTitleApp(),
           ),
         ),
-        backgroundColor: Colors.transparent,
+        backgroundColor: Colors.black,
         key: scaffoldKey,
         body: MediaQuery(
           data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
@@ -214,7 +212,7 @@ class _UserEditPageState extends State<UserEditPage> {
                   children: <Widget>[
                     const SizedBox(height: 20),
                     Text(
-                      "V. 1.03",
+                      "V. 1.08",
                       style: textForTitleApp(),
                     ),
                     const SizedBox(height: 20),
@@ -531,7 +529,7 @@ class _UserEditPageState extends State<UserEditPage> {
                                       context: context,
                                       builder: (BuildContext context) =>
                                           AlertDialog(
-                                        title: const Text('Información'),
+                                        title: const Text(Constant.info),
                                         content:
                                             const Text('¿Desea darse de baja?'),
                                         actions: <Widget>[
@@ -587,7 +585,7 @@ class _UserEditPageState extends State<UserEditPage> {
                                 width: 138,
                                 child: const Center(
                                   child: Text(
-                                    'Guardar',
+                                    Constant.saveBtn,
                                     style: TextStyle(
                                         color: Colors.black,
                                         fontWeight: FontWeight.bold,

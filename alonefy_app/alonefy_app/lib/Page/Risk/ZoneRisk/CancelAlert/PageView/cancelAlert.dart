@@ -83,7 +83,6 @@ class _CancelAlertState extends State<CancelAlertPage> {
   }
 
   void gotoHome() async {
-    _prefs.saveLastScreenRoute("home");
     code.textCode1 = '';
     code.textCode2 = '';
     code.textCode3 = '';
@@ -96,12 +95,11 @@ class _CancelAlertState extends State<CancelAlertPage> {
     prefs.setTimerCancelZone = 60;
 
     countTimer.value = 60;
-    await Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(
-        builder: (context) => const HomePage(),
-      ),
-    );
+    if (contactSelect!.save == false) {
+      riskVC.deleteContactRisk(context, contactSelect!);
+    }
+    _prefs.saveLastScreenRoute("home");
+    await Get.offAll(const HomePage());
   }
 
   void saveDate(BuildContext context) async {
@@ -122,7 +120,9 @@ class _CancelAlertState extends State<CancelAlertPage> {
       if (taskdIds.isNotEmpty) {
         MainService().cancelAllNotifications(taskdIds);
         contactSelect!.isActived = false;
-        await const HiveDataRisk().updateContactZoneRisk(contactSelect!);
+        if (contactSelect!.save == true) {
+          await const HiveDataRisk().updateContactZoneRisk(contactSelect!);
+        }
       }
 
       gotoHome();
@@ -170,8 +170,10 @@ class _CancelAlertState extends State<CancelAlertPage> {
     final size = MediaQuery.of(context).size;
 
     return MaterialApp(
+      color: Colors.black,
       debugShowCheckedModeBanner: false,
       home: Scaffold(
+        backgroundColor: Colors.black,
         body: MediaQuery(
           data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
           child: Container(

@@ -1,4 +1,6 @@
 import 'package:get/get.dart';
+import 'package:ifeelefine/Common/Constant.dart';
+import 'package:ifeelefine/Common/manager_alerts.dart';
 
 import 'package:ifeelefine/Common/notificationService.dart';
 import 'package:ifeelefine/Common/text_style_font.dart';
@@ -245,10 +247,21 @@ class _ZoneRiskPageState extends State<ZoneRiskPage> {
                                               width: 30,
                                               child: IconButton(
                                                 iconSize: 20,
-                                                onPressed: (() {
-                                                  riskVC.deleteContactRisk(
-                                                      context,
-                                                      listContact[index]);
+                                                onPressed: (() async {
+                                                  bool delete = await riskVC
+                                                      .deleteContactRisk(
+                                                          context,
+                                                          listContact[index]);
+
+                                                  if (delete) {
+                                                    setState(() {
+                                                      showSaveAlert(
+                                                          context,
+                                                          Constant.info,
+                                                          Constant
+                                                              .deletectGeneric);
+                                                    });
+                                                  }
                                                 }),
                                                 icon: Container(
                                                   width: 16,
@@ -403,6 +416,7 @@ class _ZoneRiskPageState extends State<ZoneRiskPage> {
     final size = MediaQuery.of(context).size;
     RedirectViewNotifier.setStoredContext(context);
     return Scaffold(
+      backgroundColor: Colors.black,
       appBar: AppBar(
         backgroundColor: Colors.brown,
         title: Text(

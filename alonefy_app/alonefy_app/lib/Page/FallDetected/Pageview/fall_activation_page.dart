@@ -6,6 +6,7 @@ import 'package:ifeelefine/Common/Constant.dart';
 
 import 'package:ifeelefine/Common/colorsPalette.dart';
 import 'package:ifeelefine/Common/text_style_font.dart';
+import 'package:ifeelefine/Common/utils.dart';
 import 'package:ifeelefine/Page/Contact/PageView/addContact_page.dart';
 
 import 'package:ifeelefine/Page/FallDetected/Controller/fall_detectedController.dart';
@@ -18,6 +19,7 @@ import 'package:ifeelefine/Utils/Widgets/widgetLogo.dart';
 
 import 'package:ifeelefine/Common/decoration_custom.dart';
 import 'package:ifeelefine/main.dart';
+import 'package:notification_center/notification_center.dart';
 import 'package:slidable_button/slidable_button.dart';
 
 class FallActivationPage extends StatefulWidget {
@@ -39,7 +41,7 @@ class _FallActivationPageState extends State<FallActivationPage> {
   @override
   void initState() {
     super.initState();
-    _prefs.saveLastScreenRoute("fallActivation");
+    // _prefs.saveLastScreenRoute("fallActivation");
     starTap();
   }
 
@@ -77,12 +79,7 @@ class _FallActivationPageState extends State<FallActivationPage> {
                 _prefs.setUserPremium = true;
                 var premiumController = Get.put(PremiumController());
                 premiumController.updatePremiumAPI(true);
-                List<String>? temp = [];
-                Future.sync(() async => {
-                      temp = await _prefs.getlistConfigPage,
-                      temp!.add("fallActivation"),
-                      _prefs.setlistConfigPage = temp!
-                    });
+                refreshMenu("fallActivation");
 
                 setState(() {});
               }
@@ -137,6 +134,7 @@ class _FallActivationPageState extends State<FallActivationPage> {
     final size = MediaQuery.of(context).size;
 
     return Scaffold(
+      backgroundColor: Colors.black,
       appBar: isMenu
           ? AppBar(
               backgroundColor: Colors.brown,
@@ -201,13 +199,13 @@ class _FallActivationPageState extends State<FallActivationPage> {
                   ElevateButtonFilling(
                     showIcon: false,
                     onChanged: (value) {
-                      Get.offAll(const AddContactPage());
-                      // Navigator.push(
-                      //   context,
-                      //   MaterialPageRoute(
-                      //     builder: (context) => const AddContactPage(),
-                      //   ),
-                      // );
+                      // Get.off(const AddContactPage());
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const AddContactPage(),
+                        ),
+                      );
                     },
                     mensaje: 'Continuar',
                     img: '',

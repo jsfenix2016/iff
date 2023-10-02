@@ -37,7 +37,6 @@ class _ConditionGeneralPageState extends State<ConditionGeneralPage> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    _prefs.saveLastScreenRoute("conditionGeneral");
   }
 
   @override
@@ -45,6 +44,7 @@ class _ConditionGeneralPageState extends State<ConditionGeneralPage> {
     final size = MediaQuery.of(context).size;
     RedirectViewNotifier.setStoredContext(context);
     return Scaffold(
+      backgroundColor: Colors.black,
       body: MediaQuery(
         data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
         child: Container(

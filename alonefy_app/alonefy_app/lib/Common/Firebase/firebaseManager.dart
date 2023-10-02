@@ -86,6 +86,7 @@ Future<void> onActionSelected(String value) async {
                     ? user!.telephone.replaceAll("+34", "")
                     : user!.telephone,
                 fcmToken: token);
+            print('token fire->' + token);
             FirebaseService().saveData(firebaseTokenApi);
           }
 

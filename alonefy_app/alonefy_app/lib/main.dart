@@ -9,6 +9,8 @@ import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:flutter_contacts/contact.dart';
 import 'package:ifeelefine/Data/hiveRisk_data.dart';
 import 'package:ifeelefine/Model/contactZoneRiskBD.dart';
+import 'package:ifeelefine/Page/Contact/PageView/addContact_page.dart';
+import 'package:ifeelefine/Page/UseMobil/PageView/configurationUseMobile_page.dart';
 import 'package:ifeelefine/Views/menuconfig_page.dart';
 
 import 'package:notification_center/notification_center.dart';
@@ -51,9 +53,8 @@ import 'Page/Premium/Controller/premium_controller.dart';
 
 import 'Page/UserEdit/Controller/getUserController.dart';
 
-late ContactZoneRiskBD contactTemp;
 DateTime now = DateTime.now();
-late LogAlerts userMov;
+
 var accelerometerValues = <double>[];
 List<double> userAccelerometerValues = <double>[];
 GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
@@ -81,7 +82,7 @@ List<String> listTask = [];
 RxList<String> rxlistTask = [''].obs;
 RxString rxIdTask = ''.obs;
 RxString name = "".obs;
-// RxInt countTimer = 30.obs;
+
 final countTimer = RxInt(60);
 Timer timerSendSMS = Timer(const Duration(seconds: 20), () {});
 Timer timerSendDropNotification = Timer(const Duration(minutes: 5), () {});
@@ -117,10 +118,10 @@ List<bool> menuConfig = [
   true,
   true,
   true,
-  true,
-  true,
-  true,
-  true
+  false,
+  false,
+  false,
+  false
 ];
 
 List<MenuConfigModel> permissionStatusI = [
@@ -187,8 +188,6 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   BackgroundIsolateBinaryMessenger.ensureInitialized;
 
-  userMov = LogAlerts(mov: [], time: now);
-
   await _prefs.initPrefs();
   _prefs.setProtected =
       'AlertFriends está activada y estamos comprobando que te encuentres bien';
@@ -237,7 +236,9 @@ Future<void> main() async {
 
           starTap();
         },
-        child: MyApp(initApp: initApp!),
+        child: MyApp(
+          initApp: initApp!,
+        ),
       ),
     ),
   );
@@ -710,62 +711,61 @@ Future<bool> onIosBackground(ServiceInstance service) async {
 //   }
 // }
 
-List<double> accelerationHistory = [];
-Timer? fallDetectionTimer;
+// List<double> accelerationHistory = [];
+// Timer? fallDetectionTimer;
 
-void onData(double accelerationMagnitude) {
-  // Agregar el nuevo valor a la lista de historial
-  accelerationHistory.add(accelerationMagnitude);
+// void onData(double accelerationMagnitude) {
+//   // Agregar el nuevo valor a la lista de historial
+//   accelerationHistory.add(accelerationMagnitude);
 
-  // Mantener un límite en el tamaño del historial (por ejemplo, 10 elementos)
-  if (accelerationHistory.length > 10) {
-    accelerationHistory.removeAt(0);
-  }
+//   // Mantener un límite en el tamaño del historial (por ejemplo, 10 elementos)
+//   if (accelerationHistory.length > 10) {
+//     accelerationHistory.removeAt(0);
+//   }
 
-  // Verificar si se ha alcanzado el límite de aceleración para considerarlo una caída
-  if (accelerationMagnitude >= 45) {
-    print('Movimiento brusco');
-    // Iniciar el temporizador de detección de caídas
-    if (fallDetectionTimer == null) {
-      fallDetectionTimer = Timer(Duration(seconds: 15), () {
-        // Notificar la caída después del tiempo especificado
-        notifyFall();
-      });
-    }
-  } else if (fallDetectionTimer != null) {
-    // Si la aceleración ha disminuido después de una posible caída,
-    // cancelar el temporizador de detección de caídas
-    if (isAccelerationDecreasing()) {
-      fallDetectionTimer?.cancel();
-      fallDetectionTimer = null;
-    }
-  }
-}
+//   // Verificar si se ha alcanzado el límite de aceleración para considerarlo una caída
+//   if (accelerationMagnitude >= 45) {
+//     print('Movimiento brusco');
+//     // Iniciar el temporizador de detección de caídas
+//     if (fallDetectionTimer == null) {
+//       fallDetectionTimer = Timer(Duration(seconds: 15), () {
+//         // Notificar la caída después del tiempo especificado
+//         notifyFall();
+//       });
+//     }
+//   } else if (fallDetectionTimer != null) {
+//     // Si la aceleración ha disminuido después de una posible caída,
+//     // cancelar el temporizador de detección de caídas
+//     if (isAccelerationDecreasing()) {
+//       fallDetectionTimer?.cancel();
+//       fallDetectionTimer = null;
+//     }
+//   }
+// }
 
-bool isAccelerationDecreasing() {
-  // Verificar si la aceleración está disminuyendo en los últimos valores del historial
-  if (accelerationHistory.length >= 2) {
-    final lastIndex = accelerationHistory.length - 1;
-    final secondToLastIndex = accelerationHistory.length - 2;
-    return accelerationHistory[lastIndex] <
-        accelerationHistory[secondToLastIndex];
-  }
-  return false;
-}
+// bool isAccelerationDecreasing() {
+//   // Verificar si la aceleración está disminuyendo en los últimos valores del historial
+//   if (accelerationHistory.length >= 2) {
+//     final lastIndex = accelerationHistory.length - 1;
+//     final secondToLastIndex = accelerationHistory.length - 2;
+//     return accelerationHistory[lastIndex] <
+//         accelerationHistory[secondToLastIndex];
+//   }
+//   return false;
+// }
 
-void notifyFall() {
-  // Aquí puedes implementar la notificación de caída
-  // Restablecer el historial y el temporizador después de notificar
-  accelerationHistory.clear();
-  fallDetectionTimer = null;
-  mainController.saveDrop();
-}
+// void notifyFall() {
+//   // Aquí puedes implementar la notificación de caída
+//   // Restablecer el historial y el temporizador después de notificar
+//   accelerationHistory.clear();
+//   fallDetectionTimer = null;
+//   mainController.saveDrop();
+// }
 
 void accelerometer() async {
   //Initialization Settings for Android
   await _prefs.initPrefs();
 
-  // var enableIFF = await getEnableIFF();
   _streamSubscriptions.add(
     accelerometerEvents.listen(
       (AccelerometerEvent event) {

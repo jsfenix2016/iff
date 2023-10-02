@@ -7,11 +7,13 @@ import 'package:ifeelefine/Common/colorsPalette.dart';
 import 'package:ifeelefine/Common/manager_alerts.dart';
 import 'package:ifeelefine/Common/notificationService.dart';
 import 'package:ifeelefine/Common/text_style_font.dart';
+import 'package:ifeelefine/Common/utils.dart';
 import 'package:ifeelefine/Page/FallDetected/Controller/fall_detectedController.dart';
 import 'package:ifeelefine/Page/Premium/Controller/premium_controller.dart';
 
 import 'package:ifeelefine/Provider/prefencesUser.dart';
 import 'package:ifeelefine/main.dart';
+import 'package:notification_center/notification_center.dart';
 
 import 'package:slidable_button/slidable_button.dart';
 
@@ -60,10 +62,11 @@ class _FallActivationConfigPageState extends State<FallActivationConfigPage> {
     final size = MediaQuery.of(context).size;
     RedirectViewNotifier.setStoredContext(context);
     return Scaffold(
+      backgroundColor: Colors.black,
       appBar: AppBar(
         backgroundColor: Colors.brown,
         title: Text(
-          "Configuración",
+          Constant.titleNavBar,
           style: textForTitleApp(),
         ),
       ),
@@ -328,6 +331,7 @@ class _FallActivationConfigPageState extends State<FallActivationConfigPage> {
     //_prefs.setDetectedFall = isActive;
     _fallController.setFallTime(fallTime);
     //_prefs.setFallTime = fallTime;
+    refreshMenu("previewActivity");
 
     showSaveAlert(context, "Tiempo de caída",
         "El tiempo de caída se ha guardado correctamente");

@@ -7,6 +7,7 @@ import 'package:ifeelefine/Common/Constant.dart';
 import 'package:ifeelefine/Common/colorsPalette.dart';
 import 'package:ifeelefine/Common/manager_alerts.dart';
 import 'package:ifeelefine/Common/text_style_font.dart';
+import 'package:ifeelefine/Common/utils.dart';
 
 import 'package:ifeelefine/Controllers/contactUserController.dart';
 import 'package:ifeelefine/Data/hive_data.dart';
@@ -50,8 +51,6 @@ class _ContactListState extends State<ContactList> {
   Contact? cont;
   @override
   void initState() {
-    if (!widget.isMenu) _prefs.saveLastScreenRoute("contact");
-
     super.initState();
     starTap();
     getContactBD();
@@ -337,6 +336,7 @@ class _ContactListState extends State<ContactList> {
     // }
 
     return Scaffold(
+      backgroundColor: Colors.black,
       appBar: widget.isMenu
           ? AppBar(
               backgroundColor: Colors.brown,
@@ -389,20 +389,15 @@ class _ContactListState extends State<ContactList> {
                           "Antes de continuar debe solicitar la autorización del contacto");
                       return;
                     }
+                    refreshMenu('addContact');
 
-                    List<String>? temp = [];
-                    Future.sync(() async => {
-                          temp = await _prefs.getlistConfigPage,
-                          temp!.add("addContact"),
-                          _prefs.setlistConfigPage = temp!
-                        });
                     if (widget.isMenu == false) {
-                      Get.offAll(const InitGeolocator());
-                      // Navigator.push(
-                      //   context,
-                      //   MaterialPageRoute(
-                      //       builder: (context) => const InitGeolocator()),
-                      // );
+                      // Get.off(const InitGeolocator());
+                      await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const InitGeolocator()),
+                      );
                     } else {
                       NotificationCenter().notify('getContact');
                     }

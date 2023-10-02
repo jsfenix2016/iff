@@ -33,6 +33,7 @@ class _PreviewVideoState extends State<PreviewVideoPage>
     final size = MediaQuery.of(context).size;
     RedirectViewNotifier.setStoredContext(context);
     return Scaffold(
+      backgroundColor: Colors.black,
       appBar: AppBar(
         title: Text('Video zona de riesgo', style: textForTitleApp()),
         elevation: 0,

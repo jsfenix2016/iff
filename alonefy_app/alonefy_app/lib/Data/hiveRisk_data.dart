@@ -176,9 +176,16 @@ class HiveDataRisk {
       final Box<ContactZoneRiskBD> box =
           await Hive.openBox<ContactZoneRiskBD>('ContactZoneRiskBD');
 
-      var temp = box.values.toList();
-      final index = temp.indexOf(contact);
-      await box.deleteAt(index);
+      final listDate = box.values.toList();
+
+      var index = 0;
+      for (var contactZoneRiskBD in listDate) {
+        if (contactZoneRiskBD.id == contact.id) {
+          await box.deleteAt(index);
+          break;
+        }
+        index++;
+      }
 
       return true;
     } catch (error) {

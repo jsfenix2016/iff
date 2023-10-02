@@ -119,12 +119,18 @@ class _PushAlertPageState extends State<PushAlertPage> {
   }
 
   _starRecoding() async {
-    await _cameraController.startVideoRecording();
+    await Future.wait([
+      _cameraController.prepareForVideoRecording(),
+      _cameraController.startVideoRecording()
+    ]);
     print('Grabando');
 
     if (info.brand == 'samsung' && info.model.contains("SM-G")) {
       if (!_cameraControllerfront.value.isInitialized) {
-        await _cameraControllerfront.startVideoRecording();
+        await Future.wait([
+          _cameraControllerfront.prepareForVideoRecording(),
+          _cameraControllerfront.startVideoRecording()
+        ]);
       }
     }
     if (!_cameraController.value.isRecordingVideo) {
@@ -245,6 +251,7 @@ class _PushAlertPageState extends State<PushAlertPage> {
           return true;
         },
         child: Scaffold(
+          backgroundColor: Colors.black,
           appBar: isMenu
               ? AppBar(
                   backgroundColor: Colors.brown,

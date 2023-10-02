@@ -31,6 +31,7 @@ import 'package:ifeelefine/Page/PermissionUser/Pageview/permission_page.dart';
 import 'package:ifeelefine/Views/ringtone_page.dart';
 import 'package:ifeelefine/main.dart';
 import 'package:jiffy/jiffy.dart';
+import 'package:notification_center/notification_center.dart';
 import 'package:slidable_button/slidable_button.dart';
 
 import '../Common/Constant.dart';
@@ -60,8 +61,19 @@ class _MenuConfigurationPageState extends State<MenuConfigurationPage> {
   void initState() {
     print(permissionStatusI);
     super.initState();
-
+    NotificationCenter().subscribe('refreshMenu', _refreshMenu);
     // _prefs.setlistConfigPage = addList;
+    _refreshMenu();
+  }
+
+  void _refreshMenu() async {
+    // Retrieve the list of contacts from the device
+    // var contacts = await FlutterContacts.getContacts();
+    // Set the list of contacts in the state
+    await _prefs.initPrefs();
+    // permissionStatusI = _prefs.getlistConfigPage;
+    validateConfig();
+    setState(() {});
   }
 
   void redirectToConfigUser() {
@@ -74,6 +86,35 @@ class _MenuConfigurationPageState extends State<MenuConfigurationPage> {
   void routeIndexSelect(int index) async {
     MainController mainController = Get.put(MainController());
     var user = await mainController.getUserData();
+
+    if (index != 0 && index != 10 && index != 9 && (user.idUser == "-1")) {
+      Future.sync(
+        () async => {
+          await showDialog(
+            context: context,
+            builder: (context) {
+              return AlertDialog(
+                title: const Text("Atención"),
+                content: const Text(
+                    'Para usar esta funcionalidad, debes configurar tus datos'),
+                actions: <Widget>[
+                  TextButton(
+                    child: const Text("Cancelar"),
+                    onPressed: () => Navigator.of(context).pop(),
+                  ),
+                  TextButton(
+                    child: const Text("Configurar"),
+                    onPressed: () => redirectToConfigUser(),
+                  )
+                ],
+              );
+            },
+          ),
+        },
+      );
+
+      return;
+    }
 
     switch (index) {
       case 0:
@@ -275,12 +316,13 @@ class _MenuConfigurationPageState extends State<MenuConfigurationPage> {
   Widget build(BuildContext context) {
     final Size size = MediaQuery.of(context).size;
     return Scaffold(
+      backgroundColor: Colors.black,
       extendBodyBehindAppBar: true,
       appBar: AppBar(
         backgroundColor: Colors.brown,
         elevation: 0,
         title: Text(
-          "Configuración",
+          Constant.titleNavBar,
           style: textForTitleApp(),
         ),
       ),

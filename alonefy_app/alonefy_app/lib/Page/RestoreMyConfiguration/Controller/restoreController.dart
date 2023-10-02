@@ -48,23 +48,22 @@ class RestoreController extends GetxController {
       if (isRunning) {
         service.invoke("stopService");
       }
-      Future.sync(() => _saveNotifications(userApi));
-      Future.sync(() => _saveUserFromAPI(userApi));
-      Future.sync(() => _saveTimeUseMobile(userApi.inactivityTimes));
-      Future.sync(() => _saveRestDays(userApi.sleepHours));
-      Future.sync(() => _saveActivities(userApi.activities));
-      Future.sync(() => _saveContacts(userApi.contact));
-      Future.sync(() => _saveContactRisk(userApi.contactRisk));
-      Future.sync(() => _saveContactZoneRisk(userApi.zoneRisk));
-      Future.sync(() => _saveLogAlerts(userApi.logAlert));
-      Future.sync(() => _saveLocation(userApi));
-      Future.sync(() => _saveTermsAndConditions(userApi));
-      Future.sync(() => _saveFall(userApi));
-      Future.sync(() => _saveContactPermission(userApi));
-      Future.sync(() => _saveScheduleExactAlarm(userApi));
-      Future.sync(() => _saveCameraPermission(userApi));
+      _saveNotifications(userApi);
+      _saveUserFromAPI(userApi);
+      _saveTimeUseMobile(userApi.inactivityTimes);
+      _saveRestDays(userApi.sleepHours);
+      _saveActivities(userApi.activities);
+      _saveContacts(userApi.contact);
+      _saveContactRisk(userApi.contactRisk);
+      _saveContactZoneRisk(userApi.zoneRisk);
+      _saveLogAlerts(userApi.logAlert);
+      _saveLocation(userApi);
+      _saveTermsAndConditions(userApi);
+      _saveFall(userApi);
+      _saveContactPermission(userApi);
+      _saveScheduleExactAlarm(userApi);
+      _saveCameraPermission(userApi);
 
-      await onActionSelected("get_apns_token");
       _saveConfig();
       _prefs.setUserPremium = true;
       _prefs.setUserFree = false;
@@ -127,13 +126,8 @@ class RestoreController extends GetxController {
 
       await EditUserService().updateUser(userBD);
 
-      List<String>? temp = [];
-      Future.sync(() async => {
-            temp = await _prefs.getlistConfigPage,
-            temp!.add("config2"),
-            _prefs.setlistConfigPage = temp!
-          });
-
+      refreshMenu("config2");
+      await onActionSelected("get_apns_token");
       NotificationCenter().notify('getUserData');
     }
   }
@@ -141,36 +135,20 @@ class RestoreController extends GetxController {
   Future<void> _saveTimeUseMobile(List<UseMobilApi> useMobilApiList) async {
     await EditUseMobilController().saveUseMobilFromApi(useMobilApiList);
     if (prefs.getUserPremium) {
-      List<String>? temp = [];
-      Future.sync(() async => {
-            temp = await prefs.getlistConfigPage,
-            temp!.add("useMobil"),
-            prefs.setlistConfigPage = temp!
-          });
+      refreshMenu("useMobil");
     }
   }
 
   Future<void> _saveRestDays(List<UserRestApi> userRestApiList) async {
     await UserRestController().saveFromApi(userRestApiList);
-
-    List<String>? temp = [];
-    Future.sync(() async => {
-          temp = await _prefs.getlistConfigPage,
-          temp!.add("restDay"),
-          _prefs.setlistConfigPage = temp!
-        });
+    refreshMenu("restDay");
   }
 
   Future<void> _saveActivities(
       List<ActivityDayApiResponse> activitiesApi) async {
     await AddActivityController().saveFromApi(activitiesApi);
     if (activitiesApi.isNotEmpty) {
-      List<String>? temp = [];
-      Future.sync(() async => {
-            temp = await _prefs.getlistConfigPage,
-            temp!.add("previewActivity"),
-            _prefs.setlistConfigPage = temp!
-          });
+      refreshMenu("previewActivity");
     }
   }
 
@@ -180,12 +158,7 @@ class RestoreController extends GetxController {
       _prefs.setFallTime = minutesToString(userApi.fallTime);
 
       if (userApi.activateFalls) {
-        List<String>? temp = [];
-        Future.sync(() async => {
-              temp = await _prefs.getlistConfigPage,
-              temp!.add("fallActivation"),
-              _prefs.setlistConfigPage = temp!
-            });
+        refreshMenu("fallActivation");
       }
     }
   }
@@ -193,12 +166,7 @@ class RestoreController extends GetxController {
   Future<void> _saveContacts(List<ContactApi> contactsApi) async {
     await ContactUserController().saveFromApi(contactsApi);
     if (contactsApi.isNotEmpty) {
-      List<String>? temp = [];
-      Future.sync(() async => {
-            temp = await _prefs.getlistConfigPage,
-            temp!.add("addContact"),
-            _prefs.setlistConfigPage = temp!
-          });
+      refreshMenu("addContact");
     }
   }
 
@@ -208,13 +176,7 @@ class RestoreController extends GetxController {
 
       if (isAccepted) {
         _prefs.setAcceptedSendLocation = PreferencePermission.allow;
-
-        List<String>? temp = [];
-        Future.sync(() async => {
-              temp = await _prefs.getlistConfigPage,
-              temp!.add("configGeo"),
-              _prefs.setlistConfigPage = temp!
-            });
+        refreshMenu("configGeo");
       }
     }
   }

@@ -1,7 +1,7 @@
 class Constant {
   static const baseApi = 'https://dev.alertfriends.app';
   static const baseApiMessageBird = 'https://rest.messagebird.com/';
-  static const codeMessageBird = '';
+  static const codeMessageBird = 'ZT2ppb4ZzUr86eaM3irsDolpc';
   static const urlTerms = 'https://alertfriends.app/politica_privacidad/';
   static const personalInformation = 'Datos personales';
   static const selectGender = 'Selecciona el género';
@@ -89,9 +89,95 @@ class Constant {
   static const String call = "CALL";
   static const String whatsapp = "WHATSAPP";
   static const String notification = "NOTIFICATION";
-
+  static const String termsAndConditionTitle = "Términos y condiciones";
   static const String habitsActive =
       'La función de los hábitos se encuentra activada.';
+  static const String titleNavBar = "Configuración";
+  static const String confirmTitleAlert = 'Confirmar';
+  static const String alertBody = '¿Se han leido los términos y condiciones?';
+
+  static const String disablePermission =
+      "Para poder desactivar el permiso, se ha de hacer desde los Ajustes de la app";
+  static const String enablePermission =
+      "Para poder activar el permiso, se ha de hacer desde los Ajustes de la app";
+  static const String enableLocalPermission = "¿Aceptas el permiso de";
+  static const String verifyPhoneNumber =
+      'Debe verificar su número de teléfono';
+  static const String validatePhoneNumber =
+      'Debe colocar un número de teléfono válido';
+  static const String info = 'Información';
+
+  static const String validateEmail = 'Debe colocar un email válido';
+
+  static const String premiumHabitsTitle = 'Aprende de tus hábitos';
+  static const String premiumTitle = 'Registrate y sientete protegido';
+  static const String premiumChangeTimeTitle =
+      'Modifica los tiempos para enviar sms, whatsapp y llamadas';
+  static const String premiumUseTimeTitle =
+      'Modifica el tiempo de cada cuanto usas el móvil';
+  static const String premiumMapTitle =
+      'Envía tu ubicación cuando envíes una alerta';
+
+  static const String premiumRestoreTitle = 'Restaura tú cuenta';
+  static const String premiumContactsTitle =
+      'Asegurarte que responden a tu emergencia, añade más contactos';
+  static const String premiumFallTitle =
+      'Cuando tu smartphone detecte una caída avisará al amigo o familiar que desees';
+
+  static const String conexionFail =
+      "Se produjo algún error, compruebe su conexión";
+
+  static const String validateCodeEmail =
+      'Introduce el código enviado a tu correo';
+  static const String validateCodeSms =
+      'Introduce el código enviado a tu teléfono';
+
+  static const String alertMessageValidateUser =
+      'Debe tener el teléfono e email validado para continuar.';
+
+  static const String tokenRequestTxt = 'Enviar código de verificación';
+  static const String tokenRequestSendAgainTxt = 'Reenviar código';
+
+  static const String disambleProtected = "Se ha deshabilitado la protección";
+  static const String disambleProtectedError =
+      "Ha habido un error al deshabilitar la protección";
+
+  static const String cancelChange = "Se ha cancelado los cambios";
+  static const String saveCorrectly = "Se guardó correctamente";
+  static const String contactSaveCorrectly =
+      "Contacto guardado correctamente, se ha realizado la solicitud de autorización correctamente";
+  static const String contactEditCorrectly = "Contacto editado correctamente";
+  static const String timeMaxReachedInactivity =
+      "Se ha alcanzado el máximo de tiempos de inactividad. Para poder programar más, hazte Premium.";
+
+  static const String saveImageAvatar = "Se guardó la imagen correctamente";
+
+  static const String errorGeneric = "Hubo un error, intente mas tarde";
+  static const String restoredCorrectly = "Se restauro correctamente";
+
+  static const String errorGenericConextion =
+      "Se produjo un error, verifique su conexion a internet e intente de nuevo.";
+
+  static const String changeGeneric = "Cambios guardados correctamente";
+
+  static const String codeError = 'El código no coincide';
+  static const String deletectGeneric = "Eliminado correctamente";
+  static const String codeValid = "Código válido";
+  static const String codeInvalid = "Código inválido";
+  static const String saveData = "Datos guardados";
+  static const String ok = "Ok";
+
+  static const String zoneRisk = "Zona de riesgo";
+  static const String dateRisk = "Cita de riesgo";
+  static const String activity = "Actividad";
+  static const String history = "Historial";
+
+  static const String habitsOk = "Los hábitos se han guardado correctamente";
+  static const String habitsError = "Los hábitos no se han podido guardar";
+
+  static const String activitiesTimeError =
+      "La hora de inicio no puede ser superior que la hora de fin";
+
   static const Map<String, String> headers = {
     'Content-Type': 'application/json; charset=UTF-8'
   };
@@ -290,7 +376,7 @@ class Constant {
     "16": '12 hora',
   };
 
-  static const timeMap = {
+  static const Map<String, Duration> timeMap = {
     '': Duration(seconds: 15),
     '5 min': Duration(minutes: 5),
     '1 hora': Duration(hours: 1),
@@ -304,7 +390,7 @@ class Constant {
     'Siempre': Duration(hours: 80640),
   };
 
-  static const dayMap = {
+  static const Map<int, String> dayMap = {
     1: "Lunes",
     2: "Martes",
     3: "Miércoles",
@@ -313,88 +399,6 @@ class Constant {
     6: "Sábado",
     7: "Domingo"
   };
-
-  static const String disablePermission =
-      "Para poder desactivar el permiso, se ha de hacer desde los Ajustes de la app";
-  static const String enablePermission =
-      "Para poder activar el permiso, se ha de hacer desde los Ajustes de la app";
-  static const String enableLocalPermission = "¿Aceptas el permiso de";
-  static const String verifyPhoneNumber =
-      'Debe verificar su número de teléfono';
-  static const String validatePhoneNumber =
-      'Debe colocar un número de teléfono válido';
-  static const String info = 'Información';
-
-  static const String validateEmail = 'Debe colocar un email válido';
-
-  static const String premiumHabitsTitle = 'Aprende de tus hábitos';
-  static const String premiumTitle = 'Registrate y sientete protegido';
-  static const String premiumChangeTimeTitle =
-      'Modifica los tiempos para enviar sms, whatsapp y llamadas';
-  static const String premiumUseTimeTitle =
-      'Modifica el tiempo de cada cuanto usas el móvil';
-  static const String premiumMapTitle =
-      'Envía tu ubicación cuando envíes una alerta';
-
-  static const String premiumRestoreTitle = 'Restaura tú cuenta';
-  static const String premiumContactsTitle =
-      'Asegurarte que responden a tu emergencia, añade más contactos';
-  static const String premiumFallTitle =
-      'Cuando tu smartphone detecte una caída avisará al amigo o familiar que desees';
-
-  static const String conexionFail =
-      "Se produjo algún error, compruebe su conexión";
-
-  static const String validateCodeEmail =
-      'Introduce el código enviado a tu correo';
-  static const String validateCodeSms =
-      'Introduce el código enviado a tu teléfono';
-
-  static const String alertMessageValidateUser =
-      'Debe tener el teléfono e email validado para continuar.';
-
-  static const String tokenRequestTxt = 'Enviar código de verificación';
-  static const String tokenRequestSendAgainTxt = 'Reenviar código';
-
-  static const String disambleProtected = "Se ha deshabilitado la protección";
-  static const String disambleProtectedError =
-      "Ha habido un error al deshabilitar la protección";
-
-  static const String cancelChange = "Se ha cancelado los cambios";
-  static const String saveCorrectly = "Se guardó correctamente";
-  static const String contactSaveCorrectly =
-      "Contacto guardado correctamente, se ha realizado la solicitud de autorización correctamente";
-  static const String contactEditCorrectly = "Contacto editado correctamente";
-  static const String timeMaxReachedInactivity =
-      "Se ha alcanzado el máximo de tiempos de inactividad. Para poder programar más, hazte Premium.";
-
-  static const String saveImageAvatar = "Se guardó la imagen correctamente";
-
-  static const String errorGeneric = "Hubo un error, intente mas tarde";
-  static const String restoredCorrectly = "Se restauro correctamente";
-
-  static const String errorGenericConextion =
-      "Se produjo un error, verifique su conexion a internet e intente de nuevo.";
-
-  static const String changeGeneric = "Cambios guardados correctamente";
-
-  static const String codeError = 'El código no coincide';
-  static const String deletectGeneric = "Eliminado correctamente";
-  static const String codeValid = "Código válido";
-  static const String codeInvalid = "Código inválido";
-  static const String saveData = "Datos guardados";
-  static const String ok = "Ok";
-
-  static const String zoneRisk = "Zona de riesgo";
-  static const String dateRisk = "Cita de riesgo";
-  static const String activity = "Actividad";
-  static const String history = "Historial";
-
-  static const String habitsOk = "Los hábitos se han guardado correctamente";
-  static const String habitsError = "Los hábitos no se han podido guardar";
-
-  static const String activitiesTimeError =
-      "La hora de inicio no puede ser superior que la hora de fin";
 
   // static const String
 }

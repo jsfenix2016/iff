@@ -27,7 +27,7 @@ class _CellDateRiskState extends State<CellDateRisk> {
     Uint8List bytesImages = const Base64Decoder().convert(urlImage);
 
     return Image.memory(bytesImages,
-        fit: BoxFit.fill, width: double.infinity, height: 250.0);
+        fit: BoxFit.fitWidth, width: double.infinity, height: 250.0);
   }
 
   Widget getImageFile(File urlImage) {
@@ -51,12 +51,12 @@ class _CellDateRiskState extends State<CellDateRisk> {
               border: Border.all(color: ColorPalette.principal),
               image: const DecorationImage(
                 image: AssetImage("assets/images/icons8.png"),
-                fit: BoxFit.fill,
+                fit: BoxFit.fitWidth,
               ),
             ),
           )
         : Image.file(
-            fit: BoxFit.fitHeight,
+            fit: BoxFit.fitWidth,
             scale: 3,
             urlImage,
             height: double.infinity,
@@ -66,7 +66,7 @@ class _CellDateRiskState extends State<CellDateRisk> {
 
   Widget getImageData(Uint8List img) {
     return Image.memory(
-      fit: BoxFit.fitHeight,
+      fit: BoxFit.fitWidth,
       scale: 3,
       img,
       height: double.infinity,

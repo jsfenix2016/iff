@@ -84,6 +84,7 @@ class _PreviewInactivityPageState extends State<PreviewInactivityPage> {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     return Scaffold(
+      backgroundColor: Colors.black,
       floatingActionButton: _createButtonNext(),
       key: scaffoldKey,
       appBar: AppBar(
