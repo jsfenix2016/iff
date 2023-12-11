@@ -352,6 +352,18 @@ Future<String> localizeStringName() async {
   return timeZoneName;
 }
 
+Future<tz.TZDateTime> convertTimeTZ(int hour) async {
+  tz.initializeTimeZones();
+  final String timeZoneName = await FlutterTimezone.getLocalTimezone();
+  // tz.setLocalLocation(tz.getLocation(timeZoneName));
+  final tz.TZDateTime now = tz.TZDateTime.now(tz.getLocation(timeZoneName));
+
+  tz.TZDateTime scheduleDate =
+      tz.TZDateTime(tz.local, now.year, now.month, now.day, hour, 47);
+
+  return scheduleDate;
+}
+
 Duration getDurationNew(List<String> parts) {
   int hours = int.parse(parts[0]);
   int minutes = int.parse(parts[1]);
@@ -382,6 +394,7 @@ DateTime parseStringHours(String s) {
 }
 
 DateTime parseContactRiskDate(String contactRiskDate) {
+  tz.initializeTimeZones();
   var day = contactRiskDate.substring(0, contactRiskDate.indexOf('-'));
   contactRiskDate = contactRiskDate.substring(
       contactRiskDate.indexOf('-') + 1, contactRiskDate.length);
@@ -399,6 +412,7 @@ DateTime parseContactRiskDate(String contactRiskDate) {
       contactRiskDate.indexOf(':') + 1, contactRiskDate.length);
 
   var minutes = contactRiskDate.substring(0, 2);
+
   // Obtener una zona horaria específica, por ejemplo, la zona horaria de Nueva York
   Future.sync(() async => {await _prefs.initPrefs()});
   // Obtener la zona horaria de Madrid

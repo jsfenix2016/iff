@@ -38,20 +38,22 @@ class UserConfigCOntroller extends GetxController {
         showSaveAlert(context, Constant.info, Constant.errorGenericConextion);
       });
     }
-    var resqEamil = await userVC.validateEmailWithMessageBird(user.email);
-    if (resqEamil["ok"]) {
-      prefs.setHrefMail = (resqEamil["href"]);
+    await Future.delayed(const Duration(seconds: 3), () async {
+      var resqEamil = await userVC.validateEmailWithMessageBird(user.email);
+      if (resqEamil["ok"]) {
+        prefs.setHrefMail = (resqEamil["href"]);
 
-      // Utiliza la variable local dentro del espacio asyncronizado
-      // await Future.delayed(const Duration(milliseconds: 10), () {
-      //   showSaveAlert(context, Constant.info, "Se ha enviado el código");
-      // });
-    } else {
-      // Utiliza la variable local dentro del espacio asyncronizado
-      await Future.delayed(const Duration(milliseconds: 10), () {
-        showSaveAlert(context, Constant.info, Constant.errorGenericConextion);
-      });
-    }
+        // Utiliza la variable local dentro del espacio asyncronizado
+        // await Future.delayed(const Duration(milliseconds: 10), () {
+        //   showSaveAlert(context, Constant.info, "Se ha enviado el código");
+        // });
+      } else {
+        // Utiliza la variable local dentro del espacio asyncronizado
+        await Future.delayed(const Duration(milliseconds: 10), () {
+          showSaveAlert(context, Constant.info, Constant.errorGenericConextion);
+        });
+      }
+    });
   }
 
   Future<bool> validateCodeSMS(BuildContext context, String code) async {

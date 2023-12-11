@@ -107,7 +107,7 @@ class EditRiskController extends GetxController {
       }
 
       var update = await const HiveDataRisk().updateContactRisk(contact);
-      if (update) {
+      if (update.id != -1) {
         // NotificationCenter().notify('getContactRisk');
 
         return true;

@@ -69,7 +69,7 @@ class _EditUseMobilPageState extends State<EditUseMobilPage> {
     var habits = _prefs.getHabitsTime;
     timeDic = editUseMobilVC.getMapWithHabitsTime(habits);
     getListUseMobilForDay();
-    scrollController = FixedExtentScrollController(initialItem: 1);
+    scrollController = FixedExtentScrollController(initialItem: 4);
     if (tempUseMobilBDDays.isEmpty) {
       for (var element in Constant.tempListShortDay) {
         var useMobilBD = UseMobilBD(
@@ -435,7 +435,9 @@ class _EditUseMobilPageState extends State<EditUseMobilPage> {
                                     padding: const EdgeInsets.only(left: 40.0),
                                     child: Center(
                                       child: Text(
-                                        'Aprender de mis hábitos',
+                                        _prefs.getHabitsEnable
+                                            ? Constant.habitsDisamble
+                                            : Constant.habitsEnable,
                                         textAlign: TextAlign.center,
                                         style: textBold16Black(),
                                       ),
@@ -450,100 +452,59 @@ class _EditUseMobilPageState extends State<EditUseMobilPage> {
                               var strDatetime =
                                   Jiffy(datetime).format(getDefaultPattern());
 
-                              setState(
-                                () async {
-                                  if (position == SlidableButtonPosition.end) {
-                                    if (_prefs.getUserFree &&
-                                        !_prefs.getUserPremium) {
-                                      await Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) => const PremiumPage(
-                                              isFreeTrial: false,
-                                              img: 'Pantalla5.jpg',
-                                              title:
-                                                  'Protege tu Seguridad Personal las 24h:\n\n',
-                                              subtitle:
-                                                  'Activa detección de hábitos'),
-                                        ),
-                                      ).then(
-                                        (value) {
-                                          if (value != null && value) {
-                                            _prefs.setUserFree = false;
-                                            _prefs.setUserPremium = true;
-                                            _prefs.setHabitsEnable = true;
-                                            _prefs.setHabitsRefresh =
-                                                strDatetime;
-                                            var premiumController =
-                                                Get.put(PremiumController());
-                                            premiumController
-                                                .updatePremiumAPI(true);
-                                            setState(() {});
-                                          }
-                                        },
-                                      );
-                                    }
-                                  }
-                                },
-                              );
+                              if (position == SlidableButtonPosition.end) {
+                                if (_prefs.getUserFree &&
+                                    !_prefs.getUserPremium) {
+                                  await Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => const PremiumPage(
+                                          isFreeTrial: false,
+                                          img: 'Pantalla5.jpg',
+                                          title:
+                                              'Protege tu Seguridad Personal las 24h:\n\n',
+                                          subtitle:
+                                              'Activa detección de hábitos'),
+                                    ),
+                                  ).then(
+                                    (value) {
+                                      if (value != null && value) {
+                                        _prefs.setUserFree = false;
+                                        _prefs.setUserPremium = true;
+                                        _prefs.setHabitsEnable = true;
+                                        _prefs.setHabitsRefresh = strDatetime;
+                                        var premiumController =
+                                            Get.put(PremiumController());
+                                        premiumController
+                                            .updatePremiumAPI(true);
+                                        setState(() {});
+                                      }
+                                    },
+                                  );
+                                } else {
+                                  _prefs.getHabitsEnable
+                                      ? _prefs.setHabitsEnable = false
+                                      : _prefs.setHabitsEnable = true;
+                                  setState(() {});
+                                }
+                              }
                             },
                           ),
                         ),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 40,
                       ),
                       RowButtonsWhenMenu(
-                        onCancel: (bool) {
+                        onCancel: (bool bool) {
                           setState(() {
                             Navigator.of(context).pop();
                           });
                         },
-                        onSave: (bool) {
+                        onSave: (bool bool) {
                           btnAdd();
                         },
                       ),
-                      // Row(
-                      //   children: [
-                      //     Container(
-                      //       color: Colors.transparent,
-                      //       height: 50,
-                      //       width: size.width / 2,
-                      //       child: SizedBox(
-                      //         width: size.width,
-                      //         child: Center(
-                      //           child: ElevateButtonCustomBorder(
-                      //             onChanged: (value) async {
-                      //               //btnCancel();
-                      //               setState(() {
-                      //                 Navigator.of(context).pop();
-                      //               });
-                      //             },
-                      //             mensaje: "Cancelar",
-                      //           ),
-                      //         ),
-                      //       ),
-                      //     ),
-                      //     Container(
-                      //       color: Colors.transparent,
-                      //       height: 50,
-                      //       width: size.width / 2,
-                      //       child: SizedBox(
-                      //         width: size.width,
-                      //         child: Center(
-                      //           child: ElevateButtonFilling(
-                      //             onChanged: (value) {
-                      //               btnAdd();
-                      //             },
-                      //             mensaje: Constant.saveBtn,
-                      //             showIcon: false,
-                      //             img: '',
-                      //           ),
-                      //         ),
-                      //       ),
-                      //     ),
-                      //   ],
-                      // ),
                     ],
                   ),
                 ),

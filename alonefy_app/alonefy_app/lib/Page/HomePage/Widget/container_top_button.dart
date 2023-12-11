@@ -22,13 +22,14 @@ class _ContainerTopButtonState extends State<ContainerTopButton> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 45,
+      height: 80,
+      width: 230,
       color: Colors.transparent,
       child: Stack(
         alignment: Alignment.center,
         children: [
           Positioned(
-            top: 0,
+            top: 8,
             left: 16,
             child: IconButton(
               iconSize: 40,
@@ -52,8 +53,8 @@ class _ContainerTopButtonState extends State<ContainerTopButton> {
             ),
           ),
           Positioned(
-            left: 57,
-            top: 13,
+            left: 54,
+            top: 18,
             child: Visibility(
               visible: !widget.pref.getUserPremium || !widget.isconfig,
               child: Container(
@@ -68,7 +69,7 @@ class _ContainerTopButtonState extends State<ContainerTopButton> {
             ),
           ),
           Positioned(
-            top: 0,
+            top: 8,
             right: 16,
             child: IconButton(
               iconSize: 40,

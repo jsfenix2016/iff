@@ -258,7 +258,14 @@ class _EditRiskPageState extends State<EditRiskPage> {
     await cameraPermissions(_prefs.getAcceptedCamera, context);
   }
 
-  void saveDate(BuildContext context) async {
+  String convertInitNow(String temp) {
+    String sDuration =
+        "${now.hour.toString().padLeft(2, '0')}:${now.minute.remainder(60).toString().padLeft(2, '0')}";
+
+    return "$temp$sDuration:00";
+  }
+
+  void saveDate(BuildContext context, String action) async {
     if (contactSelect == null) {
       showSaveAlert(context, Constant.info, "Debe seleccionar un contacto".tr);
       return;
@@ -309,16 +316,26 @@ class _EditRiskPageState extends State<EditRiskPage> {
     print("Total de minutos: $totalMinutosFinish");
 
     if (totalMinutosInit > totalMinutosFinish) {
-      initTimeTemp = temp + widget.contactRisk.timeinit.split(' ').last;
+      if (action.contains("Iniciar")) {
+        initTimeTemp = convertInitNow(temp);
+      } else {
+        initTimeTemp = temp + widget.contactRisk.timeinit.split(' ').last;
+      }
+
       finishTimeTemp = temp2 + widget.contactRisk.timefinish.split(' ').last;
     } else {
       if (isActived && widget.contactRisk.id == -1) {
-        String sDuration =
-            "${now.hour.toString().padLeft(2, '0')}:${now.minute.remainder(60).toString().padLeft(2, '0')}";
+        // String sDuration =
+        //     "${now.hour.toString().padLeft(2, '0')}:${now.minute.remainder(60).toString().padLeft(2, '0')}";
 
-        initTimeTemp = "$temp$sDuration:00";
+        // initTimeTemp = "$temp$sDuration:00";
+        initTimeTemp = convertInitNow(temp);
       } else {
-        initTimeTemp = temp + widget.contactRisk.timeinit.split(' ').last;
+        if (action.contains("Iniciar")) {
+          initTimeTemp = convertInitNow(temp);
+        } else {
+          initTimeTemp = temp + widget.contactRisk.timeinit.split(' ').last;
+        }
       }
 
       finishTimeTemp = temp + widget.contactRisk.timefinish.split(' ').last;
@@ -353,6 +370,7 @@ class _EditRiskPageState extends State<EditRiskPage> {
   void getchangeContact(BuildContext context, ContactRiskBD contactRisk) async {
     if (widget.contactRisk.id == -1) {
       contactRisk.id = widget.index;
+      prefs.setSelectContactRisk = contactRisk.id;
       bool save = await editVC.saveContactRisk(context, contactRisk);
       if (!save) {
         setState(() {
@@ -366,6 +384,7 @@ class _EditRiskPageState extends State<EditRiskPage> {
       bool edit = await editVC.updateNewContactRisk(context, contactRisk);
       if (!edit) {
         setState(() {
+          prefs.setSelectContactRisk = contactRisk.id;
           isLoading = false;
           showSaveAlert(context, Constant.info, Constant.errorGeneric.tr);
         });
@@ -775,7 +794,7 @@ class _EditRiskPageState extends State<EditRiskPage> {
                                   wordSpacing: 1,
                                   letterSpacing: 0.001,
                                   fontWeight: FontWeight.w700,
-                                  color: Color.fromRGBO(222, 222, 222, 1),
+                                  color: const Color.fromRGBO(222, 222, 222, 1),
                                 ),
                               ),
                             ),
@@ -1209,7 +1228,7 @@ class _EditRiskPageState extends State<EditRiskPage> {
                         isprogrammed = false;
                         widget.contactRisk.isActived = true;
                         widget.contactRisk.isprogrammed = false;
-                        saveDate(context);
+                        saveDate(context, "Iniciar");
                       },
                       mensaje: 'Iniciar cita ahora',
                       img: '',
@@ -1221,7 +1240,7 @@ class _EditRiskPageState extends State<EditRiskPage> {
                         isprogrammed = true;
                         widget.contactRisk.isActived = false;
                         widget.contactRisk.isprogrammed = true;
-                        saveDate(context);
+                        saveDate(context, "Programar");
                       },
                       mensaje: 'Programar activación',
                     ),

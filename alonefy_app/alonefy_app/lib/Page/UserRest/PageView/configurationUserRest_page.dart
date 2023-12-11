@@ -97,8 +97,8 @@ class _UserRestPageState extends State<UserRestPage> {
                               top: 32.0, left: 54, right: 54, bottom: 20),
                           child: Container(
                             color: Colors.transparent,
-                            width: 252,
-                            height: 75,
+                            width: 262,
+                            height: 105,
                             child: Text(
                               Constant.hoursSleepAndWakeup,
                               textAlign: TextAlign.center,
@@ -183,7 +183,7 @@ class _UserRestPageState extends State<UserRestPage> {
                           onChanged: (value) {
                             btnAdd();
                           },
-                          mensaje: "Agregar",
+                          mensaje: "Guardar",
                           img: '',
                         ),
                       ),

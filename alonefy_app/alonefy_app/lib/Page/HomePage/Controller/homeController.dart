@@ -1,7 +1,9 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 import 'package:get/get.dart';
 import 'package:ifeelefine/Data/hive_data.dart';
@@ -12,6 +14,8 @@ import 'package:ifeelefine/Model/user.dart';
 import 'package:ifeelefine/Model/userbd.dart';
 import 'package:ifeelefine/Page/UserConfig2/Controller/userConfig2Controller.dart';
 import 'package:ifeelefine/Page/UserEdit/Controller/editController.dart';
+import 'package:ifeelefine/main.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:uuid/uuid.dart';
 
 class HomeController extends GetxController {
@@ -28,7 +32,9 @@ class HomeController extends GetxController {
     });
 
     for (var element in box) {
-      allMov.add(element);
+      if (!element.type.contains("Cita")) {
+        allMov.add(element);
+      }
     }
 
     temp = removeDuplicates(allMov);
@@ -75,5 +81,29 @@ class HomeController extends GetxController {
     } catch (error) {
       return false;
     }
+  }
+
+  Future<void> getpermission() async {
+    final androidInfo = await DeviceInfoPlugin().androidInfo;
+    await Permission.notification.isDenied.then((value) {
+      print(value);
+      if (value) {
+        Permission.notification.request();
+      } else {
+        print(value);
+      }
+    });
+    final bool? areNotificationsEnabled = await flutterLocalNotificationsPlugin
+        .resolvePlatformSpecificImplementation<
+            AndroidFlutterLocalNotificationsPlugin>()
+        ?.areNotificationsEnabled();
+
+    if (areNotificationsEnabled ?? false) {
+      print('Las notificaciones están habilitadas.');
+    } else {
+      print('Las notificaciones están deshabilitadas.');
+    }
+
+    if (androidInfo.version.sdkInt >= 33) {}
   }
 }

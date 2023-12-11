@@ -44,7 +44,9 @@ class _AddContactPageState extends State<AddContactPage> {
 
   void getContactBD() async {
     listContactDB = await controller.getAllContact();
-
+    if (listContactDB.length != 0) {
+      gotoContactlist();
+    }
     setState(() {});
   }
 

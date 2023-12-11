@@ -220,8 +220,8 @@ class _RingTonePageState extends State<RingTonePage>
       channelShowBadge: false,
       styleInformation: const BigTextStyleInformation(''),
       // fullScreenIntent: false,
-      largeIcon:
-          const DrawableResourceAndroidBitmap('@drawable/splash_v2_screen'),
+      largeIcon: const DrawableResourceAndroidBitmap(
+          '@drawable/logo_alertfriends_v2_background'),
       ticker: 'Nuevo mensaje recibido',
       audioAttributesUsage: AudioAttributesUsage.notificationRingtone,
       sound: RawResourceAndroidNotificationSound(soundResource),

@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:ifeelefine/Common/Constant.dart';
 import 'package:ifeelefine/Common/initialize_models_bd.dart';
 import 'package:ifeelefine/Model/contactRiskBD.dart';
+import 'package:ifeelefine/Page/Disamble/Controller/disambleController.dart';
 import 'package:ifeelefine/Page/Risk/DateRisk/ListDateRisk/Controller/riskPageController.dart';
 import 'package:ifeelefine/Page/Risk/DateRisk/Pageview/cancelDatePage.dart';
 import 'package:ifeelefine/Page/Risk/DateRisk/Pageview/editRiskDatePage.dart';
@@ -41,8 +42,7 @@ class _ListContactRiskState extends State<ListContactRisk> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => CancelDatePage(
-          contactRisk: contactTemp,
+        builder: (context) => const CancelDatePage(
           taskIds: [],
         ),
       ),
@@ -71,6 +71,7 @@ class _ListContactRiskState extends State<ListContactRisk> {
                     onTap: () {
                       print(index);
                       contactTemp = temp;
+                      prefs.setSelectContactRisk = contactTemp.id;
                       if (temp.isActived || temp.isprogrammed) {
                         redirectCancelDate();
                       } else {

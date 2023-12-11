@@ -34,7 +34,7 @@ class CancelAlertPage extends StatefulWidget {
 
 class _CancelAlertState extends State<CancelAlertPage> {
   ListContactZoneController riskVC = ListContactZoneController();
-  String timeinit = "00:05";
+
   String codeTemp = '';
   var code = CodeModel();
   ContactZoneRiskBD? contactSelect;
@@ -148,7 +148,7 @@ class _CancelAlertState extends State<CancelAlertPage> {
             countTimer.value = 60;
             showSaveAlert(context, Constant.info,
                 "El servidor de AlertFriends envío una alerta con tu última ubicación.");
-            gotoHome();
+            // gotoHome();
           } else {
             secondsRemaining -= 1;
             prefs.setTimerCancelZone = secondsRemaining;
@@ -215,17 +215,15 @@ class _CancelAlertState extends State<CancelAlertPage> {
                         Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: Center(
-                            child: Obx(
-                              () => Text(
-                                '${countTimer.value}',
-                                textAlign: TextAlign.center,
-                                style: GoogleFonts.barlow(
-                                  fontSize: 74.0,
-                                  wordSpacing: 1,
-                                  letterSpacing: 1,
-                                  fontWeight: FontWeight.normal,
-                                  color: ColorPalette.principal,
-                                ),
+                            child: Text(
+                              timerText,
+                              textAlign: TextAlign.center,
+                              style: GoogleFonts.barlow(
+                                fontSize: 74.0,
+                                wordSpacing: 1,
+                                letterSpacing: 1,
+                                fontWeight: FontWeight.normal,
+                                color: ColorPalette.principal,
                               ),
                             ),
                           ),

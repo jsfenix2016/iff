@@ -85,6 +85,7 @@ class _FilterContactListScreenState extends State<FilterContactListScreen> {
                       onDelete: (bool value) {},
                       isFilter: true,
                       isExpanded: false,
+                      onExpanded: (bool value) {},
                     ),
                     onTap: () {
                       widget.oncontactSelected(contact);

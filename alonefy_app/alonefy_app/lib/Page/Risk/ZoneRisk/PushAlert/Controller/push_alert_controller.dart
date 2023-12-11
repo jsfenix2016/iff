@@ -17,6 +17,8 @@ import '../../../../../Controllers/mainController.dart';
 import '../../../../../Data/hive_constant_adapterInit.dart';
 
 class PushAlertController extends GetxController {
+  RootIsolateToken rootIsolateToken = RootIsolateToken.instance!;
+
   void _saveVideoInBackground(String path) async {
     final receivePort = ReceivePort();
     await Isolate.spawn(
@@ -28,8 +30,6 @@ class PushAlertController extends GetxController {
       print('Mensaje del isolate: $data');
     });
   }
-
-  RootIsolateToken rootIsolateToken = RootIsolateToken.instance!;
 
   void _backgroundTask(dynamic message) async {
     final String path = message['path'];

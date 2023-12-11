@@ -77,23 +77,25 @@ class _WebViewTermsConditionsState extends State<WebViewTermsConditions> {
             title: const Text(Constant.confirmTitleAlert),
             content: const Text(Constant.alertBody),
             actions: <Widget>[
-              IconButton(
-                  icon: const Icon(
-                    Icons.cancel,
-                  ),
-                  tooltip: 'Negar',
-                  onPressed: () async {
-                    Navigator.of(context).pop(false);
-                  }),
-              IconButton(
-                  icon: const Icon(
-                    Icons.save,
-                  ),
-                  tooltip: 'Aceptar',
-                  onPressed: () async {
-                    // Navigator.of(context).pop(true);
-                    Navigator.pop(context, true);
-                  }),
+              TextButton(
+                child: Text(
+                  "Cerrar",
+                  style: textNormal16Black(),
+                ),
+                onPressed: () async {
+                  Navigator.of(context).pop(false);
+                },
+              ),
+              TextButton(
+                child: Text(
+                  "Aceptar",
+                  style: textNormal16Black(),
+                ),
+                onPressed: () async {
+                  // Navigator.of(context).pop(true);
+                  Navigator.pop(context, true);
+                },
+              ),
             ],
           ),
         );

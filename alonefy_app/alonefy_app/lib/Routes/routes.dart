@@ -7,6 +7,7 @@ import 'package:ifeelefine/Page/HomePage/Pageview/home_page.dart';
 import 'package:ifeelefine/Page/Onboarding/PageView/onboarding_page.dart';
 import 'package:ifeelefine/Page/PreviewActivitiesFilteredByDate/PageView/previewActivitiesByDate_page.dart';
 import 'package:ifeelefine/Page/Risk/DateRisk/ListDateRisk/PageView/riskDatePage.dart';
+import 'package:ifeelefine/Page/Risk/DateRisk/Pageview/cancelDatePage.dart';
 import 'package:ifeelefine/Page/Risk/ZoneRisk/CancelAlert/PageView/cancelAlert.dart';
 import 'package:ifeelefine/Page/Risk/ZoneRisk/ListContactZoneRisk/PageView/zoneRisk.dart';
 import 'package:ifeelefine/Page/TermsAndConditions/PageView/conditionGeneral_page.dart';
@@ -47,6 +48,9 @@ final Map<String, Widget Function(BuildContext)> appRoute = {
   "fallActivation": (BuildContext context) => const FallActivationPage(),
   "conditionGeneral": (BuildContext context) => const ConditionGeneralPage(),
   "cancelZone": (BuildContext context) => const CancelAlertPage(
+        taskIds: [],
+      ),
+  "cancelDate": (BuildContext context) => const CancelDatePage(
         taskIds: [],
       ),
 };

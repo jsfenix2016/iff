@@ -14,6 +14,7 @@ import 'package:ifeelefine/Data/hive_data.dart';
 import 'package:ifeelefine/Model/contact.dart';
 
 import 'package:ifeelefine/Page/Contact/Widget/filter_contact.dart';
+import 'package:ifeelefine/Page/FallDetected/Pageview/fall_activation_page.dart';
 
 import 'package:ifeelefine/Page/Geolocator/PageView/geolocator_page.dart';
 import 'package:ifeelefine/Page/Premium/Controller/premium_controller.dart';
@@ -257,18 +258,50 @@ class _ContactListState extends State<ContactList> {
                             displayName: listContact[index].name,
                             img: listContact[index].photo,
                             delete: true,
-                            onDelete: (bool) {
-                              isAutorice = false;
-                              isDeleteContact = true;
-                              contactVC.deleteContact(listContact[index]);
-                              listContact.removeAt(index);
-                              listContactVisible.removeAt(index);
-                              // _selectedContacts.removeAt(index);
-                              indexSelect = 0;
+                            onDelete: (bool bool) {
+                              showDialog(
+                                  context: context,
+                                  builder: (context) {
+                                    return AlertDialog(
+                                      title: const Text("Advertencia"),
+                                      content: const Text(
+                                          "¿Está seguro de que desea eliminar el contacto?"),
+                                      actions: <Widget>[
+                                        TextButton(
+                                          child: const Text("Borrar"),
+                                          onPressed: () {
+                                            isAutorice = false;
+                                            isDeleteContact = true;
+                                            contactVC.deleteContact(
+                                                listContact[index]);
+                                            listContact.removeAt(index);
+                                            listContactVisible.removeAt(index);
+
+                                            indexSelect = 0;
+                                            Navigator.of(context).pop();
+                                          },
+                                        ),
+                                        TextButton(
+                                          child: const Text("Cancelar"),
+                                          onPressed: () =>
+                                              Navigator.of(context).pop(),
+                                        )
+                                      ],
+                                    );
+                                  });
+
                               setState(() {});
                             },
                             isFilter: false,
                             isExpanded: listContactVisible[index],
+                            onExpanded: (bool bool) {
+                              if (listContactVisible[index] == true) {
+                                listContactVisible[index] = false;
+                              } else {
+                                listContactVisible[index] = true;
+                              }
+                              setState(() {});
+                            },
                           ),
                         ],
                       ),
@@ -335,80 +368,100 @@ class _ContactListState extends State<ContactList> {
 
     // }
 
-    return Scaffold(
-      backgroundColor: Colors.black,
-      appBar: widget.isMenu
-          ? AppBar(
-              backgroundColor: Colors.brown,
-              title: Text(
-                "Contactos",
-                style: textForTitleApp(),
-              ),
-            )
-          : null,
-      body: MediaQuery(
-        data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
-        child: Container(
-          width: double.infinity,
-          height: double.infinity,
-          decoration: decorationCustom(),
-          child: Column(
-            children: [
-              const SafeArea(
-                child: SizedBox(
-                  height: 20,
+    return WillPopScope(
+      onWillPop: () async {
+        // Puedes controlar el comportamiento de retroceso aquí
+        // Por ejemplo, puedes decidir volver a la pantalla de inicio o cerrar la aplicación.
+        // Navigator.of(context).pop(); // Vuelve a la pantalla anterior
+        // Impide que se cierre la aplicación al presionar el botón físico de retroceso
+        if (listContact.isNotEmpty) {
+          await Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const FallActivationPage(),
+            ),
+          );
+        } else {
+          Navigator.of(context).pop();
+        }
+
+        return false;
+      },
+      child: Scaffold(
+        backgroundColor: Colors.black,
+        appBar: widget.isMenu
+            ? AppBar(
+                backgroundColor: Colors.brown,
+                title: Text(
+                  "Contactos",
+                  style: textForTitleApp(),
                 ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(
-                    top: 20.0, left: 46.0, right: 62.0, bottom: 30),
-                child: Text(
-                  "Selecciona quien debe ser contactado en caso de inactividad",
-                  textAlign: TextAlign.center,
-                  style: GoogleFonts.barlow(
-                    fontSize: 16.0,
-                    wordSpacing: 1,
-                    letterSpacing: 1,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
+              )
+            : null,
+        body: MediaQuery(
+          data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
+          child: Container(
+            width: double.infinity,
+            height: double.infinity,
+            decoration: decorationCustom(),
+            child: Column(
+              children: [
+                const SafeArea(
+                  child: SizedBox(
+                    height: 20,
                   ),
                 ),
-              ),
-              Expanded(
-                child: listviewContact(),
-              ),
-              getHorizontalSlide(),
-              const SizedBox(
-                height: 20,
-              ),
-              ElevateButtonCustomBorder(
-                onChanged: (value) async {
-                  if (value) {
-                    if (!isAutorice) {
-                      showSaveAlert(context, Constant.info,
-                          "Antes de continuar debe solicitar la autorización del contacto");
-                      return;
-                    }
-                    refreshMenu('addContact');
+                Padding(
+                  padding: const EdgeInsets.only(
+                      top: 20.0, left: 46.0, right: 62.0, bottom: 30),
+                  child: Text(
+                    "Selecciona quien debe ser contactado en caso de inactividad",
+                    textAlign: TextAlign.center,
+                    style: GoogleFonts.barlow(
+                      fontSize: 16.0,
+                      wordSpacing: 1,
+                      letterSpacing: 1,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: listviewContact(),
+                ),
+                getHorizontalSlide(),
+                const SizedBox(
+                  height: 20,
+                ),
+                ElevateButtonCustomBorder(
+                  onChanged: (value) async {
+                    if (value) {
+                      if (!isAutorice) {
+                        showSaveAlert(context, Constant.info,
+                            "Antes de continuar debe solicitar la autorización del contacto");
+                        return;
+                      }
+                      refreshMenu('addContact');
 
-                    if (widget.isMenu == false) {
-                      // Get.off(const InitGeolocator());
-                      await Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const InitGeolocator()),
-                      );
-                    } else {
-                      NotificationCenter().notify('getContact');
+                      if (widget.isMenu == false) {
+                        // Get.off(const InitGeolocator());
+                        await Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const InitGeolocator()),
+                        );
+                      } else {
+                        NotificationCenter().notify('getContact');
+                      }
                     }
-                  }
-                },
-                mensaje: widget.isMenu == true ? "Guardar" : "Continuar",
-              ),
-              const SizedBox(
-                height: 20,
-              ),
-            ],
+                  },
+                  mensaje: widget.isMenu == true ? "Guardar" : "Continuar",
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+              ],
+            ),
           ),
         ),
       ),

@@ -10,6 +10,7 @@ import 'package:ifeelefine/Common/utils.dart';
 import 'package:ifeelefine/Model/logActivity.dart';
 import 'package:ifeelefine/Page/LogActivity/Controller/logActivity_controller.dart';
 import 'package:ifeelefine/main.dart';
+import 'package:intl/intl.dart';
 
 class LogActivityPage extends StatefulWidget {
   const LogActivityPage({super.key});
@@ -75,7 +76,7 @@ class _LogActivityPageState extends State<LogActivityPage> {
           width: size.width,
           height: size.height,
           child: Padding(
-            padding: const EdgeInsets.fromLTRB(32, 32, 32, 32),
+            padding: const EdgeInsets.fromLTRB(8, 32, 8, 32),
             child: ListView.builder(
               shrinkWrap: true,
               scrollDirection: Axis.vertical,
@@ -92,45 +93,102 @@ class _LogActivityPageState extends State<LogActivityPage> {
 
   Widget getItem(int index) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(0, 8, 0, 0),
-      child: Column(
-        children: [
-          Row(
-            children: [
-              Expanded(
-                child: Text(
-                  _activities[index].movementType,
-                  textAlign: TextAlign.left,
-                  style: GoogleFonts.barlow(
-                    fontSize: 12.0,
-                    wordSpacing: 1,
-                    letterSpacing: 1,
-                    fontWeight: FontWeight.normal,
-                    color: Colors.white,
-                  ),
+      padding: const EdgeInsets.all(8.0),
+      child: Container(
+        width: 332,
+        height: 70,
+        decoration: const BoxDecoration(
+          color: Color.fromRGBO(11, 11, 10, 0.6),
+          borderRadius: BorderRadius.all(Radius.circular(20)),
+        ),
+        child: ListTile(
+          leading: IconButton(
+            iconSize: 40,
+            color: ColorPalette.principal,
+            onPressed: () {},
+            icon: Container(
+              height: 32,
+              width: 31.2,
+              decoration: const BoxDecoration(
+                image: DecorationImage(
+                  image: AssetImage('assets/images/Warning.png'),
+                  fit: BoxFit.fill,
                 ),
+                color: Colors.transparent,
               ),
-              Expanded(
-                child: Text(
-                  datetimes[index],
-                  textAlign: TextAlign.right,
-                  style: GoogleFonts.barlow(
-                    fontSize: 12.0,
-                    wordSpacing: 1,
-                    letterSpacing: 1,
-                    fontWeight: FontWeight.normal,
-                    color: Colors.white,
-                  ),
-                ),
-              ),
-            ],
+            ),
           ),
-          Container(
-            height: 2,
-            decoration: const BoxDecoration(color: ColorPalette.principal),
-          )
-        ],
+          title: Text(
+            _activities[index].movementType,
+            textAlign: TextAlign.left,
+            style: textNormal16White(),
+          ),
+          subtitle: Text(
+            DateFormat('yyyy-MM-dd HH:mm:ss')
+                .format(_activities[index].dateTime)
+                .toString(),
+            textAlign: TextAlign.left,
+            style: textNormal16White(),
+          ),
+          trailing: IconButton(
+            iconSize: 21,
+            color: ColorPalette.principal,
+            onPressed: () {},
+            icon: Container(
+              height: 21,
+              width: 21,
+              decoration: const BoxDecoration(
+                image: DecorationImage(
+                  image: AssetImage('assets/images/Exclamation.png'),
+                  fit: BoxFit.fill,
+                ),
+                color: Colors.transparent,
+              ),
+            ),
+          ),
+        ),
       ),
     );
+    // return Padding(
+    //   padding: const EdgeInsets.fromLTRB(0, 8, 0, 0),
+    //   child: Column(
+    //     children: [
+    //       Row(
+    //         children: [
+    //           Expanded(
+    //             child: Text(
+    //               _activities[index].movementType,
+    //               textAlign: TextAlign.left,
+    //               style: GoogleFonts.barlow(
+    //                 fontSize: 12.0,
+    //                 wordSpacing: 1,
+    //                 letterSpacing: 1,
+    //                 fontWeight: FontWeight.normal,
+    //                 color: Colors.white,
+    //               ),
+    //             ),
+    //           ),
+    //           Expanded(
+    //             child: Text(
+    //               datetimes[index],
+    //               textAlign: TextAlign.right,
+    //               style: GoogleFonts.barlow(
+    //                 fontSize: 12.0,
+    //                 wordSpacing: 1,
+    //                 letterSpacing: 1,
+    //                 fontWeight: FontWeight.normal,
+    //                 color: Colors.white,
+    //               ),
+    //             ),
+    //           ),
+    //         ],
+    //       ),
+    //       Container(
+    //         height: 2,
+    //         decoration: const BoxDecoration(color: ColorPalette.principal),
+    //       )
+    //     ],
+    //   ),
+    // );
   }
 }

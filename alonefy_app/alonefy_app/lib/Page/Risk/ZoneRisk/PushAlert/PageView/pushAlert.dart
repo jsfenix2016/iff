@@ -75,12 +75,13 @@ class _PushAlertPageState extends State<PushAlertPage> {
     _cameraController = CameraController(front, ResolutionPreset.max);
 
     await _cameraController.initialize();
-
+    await _cameraController.prepareForVideoRecording();
     if (info.brand == 'samsung' && info.model.contains("SM-G")) {
       final front = cameras.firstWhere(
           (camera) => camera.lensDirection == CameraLensDirection.front);
       _cameraControllerfront = CameraController(front, ResolutionPreset.max);
       await _cameraControllerfront.initialize();
+      await _cameraControllerfront.prepareForVideoRecording();
     }
     setState(() => _isLoading = false);
   }
@@ -119,10 +120,7 @@ class _PushAlertPageState extends State<PushAlertPage> {
   }
 
   _starRecoding() async {
-    await Future.wait([
-      _cameraController.prepareForVideoRecording(),
-      _cameraController.startVideoRecording()
-    ]);
+    await Future.wait([_cameraController.startVideoRecording()]);
     print('Grabando');
 
     if (info.brand == 'samsung' && info.model.contains("SM-G")) {

@@ -1,10 +1,14 @@
-import 'dart:io' show File;
+import 'dart:io';
+import 'dart:typed_data';
+import 'package:ifeelefine/Common/notificationService.dart';
+import 'package:ifeelefine/Page/HomePage/Widget/edit_image.dart';
 
 import 'package:avatar_glow/avatar_glow.dart';
 import 'package:flutter/material.dart';
 import 'package:ifeelefine/Common/utils.dart';
 import 'package:ifeelefine/Model/user.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:native_image_cropper/native_image_cropper.dart';
 
 class AvatarUserContent extends StatefulWidget {
   const AvatarUserContent(
@@ -18,6 +22,9 @@ class AvatarUserContent extends StatefulWidget {
 class _AvatarContentState extends State<AvatarUserContent> {
   File? foto;
   final _picker = ImagePicker();
+  Uint8List? bytes;
+  String img64 = "";
+  final controller = CropController();
   //capturar imagen de la galeria de fotos
   Future getImageGallery(ImageSource origen) async {
     final XFile? image = await _picker.pickImage(source: origen);
@@ -30,9 +37,37 @@ class _AvatarContentState extends State<AvatarUserContent> {
       });
     }
 
-    if (foto != null) {
-      widget.selectPhoto(foto);
+    if (foto!.path != "") {
+      bytes = foto!.readAsBytesSync();
     }
+
+    if (foto != null) {
+      var a = await Navigator.push(
+        RedirectViewNotifier.storedContext!,
+        MaterialPageRoute(
+          builder: (context) => EditImagePage(
+            bytes: bytes!,
+            selectPhoto: (value) async {
+              setState(() {});
+            },
+          ),
+        ),
+      );
+      if (a != null) {
+        foto = a;
+        widget.selectPhoto(a);
+      } else {
+        foto = null;
+        setState(() {});
+      }
+    }
+  }
+
+  File convertUint8ListToFile(Uint8List uint8List, String fileName) {
+    final buffer = uint8List.buffer;
+    return File(fileName)
+      ..writeAsBytesSync(
+          buffer.asUint8List(uint8List.offsetInBytes, uint8List.lengthInBytes));
   }
 
   Widget _mostrarFoto() {
@@ -41,8 +76,8 @@ class _AvatarContentState extends State<AvatarUserContent> {
         getImageGallery(ImageSource.gallery);
       }),
       child: Container(
-        width: 100,
-        height: 100,
+        width: 120,
+        height: 120,
         decoration: BoxDecoration(
           boxShadow: [
             BoxShadow(
@@ -53,7 +88,7 @@ class _AvatarContentState extends State<AvatarUserContent> {
             ),
           ],
           borderRadius: const BorderRadius.all(
-              Radius.circular(50.0) //                 <--- border radius here
+              Radius.circular(75.0) //                 <--- border radius here
               ),
           border: Border.all(color: Colors.blueAccent),
           image: DecorationImage(
@@ -63,7 +98,7 @@ class _AvatarContentState extends State<AvatarUserContent> {
                     ? FileImage(foto!, scale: 0.5)
                     : getImage(widget.user!.pathImage).image)
                 : const AssetImage("assets/images/icons8.png"),
-            fit: BoxFit.fill,
+            fit: BoxFit.contain,
           ),
         ),
       ),
@@ -75,7 +110,7 @@ class _AvatarContentState extends State<AvatarUserContent> {
     return SizedBox(
       child: AvatarGlow(
         glowColor: Colors.white,
-        endRadius: 90.0,
+        endRadius: 190.0,
         duration: const Duration(milliseconds: 2000),
         repeat: true,
         showTwoGlows: true,

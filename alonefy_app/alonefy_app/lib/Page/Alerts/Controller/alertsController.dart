@@ -31,7 +31,9 @@ class AlertsController extends GetxController {
     List<LogAlertsBD> temp = [];
     List<LogAlertsBD> box = await const HiveData().getAlerts();
     for (var element in box) {
-      allMovTime.add(element);
+      if (!element.type.contains("Cita")) {
+        allMovTime.add(element);
+      }
     }
 
     allMovTime.sort((a, b) {

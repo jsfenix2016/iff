@@ -248,7 +248,7 @@ class _TestCameraPageState extends State<TestCameraPage> {
                           initCameras();
                         },
                         showIcon: false,
-                        mensaje: "Agregar",
+                        mensaje: "Guardar",
                         img: '',
                       ),
                     ),

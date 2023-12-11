@@ -61,7 +61,7 @@ class Constant {
 
   static const hoursRest = 'A que horas duermes';
   static const hoursSleepAndWakeup =
-      '¿A qué hora te levantas y te acuestas cada día?';
+      '¿A que hora te acuestas cada día, a que horas te levantas?';
   static const casefallText =
       '¿Deseas que, en caso de alerta, enviemos tu ubicación a tus contactos?';
 
@@ -172,7 +172,8 @@ class Constant {
   static const String dateRisk = "Cita de riesgo";
   static const String activity = "Actividad";
   static const String history = "Historial";
-
+  static const String habitsEnable = 'Aprender de mis hábitos';
+  static const String habitsDisamble = 'Desactivar mis hábitos';
   static const String habitsOk = "Los hábitos se han guardado correctamente";
   static const String habitsError = "Los hábitos no se han podido guardar";
 

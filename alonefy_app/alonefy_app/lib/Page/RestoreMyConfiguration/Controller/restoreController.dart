@@ -43,6 +43,7 @@ class RestoreController extends GetxController {
       BuildContext context, String number, String email) async {
     final userApi = await restServ.getUser(number);
 
+    FlutterBackgroundService service = FlutterBackgroundService();
     if (userApi != null) {
       var isRunning = await service.isRunning();
       if (isRunning) {

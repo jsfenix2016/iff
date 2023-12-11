@@ -1,7 +1,5 @@
 import 'dart:async';
 
-import 'package:device_info_plus/device_info_plus.dart';
-
 import 'package:get/get.dart';
 
 import 'package:ifeelefine/Common/Constant.dart';
@@ -15,7 +13,7 @@ import 'package:ifeelefine/Page/HomePage/Controller/homeController.dart';
 import 'package:ifeelefine/Page/HomePage/Widget/avatar_content.dart';
 import 'package:ifeelefine/Page/HomePage/Widget/container_top_button.dart';
 import 'package:ifeelefine/Page/HomePage/Widget/customNavbar.dart';
-import 'package:ifeelefine/Page/Risk/ZoneRisk/CancelAlert/PageView/cancelAlert.dart';
+
 import 'package:ifeelefine/Page/Risk/ZoneRisk/ListContactZoneRisk/Controller/listContactZoneController.dart';
 
 import 'package:ifeelefine/Page/UserConfig/Controller/userConfigController.dart';
@@ -23,7 +21,7 @@ import 'package:ifeelefine/Model/user.dart';
 import 'package:ifeelefine/Model/userbd.dart';
 import 'package:ifeelefine/Model/logAlertsBD.dart';
 import 'package:ifeelefine/Provider/prefencesUser.dart';
-import 'package:ifeelefine/Utils/Widgets/swipeableContainer.dart';
+
 import 'package:ifeelefine/Page/Alerts/PageView/alerts_page.dart';
 
 import 'package:ifeelefine/Utils/Widgets/widgetLogo.dart';
@@ -60,6 +58,8 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   List<LogAlertsBD> temp = [];
   late AppLifecycleState _appLifecycleState;
 
+  bool notCofingAll = false;
+
   @override
   void initState() {
     super.initState();
@@ -68,15 +68,20 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     starTap();
     getUserData();
     getAlerts();
-    getpermission();
+    homeVC.getpermission();
 
     _prefs.saveLastScreenRoute("home");
 
     NotificationCenter().subscribe('getAlerts', getAlerts);
     NotificationCenter().subscribe('getUserData', getUserData);
     Future.sync(() => RedirectViewNotifier.setStoredContext(context));
-    RedirectViewNotifier.onTapRedirectCancelZone();
+    // RedirectViewNotifier.onTapRedirectCancelZone();
     NotificationCenter().notify('refreshMenu');
+    NotificationCenter().subscribe('refreshView', _refreshView);
+  }
+
+  void _refreshView() {
+    setState(() {});
   }
 
   @override
@@ -120,10 +125,6 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     print(_appLifecycleState);
   }
 
-  void redirectCancel() async {
-    print(prefs.getIsSelectContactRisk);
-  }
-
   Future getAlerts() async {
     temp = await homeVC.getAllMov();
 
@@ -150,17 +151,6 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     });
   }
 
-  Future<void> getpermission() async {
-    final androidInfo = await DeviceInfoPlugin().androidInfo;
-    await Permission.notification.isDenied.then((value) {
-      if (value) {
-        Permission.notification.request();
-      }
-    });
-    if (androidInfo.version.sdkInt >= 33) {}
-  }
-
-  bool notCofingAll = false;
   @override
   Widget build(BuildContext context) {
     final Size size = MediaQuery.of(context).size;
@@ -191,35 +181,54 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
             child: Stack(
               alignment: Alignment.center,
               children: <Widget>[
-                Column(
-                  children: [
-                    const SizedBox(
-                      height: 36,
-                    ),
-                    const SizedBox(
-                      height: 60.31,
-                      width: 250,
-                      child: WidgetLogoApp(),
-                    ),
-                    ContainerTopButton(
-                      goToAlert: (bool value) {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const AlertsPage(),
-                          ),
-                        );
-                      },
-                      onOpenMenu: (bool value) {
-                        _scaffoldKey.currentState!.openDrawer();
-                      },
-                      pref: _prefs,
-                      isconfig: notCofingAll,
-                    ),
-                  ],
-                ),
                 Positioned(
-                  top: 143,
+                  top: 10,
+                  child: Container(
+                    color: Colors.transparent,
+                    width: size.width,
+                    height: 80,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      mainAxisSize: MainAxisSize.max,
+                      children: [
+                        const SizedBox(
+                          width: 8,
+                        ),
+                        const SizedBox(
+                          height: 40.31,
+                          width: 150,
+                          child: WidgetLogoApp(),
+                        ),
+                        const SizedBox(
+                          width: 16,
+                        ),
+                        Container(
+                          width: 150,
+                          height: 80,
+                          color: Colors.transparent,
+                          child: ContainerTopButton(
+                            goToAlert: (bool value) {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => const AlertsPage(),
+                                ),
+                              );
+                            },
+                            onOpenMenu: (bool value) {
+                              _scaffoldKey.currentState!.openDrawer();
+                            },
+                            pref: _prefs,
+                            isconfig: notCofingAll,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+
+                Positioned(
+                  top: 103,
                   child: Container(
                     width: size.width,
                     color: Colors.transparent,
@@ -234,22 +243,23 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                   ),
                 ),
                 Positioned(
-                  top: 185,
-                  left: (size.width / 3) - 30,
+                  top: 65,
                   child: AvatarUserContent(
                     user: user,
                     selectPhoto: (value) async {
                       if (value != null) {
                         await homeVC.changeImage(value, user!);
+
                         Future.sync(() => showSaveAlert(context, Constant.info,
                             Constant.saveImageAvatar.tr));
+                        NotificationCenter().notify('refreshView');
                       }
                     },
                   ),
                 ),
-                SwipeableContainer(
-                  temp: temp,
-                ),
+                // SwipeableContainer(
+                //   temp: temp,
+                // ),
                 const CustomNavbar(),
               ],
             ),

@@ -643,12 +643,12 @@ class _PreviewActivitiesByDateState extends State<PreviewActivitiesByDate>
                         const SizedBox(height: 34),
                         const WidgetLogoApp(),
                         Padding(
-                          padding: const EdgeInsets.fromLTRB(32, 10, 32, 0),
+                          padding: const EdgeInsets.fromLTRB(32, 20, 32, 0),
                           child: Text(
                               "¿En que actividades no utilizas tu smartphone?",
                               textAlign: TextAlign.center,
                               style: GoogleFonts.barlow(
-                                height: 2,
+                                height: 1.5,
                                 fontSize: 24.0,
                                 wordSpacing: 1,
                                 letterSpacing: 0.001,

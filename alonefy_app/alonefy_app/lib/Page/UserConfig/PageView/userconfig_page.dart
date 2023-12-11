@@ -241,7 +241,9 @@ class _UserConfigPageState extends State<UserConfigPage> {
                               width: double.infinity,
                               child: Center(
                                 child: ElevatedButton(
-                                  style: styleColorClear(),
+                                  style: (isValidEmail && isValidSms)
+                                      ? styleColorPrincipal()
+                                      : styleColorClear(),
                                   onPressed: (isValidEmail || isValidSms)
                                       ? _submit
                                       : () {
@@ -249,14 +251,21 @@ class _UserConfigPageState extends State<UserConfigPage> {
                                               "Debe tener validado los tokens del correo y teléfono");
                                         },
                                   child: Container(
-                                    decoration: BoxDecoration(
-                                      color: Colors.transparent,
-                                      border: Border.all(
-                                        color: ColorPalette.principal,
-                                      ),
-                                      borderRadius: const BorderRadius.all(
-                                          Radius.circular(100)),
-                                    ),
+                                    decoration: (isValidEmail && isValidSms)
+                                        ? const BoxDecoration(
+                                            color: ColorPalette.principal,
+                                            borderRadius: BorderRadius.all(
+                                                Radius.circular(100)),
+                                          )
+                                        : BoxDecoration(
+                                            color: Colors.transparent,
+                                            border: Border.all(
+                                              color: ColorPalette.principal,
+                                            ),
+                                            borderRadius:
+                                                const BorderRadius.all(
+                                                    Radius.circular(100)),
+                                          ),
                                     height: 42,
                                     width: 200,
                                     child: Center(
@@ -267,7 +276,9 @@ class _UserConfigPageState extends State<UserConfigPage> {
                                           wordSpacing: 1,
                                           letterSpacing: 0.001,
                                           fontWeight: FontWeight.w700,
-                                          color: Colors.white,
+                                          color: (isValidEmail && isValidSms)
+                                              ? Colors.black
+                                              : Colors.white,
                                         ),
                                       ),
                                     ),

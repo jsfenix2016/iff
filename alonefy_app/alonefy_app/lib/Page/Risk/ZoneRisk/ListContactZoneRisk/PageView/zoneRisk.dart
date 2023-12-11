@@ -152,7 +152,6 @@ class _ZoneRiskPageState extends State<ZoneRiskPage> {
                 if (index >= 0 && index < listContact.length) {
                   return GestureDetector(
                     onTap: () {
-                      print(index);
                       contactTemp = listContact[index];
                       Navigator.push(
                         context,
@@ -317,65 +316,6 @@ class _ZoneRiskPageState extends State<ZoneRiskPage> {
                                           ],
                                         ),
                                       ),
-                                      // Column(
-                                      //   mainAxisAlignment:
-                                      //       MainAxisAlignment.center,
-                                      //   children: [
-                                      //     Container(
-                                      //       decoration: const BoxDecoration(
-                                      //         color: Colors.transparent,
-                                      //         borderRadius: BorderRadius.only(
-                                      //           bottomRight: Radius.circular(100),
-                                      //           topRight: Radius.circular(100),
-                                      //         ),
-                                      //       ),
-                                      //       height: 30,
-                                      //       width: 30,
-                                      //       child: IconButton(
-                                      //         iconSize: 20,
-                                      //         onPressed: (() {
-                                      //           riskVC.deleteContactRisk(
-                                      //               context, listContact[index]);
-                                      //         }),
-                                      //         icon: const Icon(
-                                      //           Icons.delete,
-                                      //           color: ColorPalette.principal,
-                                      //         ),
-                                      //       ),
-                                      //     ),
-                                      //     Container(
-                                      //       decoration: const BoxDecoration(
-                                      //         color: Colors.transparent,
-                                      //         borderRadius: BorderRadius.only(
-                                      //           bottomRight: Radius.circular(100),
-                                      //           topRight: Radius.circular(100),
-                                      //         ),
-                                      //       ),
-                                      //       height: 30,
-                                      //       width: 30,
-                                      //       child: IconButton(
-                                      //         iconSize: 20,
-                                      //         onPressed: (() {
-                                      //           Navigator.push(
-                                      //             context,
-                                      //             MaterialPageRoute(
-                                      //               builder: (context) =>
-                                      //                   EditZoneRiskPage(
-                                      //                 contactRisk:
-                                      //                     listContact[index],
-                                      //                 index: listContact.length,
-                                      //               ),
-                                      //             ),
-                                      //           );
-                                      //         }),
-                                      //         icon: const Icon(
-                                      //           Icons.edit,
-                                      //           color: ColorPalette.principal,
-                                      //         ),
-                                      //       ),
-                                      //     ),
-                                      //   ],
-                                      // ),
                                     ],
                                   ),
                                 ),
@@ -451,7 +391,7 @@ class _ZoneRiskPageState extends State<ZoneRiskPage> {
                           wordSpacing: 1,
                           letterSpacing: 0.001,
                           fontWeight: FontWeight.w700,
-                          color: Color.fromRGBO(222, 222, 222, 1),
+                          color: const Color.fromRGBO(222, 222, 222, 1),
                         ),
                       ),
                     ),

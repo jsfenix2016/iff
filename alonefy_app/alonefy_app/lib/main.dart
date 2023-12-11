@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'dart:isolate';
 
 import 'dart:math';
 import 'dart:ui';
@@ -7,10 +8,17 @@ import 'dart:ui';
 import 'package:flutter/services.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:flutter_contacts/contact.dart';
+import 'package:flutter_timezone/flutter_timezone.dart';
+import 'package:ifeelefine/Common/initialize_models_bd.dart';
 import 'package:ifeelefine/Data/hiveRisk_data.dart';
 import 'package:ifeelefine/Model/contactZoneRiskBD.dart';
 import 'package:ifeelefine/Page/Contact/PageView/addContact_page.dart';
+import 'package:ifeelefine/Page/EditUseMobil/Page/editUseMobil.dart';
+import 'package:ifeelefine/Page/HomePage/Pageview/home_page.dart';
 import 'package:ifeelefine/Page/UseMobil/PageView/configurationUseMobile_page.dart';
+import 'package:ifeelefine/Page/UserConfig/PageView/userconfig_page.dart';
+import 'package:ifeelefine/Page/UserInactivityPage/PageView/configurationUserInactivity_page.dart';
+import 'package:ifeelefine/Page/UserRest/PageView/configurationUserRest_page.dart';
 import 'package:ifeelefine/Views/menuconfig_page.dart';
 
 import 'package:notification_center/notification_center.dart';
@@ -38,12 +46,12 @@ import 'package:ifeelefine/Routes/routes.dart';
 
 import 'package:flutter/material.dart';
 
-import 'package:flutter_background_service_android/flutter_background_service_android.dart'
-    show AndroidServiceInstance;
+import 'package:flutter_background_service_android/flutter_background_service_android.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:timezone/src/date_time.dart';
 
 import 'Common/Firebase/firebaseManager.dart';
 
@@ -52,6 +60,9 @@ import 'Page/LogActivity/Controller/logActivity_controller.dart';
 import 'Page/Premium/Controller/premium_controller.dart';
 
 import 'Page/UserEdit/Controller/getUserController.dart';
+
+import 'package:timezone/data/latest.dart' as tz;
+import 'package:timezone/timezone.dart' as tz;
 
 DateTime now = DateTime.now();
 
@@ -62,9 +73,7 @@ GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 /// OPTIONAL when use custom notification
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
     FlutterLocalNotificationsPlugin();
-
-final FlutterBackgroundService service = FlutterBackgroundService();
-
+final service = FlutterBackgroundService();
 final List<StreamSubscription<dynamic>> _streamSubscriptions =
     <StreamSubscription<dynamic>>[];
 
@@ -90,8 +99,8 @@ Timer desactivedtimerSendDropNotification =
     Timer(const Duration(seconds: 10), () {});
 Timer timerSendLocation = Timer(const Duration(seconds: 15), () {});
 
-final LogActivityController logActivityController =
-    Get.put(LogActivityController());
+Timer timerTempDown = Timer(const Duration(seconds: 1), () {});
+int countdown = 300;
 
 final MainController mainController = Get.put(MainController());
 int _logActivityTimer = 0;
@@ -107,6 +116,7 @@ String? device;
 String? initApp;
 UserBD? user;
 int time = 120;
+int timeRevert = 300;
 double timeUpdateFirebase = (36000);
 double timeSendlocation = (120);
 List<bool> menuConfig = [
@@ -150,6 +160,7 @@ List<MenuConfigModel> permissionStatusI = [
   MenuConfigModel("Desactivar mi instalación", 'assets/images/Group 533.png',
       21, 17, false),
 ];
+
 final StreamController<ReceivedNotification> didReceiveLocalNotificationStream =
     StreamController<ReceivedNotification>.broadcast();
 
@@ -181,22 +192,24 @@ List<String> taskdIds = [];
 bool isCancelZone = true;
 
 int secondsRemaining = 60; //5 minutes = 300 seconds
+const platform = MethodChannel('custom_notification');
 
 Timer? timerCancelZone;
-
+TZDateTime? datetime;
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  BackgroundIsolateBinaryMessenger.ensureInitialized;
 
   await _prefs.initPrefs();
   _prefs.setProtected =
       'AlertFriends está activada y estamos comprobando que te encuentres bien';
+
+  datetime = await mainConvertTimeTZ(1);
+
   await inicializeHiveBD();
-
   await initializeFirebase();
-
   await activateService();
   _prefs.setNameZone = await locateZone();
+
   user = await mainController.getUserData();
 
   if (user != null && user!.idUser != '-1') {
@@ -244,6 +257,14 @@ Future<void> main() async {
   );
 }
 
+Future<void> startCustomNotification() async {
+  try {
+    await platform.invokeMethod('startCustomNotification');
+  } on PlatformException catch (e) {
+    print("Error: ${e.message}");
+  }
+}
+
 void starTap() {
   if (timerSendLocation.isActive) {
     print('timer active ${timerSendLocation.isActive}');
@@ -261,13 +282,7 @@ void starTap() {
 ///VARIABLES: Esta variable sale de preferer donde almacenamos su valor booleano
 ///getAceptedSendLocation:  indica que el usuario acepto el envio de la ubicacion actual a su contacto
 ///getDetectedFall:  indica que el usuario acepto la funcionalidad del acelerometro para poder detectar movimientos bruscos
-Future activateService() async {
-  await inicializeHiveBD();
-  await prefs.initPrefs();
-  // String sound = prefs.getNotificationAudio;
-
-  /// OPTIONAL, using custom notification channel id
-
+Future<void> activateService() async {
   var textDescrip =
       'AlertFriends está activada y estamos comprobando que te encuentres bien';
 
@@ -286,6 +301,10 @@ Future activateService() async {
       .resolvePlatformSpecificImplementation<
           AndroidFlutterLocalNotificationsPlugin>()
       ?.createNotificationChannel(channel);
+  await flutterLocalNotificationsPlugin
+      .resolvePlatformSpecificImplementation<
+          AndroidFlutterLocalNotificationsPlugin>()
+      ?.requestPermission();
 
   await service.configure(
     androidConfiguration: AndroidConfiguration(
@@ -298,7 +317,7 @@ Future activateService() async {
       notificationChannelId: "my_foreground",
       initialNotificationTitle: 'AlertFriends – Personal Protection',
       initialNotificationContent: textDescrip,
-      foregroundServiceNotificationId: 888,
+      foregroundServiceNotificationId: 788,
     ),
     iosConfiguration: IosConfiguration(
       // auto start service
@@ -312,14 +331,15 @@ Future activateService() async {
     ),
   );
 
-  if (_prefs.getAcceptedNotification == PreferencePermission.allow ||
-      _prefs.getDetectedFall ||
-      _prefs.getAcceptedSendLocation == PreferencePermission.allow) {
-    service.startService();
-  }
+  // if (_prefs.getAcceptedNotification == PreferencePermission.allow ||
+  //     _prefs.getDetectedFall ||
+  //     _prefs.getAcceptedSendLocation == PreferencePermission.allow) {
+  service.startService();
+  // }
 
   const AndroidInitializationSettings initializationSettingsAndroid =
-      AndroidInitializationSettings('@mipmap/logo_alertfriends_v2');
+      AndroidInitializationSettings('ic_bg_service_small');
+
   final List<DarwinNotificationCategory> darwinNotificationCategories =
       <DarwinNotificationCategory>[
     DarwinNotificationCategory(
@@ -474,8 +494,8 @@ void onDidReceiveBackgroundNotificationResponse(
       if (notificationResponse.payload!.contains("DateRisk_")) {
         String taskIds =
             notificationResponse.payload!.replaceAll("DateRisk_", "");
-
-        NotificationCenter().notify('getContactRisk');
+        _prefs.saveLastScreenRoute("cancelDate");
+        // NotificationCenter().notify('getContactRisk');
         var taskIdList = getTaskIdList(taskIds);
         idTask = taskIds;
         listTask = taskIdList;
@@ -484,7 +504,7 @@ void onDidReceiveBackgroundNotificationResponse(
         notActionPush = true;
         var contactRisk = await const HiveDataRisk().getcontactRiskbd;
         for (var element in contactRisk) {
-          if (element.isActived) {
+          if (element.isActived && element.isFinishTime) {
             RedirectViewNotifier.onTapNotification(
                 notificationResponse, taskIdList, (element.id));
           }
@@ -553,7 +573,7 @@ void onDidReceiveBackgroundNotificationResponse(
             notificationResponse.actionId!.indexOf('id='),
             notificationResponse.actionId!.length);
         id = id.replaceAll("id=", "");
-        NotificationCenter().notify('getContactRisk');
+        // NotificationCenter().notify('getContactRisk');
         var taskIdList = getTaskIdList(taskIds);
         RedirectViewNotifier.onTapNotification(
             notificationResponse, taskIdList, int.parse(id));
@@ -562,6 +582,55 @@ void onDidReceiveBackgroundNotificationResponse(
       break;
   }
 }
+
+Future<TZDateTime> mainConvertTimeTZ(int hour) async {
+  tz.initializeTimeZones();
+  final String timeZoneName = await FlutterTimezone.getLocalTimezone();
+  // tz.setLocalLocation(tz.getLocation(timeZoneName));
+  final TZDateTime now = TZDateTime.now(tz.getLocation(timeZoneName));
+
+  TZDateTime scheduleDate =
+      TZDateTime(tz.local, now.year, now.month, now.day, 0, hour);
+
+  return scheduleDate;
+}
+
+tz.TZDateTime _nextInstanceOfTenAM() {
+  tz.initializeTimeZones();
+  final tz.TZDateTime now = tz.TZDateTime.now(tz.local);
+  tz.TZDateTime scheduledDate = tz.TZDateTime(
+      tz.local, now.year, now.month, now.day, now.hour, now.minute + 1, 30);
+  print(scheduledDate);
+  if (scheduledDate.isBefore(now)) {
+    scheduledDate = scheduledDate.add(const Duration(minutes: 1));
+  }
+  return scheduledDate;
+}
+
+// Inicializar el ID de la notificación
+int notificationId = 1110;
+StreamController<String> notificationContentController =
+    StreamController<String>();
+
+// void updateNotification(String updatedContent) async {
+//   await flutterLocalNotificationsPlugin.show(
+//     notificationId,
+//     'Título',
+//     updatedContent,
+//     const NotificationDetails(
+//         android: AndroidNotificationDetails(
+//       'full screen channel id',
+//       'full screen channel name',
+//       channelDescription: 'full screen channel description',
+//       priority: Priority.max,
+//       importance: Importance.high,
+//       playSound: false,
+//       onlyAlertOnce: true,
+//       enableVibration: false,
+//     )),
+//     payload: 'notification payload',
+//   );
+// }
 
 ///Funcion utilizada para el momento de detectar que la app esta en segundo plano y activar o invocar el servicio.
 ///Variables:
@@ -591,60 +660,37 @@ void onStart(ServiceInstance service) async {
 
   accelerometer();
 
-  Timer.periodic(
-    const Duration(days: 30),
-    (timer) {
-      _prefs.refreshData();
-      if (_prefs.getUsedFreeDays == false &&
-          _prefs.getDayFree != "0" &&
-          _prefs.getUserFree) {
-        DateTime dateTime = DateTime.parse(_prefs.getDayFree);
-
-        DateTime fechaActual = DateTime.now();
-
-        // Calcular la diferencia entre las fechas en días
-        int diferenciaEnDias = fechaActual.difference(dateTime).inDays;
-
-        // Verificar si han pasado 30 días
-        bool hanPasado30Dias = diferenciaEnDias >= 30;
-
-        if (hanPasado30Dias) {
-          _prefs.setUsedFreeDays = true;
-          _prefs.setUserFree = true;
-          _prefs.setUserPremium = false;
-          _prefs.setDayFree = "0";
-          var premiumController = Get.put(PremiumController());
-          premiumController.updatePremiumAPI(false);
-        }
-      }
-    },
-  );
-
-  Timer.periodic(
-    const Duration(days: 3),
-    (timer) {
-      if (_prefs.getUserFree && !_prefs.getUserPremium) {
-        if (_prefs.getUsedFreeDays) {
-          RedirectViewNotifier.showPremiumNotification();
-        } else {
-          RedirectViewNotifier.showFreeeNotification();
-        }
-      }
-    },
-  );
-
   Timer.periodic(const Duration(seconds: 5), (timer) async {
     if (Platform.isAndroid) {
       if (service is AndroidServiceInstance) {
         if (await service.isForegroundService()) {
           if (isMovRude) {}
+
+          // flutterLocalNotificationsPlugin.show(
+          //   888,
+          //   'COOL SERVICE',
+          //   'Awesome ${DateTime.now()}',
+          //   const NotificationDetails(
+          //     android: AndroidNotificationDetails(
+          //         'my_foreground', 'MY FOREGROUND SERVICE',
+          //         icon: 'ic_bg_service_small',
+          //         ongoing: true,
+          //         importance: Importance.high),
+          //   ),
+          // );
+
+          // // if you don't using custom notification, uncomment this
+          // service.setForegroundNotificationInfo(
+          //   title: "My App Service",
+          //   content: "Updated at ${DateTime.now()}",
+          // );
         }
       }
     }
 
     var timeGetDisamble = _prefs.getDisambleIFF;
     var timeDisamble = deactivateTimeToMinutes(timeGetDisamble) * 60;
-
+    print(timer.tick.toString());
     if (!timeDisamble.isEqual(0)) {
       if (increaceTimerDisamble >= timeDisamble) {
         _prefs.setEnableIFF = true;
@@ -652,6 +698,108 @@ void onStart(ServiceInstance service) async {
         _prefs.setDisambleIFF = "0 hora";
       }
     }
+
+    Timer.periodic(
+      const Duration(days: 30),
+      (timer) {
+        _prefs.refreshData();
+        if (_prefs.getUsedFreeDays == false &&
+            _prefs.getDayFree != "0" &&
+            _prefs.getUserFree) {
+          DateTime dateTime = DateTime.parse(_prefs.getDayFree);
+
+          DateTime fechaActual = DateTime.now();
+
+          // Calcular la diferencia entre las fechas en días
+          int diferenciaEnDias = fechaActual.difference(dateTime).inDays;
+
+          // Verificar si han pasado 30 días
+          bool hanPasado30Dias = diferenciaEnDias >= 30;
+
+          if (hanPasado30Dias) {
+            _prefs.setUsedFreeDays = true;
+            _prefs.setUserFree = true;
+            _prefs.setUserPremium = false;
+            _prefs.setDayFree = "0";
+            var premiumController = Get.put(PremiumController());
+            premiumController.updatePremiumAPI(false);
+          }
+        }
+      },
+    );
+
+    // Timer.periodic(
+    //   const Duration(days: 3),
+    //   (timer) {
+    //     if (_prefs.getUserFree && !_prefs.getUserPremium) {
+    //       if (_prefs.getUsedFreeDays) {
+    //         RedirectViewNotifier.showPremiumNotification();
+    //       } else {
+    //         RedirectViewNotifier.showFreeeNotification();
+    //       }
+    //     }
+    //   },
+    // );
+
+    // await flutterLocalNotificationsPlugin.zonedSchedule(
+    //     0,
+    //     'scheduled title',
+    //     'scheduled body',
+    //     _nextInstanceOfTenAM(),
+    //     const NotificationDetails(
+    //         android: AndroidNotificationDetails(
+    //             'full screen channel id', 'full screen channel name',
+    //             channelDescription: 'full screen channel description',
+    //             priority: Priority.high,
+    //             importance: Importance.high,
+    //             fullScreenIntent: true)),
+    //     androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+    //     uiLocalNotificationDateInterpretation:
+    //         UILocalNotificationDateInterpretation.absoluteTime);
+
+    // await flutterLocalNotificationsPlugin.zonedSchedule(
+    //   100,
+    //   'Cuenta Regresiva',
+    //   'Tiempo restante: ${secondsRemaining ~/ 60}:${(secondsRemaining % 60).toString().padLeft(2, '0')}',
+    //   _nextInstanceOfTenAM(),
+    //   const NotificationDetails(
+    //     android: AndroidNotificationDetails(
+    //         'my_foreground', 'MY FOREGROUND SERVICE',
+    //         icon: 'ic_bg_service_small',
+    //         ongoing: false,
+    //         priority: Priority.high,
+    //         importance: Importance.high,
+    //         playSound: false),
+    //   ),
+    //   payload: 'notification payload',
+    //   uiLocalNotificationDateInterpretation:
+    //       UILocalNotificationDateInterpretation.absoluteTime,
+    //   matchDateTimeComponents: DateTimeComponents.time,
+    // );
+
+    Timer.periodic(const Duration(seconds: 1), (timer) async {
+      if (Platform.isAndroid) {
+        if (service is AndroidServiceInstance) {
+          if (await service.isForegroundService()) {
+            var timerTemp = timeRevert - 1;
+            // flutterLocalNotificationsPlugin.show(
+            //   888,
+            //   'COOL SERVICE',
+            //   'Awesome ${timerTemp}',
+            //   const NotificationDetails(
+            //     android: AndroidNotificationDetails(
+            //         'my_foreground', 'MY FOREGROUND SERVICE',
+            //         icon: 'ic_bg_service_small',
+            //         ongoing: false,
+            //         priority: Priority.high,
+            //         importance: Importance.high,
+            //         playSound: false),
+            //   ),
+            // );
+          }
+        }
+      }
+    });
 
     if (increaceUpdateFirebase >= timeUpdateFirebase) {
       updateFirebaseToken();
@@ -773,7 +921,7 @@ void accelerometer() async {
             sqrt(event.x * event.x + event.y * event.y + event.z * event.z);
         _prefs.refreshData();
         // onData(accelerationMagnitude);
-        if (accelerationMagnitude > 45) {
+        if (accelerationMagnitude > 25) {
           isMovRude = true;
           print('_prefs.getUserFree ${_prefs.getUserFree}');
           print('_prefs.getDetectedFall ${_prefs.getDetectedFall}');
@@ -789,7 +937,7 @@ void accelerometer() async {
         } else {
           if (isMovRude) {
             desactivedtimerSendDropNotification =
-                Timer(const Duration(seconds: 10), () async {
+                Timer(const Duration(seconds: 20), () async {
               isMovRude = false;
               desactivedtimerSendDropNotification.cancel();
             });
@@ -816,16 +964,16 @@ void accelerometer() async {
   );
 }
 
-void sendMessageContact() async {
-  Duration useMobil =
-      await IdleLogic().convertStringToDuration(_prefs.getHabitsTime);
-  timerSendSMS = Timer(useMobil, () {
-    timerActive = false;
+// void sendMessageContact() async {
+//   Duration useMobil =
+//       await IdleLogic().convertStringToDuration(_prefs.getHabitsTime);
+//   timerSendSMS = Timer(useMobil, () {
+//     timerActive = false;
 
-    IdleLogic().notifyContact();
-    mainController.saveUserLog("Envío de SMS a contacto ", now);
-  });
-}
+//     IdleLogic().notifyContact();
+//     mainController.saveUserLog("Envío de SMS a contacto ", now);
+//   });
+// }
 
 class MyApp extends StatefulWidget {
   final String initApp;

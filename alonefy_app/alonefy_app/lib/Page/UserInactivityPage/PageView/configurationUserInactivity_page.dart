@@ -148,7 +148,7 @@ class _UserInactivityPageState extends State<UserInactivityPage> {
   Widget _createButtonAddActivity() {
     return ElevatedButton.icon(
       style: styleColorPrincipal(),
-      label: const Text("Agregar actividad"),
+      label: const Text("Guardar"),
       icon: const Icon(
         Icons.add,
       ),
@@ -163,8 +163,8 @@ class _UserInactivityPageState extends State<UserInactivityPage> {
       showIcon: false,
       onChanged: (value) async {
         if (selecDicActivity.isEmpty) {
-          mostrarAlertaTwoButton(context,
-              'No has agregado ninguna actividad,  ¿deseas continuar?');
+          mostrarAlertaTwoButton(
+              context, 'No has agregado ninguna actividad, ¿deseas continuar?');
         } else {
           var id = await inactVC.saveInactivity(context, selecDicActivity);
           if (id != -1) {

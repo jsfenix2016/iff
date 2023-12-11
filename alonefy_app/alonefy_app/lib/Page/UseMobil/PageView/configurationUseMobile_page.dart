@@ -38,6 +38,7 @@ class _UseMobilePageState extends State<UseMobilePage> {
 
   @override
   void initState() {
+    _prefs.initPrefs();
     if (widget.userbd.idUser == "-1") {
       _getUserData();
     } else {
@@ -146,7 +147,7 @@ class _UseMobilePageState extends State<UseMobilePage> {
                           selectionOverlay:
                               SelectionContainer.disabled(child: Container()),
                           scrollController:
-                              FixedExtentScrollController(initialItem: 1),
+                              FixedExtentScrollController(initialItem: 4),
                           backgroundColor: Colors.transparent,
                           onSelectedItemChanged: (int value) {
                             indexSelect = value;
@@ -256,7 +257,9 @@ class _UseMobilePageState extends State<UseMobilePage> {
                                 padding: const EdgeInsets.only(left: 40.0),
                                 child: Center(
                                   child: Text(
-                                    'Aprender de mis hábitos',
+                                    _prefs.getHabitsEnable
+                                        ? Constant.habitsDisamble
+                                        : Constant.habitsEnable,
                                     textAlign: TextAlign.center,
                                     style: textBold16Black(),
                                   ),
@@ -271,47 +274,45 @@ class _UseMobilePageState extends State<UseMobilePage> {
                           var strDatetime =
                               Jiffy(datetime).format(getDefaultPattern());
 
-                          setState(
-                            () async {
-                              if (position == SlidableButtonPosition.end) {
-                                if (_prefs.getUserFree &&
-                                    !_prefs.getUserPremium) {
-                                  await Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => const PremiumPage(
-                                          isFreeTrial: false,
-                                          img: 'Pantalla5.jpg',
-                                          title: Constant.premiumUseTimeTitle,
-                                          subtitle: ''),
-                                    ),
-                                  ).then(
-                                    (value) {
-                                      if (value != null && value) {
-                                        _prefs.setUserFree = false;
-                                        _prefs.setUserPremium = true;
-                                        _prefs.setHabitsEnable = true;
-                                        _prefs.setHabitsRefresh = strDatetime;
-                                        var premiumController =
-                                            Get.put(PremiumController());
-                                        premiumController
-                                            .updatePremiumAPI(true);
+                          if (position == SlidableButtonPosition.end) {
+                            if (_prefs.getUserFree && !_prefs.getUserPremium) {
+                              await Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => const PremiumPage(
+                                      isFreeTrial: false,
+                                      img: 'Pantalla5.jpg',
+                                      title: Constant.premiumUseTimeTitle,
+                                      subtitle: ''),
+                                ),
+                              ).then(
+                                (value) {
+                                  if (value != null && value) {
+                                    _prefs.setUserFree = false;
+                                    _prefs.setUserPremium = true;
+                                    _prefs.setHabitsEnable = true;
+                                    _prefs.setHabitsRefresh = strDatetime;
+                                    var premiumController =
+                                        Get.put(PremiumController());
+                                    premiumController.updatePremiumAPI(true);
 
-                                        List<String>? temp = [];
-                                        Future.sync(() async => {
-                                              temp = await _prefs
-                                                  .getlistConfigPage,
-                                              temp!.add("useMobil"),
-                                              _prefs.setlistConfigPage = temp!
-                                            });
-                                        setState(() {});
-                                      }
-                                    },
-                                  );
-                                }
-                              }
-                            },
-                          );
+                                    List<String>? temp = [];
+                                    Future.sync(() async => {
+                                          temp = await _prefs.getlistConfigPage,
+                                          temp!.add("useMobil"),
+                                          _prefs.setlistConfigPage = temp!
+                                        });
+                                    setState(() {});
+                                  }
+                                },
+                              );
+                            } else {
+                              _prefs.getHabitsEnable
+                                  ? _prefs.setHabitsEnable = false
+                                  : _prefs.setHabitsEnable = true;
+                              setState(() {});
+                            }
+                          }
                         },
                       ),
                     ),

@@ -159,7 +159,7 @@ class _ConditionGeneralPageState extends State<ConditionGeneralPage> {
                           Padding(
                             padding: const EdgeInsets.only(top: 24),
                             child: Container(
-                              width: 304,
+                              width: 314,
                               height: 254,
                               padding:
                                   const EdgeInsets.fromLTRB(12, 40, 12, 18),
@@ -203,6 +203,9 @@ class _ConditionGeneralPageState extends State<ConditionGeneralPage> {
                                                           const WebViewTermsConditions(),
                                                     ),
                                                   );
+                                                  if (sawTerms) {
+                                                    setState(() {});
+                                                  }
                                                 },
                                             ),
                                           ],
@@ -216,19 +219,36 @@ class _ConditionGeneralPageState extends State<ConditionGeneralPage> {
                                       style: styleColorClear(),
                                       child: Container(
                                         decoration: BoxDecoration(
-                                          color: Colors.transparent,
+                                          color: (aceptedConditions &&
+                                                  aceptedSendMessage &&
+                                                  sawTerms)
+                                              ? ColorPalette.principal
+                                              : Colors.transparent,
                                           border: Border.all(
                                               color: ColorPalette.secondView,
                                               width: 2),
                                           borderRadius: const BorderRadius.all(
                                               Radius.circular(100)),
                                         ),
-                                        height: 42,
-                                        width: 200,
+                                        height: 50,
+                                        width: (aceptedConditions &&
+                                                aceptedSendMessage &&
+                                                sawTerms)
+                                            ? 320
+                                            : 200,
                                         child: Center(
                                           child: Text(
-                                            Constant.continueTxt,
-                                            style: textNormal16White(),
+                                            textAlign: TextAlign.center,
+                                            (aceptedConditions &&
+                                                    aceptedSendMessage &&
+                                                    sawTerms)
+                                                ? 'He leido y aceptado la politica de privacidad'
+                                                : Constant.continueTxt,
+                                            style: (aceptedConditions &&
+                                                    aceptedSendMessage &&
+                                                    sawTerms)
+                                                ? textNormal16Black()
+                                                : textNormal16White(),
                                           ),
                                         ),
                                       ),

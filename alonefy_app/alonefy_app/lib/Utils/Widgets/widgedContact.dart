@@ -13,16 +13,18 @@ class WidgetContact extends StatelessWidget {
       required this.delete,
       required this.onDelete,
       required this.isFilter,
-      required this.isExpanded});
+      required this.isExpanded,
+      required this.onExpanded});
   final String displayName;
   final Uint8List? img;
   final bool delete;
   final bool isFilter;
   final bool isExpanded;
   final void Function(bool) onDelete;
+  final void Function(bool) onExpanded;
   Widget _mostrarFoto() {
     return GestureDetector(
-      onTap: () {},
+      onTap: expandContact,
       child: Container(
         width: 89,
         height: 89,
@@ -45,6 +47,15 @@ class WidgetContact extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  void expandContact() {
+    print("object");
+    if (isExpanded) {
+      onExpanded(false);
+    } else {
+      onExpanded(true);
+    }
   }
 
   Image getImage(String urlImage) {
@@ -129,15 +140,16 @@ class WidgetContact extends StatelessWidget {
                           }
                         },
                         icon: Container(
-                          height: 30,
-                          width: 30,
+                          height: 20,
+                          width: 20,
                           decoration: BoxDecoration(
                             image: DecorationImage(
                               image: delete
-                                  ? const AssetImage('assets/images/Error.png')
+                                  ? const AssetImage(
+                                      'assets/images/Group 533.png')
                                   : const AssetImage(
                                       'assets/images/plussWhite.png'),
-                              fit: BoxFit.cover,
+                              fit: BoxFit.contain,
                             ),
                             color: Colors.transparent,
                           ),
@@ -147,27 +159,26 @@ class WidgetContact extends StatelessWidget {
                   ),
                   Visibility(
                     visible: !isFilter && !isExpanded,
-                    child: Row(
+                    child: Stack(
+                      alignment: Alignment.center,
                       children: [
                         Container(
                           decoration: const BoxDecoration(
                             color: Colors.transparent,
                           ),
-                          height: 35,
-                          width: 35,
+                          height: 30,
+                          width: 30,
                           child: IconButton(
                             iconSize: 30,
                             color: ColorPalette.principal,
-                            onPressed: () {
-                              if (delete) {}
-                            },
+                            onPressed: expandContact,
                             icon: Container(
                               height: 30,
                               width: 30,
                               decoration: const BoxDecoration(
                                 image: DecorationImage(
-                                  image: AssetImage(
-                                      'assets/images/Path (Stroke).png'),
+                                  image:
+                                      AssetImage('assets/images/Vector-2.png'),
                                   fit: BoxFit.cover,
                                 ),
                                 color: Colors.transparent,
@@ -175,32 +186,19 @@ class WidgetContact extends StatelessWidget {
                             ),
                           ),
                         ),
-                        Container(
-                          decoration: const BoxDecoration(
-                            color: Colors.transparent,
-                            borderRadius: BorderRadius.only(
-                              bottomRight: Radius.circular(100),
-                              topRight: Radius.circular(100),
+                        Positioned(
+                          top: 8,
+                          child: Container(
+                            decoration: const BoxDecoration(
+                              color: Colors.transparent,
                             ),
-                          ),
-                          height: 30,
-                          width: 36,
-                          child: IconButton(
-                            iconSize: 30,
-                            color: ColorPalette.principal,
-                            onPressed: () {
-                              if (delete) {}
-                            },
-                            icon: Container(
-                              height: 30,
-                              width: 36,
-                              decoration: const BoxDecoration(
-                                image: DecorationImage(
-                                  image: AssetImage('assets/images/Email.png'),
-                                  fit: BoxFit.cover,
-                                ),
-                                color: Colors.transparent,
-                              ),
+                            height: 35,
+                            width: 35,
+                            child: IconButton(
+                              iconSize: 20,
+                              color: Colors.white.withAlpha(170),
+                              onPressed: expandContact,
+                              icon: Icon(Icons.keyboard_arrow_down),
                             ),
                           ),
                         ),

@@ -53,13 +53,16 @@ class _RowContactState extends State<RowContact> {
     bool isAfter = startTime.isAfter(endTime);
     bool isBefore = startTime.isBefore(endTime);
 
-    if (isActive && !isProgrammed && !isAfter) {
+    if (isActive &&
+        !isProgrammed &&
+        !isAfter &&
+        !widget.contactRisk.isFinishTime) {
       // La cita está activa y no está programada, se muestra en amarillo
       return ColorPalette.principal.withAlpha(900);
-    } else if (!isActive && isProgrammed && isBefore) {
+    } else if (!isActive && isProgrammed && !isBefore) {
       // La cita está programada y aún no ha comenzado, se muestra en azul
       return Colors.blueAccent.withAlpha(900);
-    } else if (isAfter && isActive) {
+    } else if (isBefore && isActive && widget.contactRisk.isFinishTime) {
       // La cita ha finalizado, se muestra en rojo
       return Colors.red.withAlpha(900);
     } else {

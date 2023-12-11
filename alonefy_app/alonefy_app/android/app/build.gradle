@@ -33,7 +33,7 @@ if (keystorePropertiesFile.exists()) {
 }
 
 android {
-    compileSdkVersion 33
+    compileSdkVersion 34
     ndkVersion flutter.ndkVersion
 
     compileOptions {
@@ -55,10 +55,11 @@ android {
         applicationId "com.alertfriends.alertfriends"
         // You can update the following values to match your application needs.
         // For more information, see: https://docs.flutter.dev/deployment/android#reviewing-the-build-configuration.
-        minSdkVersion 23
+        minSdkVersion 26
         targetSdkVersion flutter.targetSdkVersion
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
+        manifestPlaceholders['foregroundServiceType'] = 'location|microphone|mediaPlayback|camera|health'
     }
 
     //buildTypes {
@@ -80,7 +81,9 @@ android {
     buildTypes {
         release {
             signingConfig signingConfigs.release
+            
         }
+       
     }
 }
 

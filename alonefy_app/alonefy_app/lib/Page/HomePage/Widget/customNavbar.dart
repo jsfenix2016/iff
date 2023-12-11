@@ -6,7 +6,6 @@ import 'package:ifeelefine/Page/LogActivity/PageView/logActivity_page.dart';
 
 import 'package:ifeelefine/Page/Risk/DateRisk/ListDateRisk/PageView/riskDatePage.dart';
 import 'package:ifeelefine/Page/Risk/ZoneRisk/ListContactZoneRisk/PageView/zoneRisk.dart';
-import 'package:ifeelefine/main.dart';
 
 class CustomNavbar extends StatefulWidget {
   const CustomNavbar({super.key});
@@ -25,11 +24,11 @@ class _CustomNavbarState extends State<CustomNavbar> {
       child: Container(
         color: Colors.transparent,
         width: size.width,
-        height: 120,
+        height: 130,
         child: Stack(
           children: [
             Container(
-              height: 120,
+              height: 130,
               decoration: const BoxDecoration(
                 image: DecorationImage(
                   image: AssetImage('assets/images/VectorNavBar.png'),
@@ -56,16 +55,16 @@ class _CustomNavbarState extends State<CustomNavbar> {
                         fit: BoxFit.fill,
                       ),
                       borderRadius: BorderRadius.all(Radius.circular(
-                              20.0) //                 <--- border radius here
+                              40.0) //                 <--- border radius here
                           ),
                       color: Colors.orange),
-                  height: 30,
-                  width: 30,
+                  height: 60,
+                  width: 60,
                 ),
               ),
             ),
             Padding(
-              padding: const EdgeInsets.only(top: 30.0),
+              padding: const EdgeInsets.only(top: 40.0),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
@@ -147,11 +146,11 @@ class _CustomNavbarState extends State<CustomNavbar> {
                       ),
                     ],
                   ),
-                  // Container(
-                  //   width: 30,
-                  //   height: 85,
-                  //   color: Colors.transparent,
-                  // ),
+                  Container(
+                    width: 15,
+                    height: 85,
+                    color: Colors.transparent,
+                  ),
                   Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [

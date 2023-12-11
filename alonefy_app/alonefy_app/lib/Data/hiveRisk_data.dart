@@ -1,4 +1,5 @@
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:ifeelefine/Common/initialize_models_bd.dart';
 import 'package:ifeelefine/Model/contactRiskBD.dart';
 import 'package:ifeelefine/Model/contactZoneRiskBD.dart';
 import 'package:ifeelefine/Model/logAlertsBD.dart';
@@ -27,7 +28,8 @@ class HiveDataRisk {
     }
   }
 
-  Future<bool> updateContactRisk(ContactRiskBD contact) async {
+  Future<ContactRiskBD> updateContactRisk(ContactRiskBD contact) async {
+    ContactRiskBD? temp = initContactRisk();
     try {
       final box = await Hive.openBox<ContactRiskBD>('contactriskbd');
 
@@ -41,11 +43,14 @@ class HiveDataRisk {
       }
 
       final listDate = box.values.toList();
+      int indexSelect = listDate.indexWhere((item) => item.id == contact.id);
       print(listDate);
-      return true;
+
+      temp = listDate[indexSelect];
+      return temp;
     } catch (error) {
       print(error);
-      return false;
+      return temp!;
     }
   }
 
