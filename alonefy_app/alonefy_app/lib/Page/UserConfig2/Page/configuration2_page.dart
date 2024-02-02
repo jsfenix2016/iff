@@ -1,13 +1,12 @@
 import 'dart:async';
 
-import 'package:flutter_countries/models/country.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ifeelefine/Common/Constant.dart';
 import 'package:ifeelefine/Common/button_style_custom.dart';
 import 'package:ifeelefine/Common/Firebase/firebaseManager.dart';
 import 'package:ifeelefine/Common/colorsPalette.dart';
 import 'package:ifeelefine/Common/initialize_models_bd.dart';
-import 'package:ifeelefine/Common/location_custom.dart';
+
 import 'package:ifeelefine/Common/notificationService.dart';
 import 'package:ifeelefine/Common/text_style_font.dart';
 import 'package:ifeelefine/Common/utils.dart';
@@ -54,7 +53,6 @@ class _UserConfigPageState2 extends State<UserConfigPage2> {
 
   final scaffoldKey = GlobalKey<ScaffoldState>();
 
-  final List<String> _states = ["Seleccionar estado"];
   late String selectState = "";
   final List<String> _country = ["Seleccionar pais"];
   late String selectCountry = "";
@@ -64,6 +62,12 @@ class _UserConfigPageState2 extends State<UserConfigPage2> {
   List<dynamic> countryres = [];
   List<dynamic> stateTemp = [];
   final PreferenceUser _prefs = PreferenceUser();
+  final gender = {
+    '0': 'Mujer',
+    '1': 'Hombre',
+    '2': 'Prefiero no decir',
+  };
+
   @override
   void initState() {
     user = initUser();
@@ -197,11 +201,11 @@ class _UserConfigPageState2 extends State<UserConfigPage2> {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    SizedBox(height: 34),
+                    const SizedBox(height: 34),
                     const WidgetLogoApp(),
-                    SizedBox(height: 34),
+                    const SizedBox(height: 34),
                     CustomDropdownMaritalState(
-                      instance: Constant.gender,
+                      instance: gender,
                       mensaje: Constant.selectGender,
                       isVisible: true,
                       onChanged: (value) {
@@ -296,7 +300,7 @@ class _UserConfigPageState2 extends State<UserConfigPage2> {
                                   left: 8.0, right: 16, top: 14),
                               child: Text(
                                 selectState.isEmpty
-                                    ? "Selecciona la ciudad"
+                                    ? Constant.selectCity
                                     : selectState,
                                 style: textNormal16White(),
                               ),
@@ -309,14 +313,7 @@ class _UserConfigPageState2 extends State<UserConfigPage2> {
                     const SizedBox(height: 10),
 
                     const SizedBox(height: 20),
-                    // ElevateButtonCustomBorder(
-                    //     onChanged: ((value) {
-                    //       // free(false);
 
-                    //     }),
-                    //     mensaje: "Gratuito 30 días"),
-                    // const SizedBox(height: 20),
-                    // _createButtonPremium(),
                     ElevatedButton(
                       style: styleColorClear(),
                       onPressed: (() {
@@ -415,7 +412,8 @@ class _UserConfigPageState2 extends State<UserConfigPage2> {
     userbd!.city = user!.city;
     userbd!.styleLife = user!.styleLife;
     userbd!.maritalStatus = user!.maritalStatus;
-    userbd!.gender = user!.gender;
+    userbd!.gender =
+        user!.gender == "Prefiero no decir" ? "Otro/a" : user!.gender;
     userbd!.country = user!.country;
     bool isupdate = await userConfigVC.updateUserDate(userbd!);
 

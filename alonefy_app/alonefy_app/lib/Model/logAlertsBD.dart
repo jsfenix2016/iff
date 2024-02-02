@@ -11,7 +11,8 @@ class LogAlertsBD extends HiveObject {
       required this.type,
       required this.time,
       this.photoDate,
-      this.video});
+      this.video,
+      required this.groupBy});
 
   @HiveField(0)
   late int id;
@@ -27,4 +28,7 @@ class LogAlertsBD extends HiveObject {
 
   @HiveField(4)
   Uint8List? video;
+
+  @HiveField(5)
+  late String groupBy;
 }

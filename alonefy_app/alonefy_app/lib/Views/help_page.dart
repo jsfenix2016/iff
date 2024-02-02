@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:ifeelefine/Common/colorsPalette.dart';
+
 import 'package:ifeelefine/Common/decoration_custom.dart';
-import 'package:ifeelefine/Common/initialize_models_bd.dart';
-import 'package:ifeelefine/Model/userbd.dart';
+import 'package:ifeelefine/Provider/prefencesUser.dart';
+
 import 'package:ifeelefine/Services/mainService.dart';
 import 'package:ifeelefine/main.dart';
 
@@ -18,12 +18,19 @@ class HelpPage extends StatefulWidget {
 }
 
 class _HelpPageState extends State<HelpPage> {
+  PreferenceUser prefs = PreferenceUser();
   @override
   void initState() {
     super.initState();
+    initPrefs();
     starTap();
     print(rxIdTask.value);
     print(rxlistTask);
+  }
+
+  void initPrefs() async {
+    await prefs.initPrefs();
+    prefs.refreshData();
   }
 
   @override
@@ -66,6 +73,10 @@ class _HelpPageState extends State<HelpPage> {
                 Center(
                   child: GestureDetector(
                     onTap: () async {
+                      mainController.saveUserLog(
+                          "Inactividad - hubo actividad ",
+                          DateTime.now(),
+                          prefs.getIdInactiveGroup);
                       MainService().cancelAllNotifications(rxlistTask);
 
                       Navigator.of(context).pop();
@@ -123,6 +134,8 @@ class _HelpPageState extends State<HelpPage> {
                 ),
                 GestureDetector(
                   onTap: () {
+                    mainController.saveUserLog("Inactividad - solicito ayuda ",
+                        DateTime.now(), prefs.getIdInactiveGroup);
                     MainService().sendAlertToContactImmediately(rxlistTask);
                     Navigator.of(context).pop();
                   },

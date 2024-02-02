@@ -3,12 +3,14 @@ import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ifeelefine/Common/Constant.dart';
+import 'package:ifeelefine/Common/manager_alerts.dart';
 
 import 'package:ifeelefine/Common/notificationService.dart';
 import 'package:ifeelefine/Common/text_style_font.dart';
 
 import 'package:ifeelefine/Model/contact.dart';
 import 'package:ifeelefine/Page/Contact/EditContact/PageView/editContact.dart';
+import 'package:ifeelefine/Page/Contact/ListContact/Controller/list_contact_controller.dart';
 
 import 'package:ifeelefine/Page/Contact/Notice/Controller/contactNoticeController.dart';
 import 'package:ifeelefine/Page/Contact/Widget/cellContactStatus.dart';
@@ -48,9 +50,16 @@ class _ContactNoticePageState extends State<ContactNoticePage> {
     getContact();
   }
 
+  Future<RxList<ContactBD>> refreshListContact() async {
+    return await controller.getAllContactDB();
+  }
+
   Future getContact() async {
-    listContact = await controller.getAllContact();
-    print(listContact);
+    var list = await refreshListContact();
+    listContact = list.value;
+    // listContact = await controller.getAllContact();
+
+    // controller.update();
     setState(() {});
   }
 
@@ -148,55 +157,71 @@ class _ContactNoticePageState extends State<ContactNoticePage> {
                       height: 32,
                     ),
                     Expanded(
-                      child: ListView.separated(
-                        shrinkWrap: false,
-                        itemCount: listContact.length,
-                        separatorBuilder: (context, index) {
-                          return const SizedBox(
-                            height: 10,
-                          );
-                        },
-                        itemBuilder: (context, index) {
-                          return GestureDetector(
-                            onTap: () {
-                              print(index);
+                      child: GetBuilder<ContactNoticeController>(
+                          builder: (context) {
+                        return FutureBuilder<List<ContactBD>>(
+                            future: refreshListContact(),
+                            builder: (context, snapshot) {
+                              if (snapshot.hasData) {
+                                final listContact = snapshot.data!;
+                                return ListView.separated(
+                                  shrinkWrap: false,
+                                  itemCount: listContact.length,
+                                  separatorBuilder: (context, index) {
+                                    return const SizedBox(
+                                      height: 10,
+                                    );
+                                  },
+                                  itemBuilder: (context, index) {
+                                    return GestureDetector(
+                                      onTap: () {
+                                        print(index);
 
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => EditContact(
-                                    contact: listContact[index],
-                                    isEdit: true,
-                                  ),
-                                ),
-                              );
-                            },
-                            child: Center(
-                              child: Container(
-                                decoration: const BoxDecoration(
-                                  color: Color.fromRGBO(169, 146, 125, 0.5),
-                                  borderRadius: BorderRadius.all(
-                                      Radius.circular(
-                                          100.0) //                 <--- border radius here
-                                      ),
-                                ),
-                                height: 80,
-                                width: 320,
-                                child: Stack(
-                                  children: [
-                                    CellContactStatus(
-                                      contact: listContact[index],
-                                      onChanged: (ContactBD value) {
-                                        controller.deleteContact(value);
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) => EditContact(
+                                              contact: listContact[index],
+                                              isEdit: true,
+                                            ),
+                                          ),
+                                        );
                                       },
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          );
-                        },
-                      ),
+                                      child: Center(
+                                        child: Container(
+                                          decoration: const BoxDecoration(
+                                            color: Color.fromRGBO(
+                                                169, 146, 125, 0.5),
+                                            borderRadius: BorderRadius.all(
+                                                Radius.circular(
+                                                    100.0) //                 <--- border radius here
+                                                ),
+                                          ),
+                                          height: 80,
+                                          width: 320,
+                                          child: Stack(
+                                            children: [
+                                              CellContactStatus(
+                                                contact: listContact[index],
+                                                onChanged: (ContactBD value) {
+                                                  controller
+                                                      .deleteContact(value);
+                                                },
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                );
+                              } else if (snapshot.hasError) {
+                                return Text(snapshot.error.toString());
+                              } else {
+                                return const SizedBox.shrink();
+                              }
+                            });
+                      }),
                     ),
                     Padding(
                       padding: const EdgeInsets.only(left: 80.0, right: 80.0),
@@ -228,6 +253,9 @@ class _ContactNoticePageState extends State<ContactNoticePage> {
                           showIcon: true,
                           onChanged: ((value) async {
                             if (_prefs.getUserFree && listContact.isNotEmpty) {
+                              late ListContactController controller =
+                                  Get.put(ListContactController());
+                              controller.update();
                               NotificationCenter().notify('getContact');
                               await Navigator.push(
                                 context,
@@ -254,6 +282,13 @@ class _ContactNoticePageState extends State<ContactNoticePage> {
                               );
                               return;
                             }
+                            // if (_prefs.getUserFree && listContact.isNotEmpty) {
+                            //   Future.sync(() => showSaveAlert(
+                            //       context,
+                            //       Constant.info,
+                            //       'Debes ser premium para agregar mas contactos'));
+                            //   return;
+                            // }
                             _showCountryListScreen(context);
                           }),
                           mensaje: 'Añadir contacto',

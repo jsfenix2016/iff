@@ -10,6 +10,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:ifeelefine/Common/Constant.dart';
 import 'package:ifeelefine/Common/manager_alerts.dart';
+import 'package:ifeelefine/Common/notificationService.dart';
 import 'package:ifeelefine/Model/ApiRest/ContactApi.dart';
 import 'package:ifeelefine/Model/ApiRest/ZoneRiskApi.dart';
 import 'package:ifeelefine/Page/Geolocator/Controller/configGeolocatorController.dart';
@@ -70,7 +71,11 @@ void refreshMenu(String menu) async {
     }
   }
   _prefs.setlistConfigPage = temp;
-  NotificationCenter().notify('refreshMenu');
+  try {
+    NotificationCenter().notify('refreshMenu');
+  } catch (e) {
+    print(e);
+  }
 }
 
 Future<List<MenuConfigModel>> validateConfig() async {
@@ -501,7 +506,7 @@ void showAlert(BuildContext context, String mensaje) {
           content: Text(mensaje),
           actions: <Widget>[
             TextButton(
-              child: const Text("Ok"),
+              child: const Text("OK"),
               onPressed: () => Navigator.of(context).pop(),
             )
           ],
@@ -628,10 +633,15 @@ Future<List<String>> getTraslateState(Country countryId) async {
     return liststate;
   }
   for (var f in list) {
-    states.add(f.name.toString());
+    if (countryId.id == f.countryId) {
+      states.add(f.name.toString());
+    } else {
+      states.remove(f.name);
+    }
   }
+
   liststate.value = states;
-  return liststate;
+  return states;
 }
 
 Future<List<Country>> getTraslateCountry() async {
@@ -641,10 +651,12 @@ Future<List<Country>> getTraslateCountry() async {
 }
 
 Container searchImageForIcon(String typeAction) {
-  AssetImage name = const AssetImage('assets/images/Email.png');
+  AssetImage name = const AssetImage('assets/images/Warning.png');
   if (typeAction.contains("SMS")) {
     name = const AssetImage('assets/images/Email.png');
-  } else if (typeAction.contains("inactividad")) {
+  } else if (typeAction.contains("cancelada")) {
+    name = const AssetImage('assets/images/Group 1283.png');
+  } else if (typeAction.contains("Inactividad")) {
     name = const AssetImage('assets/images/Warning.png');
   } else if (typeAction.contains("Notificación")) {
     name = const AssetImage('assets/images/Group 1283.png');
@@ -665,10 +677,10 @@ Container searchImageForIcon(String typeAction) {
 }
 
 Container searchImageForIcona(String typeAction) {
-  AssetImage name = const AssetImage('assets/images/Email.png');
+  AssetImage name = const AssetImage('assets/images/Warning.png');
   if (typeAction.contains("SMS")) {
     name = const AssetImage('assets/images/Email.png');
-  } else if (typeAction.contains("inactividad")) {
+  } else if (typeAction.contains("Inactividad")) {
     name = const AssetImage('assets/images/Warning.png');
   } else if (typeAction.contains("Notificación")) {
     name = const AssetImage('assets/images/Group 1283.png');
@@ -741,14 +753,14 @@ Future<Position> determinePosition() async {
   return await Geolocator.getCurrentPosition();
 }
 
-Future<bool> cameraPermissions(
-    PreferencePermission acceptedCamera, BuildContext context) async {
+Future<bool> cameraPermissions(PreferencePermission acceptedCamera) async {
   PermissionStatus permission = await Permission.camera.status;
   PreferencePermission prefsCamera = acceptedCamera;
 
   if (permission == PermissionStatus.denied &&
       prefsCamera == PreferencePermission.deniedForever) {
-    showPermissionDialog(context, Constant.enablePermission);
+    showPermissionDialog(
+        RedirectViewNotifier.storedContext!, Constant.enablePermission);
 
     return false;
   } else if (permission == PermissionStatus.denied) {
@@ -766,6 +778,29 @@ Future<bool> cameraPermissions(
     return permissionStatus[Permission.camera] == PermissionStatus.granted;
   } else {
     return _prefs.getAcceptedCamera == PreferencePermission.allow;
+  }
+}
+
+Future<RxList<Contact>> getContactsMobil(BuildContext context) async {
+  RxList<Contact> contactList = <Contact>[].obs;
+
+  PermissionStatus permission = await Permission.contacts.request();
+
+  if (permission.isPermanentlyDenied) {
+    // ignore: use_build_context_synchronously
+    showPermissionDialog(context, "Permitir acceder a los contactos");
+    return contactList;
+  } else if (permission.isDenied) {
+    return contactList;
+  } else {
+    // Retrieve the list of contacts from the device
+    // var contacts = await FlutterContacts.getContacts();
+    // Set the list of contacts in the state
+    var contacts = await FlutterContacts.getContacts(
+        withProperties: true, withPhoto: true);
+    contactList.value = contacts;
+
+    return contactList;
   }
 }
 

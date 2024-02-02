@@ -1,4 +1,5 @@
 import 'package:ifeelefine/Common/initialize_models_bd.dart';
+import 'package:ifeelefine/Page/Alternative/Pageview/alternative_page.dart';
 import 'package:ifeelefine/Page/Contact/PageView/addContact_page.dart';
 import 'package:ifeelefine/Page/FallDetected/Pageview/fall_activation_page.dart';
 import 'package:ifeelefine/Page/FinishConfig/Pageview/finishConfig_page.dart';
@@ -53,4 +54,5 @@ final Map<String, Widget Function(BuildContext)> appRoute = {
   "cancelDate": (BuildContext context) => const CancelDatePage(
         taskIds: [],
       ),
+  "alternative": (BuildContext context) => const AlternativePage(),
 };

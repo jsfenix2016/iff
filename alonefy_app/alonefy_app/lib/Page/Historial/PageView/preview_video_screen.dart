@@ -5,7 +5,6 @@ import 'package:ifeelefine/Common/notificationService.dart';
 import 'package:ifeelefine/Common/text_style_font.dart';
 import 'package:ifeelefine/Utils/Widgets/video_player.dart';
 import 'package:ifeelefine/main.dart';
-import 'package:video_player/video_player.dart';
 
 class PreviewVideoPage extends StatefulWidget {
   final String filePath;
@@ -30,7 +29,6 @@ class _PreviewVideoState extends State<PreviewVideoPage>
 
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
     RedirectViewNotifier.setStoredContext(context);
     return Scaffold(
       backgroundColor: Colors.black,

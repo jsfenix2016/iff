@@ -161,7 +161,7 @@ class EditConfigController extends GetxController {
           lastname: user.lastname,
           email: user.email,
           telephone: user.telephone,
-          gender: user.gender,
+          gender: user.gender == "Prefiero no decir" ? "Otro/a" : user.gender,
           maritalStatus: user.maritalStatus,
           styleLife: user.styleLife,
           pathImage: user.pathImage,

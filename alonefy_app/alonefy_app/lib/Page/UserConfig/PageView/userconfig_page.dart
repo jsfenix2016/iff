@@ -1,4 +1,5 @@
 import 'package:google_fonts/google_fonts.dart';
+import 'package:http/http.dart';
 import 'package:ifeelefine/Common/Constant.dart';
 import 'package:ifeelefine/Common/button_style_custom.dart';
 import 'package:ifeelefine/Common/colorsPalette.dart';
@@ -8,6 +9,7 @@ import 'package:ifeelefine/Common/manager_alerts.dart';
 import 'package:ifeelefine/Common/notificationService.dart';
 import 'package:ifeelefine/Common/text_style_font.dart';
 import 'package:ifeelefine/Common/utils.dart';
+import 'package:ifeelefine/Page/Alternative/Pageview/alternative_page.dart';
 
 import 'package:ifeelefine/Page/UserConfig/Controller/userConfigController.dart';
 import 'package:ifeelefine/Model/user.dart';
@@ -58,238 +60,251 @@ class _UserConfigPageState extends State<UserConfigPage> {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
 
-    return Scaffold(
-      backgroundColor: Colors.black,
-      body: MediaQuery(
-        data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
-        child: Container(
-          height: size.height,
-          width: size.width,
-          decoration: decorationCustom(),
-          child: SingleChildScrollView(
-            keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-            child: SafeArea(
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: SizedBox(
-                  child: Form(
-                    child: Column(
-                      children: <Widget>[
-                        const SizedBox(height: 30),
-                        Column(
-                          mainAxisSize: MainAxisSize.max,
-                          children: <Widget>[
-                            const WidgetLogoApp(),
-                            const SizedBox(height: 10),
-                            TextFieldFormCustomBorder(
-                              labelText: Constant.nameUser,
-                              mesaje: "",
-                              onChanged: (String value) {
-                                userlocal?.name = value;
-                              },
-                              placeholder: Constant.namePlaceholder,
-                              typeInput: TextInputType.text,
-                            ),
-                            const SizedBox(height: 20),
-                            TextFieldFormCustomBorder(
-                              labelText: Constant.lastName,
-                              mesaje: "",
-                              onChanged: (String value) {
-                                userlocal?.lastname = value;
-                              },
-                              placeholder: Constant.lastName,
-                              typeInput: TextInputType.text,
-                            ),
-                            const SizedBox(height: 20),
-                            Row(
-                              crossAxisAlignment: CrossAxisAlignment.baseline,
-                              textBaseline: TextBaseline
-                                  .alphabetic, // Agrega este parámetro y proporciona un valor de TextBaseline
-                              mainAxisSize: MainAxisSize.max,
-                              children: [
-                                Flexible(
-                                  flex: 1,
-                                  child: TextFieldFormCustomBorder(
-                                    labelText: Constant.telephone,
-                                    mesaje: "",
-                                    onChanged: (String value) {
-                                      userlocal?.telephone = '+34$value';
+    return WillPopScope(
+      onWillPop: () async {
+        // Aquí puedes ejecutar acciones personalizadas antes de volver atrás
+        // Por ejemplo, mostrar un diálogo de confirmación
+        if (!widget.isMenu) {
+          Get.offAll(() => const AlternativePage());
+        }
+        return true;
+      },
+      child: Scaffold(
+        backgroundColor: Colors.black,
+        body: MediaQuery(
+          data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
+          child: Container(
+            height: size.height,
+            width: size.width,
+            decoration: decorationCustom(),
+            child: SingleChildScrollView(
+              keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+              child: SafeArea(
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: SizedBox(
+                    child: Form(
+                      child: Column(
+                        children: <Widget>[
+                          const SizedBox(height: 30),
+                          Column(
+                            mainAxisSize: MainAxisSize.max,
+                            children: <Widget>[
+                              const WidgetLogoApp(),
+                              const SizedBox(height: 10),
+                              TextFieldFormCustomBorder(
+                                labelText: Constant.nameUser,
+                                mesaje: "",
+                                onChanged: (String value) {
+                                  userlocal?.name = value;
+                                },
+                                placeholder: Constant.namePlaceholder,
+                                typeInput: TextInputType.text,
+                              ),
+                              const SizedBox(height: 20),
+                              TextFieldFormCustomBorder(
+                                labelText: Constant.lastName,
+                                mesaje: "",
+                                onChanged: (String value) {
+                                  userlocal?.lastname = value;
+                                },
+                                placeholder: Constant.lastName,
+                                typeInput: TextInputType.text,
+                              ),
+                              const SizedBox(height: 20),
+                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.baseline,
+                                textBaseline: TextBaseline
+                                    .alphabetic, // Agrega este parámetro y proporciona un valor de TextBaseline
+                                mainAxisSize: MainAxisSize.max,
+                                children: [
+                                  Flexible(
+                                    flex: 1,
+                                    child: TextFieldFormCustomBorder(
+                                      labelText: Constant.telephone,
+                                      mesaje: "",
+                                      onChanged: (String value) {
+                                        userlocal?.telephone = '+34$value';
+                                      },
+                                      placeholder:
+                                          Constant.telephonePlaceholder,
+                                      typeInput: TextInputType.number,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 20),
+                              TextFieldFormCustomBorder(
+                                labelText: Constant.email,
+                                mesaje: "",
+                                onChanged: (String value) {
+                                  userlocal!.email = value;
+                                },
+                                placeholder: Constant.email,
+                                typeInput: TextInputType.emailAddress,
+                              ),
+                              const SizedBox(height: 20),
+                              Container(
+                                color: Colors.transparent,
+                                width: double.infinity,
+                                child: Center(
+                                  child: ElevatedButton(
+                                    style: styleColorClear(),
+                                    child: Container(
+                                      alignment: Alignment.center,
+                                      decoration: const BoxDecoration(
+                                        color: ColorPalette.principal,
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(100)),
+                                      ),
+                                      width: 235,
+                                      height: 45,
+                                      child: Text(
+                                        sendtoken
+                                            ? Constant.tokenRequestSendAgainTxt
+                                            : Constant.tokenRequestTxt,
+                                        textAlign: TextAlign.center,
+                                        style: textNormal16Black(),
+                                      ),
+                                    ),
+                                    onPressed: () async {
+                                      if (!validatePhoneNumber(
+                                              userlocal!.telephone) ||
+                                          userlocal!.telephone.length > 12 ||
+                                          userlocal!.telephone.isEmpty) {
+                                        showSaveAlert(context, Constant.info,
+                                            Constant.validatePhoneNumber);
+
+                                        return;
+                                      }
+
+                                      if (!validateEmail(userlocal!.email)) {
+                                        // El correo electrónico no es válido
+                                        showSaveAlert(context, Constant.info,
+                                            Constant.validateEmail);
+                                        return;
+                                      }
+
+                                      await userVC.requestCode(
+                                          context, userlocal!);
+                                      sendtoken = true;
                                     },
-                                    placeholder: Constant.telephonePlaceholder,
-                                    typeInput: TextInputType.number,
                                   ),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 20),
-                            TextFieldFormCustomBorder(
-                              labelText: Constant.email,
-                              mesaje: "",
-                              onChanged: (String value) {
-                                userlocal!.email = value;
-                              },
-                              placeholder: Constant.email,
-                              typeInput: TextInputType.emailAddress,
-                            ),
-                            const SizedBox(height: 20),
-                            Container(
-                              color: Colors.transparent,
-                              width: double.infinity,
-                              child: Center(
-                                child: ElevatedButton(
-                                  style: styleColorClear(),
-                                  child: Container(
-                                    alignment: Alignment.center,
-                                    decoration: const BoxDecoration(
-                                      color: ColorPalette.principal,
-                                      borderRadius: BorderRadius.all(
-                                          Radius.circular(100)),
-                                    ),
-                                    width: 235,
-                                    height: 45,
-                                    child: Text(
-                                      sendtoken
-                                          ? Constant.tokenRequestSendAgainTxt
-                                          : Constant.tokenRequestTxt,
-                                      textAlign: TextAlign.center,
-                                      style: textNormal16Black(),
-                                    ),
-                                  ),
-                                  onPressed: () async {
-                                    if (!validatePhoneNumber(
-                                            userlocal!.telephone) ||
-                                        userlocal!.telephone.length > 12 ||
-                                        userlocal!.telephone.isEmpty) {
-                                      showSaveAlert(context, Constant.info,
-                                          Constant.validatePhoneNumber);
-
-                                      return;
-                                    }
-
-                                    if (!validateEmail(userlocal!.email)) {
-                                      // El correo electrónico no es válido
-                                      showSaveAlert(context, Constant.info,
-                                          Constant.validateEmail);
-                                      return;
-                                    }
-
-                                    await userVC.requestCode(
-                                        context, userlocal!);
-                                    sendtoken = true;
-                                  },
                                 ),
                               ),
-                            ),
-                            const SizedBox(height: 20),
-                            TextValidateToken(
-                              type: "Sms",
-                              code: "",
-                              message: Constant.validateCodeSms,
-                              onChanged: (String value) async {
-                                if (!validatePhoneNumber(
-                                    userlocal!.telephone)) {
-                                  showSaveAlert(context, Constant.info,
-                                      Constant.validatePhoneNumber);
-                                  isValidSms = false;
-                                  FocusScope.of(context).unfocus();
-                                  return;
-                                }
-                                if (value.length < 6 || value.length > 7) {
-                                  isValidSms = false;
-                                } else {
-                                  isValidSms = await userVC.validateCodeSMS(
-                                      context, value);
-                                }
-                                if (isValidSms) {
-                                  FocusScope.of(context).unfocus();
-                                }
-                              },
-                              isValid: isValidSms,
-                            ),
-                            const SizedBox(height: 20),
-                            Visibility(
-                              visible: true,
-                              child: TextValidateToken(
-                                type: "email",
+                              const SizedBox(height: 20),
+                              TextValidateToken(
+                                type: "Sms",
                                 code: "",
-                                message: Constant.validateCodeEmail,
+                                message: Constant.validateCodeSms,
                                 onChanged: (String value) async {
-                                  if (!validateEmail(userlocal!.email)) {
-                                    isValidEmail = false;
-                                    // El correo electrónico no es válido
+                                  if (!validatePhoneNumber(
+                                      userlocal!.telephone)) {
                                     showSaveAlert(context, Constant.info,
-                                        Constant.validateEmail);
+                                        Constant.validatePhoneNumber);
+                                    isValidSms = false;
                                     FocusScope.of(context).unfocus();
                                     return;
                                   }
                                   if (value.length < 6 || value.length > 7) {
-                                    isValidEmail = false;
+                                    isValidSms = false;
                                   } else {
-                                    isValidEmail = await userVC
-                                        .validateCodeEmail(context, value);
+                                    isValidSms = await userVC.validateCodeSMS(
+                                        context, value);
                                   }
-
-                                  if (isValidEmail) {
+                                  if (isValidSms) {
                                     FocusScope.of(context).unfocus();
                                   }
                                 },
-                                isValid: isValidEmail,
+                                isValid: isValidSms,
                               ),
-                            ),
-                            const SizedBox(height: 20),
-                            SizedBox(
-                              width: double.infinity,
-                              child: Center(
-                                child: ElevatedButton(
-                                  style: (isValidEmail && isValidSms)
-                                      ? styleColorPrincipal()
-                                      : styleColorClear(),
-                                  onPressed: (isValidEmail || isValidSms)
-                                      ? _submit
-                                      : () {
-                                          showSaveAlert(context, Constant.info,
-                                              "Debe tener validado los tokens del correo y teléfono");
-                                        },
-                                  child: Container(
-                                    decoration: (isValidEmail && isValidSms)
-                                        ? const BoxDecoration(
-                                            color: ColorPalette.principal,
-                                            borderRadius: BorderRadius.all(
-                                                Radius.circular(100)),
-                                          )
-                                        : BoxDecoration(
-                                            color: Colors.transparent,
-                                            border: Border.all(
+                              const SizedBox(height: 20),
+                              Visibility(
+                                visible: true,
+                                child: TextValidateToken(
+                                  type: "email",
+                                  code: "",
+                                  message: Constant.validateCodeEmail,
+                                  onChanged: (String value) async {
+                                    if (!validateEmail(userlocal!.email)) {
+                                      isValidEmail = false;
+                                      // El correo electrónico no es válido
+                                      showSaveAlert(context, Constant.info,
+                                          Constant.validateEmail);
+                                      FocusScope.of(context).unfocus();
+                                      return;
+                                    }
+                                    if (value.length < 6 || value.length > 7) {
+                                      isValidEmail = false;
+                                    } else {
+                                      isValidEmail = await userVC
+                                          .validateCodeEmail(context, value);
+                                    }
+
+                                    if (isValidEmail) {
+                                      FocusScope.of(context).unfocus();
+                                    }
+                                  },
+                                  isValid: isValidEmail,
+                                ),
+                              ),
+                              const SizedBox(height: 20),
+                              SizedBox(
+                                width: double.infinity,
+                                child: Center(
+                                  child: ElevatedButton(
+                                    style: (isValidEmail && isValidSms)
+                                        ? styleColorPrincipal()
+                                        : styleColorClear(),
+                                    onPressed: (isValidEmail && isValidSms)
+                                        ? _submit
+                                        : () {
+                                            showSaveAlert(
+                                                context,
+                                                Constant.info,
+                                                "Debe tener validado los tokens del correo y teléfono");
+                                          },
+                                    child: Container(
+                                      decoration: (isValidEmail && isValidSms)
+                                          ? const BoxDecoration(
                                               color: ColorPalette.principal,
+                                              borderRadius: BorderRadius.all(
+                                                  Radius.circular(100)),
+                                            )
+                                          : BoxDecoration(
+                                              color: Colors.transparent,
+                                              border: Border.all(
+                                                color: ColorPalette.principal,
+                                              ),
+                                              borderRadius:
+                                                  const BorderRadius.all(
+                                                      Radius.circular(100)),
                                             ),
-                                            borderRadius:
-                                                const BorderRadius.all(
-                                                    Radius.circular(100)),
+                                      height: 42,
+                                      width: 200,
+                                      child: Center(
+                                        child: Text(
+                                          Constant.continueTxt,
+                                          style: GoogleFonts.barlow(
+                                            fontSize: 16.0,
+                                            wordSpacing: 1,
+                                            letterSpacing: 0.001,
+                                            fontWeight: FontWeight.w700,
+                                            color: (isValidEmail && isValidSms)
+                                                ? Colors.black
+                                                : Colors.white,
                                           ),
-                                    height: 42,
-                                    width: 200,
-                                    child: Center(
-                                      child: Text(
-                                        Constant.continueTxt,
-                                        style: GoogleFonts.barlow(
-                                          fontSize: 16.0,
-                                          wordSpacing: 1,
-                                          letterSpacing: 0.001,
-                                          fontWeight: FontWeight.w700,
-                                          color: (isValidEmail && isValidSms)
-                                              ? Colors.black
-                                              : Colors.white,
                                         ),
                                       ),
                                     ),
                                   ),
                                 ),
                               ),
-                            ),
-                            const SizedBox(height: 10),
-                          ],
-                        ),
-                      ],
+                              const SizedBox(height: 10),
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),

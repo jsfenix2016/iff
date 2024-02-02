@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:io';
-import 'dart:isolate';
 
 import 'dart:math';
 import 'dart:ui';
@@ -11,17 +10,14 @@ import 'package:flutter_contacts/contact.dart';
 import 'package:flutter_timezone/flutter_timezone.dart';
 import 'package:ifeelefine/Common/initialize_models_bd.dart';
 import 'package:ifeelefine/Data/hiveRisk_data.dart';
-import 'package:ifeelefine/Model/contactZoneRiskBD.dart';
-import 'package:ifeelefine/Page/Contact/PageView/addContact_page.dart';
-import 'package:ifeelefine/Page/EditUseMobil/Page/editUseMobil.dart';
-import 'package:ifeelefine/Page/HomePage/Pageview/home_page.dart';
-import 'package:ifeelefine/Page/UseMobil/PageView/configurationUseMobile_page.dart';
-import 'package:ifeelefine/Page/UserConfig/PageView/userconfig_page.dart';
-import 'package:ifeelefine/Page/UserInactivityPage/PageView/configurationUserInactivity_page.dart';
-import 'package:ifeelefine/Page/UserRest/PageView/configurationUserRest_page.dart';
+import 'package:ifeelefine/Model/contact.dart';
+import 'package:ifeelefine/Model/contactRiskBD.dart';
+
+import 'package:ifeelefine/Page/Risk/DateRisk/Controller/editRiskController.dart';
+import 'package:ifeelefine/Page/Risk/DateRisk/ListDateRisk/Controller/riskPageController.dart';
+
 import 'package:ifeelefine/Views/menuconfig_page.dart';
 
-import 'package:notification_center/notification_center.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import 'package:sensors_plus/sensors_plus.dart';
@@ -37,9 +33,7 @@ import 'package:ifeelefine/Page/RestoreMyConfiguration/Controller/restoreControl
 
 import 'package:ifeelefine/Services/mainService.dart';
 
-import 'package:ifeelefine/Common/idleLogic.dart';
 import 'package:ifeelefine/Common/utils.dart';
-import 'package:ifeelefine/Model/logAlerts.dart';
 
 import 'package:ifeelefine/Provider/prefencesUser.dart';
 import 'package:ifeelefine/Routes/routes.dart';
@@ -52,11 +46,12 @@ import 'package:get/get.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:timezone/src/date_time.dart';
+import 'package:uuid/uuid.dart';
 
 import 'Common/Firebase/firebaseManager.dart';
 
 import 'Page/Geolocator/Controller/configGeolocatorController.dart';
-import 'Page/LogActivity/Controller/logActivity_controller.dart';
+
 import 'Page/Premium/Controller/premium_controller.dart';
 
 import 'Page/UserEdit/Controller/getUserController.dart';
@@ -71,7 +66,7 @@ List<double> userAccelerometerValues = <double>[];
 GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 /// OPTIONAL when use custom notification
-final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
     FlutterLocalNotificationsPlugin();
 final service = FlutterBackgroundService();
 final List<StreamSubscription<dynamic>> _streamSubscriptions =
@@ -100,7 +95,9 @@ Timer desactivedtimerSendDropNotification =
 Timer timerSendLocation = Timer(const Duration(seconds: 15), () {});
 
 Timer timerTempDown = Timer(const Duration(seconds: 1), () {});
-int countdown = 300;
+Timer timerDropTempDown = Timer(const Duration(seconds: 1), () {});
+int countdown = 60;
+int countdownDrop = 60;
 
 final MainController mainController = Get.put(MainController());
 int _logActivityTimer = 0;
@@ -148,7 +145,7 @@ List<MenuConfigModel> permissionStatusI = [
   MenuConfigModel(
       "Configurar caída", 'assets/images/Group 506.png', 26, 22.76, true),
   MenuConfigModel(
-      "Cambiar envío ubicación", 'assets/images/Group 1082.png', 24, 24, true),
+      "Cambiar envió ubicación", 'assets/images/Group 1082.png', 24, 24, true),
   MenuConfigModel("Cambiar tiempo notificaciónes",
       'assets/images/Group 1099.png', 22, 17.15, true),
   MenuConfigModel("Cambiar sonido notificaciones",
@@ -175,10 +172,10 @@ class ReceivedNotification {
     required this.payload,
   });
 
-  final int id;
-  final String? title;
   final String? body;
+  final int id;
   final String? payload;
+  final String? title;
 }
 
 /// Defines a iOS/MacOS notification category for text input actions.
@@ -191,15 +188,22 @@ List<Contact> contactlist = [];
 List<String> taskdIds = [];
 bool isCancelZone = true;
 
-int secondsRemaining = 60; //5 minutes = 300 seconds
+int secondsRemaining = 30; //5 minutes = 300 seconds
 const platform = MethodChannel('custom_notification');
 
 Timer? timerCancelZone;
+StreamController<int> controllerTimer = StreamController<int>.broadcast();
+Stream subscription = Stream.periodic(const Duration(hours: 1));
+
 TZDateTime? datetime;
+
+ContactBD? contactTemp;
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await _prefs.initPrefs();
+  _prefs.refreshData();
   _prefs.setProtected =
       'AlertFriends está activada y estamos comprobando que te encuentres bien';
 
@@ -208,6 +212,7 @@ Future<void> main() async {
   await inicializeHiveBD();
   await initializeFirebase();
   await activateService();
+
   _prefs.setNameZone = await locateZone();
 
   user = await mainController.getUserData();
@@ -249,9 +254,7 @@ Future<void> main() async {
 
           starTap();
         },
-        child: MyApp(
-          initApp: initApp!,
-        ),
+        child: MyApp(initApp: initApp!),
       ),
     ),
   );
@@ -272,7 +275,8 @@ void starTap() {
   }
   timerSendLocation = Timer(const Duration(seconds: 15), () {
     print('Movimiento normal');
-    mainController.saveActivityLog(DateTime.now(), "Movimiento normal");
+    mainController.saveActivityLog(
+        DateTime.now(), "Movimiento normal", Uuid().v4().toString());
     timerSendLocation.cancel();
   });
 }
@@ -431,13 +435,22 @@ Future<void> activateService() async {
 @pragma('vm:entry-point')
 void onDidReceiveBackgroundNotificationResponse(
     NotificationResponse notificationResponse) async {
-  mainController.saveActivityLog(DateTime.now(), "Movimiento normal");
+  await inicializeHiveBD();
+  await prefs.initPrefs();
+  var aid = Uuid().v4().toString();
+  mainController.saveActivityLog(DateTime.now(), "Movimiento normal", aid);
   _logRudeMovementTimer = 0;
-
+  if (timerTempDown.isActive) {
+    timerTempDown.cancel();
+  }
+  if (timerDropTempDown.isActive) {
+    timerDropTempDown.cancel();
+  }
+  await flutterLocalNotificationsPlugin.cancel(notificationResponse.id!);
   switch (notificationResponse.notificationResponseType) {
     case NotificationResponseType.selectedNotification:
       if (notificationResponse.payload!.contains('ContactResponse')) {
-        NotificationCenter().notify('getContact');
+        RedirectViewNotifier.onRefreshContact(notificationResponse);
       }
       if (notificationResponse.payload!.contains("free")) {
         RedirectViewNotifier.onTapFreeNotification(notificationResponse);
@@ -448,6 +461,7 @@ void onDidReceiveBackgroundNotificationResponse(
       if (notificationResponse.payload!.contains("Drop_")) {
         ismove = false;
         timerActive = true;
+        _prefs.setEnableTimerDrop = false;
         String taskIds = notificationResponse.payload!.replaceAll("Drop_", "");
         var taskIdList = getTaskIdList(taskIds);
         idTask = taskIds;
@@ -465,7 +479,7 @@ void onDidReceiveBackgroundNotificationResponse(
         ismove = false;
         timerActive = true;
         _prefs.setEnableIFF = true;
-
+        _prefs.setEnableTimer = false;
         _prefs.setDisambleIFF = "0 hora";
         String taskIds =
             notificationResponse.payload!.replaceAll("Inactived_", "");
@@ -475,7 +489,9 @@ void onDidReceiveBackgroundNotificationResponse(
         rxIdTask.value = taskIds;
         rxlistTask.value = taskIdList;
         notActionPush = true;
-
+        if (timerTempDown.isActive) {
+          timerTempDown.cancel();
+        }
         RedirectViewNotifier.onTapNotificationBody(
             notificationResponse, taskIdList);
         // RedirectViewNotifier.showAlertDialog(taskIds, taskIdList);
@@ -488,14 +504,33 @@ void onDidReceiveBackgroundNotificationResponse(
         String taskIds =
             notificationResponse.actionId!.replaceAll("Inactived_", "");
         var taskIdList = getTaskIdList(taskIds);
+        if (timerTempDown.isActive) {
+          timerTempDown.cancel();
+        }
+        if (timerDropTempDown.isActive) {
+          timerDropTempDown.cancel();
+        }
+        if (notificationResponse.payload!.contains("Inactived_")) {
+          mainController.saveUserLog("Inactividad - solicito ayuda",
+              DateTime.now(), prefs.getIdInactiveGroup);
+        }
 
+        if (notificationResponse.payload!.contains("Drop_")) {
+          mainController.saveUserLog(
+              "Caida  - solicito ayuda", DateTime.now(), prefs.getIdDropGroup);
+        }
+        _prefs.setEnableTimer = false;
+        _prefs.setEnableTimerDrop = false;
         MainService().cancelAllNotifications(taskIdList);
+
+        return Future.value();
       }
       if (notificationResponse.payload!.contains("DateRisk_")) {
         String taskIds =
             notificationResponse.payload!.replaceAll("DateRisk_", "");
+
         _prefs.saveLastScreenRoute("cancelDate");
-        // NotificationCenter().notify('getContactRisk');
+
         var taskIdList = getTaskIdList(taskIds);
         idTask = taskIds;
         listTask = taskIdList;
@@ -503,8 +538,39 @@ void onDidReceiveBackgroundNotificationResponse(
         rxlistTask.value = taskIdList;
         notActionPush = true;
         var contactRisk = await const HiveDataRisk().getcontactRiskbd;
+        if (taskIds.isEmpty) {
+          EditRiskController erisk = Get.put(EditRiskController());
+          RiskController risk = Get.put(RiskController());
+          var resp = await risk.getContactsRisk();
+          ContactRiskBD tempcontact = initContactRisk();
+          for (var temp in resp) {
+            DateTime starTime = parseContactRiskDate(temp.timeinit);
+            bool isafter = DateTime.now().isAfter(starTime);
+            if (!temp.isActived &&
+                temp.isprogrammed &&
+                isafter &&
+                temp.isFinishTime == false) {
+              tempcontact = temp;
+            }
+          }
+
+          var contactRiskTemp = tempcontact;
+          // contactRiskTemp.id = int.parse(id);
+          // contactRiskTemp.isActived = true;
+          // contactRiskTemp.isprogrammed = false;
+          // contactRiskTemp.isFinishTime = true;
+          if (contactRiskTemp.id != -1) {
+            await erisk.updateContactRisk(contactRiskTemp);
+          }
+          // if (contactRiskTemp.id != prefs.getCancelIdDate) {
+          //   RedirectViewNotifier.onTapNotification(
+          //       notificationResponse, taskIdList, (contactRiskTemp.id));
+          // }
+
+          return;
+        }
         for (var element in contactRisk) {
-          if (element.isActived && element.isFinishTime) {
+          if (element.isFinishTime) {
             RedirectViewNotifier.onTapNotification(
                 notificationResponse, taskIdList, (element.id));
           }
@@ -519,8 +585,32 @@ void onDidReceiveBackgroundNotificationResponse(
         String taskIds =
             notificationResponse.actionId!.replaceAll("helpID_", "");
         var taskIdList = getTaskIdList(taskIds);
+        if (timerTempDown.isActive) {
+          timerTempDown.cancel();
+        }
+        if (timerDropTempDown.isActive) {
+          timerDropTempDown.cancel();
+        }
 
+        if (notificationResponse.payload!.contains("DateRisk_")) {
+          mainController.saveUserLog(
+              "Cita - solicito ayuda", DateTime.now(), prefs.getIdDateGroup);
+        }
+        if (notificationResponse.payload!.contains("Inactived_")) {
+          mainController.saveUserLog("Inactividad - solicito ayuda",
+              DateTime.now(), prefs.getIdInactiveGroup);
+        }
+
+        if (notificationResponse.payload!.contains("Drop_")) {
+          mainController.saveUserLog(
+              "Caida  - solicito ayuda", DateTime.now(), prefs.getIdDropGroup);
+        }
+
+        _prefs.setEnableTimer = false;
+        _prefs.setEnableTimerDrop = false;
         MainService().sendAlertToContactImmediately(taskIdList);
+
+        return Future.value();
       }
 
       if (notificationResponse.actionId != null &&
@@ -531,17 +621,73 @@ void onDidReceiveBackgroundNotificationResponse(
         ismove = false;
         timerActive = true;
 
+        if (timerTempDown.isActive) {
+          timerTempDown.cancel();
+        }
+
+        if (notificationResponse.payload!.contains("DateRisk_")) {
+          mainController.saveUserLog(
+              "Cita - Cancelada ", DateTime.now(), prefs.getIdDateGroup);
+          RiskController riskVC = Get.find<RiskController>();
+          riskVC.update();
+        }
+
+        if (notificationResponse.payload!.contains("Inactived_")) {
+          mainController.saveUserLog("Inactividad - Actividad detectada ",
+              DateTime.now(), prefs.getIdInactiveGroup);
+        }
+
+        if (notificationResponse.payload!.contains("Drop_")) {
+          mainController.saveUserLog(
+              "Caida cancelada", DateTime.now(), prefs.getIdDropGroup);
+        }
+
+        if (timerDropTempDown.isActive) {
+          timerDropTempDown.cancel();
+        }
+
+        _prefs.setEnableTimer = false;
+        _prefs.setEnableTimerDrop = false;
         MainService().cancelAllNotifications(taskIdList);
 
         await flutterLocalNotificationsPlugin.cancel(notificationResponse.id!);
+
+        return Future.value();
       }
       if (notificationResponse.actionId != null &&
           notificationResponse.actionId!.contains("dateHelp")) {
         String taskIds =
             notificationResponse.actionId!.replaceAll("dateHelp_", "");
         var taskIdList = getTaskIdList(taskIds);
-        NotificationCenter().notify('getContactRisk');
+        String id = notificationResponse.actionId!.substring(
+            notificationResponse.actionId!.indexOf('id='),
+            notificationResponse.actionId!.length);
 
+        if (timerTempDown.isActive) {
+          timerTempDown.cancel();
+        }
+        if (timerDropTempDown.isActive) {
+          timerDropTempDown.cancel();
+        }
+
+        if (notificationResponse.payload!.contains("Inactived_")) {
+          mainController.saveUserLog("Inactividad - solicito ayuda",
+              DateTime.now(), prefs.getIdInactiveGroup);
+        }
+
+        if (notificationResponse.payload!.contains("Drop_")) {
+          mainController.saveUserLog(
+              "Caida - solicito ayuda", DateTime.now(), prefs.getIdDropGroup);
+        }
+
+        if (notificationResponse.payload!.contains("DateRisk_")) {
+          var id = prefs.getIdDateGroup;
+          mainController.saveUserLog(
+              "Cita - solicito ayuda", DateTime.now(), id);
+        }
+
+        _prefs.setEnableTimer = false;
+        _prefs.setEnableTimerDrop = false;
         MainService().sendAlertToContactImmediately(taskIdList);
       }
       if (notificationResponse.actionId != null &&
@@ -553,10 +699,32 @@ void onDidReceiveBackgroundNotificationResponse(
             notificationResponse.actionId!.indexOf('id='),
             notificationResponse.actionId!.length);
         id = id.replaceAll("id=", "");
-        NotificationCenter().notify('getContactRisk');
+        EditRiskController erisk = Get.put(EditRiskController());
+        RiskController risk = Get.put(RiskController());
+        var resp = await risk.getContactsRisk();
+        ContactRiskBD tempcontact = initContactRisk();
+        for (var temp in resp) {
+          if (temp.id == int.parse(id)) {
+            tempcontact = temp;
+          }
+        }
+
+        var contactRiskTemp = tempcontact;
+        contactRiskTemp.id = int.parse(id);
+        contactRiskTemp.isActived = false;
+        contactRiskTemp.isprogrammed = false;
+        contactRiskTemp.isFinishTime = true;
+        await erisk.updateContactRisk(contactRiskTemp);
         var taskIdList = getTaskIdList(taskIds);
-        RedirectViewNotifier.onTapNotification(
-            notificationResponse, taskIdList, int.parse(id));
+        if (notificationResponse.payload!.contains("DateRisk_")) {
+          mainController.saveUserLog(
+              "Cita - Cancelada", DateTime.now(), prefs.getIdDateGroup);
+        }
+        MainService().cancelAllNotifications(taskIdList);
+        // NotificationCenter().notify('getContactRisk', data: id);
+        return Future.value();
+        // RedirectViewNotifier.onTapNotification(
+        // notificationResponse, taskIdList, int.parse(id));
       }
       if (notificationResponse.actionId!.contains("premium")) {
         RedirectViewNotifier.onTapPremiumNotification(notificationResponse);
@@ -573,10 +741,42 @@ void onDidReceiveBackgroundNotificationResponse(
             notificationResponse.actionId!.indexOf('id='),
             notificationResponse.actionId!.length);
         id = id.replaceAll("id=", "");
-        // NotificationCenter().notify('getContactRisk');
+
         var taskIdList = getTaskIdList(taskIds);
+        if (notificationResponse.payload!.contains("DateRisk_")) {
+          _prefs.saveLastScreenRoute("home");
+          EditRiskController erisk = Get.put(EditRiskController());
+          RiskController riskVC = Get.put(RiskController());
+
+          var resp = await riskVC.getContactsRisk();
+          ContactRiskBD tempcontact = initContactRisk();
+          for (var temp in resp) {
+            if (temp.id == int.parse(id)) {
+              tempcontact = temp;
+            }
+          }
+          // int indexSelect =
+          //     resp.indexWhere((item) => (item.id) == int.parse(id));
+          var contactRiskTemp = tempcontact;
+          contactRiskTemp.id = int.parse(id);
+          // contactRiskTemp.isActived = false;
+          // contactRiskTemp.isprogrammed = false;
+          contactRiskTemp.isFinishTime = true;
+          await erisk.updateContactRisk(contactRiskTemp);
+          riskVC.update();
+          mainController.saveUserLog(
+              "Cita - Cancelada ", DateTime.now(), prefs.getIdDateGroup);
+        }
+
+        if (notificationResponse.payload!.contains("Drop_")) {
+          mainController.saveUserLog(
+              "Caida - estoy bien", DateTime.now(), prefs.getIdDropGroup);
+        }
         RedirectViewNotifier.onTapNotification(
             notificationResponse, taskIdList, int.parse(id));
+        // MainService().cancelAllNotifications(taskIdList);
+
+        return Future.value();
       }
 
       break;
@@ -611,26 +811,6 @@ tz.TZDateTime _nextInstanceOfTenAM() {
 int notificationId = 1110;
 StreamController<String> notificationContentController =
     StreamController<String>();
-
-// void updateNotification(String updatedContent) async {
-//   await flutterLocalNotificationsPlugin.show(
-//     notificationId,
-//     'Título',
-//     updatedContent,
-//     const NotificationDetails(
-//         android: AndroidNotificationDetails(
-//       'full screen channel id',
-//       'full screen channel name',
-//       channelDescription: 'full screen channel description',
-//       priority: Priority.max,
-//       importance: Importance.high,
-//       playSound: false,
-//       onlyAlertOnce: true,
-//       enableVibration: false,
-//     )),
-//     payload: 'notification payload',
-//   );
-// }
 
 ///Funcion utilizada para el momento de detectar que la app esta en segundo plano y activar o invocar el servicio.
 ///Variables:
@@ -728,78 +908,29 @@ void onStart(ServiceInstance service) async {
       },
     );
 
-    // Timer.periodic(
-    //   const Duration(days: 3),
-    //   (timer) {
-    //     if (_prefs.getUserFree && !_prefs.getUserPremium) {
-    //       if (_prefs.getUsedFreeDays) {
-    //         RedirectViewNotifier.showPremiumNotification();
-    //       } else {
-    //         RedirectViewNotifier.showFreeeNotification();
+    // Timer.periodic(const Duration(seconds: 1), (timer) async {
+    //   if (Platform.isAndroid) {
+    //     if (service is AndroidServiceInstance) {
+    //       if (await service.isForegroundService()) {
+    //         var timerTemp = timeRevert - 1;
+    //         // flutterLocalNotificationsPlugin.show(
+    //         //   888,
+    //         //   'COOL SERVICE',
+    //         //   'Awesome ${timerTemp}',
+    //         //   const NotificationDetails(
+    //         //     android: AndroidNotificationDetails(
+    //         //         'my_foreground', 'MY FOREGROUND SERVICE',
+    //         //         icon: 'ic_bg_service_small',
+    //         //         ongoing: false,
+    //         //         priority: Priority.high,
+    //         //         importance: Importance.high,
+    //         //         playSound: false),
+    //         //   ),
+    //         // );
     //       }
     //     }
-    //   },
-    // );
-
-    // await flutterLocalNotificationsPlugin.zonedSchedule(
-    //     0,
-    //     'scheduled title',
-    //     'scheduled body',
-    //     _nextInstanceOfTenAM(),
-    //     const NotificationDetails(
-    //         android: AndroidNotificationDetails(
-    //             'full screen channel id', 'full screen channel name',
-    //             channelDescription: 'full screen channel description',
-    //             priority: Priority.high,
-    //             importance: Importance.high,
-    //             fullScreenIntent: true)),
-    //     androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
-    //     uiLocalNotificationDateInterpretation:
-    //         UILocalNotificationDateInterpretation.absoluteTime);
-
-    // await flutterLocalNotificationsPlugin.zonedSchedule(
-    //   100,
-    //   'Cuenta Regresiva',
-    //   'Tiempo restante: ${secondsRemaining ~/ 60}:${(secondsRemaining % 60).toString().padLeft(2, '0')}',
-    //   _nextInstanceOfTenAM(),
-    //   const NotificationDetails(
-    //     android: AndroidNotificationDetails(
-    //         'my_foreground', 'MY FOREGROUND SERVICE',
-    //         icon: 'ic_bg_service_small',
-    //         ongoing: false,
-    //         priority: Priority.high,
-    //         importance: Importance.high,
-    //         playSound: false),
-    //   ),
-    //   payload: 'notification payload',
-    //   uiLocalNotificationDateInterpretation:
-    //       UILocalNotificationDateInterpretation.absoluteTime,
-    //   matchDateTimeComponents: DateTimeComponents.time,
-    // );
-
-    Timer.periodic(const Duration(seconds: 1), (timer) async {
-      if (Platform.isAndroid) {
-        if (service is AndroidServiceInstance) {
-          if (await service.isForegroundService()) {
-            var timerTemp = timeRevert - 1;
-            // flutterLocalNotificationsPlugin.show(
-            //   888,
-            //   'COOL SERVICE',
-            //   'Awesome ${timerTemp}',
-            //   const NotificationDetails(
-            //     android: AndroidNotificationDetails(
-            //         'my_foreground', 'MY FOREGROUND SERVICE',
-            //         icon: 'ic_bg_service_small',
-            //         ongoing: false,
-            //         priority: Priority.high,
-            //         importance: Importance.high,
-            //         playSound: false),
-            //   ),
-            // );
-          }
-        }
-      }
-    });
+    //   }
+    // });
 
     if (increaceUpdateFirebase >= timeUpdateFirebase) {
       updateFirebaseToken();
@@ -831,85 +962,6 @@ Future<bool> onIosBackground(ServiceInstance service) async {
   return true;
 }
 
-// Future<void> movimientoBrusco() async {
-//   await _prefs.initPrefs();
-//   await _prefs.refreshData();
-//   var enableIFF = await getEnableIFF();
-
-//   if (_prefs.getUserFree) return;
-//   if (enableIFF && !_prefs.getDetectedFall && !_prefs.getUserPremium) return;
-
-//   if (_logRudeMovementTimer >= _logRudeMovementTimerRefresh) {
-//     mainController.saveDrop();
-//     _logRudeMovementTimer = 0;
-//   }
-// }
-
-// Future<void> movimientoNormal() async {
-//   await _prefs.initPrefs();
-//   await _prefs.refreshData();
-//   var enableIFF = await getEnableIFF();
-
-//   if (_prefs.getUserFree) return;
-//   if (enableIFF && !_prefs.getDetectedFall && !_prefs.getUserPremium) return;
-
-//   if (_logRudeMovementTimer >= _logRudeMovementTimerRefresh) {
-//     mainController.saveDrop();
-//     _logRudeMovementTimer = 0;
-//   }
-// }
-
-// List<double> accelerationHistory = [];
-// Timer? fallDetectionTimer;
-
-// void onData(double accelerationMagnitude) {
-//   // Agregar el nuevo valor a la lista de historial
-//   accelerationHistory.add(accelerationMagnitude);
-
-//   // Mantener un límite en el tamaño del historial (por ejemplo, 10 elementos)
-//   if (accelerationHistory.length > 10) {
-//     accelerationHistory.removeAt(0);
-//   }
-
-//   // Verificar si se ha alcanzado el límite de aceleración para considerarlo una caída
-//   if (accelerationMagnitude >= 45) {
-//     print('Movimiento brusco');
-//     // Iniciar el temporizador de detección de caídas
-//     if (fallDetectionTimer == null) {
-//       fallDetectionTimer = Timer(Duration(seconds: 15), () {
-//         // Notificar la caída después del tiempo especificado
-//         notifyFall();
-//       });
-//     }
-//   } else if (fallDetectionTimer != null) {
-//     // Si la aceleración ha disminuido después de una posible caída,
-//     // cancelar el temporizador de detección de caídas
-//     if (isAccelerationDecreasing()) {
-//       fallDetectionTimer?.cancel();
-//       fallDetectionTimer = null;
-//     }
-//   }
-// }
-
-// bool isAccelerationDecreasing() {
-//   // Verificar si la aceleración está disminuyendo en los últimos valores del historial
-//   if (accelerationHistory.length >= 2) {
-//     final lastIndex = accelerationHistory.length - 1;
-//     final secondToLastIndex = accelerationHistory.length - 2;
-//     return accelerationHistory[lastIndex] <
-//         accelerationHistory[secondToLastIndex];
-//   }
-//   return false;
-// }
-
-// void notifyFall() {
-//   // Aquí puedes implementar la notificación de caída
-//   // Restablecer el historial y el temporizador después de notificar
-//   accelerationHistory.clear();
-//   fallDetectionTimer = null;
-//   mainController.saveDrop();
-// }
-
 void accelerometer() async {
   //Initialization Settings for Android
   await _prefs.initPrefs();
@@ -921,7 +973,7 @@ void accelerometer() async {
             sqrt(event.x * event.x + event.y * event.y + event.z * event.z);
         _prefs.refreshData();
         // onData(accelerationMagnitude);
-        if (accelerationMagnitude > 25) {
+        if (accelerationMagnitude > 45) {
           isMovRude = true;
           print('_prefs.getUserFree ${_prefs.getUserFree}');
           print('_prefs.getDetectedFall ${_prefs.getDetectedFall}');
@@ -943,13 +995,13 @@ void accelerometer() async {
             });
             return;
           }
-          if (accelerationMagnitude < 45 && accelerationMagnitude > 12) {
+          if (accelerationMagnitude < 45 && accelerationMagnitude > 10) {
             if (_prefs.getEnableIFF &&
                 _logActivityTimer >= _logActivityTimerRefresh) {
               if (_prefs.getUseMobilConfig) {
                 print('Movimiento normal');
-                mainController.saveActivityLog(
-                    DateTime.now(), "Movimiento normal");
+                mainController.saveActivityLog(DateTime.now(),
+                    "Movimiento normal", Uuid().v4().toString());
                 isMovRude = false;
               }
               _logActivityTimer = 0;
@@ -976,9 +1028,9 @@ void accelerometer() async {
 // }
 
 class MyApp extends StatefulWidget {
-  final String initApp;
-
   const MyApp({super.key, required this.initApp});
+
+  final String initApp;
 
   @override
   State<MyApp> createState() => _MyAppState();

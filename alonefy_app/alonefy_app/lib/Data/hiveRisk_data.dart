@@ -1,9 +1,8 @@
+import 'package:flutter/src/foundation/change_notifier.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:ifeelefine/Common/initialize_models_bd.dart';
 import 'package:ifeelefine/Model/contactRiskBD.dart';
 import 'package:ifeelefine/Model/contactZoneRiskBD.dart';
-import 'package:ifeelefine/Model/logAlertsBD.dart';
-import 'package:intl/intl.dart';
 
 class HiveDataRisk {
   const HiveDataRisk();
@@ -15,15 +14,9 @@ class HiveDataRisk {
 
       final person = await box.add(contact);
 
-      var formattedDate = DateFormat('yMd').format(contact.createDate);
-      print(formattedDate); // Imprimirá: 10-08-2023
-
-      DateTime fss = DateFormat('yMd').parse(formattedDate);
-      var tempAct = LogAlertsBD(
-          id: 0, time: fss, type: "Cita", photoDate: contact.photoDate);
-
       return true;
     } catch (error) {
+      print(error);
       return false;
     }
   }
@@ -43,10 +36,13 @@ class HiveDataRisk {
       }
 
       final listDate = box.values.toList();
+      // contactNotifiers.value = listDate;
       int indexSelect = listDate.indexWhere((item) => item.id == contact.id);
       print(listDate);
 
       temp = listDate[indexSelect];
+
+      // contactNotifiers.notifyListeners();
       return temp;
     } catch (error) {
       print(error);
@@ -68,6 +64,8 @@ class HiveDataRisk {
         index++;
       }
       print("delete");
+      // final listDate = box.values.toList();
+      // contactNotifiers.value = listDate;
     } catch (error) {
       print(error);
     }
@@ -110,7 +108,8 @@ class HiveDataRisk {
           return item;
         }
       }
-
+      // final listDate = box.values.toList();
+      // contactNotifiers.value = listDate;
       return null;
     } catch (error) {
       print(error);

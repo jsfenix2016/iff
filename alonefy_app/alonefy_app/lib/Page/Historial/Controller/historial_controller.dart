@@ -91,7 +91,11 @@ class HistorialController extends GetxController {
         var dateTime1 = DateFormat('dd-MM-yyyy HH:mm').parse(ar);
 
         var tempAct = LogAlertsBD(
-            id: 0, time: dateTime1, type: "Cita", photoDate: dateTem.photoDate);
+            id: dateTem.id,
+            time: dateTime1,
+            type: "Cita",
+            photoDate: dateTem.photoDate,
+            groupBy: '2');
         tempDynamic.add(tempAct);
       }
     }
@@ -106,7 +110,11 @@ class HistorialController extends GetxController {
         var dateTime1 = DateFormat('dd-MM-yyyy HH:mm').parse(ar);
         // var datenew = DateFormat('dd-MM-yyyy HH:mm:ss').format(date.createDate);
         var tempAct = LogAlertsBD(
-            id: 0, time: (dateTime1), type: "Zona", video: date.video);
+            id: date.id,
+            time: (dateTime1),
+            type: "Zona",
+            video: date.video,
+            groupBy: "3");
         tempDynamic.add(tempAct);
       }
     }
@@ -115,8 +123,17 @@ class HistorialController extends GetxController {
         convertDateTimeToString(activityItem.time);
 
         var tempAct = LogAlertsBD(
-            id: 0, time: activityItem.time, type: activityItem.movementType);
-        tempDynamic.add(tempAct);
+            id: activityItem.key,
+            time: activityItem.time,
+            type: activityItem.movementType,
+            groupBy: activityItem.groupBy);
+
+        if (activityItem.movementType != "Zona" ||
+            activityItem.movementType != "Cita") {
+          tempDynamic.add(tempAct);
+        } else {
+          print("object");
+        }
       }
     }
     if (activities.isNotEmpty) {

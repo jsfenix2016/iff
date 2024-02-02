@@ -4,7 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:ifeelefine/Common/colorsPalette.dart';
 import 'package:ifeelefine/Common/decoration_custom.dart';
 import 'package:ifeelefine/Common/habits.dart';
-import 'package:ifeelefine/Common/notificationService.dart';
+
 import 'package:ifeelefine/Common/text_style_font.dart';
 import 'package:ifeelefine/Controllers/mainController.dart';
 
@@ -250,6 +250,15 @@ class _MenuConfigurationPageState extends State<MenuConfigurationPage> {
             ));
         break;
       case 10:
+        Future.sync(
+          () => Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const RestoreMyConfigPage(),
+            ),
+          ),
+        );
+        return;
         if (_prefs.getUserPremium) {
           Future.sync(
             () => Navigator.push(

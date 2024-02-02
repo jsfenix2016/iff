@@ -59,6 +59,8 @@ class PermissionController extends GetxController {
           case 2:
             if (_prefs.getAcceptedContacts == PreferencePermission.allow) {
               _prefs.setAcceptedContacts = PreferencePermission.noAccepted;
+            } else {
+              _prefs.setAcceptedContacts = PreferencePermission.noAccepted;
             }
             break;
           case 3:

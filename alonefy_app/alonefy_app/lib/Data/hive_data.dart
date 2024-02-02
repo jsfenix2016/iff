@@ -68,11 +68,16 @@ class HiveData {
   }
 
   Future<List<ContactBD>> get listUserContactbd async {
-    final Box<ContactBD> box = await Hive.openBox<ContactBD>('contactBD');
+    try {
+      var box = await Hive.openBox<ContactBD>('contactBD');
 
-    var listContact = box.values.toList();
-
-    return listContact;
+      var listContact = box.values.toList();
+      Hive.close();
+      return listContact;
+    } catch (error) {
+      print(error);
+      return [];
+    }
   }
 
   Future<ContactBD?> getContactBD(String phones) async {
@@ -92,24 +97,75 @@ class HiveData {
     }
   }
 
-  Future updateContact(ContactBD contact) async {
-    final Box<ContactBD> box = await Hive.openBox<ContactBD>('contactBD');
+  Future<ContactBD?> updateContact(ContactBD contact) async {
+    try {
+      var box = await Hive.openBox<ContactBD>('contactBD');
 
-    var index = 0;
-    for (var contactBD in box.values) {
-      if (contact.phones == contactBD.phones) {
-        await box.putAt(index, contact);
-        break;
+      // var index = 0;
+      // for (var contactBD in box.values) {
+      //   if (contact.phones == contactBD.phones) {}
+      //   index++;
+      // }
+
+      var index = 0;
+      for (var contactRiskBD in box.values.toList()) {
+        if (contactRiskBD.phones == contact.phones) {
+          await box.putAt(index, contact);
+          break;
+        }
+        index++;
       }
-      index++;
-    }
 
-    var listContact = box.values.toList();
-    print(listContact);
+      final listDate = box.values.toList();
+      // contactNotifiers.value = listDate;
+      int indexSelect =
+          listDate.indexWhere((item) => item.phones == contact.phones);
+      print(listDate);
+
+      var temp = listDate[indexSelect];
+      print(temp);
+      return temp;
+    } catch (error) {
+      print(error);
+      return null;
+    }
+  }
+
+  Future<ContactBD?> updateContactBackGround(ContactBD contact) async {
+    try {
+      var box = await Hive.openBox<ContactBD>('contactBD');
+      ContactBD? contactTemp;
+
+      var index = 0;
+      for (var contactBD in box.values.toList()) {
+        if (contactBD.phones == contact.phones) {
+          contact = contactBD;
+          contactTemp = contactBD;
+          break;
+        }
+        index++;
+      }
+
+      await box.delete(contact.key);
+      await box.add(contactTemp!);
+      Hive.close();
+      final listDate = box.values.toList();
+      // contactNotifiers.value = listDate;
+      int indexSelect =
+          listDate.indexWhere((item) => item.phones == contact.phones);
+      print(listDate);
+
+      var temp = listDate[indexSelect];
+      print(temp);
+      return temp;
+    } catch (error) {
+      print(error);
+      return null;
+    }
   }
 
   Future<bool> saveUserContact(ContactBD user) async {
-    final Box<ContactBD> box = await Hive.openBox<ContactBD>('contactBD');
+    final box = await Hive.openBox<ContactBD>('contactBD');
     try {
       await box.add(user);
       return true;

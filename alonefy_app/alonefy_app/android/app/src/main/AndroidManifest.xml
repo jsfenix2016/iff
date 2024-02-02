@@ -124,11 +124,13 @@
             android:resource="" />-->
             <meta-data
             android:name="com.google.firebase.messaging.default_notification_channel_id"
-            android:value="uri_channel_name" />
+            android:value="uri_channel_name"
+             />
             <service
             android:name="com.alertfriends.alertfriends.ForegroundService"        
             android:exported="true"
             android:stopWithTask="false"
+           
             android:foregroundServiceType="location|microphone|mediaPlayback|camera|health"/>
             
            

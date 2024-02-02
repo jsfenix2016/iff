@@ -36,10 +36,10 @@ class _ListContactState extends State<ListContact> {
     starTap();
     NotificationCenter().subscribe('getContact', _getContacts);
     // Get the list of contacts from the device
-    _checkPermissionIsEnabled();
+    _checkPermissionContact();
   }
 
-  void _checkPermissionIsEnabled() async {
+  void _checkPermissionContact() async {
     PermissionStatus permission = await Permission.contacts.request();
 
     if (permission.isPermanentlyDenied) {
@@ -80,6 +80,7 @@ class _ListContactState extends State<ListContact> {
       _prefs.setAcceptedContacts = PreferencePermission.allow;
       _contacts = contacts;
     });
+    controller.update();
   }
 
   Future<List<Contact>> getList() async {
@@ -118,113 +119,117 @@ class _ListContactState extends State<ListContact> {
   }
 
   Widget listviewContactRisk() {
-    return FutureBuilder<List<Contact>>(
-      future: getList(),
-      builder: (context, snapshot) {
-        if (snapshot.hasData) {
-          final listContact = snapshot.data!;
-          return ListView.separated(
-            separatorBuilder: (context, index) {
-              return const SizedBox(
-                height: 10,
-              );
-            },
-            scrollDirection: Axis.vertical,
-            padding: const EdgeInsets.only(top: 0.0, bottom: 50),
-            shrinkWrap: true,
-            itemCount: listContact.length,
-            itemBuilder: (context, index) {
-              if (index >= 0 && index < listContact.length) {
-                return Padding(
-                  padding: const EdgeInsets.only(left: 0, right: 0),
-                  child: GestureDetector(
-                    onTap: () {
-                      widget.onSelectContact(listContact[index]);
-                      setState(() {});
-                    },
-                    child: Container(
-                      decoration: const BoxDecoration(
-                        color: Color.fromRGBO(169, 146, 125, 0.5),
-                        borderRadius: BorderRadius.all(
-                          Radius.circular(
-                              100.0), //                 <--- border radius here
+    return GetBuilder<ListContactController>(builder: (context) {
+      return FutureBuilder<List<Contact>>(
+        future: getList(),
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            final listContact = snapshot.data!;
+            return ListView.separated(
+              separatorBuilder: (context, index) {
+                return const SizedBox(
+                  height: 10,
+                );
+              },
+              scrollDirection: Axis.vertical,
+              padding: const EdgeInsets.only(top: 0.0, bottom: 50),
+              shrinkWrap: true,
+              itemCount: listContact.length,
+              itemBuilder: (context, index) {
+                if (index >= 0 && index < listContact.length) {
+                  return Padding(
+                    padding: const EdgeInsets.only(left: 0, right: 0),
+                    child: GestureDetector(
+                      onTap: () {
+                        widget.onSelectContact(listContact[index]);
+                        setState(() {});
+                      },
+                      child: Container(
+                        decoration: const BoxDecoration(
+                          color: Color.fromRGBO(169, 146, 125, 0.5),
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(
+                                100.0), //                 <--- border radius here
+                          ),
                         ),
-                      ),
-                      height: 79,
-                      width: 180,
-                      child: Stack(
-                        children: [
-                          _mostrarFoto(listContact[index]),
-                          Positioned(
-                            right: 0,
-                            child: Center(
-                              child: Container(
-                                decoration: const BoxDecoration(
-                                  color: Colors.transparent,
-                                  borderRadius: BorderRadius.only(
-                                    bottomRight: Radius.circular(100),
-                                    topRight: Radius.circular(100),
-                                  ),
-                                ),
-                                height: 79,
-                                width: 200,
-                                child: Row(
-                                  children: [
-                                    Container(
-                                      decoration: const BoxDecoration(
-                                        color: Colors.transparent,
-                                      ),
-                                      height: 79,
-                                      width: 150,
-                                      child: Center(
-                                        child: (listContact.isNotEmpty)
-                                            ? Text(
-                                                listContact[index]
-                                                    .displayName
-                                                    .trimRight(),
-                                                textAlign: TextAlign.center,
-                                                style: GoogleFonts.barlow(
-                                                  fontSize: 18.0,
-                                                  wordSpacing: 1,
-                                                  letterSpacing: 1,
-                                                  fontWeight: FontWeight.normal,
-                                                  color: Colors.white,
-                                                ),
-                                              )
-                                            : Text(
-                                                "Selecciona un contacto",
-                                                textAlign: TextAlign.center,
-                                                style: GoogleFonts.barlow(
-                                                  fontSize: 18.0,
-                                                  wordSpacing: 1,
-                                                  letterSpacing: 1,
-                                                  fontWeight: FontWeight.normal,
-                                                  color: Colors.white,
-                                                ),
-                                              ),
-                                      ),
+                        height: 79,
+                        width: 180,
+                        child: Stack(
+                          children: [
+                            _mostrarFoto(listContact[index]),
+                            Positioned(
+                              right: 0,
+                              child: Center(
+                                child: Container(
+                                  decoration: const BoxDecoration(
+                                    color: Colors.transparent,
+                                    borderRadius: BorderRadius.only(
+                                      bottomRight: Radius.circular(100),
+                                      topRight: Radius.circular(100),
                                     ),
-                                  ],
+                                  ),
+                                  height: 79,
+                                  width: 200,
+                                  child: Row(
+                                    children: [
+                                      Container(
+                                        decoration: const BoxDecoration(
+                                          color: Colors.transparent,
+                                        ),
+                                        height: 79,
+                                        width: 150,
+                                        child: Center(
+                                          child: (listContact.isNotEmpty)
+                                              ? Text(
+                                                  listContact[index]
+                                                      .displayName
+                                                      .trimRight(),
+                                                  textAlign: TextAlign.center,
+                                                  style: GoogleFonts.barlow(
+                                                    fontSize: 18.0,
+                                                    wordSpacing: 1,
+                                                    letterSpacing: 1,
+                                                    fontWeight:
+                                                        FontWeight.normal,
+                                                    color: Colors.white,
+                                                  ),
+                                                )
+                                              : Text(
+                                                  "Selecciona un contacto",
+                                                  textAlign: TextAlign.center,
+                                                  style: GoogleFonts.barlow(
+                                                    fontSize: 18.0,
+                                                    wordSpacing: 1,
+                                                    letterSpacing: 1,
+                                                    fontWeight:
+                                                        FontWeight.normal,
+                                                    color: Colors.white,
+                                                  ),
+                                                ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                );
-              }
-              return const Center(child: CircularProgressIndicator());
-            },
-          );
-        } else if (snapshot.hasError) {
-          return const Text("");
-        } else {
-          return const Center(child: CircularProgressIndicator());
-        }
-      },
-    );
+                  );
+                }
+                return const Center(child: CircularProgressIndicator());
+              },
+            );
+          } else if (snapshot.hasError) {
+            return const Text("");
+          } else {
+            return const Center(child: CircularProgressIndicator());
+          }
+        },
+      );
+    });
   }
 
   @override

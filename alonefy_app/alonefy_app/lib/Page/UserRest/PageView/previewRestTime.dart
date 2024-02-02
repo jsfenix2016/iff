@@ -5,9 +5,10 @@ import 'dart:collection';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ifeelefine/Common/Constant.dart';
-import 'package:ifeelefine/Common/colorsPalette.dart';
+
 import 'package:ifeelefine/Common/manager_alerts.dart';
 import 'package:ifeelefine/Common/text_style_font.dart';
+import 'package:ifeelefine/Common/utils.dart';
 import 'package:ifeelefine/Model/restdaybd.dart';
 import 'package:ifeelefine/Page/PreviewActivitiesFilteredByDate/PageView/previewActivitiesByDate_page.dart';
 
@@ -49,7 +50,7 @@ class _PreviewRestTimePageState extends State<PreviewRestTimePage> {
   @override
   void initState() {
     getInactivity();
-    if (!widget.isMenu) _prefs.saveLastScreenRoute("previewRestDay");
+    // if (!widget.isMenu) _prefs.saveLastScreenRoute("previewRestDay");
     super.initState();
 
     starTap();
@@ -127,7 +128,8 @@ class _PreviewRestTimePageState extends State<PreviewRestTimePage> {
         showSaveAlert(context, Constant.info, Constant.saveCorrectly);
         return;
       }
-      Get.offAll(const PreviewActivitiesByDate(isMenu: false));
+      refreshMenu('restDay');
+      Get.off(const PreviewActivitiesByDate(isMenu: false));
     }
   }
 
@@ -373,7 +375,9 @@ class _PreviewRestTimePageState extends State<PreviewRestTimePage> {
 
                                         if (widget.isMenu) return;
                                       },
-                                      mensaje: Constant.saveBtn,
+                                      mensaje: widget.isMenu
+                                          ? Constant.saveBtn
+                                          : Constant.continueTxt,
                                       showIcon: false,
                                       img: '',
                                     ),

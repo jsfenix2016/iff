@@ -23,7 +23,7 @@ class EditUserService {
       "email": user.email,
       "gender": (user.gender),
       "maritalStatus": (user.maritalStatus),
-      "stylelife": (user.styleLife),
+      "styleLife": (user.styleLife),
       "pathImage": "",
       "age": (user.age),
       "country": (user.country),

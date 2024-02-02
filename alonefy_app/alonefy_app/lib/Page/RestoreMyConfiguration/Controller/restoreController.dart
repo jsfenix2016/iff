@@ -6,7 +6,7 @@ import 'package:ifeelefine/Common/Firebase/firebaseManager.dart';
 import 'package:ifeelefine/Common/manager_alerts.dart';
 import 'package:ifeelefine/Common/notificationService.dart';
 import 'package:ifeelefine/Common/utils.dart';
-import 'package:ifeelefine/Controllers/contactUserController.dart';
+import 'package:ifeelefine/Page/Contact/Controller/contactUserController.dart';
 
 import 'package:ifeelefine/Data/hiveRisk_data.dart';
 import 'package:ifeelefine/Model/ApiRest/ContactRiskApi.dart';
@@ -164,21 +164,26 @@ class RestoreController extends GetxController {
     }
   }
 
-  Future<void> _saveContacts(List<ContactApi> contactsApi) async {
-    await ContactUserController().saveFromApi(contactsApi);
-    if (contactsApi.isNotEmpty) {
-      refreshMenu("addContact");
-    }
+  void _saveContacts(List<ContactApi> contactsApi) {
+    refreshMenu("addContact");
+    Future.sync(
+      () async {
+        await ContactUserController().saveFromApi(contactsApi);
+        if (contactsApi.isNotEmpty) {
+          bool enable = await requestPermission(Permission.contacts);
+          if (enable) {
+            _prefs.setAcceptedContacts = PreferencePermission.allow;
+          }
+        }
+      },
+    );
   }
 
-  Future<void> _saveLocation(UserApi? userApi) async {
+  void _saveLocation(UserApi? userApi) {
     if (userApi != null && userApi.activateLocation) {
-      var isAccepted = await requestPermission(Permission.location);
-
-      if (isAccepted) {
-        _prefs.setAcceptedSendLocation = PreferencePermission.allow;
-        refreshMenu("configGeo");
-      }
+      requestPermission(Permission.location);
+      _prefs.setAcceptedSendLocation = PreferencePermission.allow;
+      refreshMenu("configGeo");
     }
   }
 
@@ -189,37 +194,33 @@ class RestoreController extends GetxController {
     }
   }
 
-  Future<void> _saveContactPermission(UserApi? userApi) async {
+  void _saveContactPermission(UserApi? userApi) async {
     if (userApi != null && userApi.activateContacts) {
-      var isAccepted;
-      Future.sync(() async =>
-          isAccepted = await requestPermission(Permission.contacts));
-
-      if (isAccepted) {
+      bool allow = await requestPermission(Permission.contacts);
+      if (allow) {
         _prefs.setAcceptedContacts = PreferencePermission.allow;
       }
     }
   }
 
-  Future<void> _saveCameraPermission(UserApi? userApi) async {
+  void _saveCameraPermission(UserApi? userApi) {
     if (userApi != null && userApi.activateCamera) {
-      var isAccepted = await requestPermission(Permission.camera);
-
-      if (isAccepted) {
-        _prefs.setAcceptedCamera = PreferencePermission.allow;
-      }
+      Future.sync(() async {
+        bool cameraenabled = await requestPermission(Permission.camera);
+        if (cameraenabled) {
+          _prefs.setAcceptedCamera = PreferencePermission.allow;
+        }
+      });
     }
   }
 
-  Future<void> _saveNotifications(UserApi? userApi) async {
+  void _saveNotifications(UserApi? userApi) {
     if (userApi != null && userApi.activateNotifications) {
-      var isAccepted = await requestPermission(Permission.notification);
-      if (isAccepted) {
-        updateFirebaseToken();
-        _prefs.setAcceptedNotification = userApi.activateNotifications
-            ? PreferencePermission.allow
-            : PreferencePermission.noAccepted;
-      }
+      requestPermission(Permission.notification);
+      updateFirebaseToken();
+      _prefs.setAcceptedNotification = userApi.activateNotifications
+          ? PreferencePermission.allow
+          : PreferencePermission.noAccepted;
       if (_prefs.getAcceptedNotification == PreferencePermission.allow ||
           _prefs.getDetectedFall ||
           _prefs.getAcceptedSendLocation == PreferencePermission.allow) {
@@ -238,11 +239,22 @@ class RestoreController extends GetxController {
   }
 
   Future<void> _saveContactRisk(List<ContactRiskApi> contactsRiskApi) async {
+    if (contactsRiskApi.isEmpty) {
+      return;
+    }
+
     EditRiskController().saveFromApi(contactsRiskApi);
   }
 
   Future<void> _saveContactZoneRisk(
       List<ZoneRiskApi> contactsZoneRiskApi) async {
+    if (contactsZoneRiskApi.isEmpty) {
+      return;
+    }
+    prefs.setAcceptedCamera = PreferencePermission.allow;
+    await cameraPermissions(
+      prefs.getAcceptedCamera,
+    );
     EditZoneController().saveFromApi(contactsZoneRiskApi);
   }
 

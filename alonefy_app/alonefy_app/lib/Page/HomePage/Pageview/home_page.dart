@@ -8,11 +8,13 @@ import 'package:ifeelefine/Common/manager_alerts.dart';
 import 'package:ifeelefine/Common/notificationService.dart';
 import 'package:ifeelefine/Common/text_style_font.dart';
 import 'package:ifeelefine/Common/utils.dart';
+import 'package:ifeelefine/Page/Contact/Notice/Controller/contactNoticeController.dart';
 
 import 'package:ifeelefine/Page/HomePage/Controller/homeController.dart';
 import 'package:ifeelefine/Page/HomePage/Widget/avatar_content.dart';
 import 'package:ifeelefine/Page/HomePage/Widget/container_top_button.dart';
 import 'package:ifeelefine/Page/HomePage/Widget/customNavbar.dart';
+import 'package:ifeelefine/Page/Risk/DateRisk/ListDateRisk/Controller/riskPageController.dart';
 
 import 'package:ifeelefine/Page/Risk/ZoneRisk/ListContactZoneRisk/Controller/listContactZoneController.dart';
 
@@ -25,6 +27,7 @@ import 'package:ifeelefine/Provider/prefencesUser.dart';
 import 'package:ifeelefine/Page/Alerts/PageView/alerts_page.dart';
 
 import 'package:ifeelefine/Utils/Widgets/widgetLogo.dart';
+import 'package:ifeelefine/Views/menu_controller.dart';
 
 import 'package:ifeelefine/Views/menuconfig_page.dart';
 
@@ -76,11 +79,17 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     NotificationCenter().subscribe('getUserData', getUserData);
     Future.sync(() => RedirectViewNotifier.setStoredContext(context));
     // RedirectViewNotifier.onTapRedirectCancelZone();
-    NotificationCenter().notify('refreshMenu');
+    try {
+      NotificationCenter().notify('refreshMenu');
+    } catch (e) {
+      print(e);
+    }
     NotificationCenter().subscribe('refreshView', _refreshView);
   }
 
   void _refreshView() {
+    userVC.update();
+    riskVC.update();
     setState(() {});
   }
 
@@ -95,7 +104,12 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     setState(
       () {
         _appLifecycleState = state;
-        if (state.name.contains("paused")) {}
+        if (state.name.contains("paused")) {
+          print(state.name);
+          if (_prefs.getUseMobilConfig) {
+            Get.offAll(HomePage());
+          }
+        }
       },
     );
 
@@ -104,7 +118,36 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
         // isOppenedApp = true;
         // FlutterBackgroundService().invoke("setAsForeground");
         Future.sync(() => RedirectViewNotifier.setStoredContext(context));
+//         RiskController? riskVC;
+//         try {
+//           riskVC = Get.find<RiskController>();
+//         } catch (e) {
+//           // Si Get.find lanza un error, eso significa que el controlador no está en el árbol de widgets.
+//           // En ese caso, usamos Get.put para agregar el controlador al árbol de widgets.
+//           riskVC = Get.put(RiskController());
+//         }
 
+// // Ahora, puedes utilizar riskVC normalmente sabiendo que está disponible.
+//         if (riskVC != null) {
+//           riskVC.update();
+//           // NotificationCenter().notify('getContactRisk');
+//         }
+
+        ContactNoticeController? contactNotiVC;
+        try {
+          contactNotiVC = Get.find<ContactNoticeController>();
+        } catch (e) {
+          // Si Get.find lanza un error, eso significa que el controlador no está en el árbol de widgets.
+          // En ese caso, usamos Get.put para agregar el controlador al árbol de widgets.
+          contactNotiVC = Get.put(ContactNoticeController());
+        }
+
+// Ahora, puedes utilizar riskVC normalmente sabiendo que está disponible.
+        if (contactNotiVC != null) {
+          contactNotiVC.update();
+          // NotificationCenter().notify('getContactRisk');
+        }
+        Get.appUpdate();
         break;
       case AppLifecycleState.inactive:
         // RedirectViewNotifier.setStoredContext(context);
@@ -127,8 +170,6 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
 
   Future getAlerts() async {
     temp = await homeVC.getAllMov();
-
-    setState(() {});
   }
 
   Future getUserData() async {
@@ -257,6 +298,20 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                     },
                   ),
                 ),
+                Positioned(
+                  bottom: 145,
+                  child: Container(
+                    height: 60,
+                    width: 345,
+                    color: Colors.transparent,
+                    child: Text(
+                      'Recuerde que si desea desinstalar la aplicación, antes deberá darse de baja del servicio en: Confguración/Datos personales/Darse de baja',
+                      style: textNormal14White(),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                ),
+
                 // SwipeableContainer(
                 //   temp: temp,
                 // ),

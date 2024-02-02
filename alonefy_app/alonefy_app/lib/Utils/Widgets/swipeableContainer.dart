@@ -13,7 +13,7 @@ class SwipeableContainer extends StatefulWidget {
 }
 
 class _SwipeableContainerState extends State<SwipeableContainer> {
-  late Offset _dragPosition = Offset.zero;
+  late Offset dragPosition = Offset.zero;
 
   @override
   void initState() {
@@ -30,7 +30,7 @@ class _SwipeableContainerState extends State<SwipeableContainer> {
         setState(() {
           if (details.globalPosition.dy >=
               MediaQuery.of(context).size.height / 2.1) {
-            _dragPosition = details.globalPosition;
+            dragPosition = details.globalPosition;
           }
           // if (size.width / 2 >= 320) {
           //   _dragPosition = Offset(0, size.width / 2);

@@ -47,26 +47,22 @@ class _RowContactState extends State<RowContact> {
     super.dispose();
   }
 
-  Color _getColor(
-      DateTime endTime, DateTime startTime, bool isActive, bool isProgrammed) {
-    DateTime now = DateTime.now();
-    bool isAfter = startTime.isAfter(endTime);
-    bool isBefore = startTime.isBefore(endTime);
-
-    if (isActive &&
-        !isProgrammed &&
-        !isAfter &&
-        !widget.contactRisk.isFinishTime) {
+  Color _getColor(DateTime endTime, DateTime startTime, bool isActive,
+      bool isProgrammed, bool isFinishTime) {
+    // DateTime now = DateTime.now();
+    // bool isAfter = startTime.isAfter(endTime);
+    // bool isBefore = endTime.isBefore(now);
+    // print("isBefore : $isBefore");
+    if (isActive) {
       // La cita está activa y no está programada, se muestra en amarillo
       return ColorPalette.principal.withAlpha(900);
-    } else if (!isActive && isProgrammed && !isBefore) {
+    } else if (isProgrammed) {
       // La cita está programada y aún no ha comenzado, se muestra en azul
       return Colors.blueAccent.withAlpha(900);
-    } else if (isBefore && isActive && widget.contactRisk.isFinishTime) {
+    } else if (isFinishTime) {
       // La cita ha finalizado, se muestra en rojo
       return Colors.red.withAlpha(900);
     } else {
-      // La cita no ha comenzado aún y no está programada, se muestra en un color por defecto
       return const Color.fromRGBO(11, 11, 10, 0.6);
     }
   }
@@ -74,8 +70,8 @@ class _RowContactState extends State<RowContact> {
   Color getColor(ContactRiskBD contactRisk) {
     DateTime starTime = parseContactRiskDate(contactRisk.timeinit);
     DateTime endTime = parseContactRiskDate(contactRisk.timefinish);
-    return _getColor(
-        endTime, starTime, contactRisk.isActived, contactRisk.isprogrammed);
+    return _getColor(endTime, starTime, contactRisk.isActived,
+        contactRisk.isprogrammed, contactRisk.isFinishTime);
   }
 
   @override
@@ -339,8 +335,9 @@ class _RowContactState extends State<RowContact> {
               ),
               Visibility(
                 visible: (widget.contactRisk.isActived ||
-                        widget.contactRisk.isprogrammed) &&
-                    widget.contactRisk.code != '',
+                        widget.contactRisk.isprogrammed ||
+                        widget.contactRisk.isFinishTime) &&
+                    widget.contactRisk.code != ',,,',
                 child: ElevateButtonFilling(
                   showIcon: false,
                   onChanged: (value) {

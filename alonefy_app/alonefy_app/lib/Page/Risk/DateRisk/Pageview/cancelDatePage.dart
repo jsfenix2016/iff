@@ -1,13 +1,16 @@
 import 'dart:async';
 
+import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:get/get.dart';
 import 'package:ifeelefine/Common/Constant.dart';
 
 import 'package:ifeelefine/Common/colorsPalette.dart';
+import 'package:ifeelefine/Common/initialize_models_bd.dart';
 import 'package:ifeelefine/Common/manager_alerts.dart';
 import 'package:ifeelefine/Common/text_style_font.dart';
 
 import 'package:ifeelefine/Model/contactRiskBD.dart';
+import 'package:ifeelefine/Page/Disamble/Controller/disambleController.dart';
 import 'package:ifeelefine/Page/HomePage/Pageview/home_page.dart';
 import 'package:ifeelefine/Page/Risk/DateRisk/Controller/editRiskController.dart';
 import 'package:ifeelefine/Page/Risk/DateRisk/ListDateRisk/Controller/riskPageController.dart';
@@ -23,6 +26,7 @@ import 'package:ifeelefine/Utils/Widgets/elevatedButtonFilling.dart';
 import 'package:ifeelefine/Utils/Widgets/loading_page.dart';
 import 'package:ifeelefine/main.dart';
 import 'package:ifeelefine/Common/decoration_custom.dart';
+import 'package:notification_center/notification_center.dart';
 
 class CancelDatePage extends StatefulWidget {
   const CancelDatePage({super.key, required this.taskIds});
@@ -39,15 +43,15 @@ class _CancelDatePageState extends State<CancelDatePage> {
   EditRiskController editVC = Get.put(EditRiskController());
   RiskController riskVC = Get.put(RiskController());
   // String timeinit = "00:05";
-  String codeTemp = '';
+  String codeTemp = ',,,';
   var code = CodeModel();
   late ContactRiskBD contactRiskTemp;
 
-  int secondsRemaining = 60; //5 minutes = 300 seconds
+  int secondsRemaining = 30; //5 minutes = 300 seconds
   Timer? _timer;
   bool isLoading = false;
   final PreferenceUser _prefs = PreferenceUser();
-
+  bool _shouldReloadData = false;
   @override
   void dispose() {
     super.dispose();
@@ -57,26 +61,40 @@ class _CancelDatePageState extends State<CancelDatePage> {
   @override
   void initState() {
     // contactRiskTemp = widget.contactRisk;
-
+    contactRiskTemp = initContactRisk();
     getcontactRisk();
     _prefs.saveLastScreenRoute("cancelDate");
 
-    startTimer();
     super.initState();
     starTap();
-    var secondsRemaining1 = _prefs.getTimerCancelZone;
+    var secondsRemaining1 = (_prefs.getTimerCancelZone);
     secondsRemaining = secondsRemaining1;
   }
 
   void getcontactRisk() async {
     await _prefs.initPrefs();
+    _prefs.refreshData();
+    if (_prefs.getListDate == false && _prefs.getCountFinish == false) {
+      startTimer();
+    }
+
     var resp = await riskVC.getContactsRisk();
-    int indexSelect = resp.indexWhere((item) => item.isActived == true);
+
+    int indexSelect = resp.indexWhere((item) =>
+        item.isFinishTime == true ||
+        item.isActived == true ||
+        item.isprogrammed == true);
+
+    if (indexSelect == -1) {
+      _prefs.saveLastScreenRoute("home");
+      await Get.off(const HomePage());
+      return;
+    }
     contactRiskTemp = resp[indexSelect];
 
     List<String> parts = [];
 
-    if (contactRiskTemp.code != "") {
+    if (contactRiskTemp.code != ",,," || contactRiskTemp.code != "") {
       parts = contactRiskTemp.code.split(',');
 
       code.textCode1 = parts[0];
@@ -94,31 +112,39 @@ class _CancelDatePageState extends State<CancelDatePage> {
         widget.taskIds.isEmpty ? _prefs.getlistTaskIdsCancel : widget.taskIds;
   }
 
-  void saveDate(BuildContext context) async {
+  Future<void> saveDate() async {
     setState(() {
       isLoading = true;
     });
+    await _prefs.initPrefs();
+
     if (contactRiskTemp.code == codeTemp) {
       contactRiskTemp.isActived = false;
       contactRiskTemp.isprogrammed = false;
-      contactRiskTemp.code = "";
-      // contactRiskTemp.timefinish = '00:00';
-      // contactRiskTemp.timeinit = '00:00';
-
+      contactRiskTemp.code = ",,,";
+      contactRiskTemp.isFinishTime = false;
+      contactRiskTemp.finish = false;
       bool res = false;
       if (contactRiskTemp.taskIds != null &&
           contactRiskTemp.taskIds!.isNotEmpty) {
+        print(contactRiskTemp.taskIds!);
         MainService().cancelAllNotifications(contactRiskTemp.taskIds!);
       } else if (widget.taskIds.isNotEmpty) {
+        print(contactRiskTemp.taskIds!);
         MainService().cancelAllNotifications(widget.taskIds);
+        print(widget.taskIds);
       }
-      await _prefs.initPrefs();
+
       _prefs.saveLastScreenRoute("home");
+
       if (contactRiskTemp.saveContact == false &&
           contactRiskTemp.isFinishTime) {
         res = await editVC.deleteContactRisk(context, contactRiskTemp);
       } else {
-        res = await editVC.updateContactRisk(context, contactRiskTemp);
+        contactRiskTemp.finish = true;
+        res = await editVC.updateContactRisk(contactRiskTemp);
+
+        // res = await editVC.updateNewContactRisk(context, contactRiskTemp);
       }
 
       if (res) {
@@ -126,10 +152,37 @@ class _CancelDatePageState extends State<CancelDatePage> {
 
         // riskVC.update();
         stopTimer();
+        mainController.saveUserLog(
+            "Cita - cancelada", DateTime.now(), prefs.getIdDateGroup);
+        _prefs.setTimerCancelZone = 30;
+        secondsRemaining = 30;
 
+        prefs.setCancelDate = true;
+        prefs.setCancelIdDate = contactRiskTemp.id;
+        _prefs.setListDate = false;
+        await flutterLocalNotificationsPlugin.cancelAll();
+        RiskController? riskVC;
+        try {
+          riskVC = Get.find<RiskController>();
+        } catch (e) {
+          // Si Get.find lanza un error, eso significa que el controlador no está en el árbol de widgets.
+          // En ese caso, usamos Get.put para agregar el controlador al árbol de widgets.
+          riskVC = Get.put(RiskController());
+        }
+
+// Ahora, puedes utilizar riskVC normalmente sabiendo que está disponible.
+        if (riskVC != null) {
+          riskVC.update();
+          // try {
+          //   NotificationCenter().notify('getContactRisk');
+          // } catch (e) {
+          //   print(e);
+          // }
+        }
         await Get.off(const HomePage());
       }
     }
+    isLoading = false;
     // riskVC.update();
     // Navigator.of(context).pop();
   }
@@ -155,13 +208,21 @@ class _CancelDatePageState extends State<CancelDatePage> {
 
     _prefs.setlistTaskIdsCancel = [];
     _prefs.setSelectContactRisk = -1;
-    _prefs.setTimerCancelZone = 60;
+    _prefs.setTimerCancelZone = 30;
+    _prefs.setListDate = false;
 
-    countTimer.value = 60;
+    countTimer.value = 30;
     if (contactRiskTemp.saveContact == false) {
       riskVC.deleteContactRisk(context, contactRiskTemp);
     }
     _prefs.saveLastScreenRoute("home");
+    final service = FlutterBackgroundService();
+    var isRunning = await service.isRunning();
+    if (isRunning) {
+      service.invoke("stopService");
+    }
+    await service.startService();
+    await activateService();
     await Get.offAll(const HomePage());
   }
 
@@ -173,17 +234,18 @@ class _CancelDatePageState extends State<CancelDatePage> {
       (Timer timer) => setState(
         () {
           if (secondsRemaining < 1) {
-            timer.cancel();
-            _prefs.setTimerCancelZone = 60;
-            countTimer.value = 60;
+            countTimer.value = 30;
             showSaveAlert(context, Constant.info,
-                "El servidor de AlertFriends envío una alerta con tu última ubicación.");
-            timerCancelZone!.cancel();
+                "El servidor de AlertFriends envió una alerta con tu última ubicación.");
+            timer.cancel();
+            _prefs.setCountFinish = true;
+            setState(() {});
             // gotoHome();
           } else {
             secondsRemaining -= 1;
             _prefs.setTimerCancelZone = secondsRemaining;
             countTimer.value = secondsRemaining;
+            setState(() {});
           }
         },
       ),
@@ -292,38 +354,50 @@ class _CancelDatePageState extends State<CancelDatePage> {
                             child: ElevateButtonFilling(
                               showIcon: false,
                               onChanged: (value) {
-                                saveDate(context);
+                                saveDate();
                               },
                               mensaje: 'Cancelar alerta',
                               img: '',
                             ),
                           ),
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Center(
-                              child: Text(
-                                timerText,
-                                textAlign: TextAlign.center,
-                                style: GoogleFonts.barlow(
-                                  fontSize: 74.0,
-                                  wordSpacing: 1,
-                                  letterSpacing: 1,
-                                  fontWeight: FontWeight.normal,
-                                  color: ColorPalette.principal,
+                          if (contactRiskTemp.isFinishTime) ...[
+                            Visibility(
+                              visible: true,
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Center(
+                                  child: Text(
+                                    timerText,
+                                    textAlign: TextAlign.center,
+                                    style: GoogleFonts.barlow(
+                                      fontSize: 74.0,
+                                      wordSpacing: 1,
+                                      letterSpacing: 1,
+                                      fontWeight: FontWeight.normal,
+                                      color: ColorPalette.principal,
+                                    ),
+                                  ),
                                 ),
                               ),
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(20.0),
-                            child: Center(
-                              child: Text(
-                                "Aunque se apague el smartphone, el servidor de AlertFriends ha registrado tu última ubicación y emitirá una alerta a tu contacto",
-                                textAlign: TextAlign.center,
-                                style: textNormal14White(),
-                              ),
-                            ),
-                          ),
+                            )
+                          ] else ...[
+                            const SizedBox.shrink()
+                          ],
+                          contactRiskTemp.isFinishTime
+                              ? Visibility(
+                                  visible: true,
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(20.0),
+                                    child: Center(
+                                      child: Text(
+                                        "Aunque se apague el smartphone, el servidor de AlertFriends ha registrado tu última ubicación y emitirá una alerta a tu contacto",
+                                        textAlign: TextAlign.center,
+                                        style: textNormal14White(),
+                                      ),
+                                    ),
+                                  ),
+                                )
+                              : const SizedBox.shrink(),
                         ],
                       ),
                     ),

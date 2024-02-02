@@ -8,6 +8,10 @@ import 'package:ifeelefine/Page/Risk/DateRisk/ListDateRisk/Controller/riskPageCo
 import 'package:ifeelefine/Page/Risk/DateRisk/Pageview/cancelDatePage.dart';
 import 'package:ifeelefine/Page/Risk/DateRisk/Pageview/editRiskDatePage.dart';
 import 'package:ifeelefine/Page/Risk/DateRisk/Widgets/rowContact.dart';
+import 'package:notification_center/notification_center.dart';
+
+// ValueNotifier<List<ContactRiskBD>> contactNotifiers =
+//     ValueNotifier<List<ContactRiskBD>>([]);
 
 class ListContactRisk extends StatefulWidget {
   const ListContactRisk({super.key});
@@ -17,7 +21,7 @@ class ListContactRisk extends StatefulWidget {
 }
 
 class _ListContactRiskState extends State<ListContactRisk> {
-  RiskController riskVC = Get.find<RiskController>();
+  RiskController riskVC = Get.put(RiskController());
 
   late ContactRiskBD contactTemp;
 
@@ -52,11 +56,14 @@ class _ListContactRiskState extends State<ListContactRisk> {
   @override
   Widget build(BuildContext context) {
     return GetBuilder<RiskController>(builder: (context) {
-      return FutureBuilder<List<ContactRiskBD>>(
+      return FutureBuilder<RxList<ContactRiskBD>>(
         future: refreshListDateContact(),
         builder: (context, snapshot) {
-          if (snapshot.hasData) {
+          if (snapshot.data != null) {
             final listContact = snapshot.data!;
+            if (listContact.isEmpty) {
+              return const SizedBox.shrink();
+            }
             return ListView.builder(
               physics: const ClampingScrollPhysics(),
               scrollDirection: Axis.vertical,
@@ -67,12 +74,14 @@ class _ListContactRiskState extends State<ListContactRisk> {
               itemBuilder: (context, index) {
                 if (index >= 0 && index < listContact.length) {
                   var temp = listContact[index];
-                  return GestureDetector(
+                  return InkWell(
                     onTap: () {
                       print(index);
                       contactTemp = temp;
                       prefs.setSelectContactRisk = contactTemp.id;
-                      if (temp.isActived || temp.isprogrammed) {
+                      if (temp.isActived ||
+                          temp.isprogrammed ||
+                          temp.isFinishTime) {
                         redirectCancelDate();
                       } else {
                         Navigator.push(
@@ -91,7 +100,9 @@ class _ListContactRiskState extends State<ListContactRisk> {
                       index: index,
                       onChanged: ((value) {
                         contactTemp = temp;
-                        if (contactTemp.isActived || contactTemp.isprogrammed) {
+                        if (contactTemp.isActived ||
+                            contactTemp.isprogrammed ||
+                            temp.isFinishTime) {
                           redirectCancelDate();
                         } else {
                           Navigator.push(
@@ -107,7 +118,9 @@ class _ListContactRiskState extends State<ListContactRisk> {
                       }),
                       onChangedDelete: (bool value) {
                         contactTemp = temp;
-                        if (contactTemp.isActived || contactTemp.isprogrammed) {
+                        if (contactTemp.isActived ||
+                            contactTemp.isprogrammed ||
+                            temp.isFinishTime) {
                           redirectCancelDate();
                         } else {
                           showDialog(
@@ -137,18 +150,22 @@ class _ListContactRiskState extends State<ListContactRisk> {
                       },
                       onCancel: (bool value) {
                         contactTemp = temp;
+                        if (contactTemp.isFinishTime == false) {
+                          prefs.setListDate = true;
+                        }
+
                         redirectCancelDate();
                       },
                     ),
                   );
                 }
-                return const CircularProgressIndicator();
+                return const SizedBox.shrink();
               },
             );
           } else if (snapshot.hasError) {
             return Text(snapshot.error.toString());
           } else {
-            return const CircularProgressIndicator();
+            return const SizedBox.shrink();
           }
         },
       );

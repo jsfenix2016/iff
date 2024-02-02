@@ -8,6 +8,7 @@ import 'package:ifeelefine/Common/text_style_font.dart';
 import 'package:ifeelefine/Page/Calendar/calendarPopup.dart';
 import 'package:ifeelefine/Page/Contact/Widget/filter_contact.dart';
 import 'package:ifeelefine/Page/Geolocator/Controller/configGeolocatorController.dart';
+import 'package:ifeelefine/Page/HomePage/Pageview/home_page.dart';
 import 'package:ifeelefine/Page/Premium/Controller/premium_controller.dart';
 import 'package:ifeelefine/Page/Premium/PageView/premium_page.dart';
 import 'package:ifeelefine/Page/Risk/DateRisk/ListDateRisk/Controller/riskPageController.dart';
@@ -92,9 +93,9 @@ class _EditRiskPageState extends State<EditRiskPage> {
   late DateTime dateTimeTemp = DateTime.now();
   late DateTime dateTimeTempIncrease = DateTime.now();
   PreferencePermission preferencePermission = PreferencePermission.init;
-  final _locationController = Get.put(ConfigGeolocatorController());
-  // late bool isActive = false;
 
+  // late bool isActive = false;
+  bool contactPermissionEnabled = false;
   @override
   void initState() {
     // Agregar un día a la fecha actual
@@ -103,9 +104,13 @@ class _EditRiskPageState extends State<EditRiskPage> {
 
     timeinit = "${temp}00:00";
     timefinish = "${temp}00:00";
-    getContact();
+    isActivePermissionContact();
     requestGalleryPermission();
+
+    getContact();
+
     initDates();
+
     List<String> parts = [];
     if (widget.contactRisk.code != "") {
       parts = widget.contactRisk.code.split(',');
@@ -121,11 +126,16 @@ class _EditRiskPageState extends State<EditRiskPage> {
       code.textCode3 = '';
       code.textCode4 = '';
     }
-    _isActivePermission();
+
+    if (widget.contactRisk.photoDate.isNotEmpty) {
+      imageData = widget.contactRisk.photoDate;
+    }
+
     if (widget.contactRisk.messages.isNotEmpty) {
       controllerText.text = widget.contactRisk.messages;
     }
     super.initState();
+
     starTap();
     Future.sync(() => RedirectViewNotifier.setStoredContext(context));
   }
@@ -159,103 +169,34 @@ class _EditRiskPageState extends State<EditRiskPage> {
     });
   }
 
-  void _checkPermissionIsEnabled() async {
-    PermissionStatus permission = await Permission.contacts.request();
+  Future isActivePermissionContact() async {
+    bool contactEnable = await requestPermission(Permission.contacts);
 
-    if (permission.isPermanentlyDenied) {
-      showPermition();
-    } else if (permission.isDenied ||
-        _prefs.getAcceptedContacts == PreferencePermission.noAccepted) {
-      var permissionName = '${Constant.enableLocalPermission} contacto?';
-      showLocalPermission(permissionName);
+    if (contactEnable == false) {
+      showSaveAlert(
+          context,
+          Constant.info,
+          "Por favor, acceda a configuración y permita el acceso a sus contactos"
+              .tr);
     } else {
-      getContacts(context);
-    }
-  }
-
-  void showPermition() {
-    showPermissionDialog(context, Constant.enablePermission);
-  }
-
-  void showLocalPermission(String permissionName) {
-    showLocalPermissionDialog(
-        context, permissionName, (bool response) => {alertResponse(response)});
-  }
-
-  void alertResponse(bool response) {
-    _prefs.setAcceptedContacts =
-        response ? PreferencePermission.allow : PreferencePermission.noAccepted;
-
-    if (response) {
-      getContacts(context);
+      _prefs.setAcceptedContacts = PreferencePermission.allow;
     }
   }
 
   Future _isActivePermission() async {
-    var isAccepted = await requestPermission(Permission.location);
-  }
-
-  Future _checkPermission() async {
-    LocationPermission permission;
-    bool serviceEnabled;
-
-    serviceEnabled = await Geolocator.isLocationServiceEnabled();
-    if (!serviceEnabled) {
-      // Location services are not enabled don't continue
-      // accessing the position and request users of the
-      // App to enable the location services.
-
-      return Future.error('Location services are disabled.');
-    }
-
-    permission = await Geolocator.requestPermission();
-
-    if (permission == LocationPermission.deniedForever &&
-        preferencePermission == PreferencePermission.init) {
-    } else {
-      if (permission == LocationPermission.denied ||
-          permission == LocationPermission.deniedForever) {
-        switch (preferencePermission) {
-          case PreferencePermission.init:
-            _locationController.activateLocation(PreferencePermission.denied);
-            //_prefs.setAcceptedSendLocation = PreferencePermission.denied;
-            break;
-          case PreferencePermission.denied:
-            _locationController
-                .activateLocation(PreferencePermission.deniedForever);
-            //_prefs.setAcceptedSendLocation = PreferencePermission.deniedForever;
-            break;
-          case PreferencePermission.deniedForever:
-            //_prefs.setAcceptedSendLocation = PreferencePermission.deniedForever;
-            _locationController
-                .activateLocation(PreferencePermission.deniedForever);
-            if (permission == LocationPermission.deniedForever) {
-              showPermissionDialog(context, Constant.enablePermission);
-            }
-            break;
-          case PreferencePermission.allow:
-            //_prefs.setAcceptedSendLocation = PreferencePermission.deniedForever;
-            _locationController
-                .activateLocation(PreferencePermission.deniedForever);
-            break;
-          case PreferencePermission.noAccepted:
-            //_prefs.setAcceptedSendLocation = PreferencePermission.deniedForever;
-            _locationController
-                .activateLocation(PreferencePermission.deniedForever);
-            break;
-        }
-      } else {
-        //_prefs.setAcceptedSendLocation = PreferencePermission.allow;
-        _locationController.activateLocation(PreferencePermission.allow);
-      }
-
-      preferencePermission = _prefs.getAcceptedSendLocation;
+    try {
+      var isAccepted = await requestPermission(Permission.location);
+    } catch (e) {
+      print(e);
     }
   }
 
   // Función para solicitar permiso de acceso a la galería
   Future<void> requestGalleryPermission() async {
-    await cameraPermissions(_prefs.getAcceptedCamera, context);
+    bool cameraEnable = await requestPermission(Permission.camera);
+    if (!cameraEnable) {
+      await cameraPermissions(_prefs.getAcceptedCamera);
+    }
   }
 
   String convertInitNow(String temp) {
@@ -266,8 +207,13 @@ class _EditRiskPageState extends State<EditRiskPage> {
   }
 
   void saveDate(BuildContext context, String action) async {
-    if (contactSelect == null) {
+    if (contactSelect == null || contactSelect!.phones.isEmpty) {
       showSaveAlert(context, Constant.info, "Debe seleccionar un contacto".tr);
+      return;
+    }
+    if (widget.contactRisk.code == ",,," || widget.contactRisk.code == "") {
+      showSaveAlert(context, Constant.info,
+          "Por favor, establece tu clave de cancelación");
       return;
     }
     setState(() {
@@ -297,7 +243,9 @@ class _EditRiskPageState extends State<EditRiskPage> {
     if (widget.contactRisk.timefinish == "00:00") {
       widget.contactRisk.timefinish = "${temp}00:00";
     }
-
+    if (action.contains("Iniciar")) {
+      widget.contactRisk.timeinit = convertInitNow(temp);
+    }
     partesdate = widget.contactRisk.timeinit.split(' ');
     partesInit = partesdate[1].split(':');
     horasInit = int.parse(partesInit[0]);
@@ -324,12 +272,12 @@ class _EditRiskPageState extends State<EditRiskPage> {
 
       finishTimeTemp = temp2 + widget.contactRisk.timefinish.split(' ').last;
     } else {
-      if (isActived && widget.contactRisk.id == -1) {
-        // String sDuration =
-        //     "${now.hour.toString().padLeft(2, '0')}:${now.minute.remainder(60).toString().padLeft(2, '0')}";
-
-        // initTimeTemp = "$temp$sDuration:00";
-        initTimeTemp = convertInitNow(temp);
+      if (widget.contactRisk.id == -1) {
+        if (action.contains("Iniciar")) {
+          initTimeTemp = convertInitNow(temp);
+        } else {
+          initTimeTemp = temp + widget.contactRisk.timeinit.split(' ').last;
+        }
       } else {
         if (action.contains("Iniciar")) {
           initTimeTemp = convertInitNow(temp);
@@ -337,11 +285,17 @@ class _EditRiskPageState extends State<EditRiskPage> {
           initTimeTemp = temp + widget.contactRisk.timeinit.split(' ').last;
         }
       }
-
-      finishTimeTemp = temp + widget.contactRisk.timefinish.split(' ').last;
+      if (totalMinutosInit == totalMinutosFinish) {
+        finishTimeTemp = temp2 + widget.contactRisk.timefinish.split(' ').last;
+      } else {
+        finishTimeTemp = temp + widget.contactRisk.timefinish.split(' ').last;
+      }
     }
 
     var list = await convertImageData();
+    if (list.isEmpty) {
+      list = widget.contactRisk.photoDate;
+    }
     var contactRisk = ContactRiskBD(
         id: widget.contactRisk.id,
         photo: contactSelect!.photo,
@@ -363,7 +317,8 @@ class _EditRiskPageState extends State<EditRiskPage> {
         photoDate: list,
         saveContact: widget.contactRisk.saveContact,
         createDate: now,
-        taskIds: []);
+        taskIds: [],
+        finish: false);
     Future.sync(() => {getchangeContact(context, contactRisk)});
   }
 
@@ -377,8 +332,6 @@ class _EditRiskPageState extends State<EditRiskPage> {
           isLoading = false;
           showSaveAlert(context, Constant.info, Constant.errorGeneric.tr);
         });
-
-        return;
       }
     } else {
       bool edit = await editVC.updateNewContactRisk(context, contactRisk);
@@ -388,16 +341,12 @@ class _EditRiskPageState extends State<EditRiskPage> {
           isLoading = false;
           showSaveAlert(context, Constant.info, Constant.errorGeneric.tr);
         });
-
-        return;
       }
     }
 
-    Future.sync(() => {
-          riskVC.update(),
-          isLoading = false,
-        });
-    Future.sync(() => {Navigator.of(context).pop()});
+    riskVC.update();
+    isLoading = false;
+    Get.offAll(const HomePage());
   }
 
   Future<List<Uint8List>> convertImageData() async {
@@ -544,6 +493,11 @@ class _EditRiskPageState extends State<EditRiskPage> {
 
   void _showContactListScreen(BuildContext context) async {
     Contact? cont;
+
+    if (contactlist.isEmpty &&
+        _prefs.getAcceptedContacts == PreferencePermission.allow) {
+      contactlist = await getContacts(context);
+    }
     await Navigator.push(
       context,
       MaterialPageRoute(
@@ -556,6 +510,10 @@ class _EditRiskPageState extends State<EditRiskPage> {
       ),
     );
 
+    if (cont == null) {
+      return;
+    }
+
     if (cont!.name.first.isNotEmpty) {
       setState(() {
         contactSelect = cont!;
@@ -565,6 +523,16 @@ class _EditRiskPageState extends State<EditRiskPage> {
             contactlist.indexWhere((item) => item.id == contactSelect!.id);
       });
     }
+  }
+
+  Widget getImageData(Uint8List img) {
+    return Image.memory(
+      fit: BoxFit.fitWidth,
+      scale: 3,
+      img,
+      height: double.infinity,
+      width: double.infinity,
+    );
   }
 
   @override
@@ -947,13 +915,15 @@ class _EditRiskPageState extends State<EditRiskPage> {
                                               premiumController
                                                   .updatePremiumAPI(true);
                                               setState(() {});
-                                              await _checkPermission();
+                                              await editVC
+                                                  .checkPermission(context);
                                               getCurrentPosition();
                                             }
                                           });
 
                                           return;
                                         }
+                                        _isActivePermission();
                                         sendLocation = value!;
                                         widget.contactRisk.sendLocation = value;
                                         setState(() {});
@@ -1055,16 +1025,32 @@ class _EditRiskPageState extends State<EditRiskPage> {
                                       ),
                                     ),
                                     ImageFanWidget(
-                                      onChanged: (List<File> value) {
+                                      onChanged: (List<File> value) async {
                                         imagePaths = value;
+
                                         setState(() {});
                                       },
                                       listImg: widget.contactRisk.photoDate,
-                                      isEdit: false,
+                                      isEdit: true,
+                                      onChangedEdit: (Uint8List value) {
+                                        if (widget
+                                                .contactRisk.photoDate.length >=
+                                            3) {
+                                          widget.contactRisk.photoDate
+                                              .insert(0, value);
+                                        } else {
+                                          widget.contactRisk.photoDate
+                                              .add(value);
+                                        }
+
+                                        setState(() {});
+                                      },
                                     ),
                                     Visibility(
                                       visible:
-                                          imagePaths.isEmpty ? false : true,
+                                          widget.contactRisk.photoDate.isEmpty
+                                              ? false
+                                              : true,
                                       child: IconButton(
                                         onPressed: () {
                                           //action coe when button is pressed
@@ -1076,8 +1062,14 @@ class _EditRiskPageState extends State<EditRiskPage> {
                                                   child: Column(
                                                     children: [
                                                       Expanded(
-                                                        child: getImageFile(
-                                                            imagePaths[
+                                                        child: imagePaths
+                                                                .isNotEmpty
+                                                            ? getImageFile(
+                                                                imagePaths[
+                                                                    _currentIndex])
+                                                            : getImageData(widget
+                                                                    .contactRisk
+                                                                    .photoDate[
                                                                 _currentIndex]),
                                                       ),
                                                       ButtonBar(
@@ -1090,18 +1082,37 @@ class _EditRiskPageState extends State<EditRiskPage> {
                                                                 Icons
                                                                     .arrow_back),
                                                             onPressed: () {
-                                                              _currentIndex =
-                                                                  (_currentIndex -
-                                                                          1) %
-                                                                      imagePaths
-                                                                          .length;
-                                                              if (_currentIndex <
-                                                                  0) {
+                                                              if (imagePaths
+                                                                  .isNotEmpty) {
                                                                 _currentIndex =
-                                                                    imagePaths
-                                                                            .length -
-                                                                        1;
+                                                                    (_currentIndex -
+                                                                            1) %
+                                                                        imagePaths
+                                                                            .length;
+                                                                if (_currentIndex <
+                                                                    0) {
+                                                                  _currentIndex =
+                                                                      imagePaths
+                                                                              .length -
+                                                                          1;
+                                                                }
+                                                              } else {
+                                                                _currentIndex = (_currentIndex -
+                                                                        1) %
+                                                                    widget
+                                                                        .contactRisk
+                                                                        .photoDate
+                                                                        .length;
+                                                                if (_currentIndex <
+                                                                    0) {
+                                                                  _currentIndex = widget
+                                                                          .contactRisk
+                                                                          .photoDate
+                                                                          .length -
+                                                                      1;
+                                                                }
                                                               }
+
                                                               (context
                                                                       as Element)
                                                                   .markNeedsBuild();
@@ -1111,11 +1122,36 @@ class _EditRiskPageState extends State<EditRiskPage> {
                                                             icon: const Icon(Icons
                                                                 .arrow_forward),
                                                             onPressed: () {
-                                                              _currentIndex =
-                                                                  (_currentIndex +
-                                                                          1) %
+                                                              if (imagePaths
+                                                                  .isNotEmpty) {
+                                                                _currentIndex =
+                                                                    (_currentIndex +
+                                                                            1) %
+                                                                        imagePaths
+                                                                            .length;
+                                                                if (_currentIndex <
+                                                                    0) {
+                                                                  _currentIndex =
                                                                       imagePaths
-                                                                          .length;
+                                                                              .length +
+                                                                          1;
+                                                                }
+                                                              } else {
+                                                                _currentIndex = (_currentIndex +
+                                                                        1) %
+                                                                    widget
+                                                                        .contactRisk
+                                                                        .photoDate
+                                                                        .length;
+                                                                if (_currentIndex <
+                                                                    0) {
+                                                                  _currentIndex = widget
+                                                                          .contactRisk
+                                                                          .photoDate
+                                                                          .length +
+                                                                      1;
+                                                                }
+                                                              }
                                                               (context
                                                                       as Element)
                                                                   .markNeedsBuild();
@@ -1226,8 +1262,10 @@ class _EditRiskPageState extends State<EditRiskPage> {
                       onChanged: (value) {
                         isActived = true;
                         isprogrammed = false;
+
                         widget.contactRisk.isActived = true;
                         widget.contactRisk.isprogrammed = false;
+                        widget.contactRisk.isFinishTime = false;
                         saveDate(context, "Iniciar");
                       },
                       mensaje: 'Iniciar cita ahora',
@@ -1240,6 +1278,7 @@ class _EditRiskPageState extends State<EditRiskPage> {
                         isprogrammed = true;
                         widget.contactRisk.isActived = false;
                         widget.contactRisk.isprogrammed = true;
+                        widget.contactRisk.isFinishTime = false;
                         saveDate(context, "Programar");
                       },
                       mensaje: 'Programar activación',

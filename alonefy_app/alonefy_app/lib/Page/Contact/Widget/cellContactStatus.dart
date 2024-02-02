@@ -51,7 +51,7 @@ class _CellContactStatusState extends State<CellContactStatus> {
       case "ACCEPTED":
         return ColorPalette.aceptedContact;
 
-      case "Rechazado":
+      case "REFUSED":
         return ColorPalette.refusedContact;
 
       default:

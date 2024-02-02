@@ -28,16 +28,15 @@ class _CellZoneRiskState extends State<CellZoneRisk> {
     final cacheManager = DefaultCacheManager();
     if (widget.logAlert.video != null) {
       final videoFile = await cacheManager.putFile(
-        'temp_video.mp4',
+        'temp_video_${DateTime.now()}.mp4',
         widget.logAlert.video!,
         key: 'video_key',
       );
       fileTemp = videoFile;
+      var pa = videoFile.basename;
       _videoPlayerController = VideoPlayerController.file(videoFile);
       _initializeVideoPlayerFuture = _videoPlayerController.initialize();
     }
-
-    // _videoPlayerController.play();
   }
 
   @override
@@ -84,13 +83,13 @@ class _CellZoneRiskState extends State<CellZoneRisk> {
                 width: 200,
                 color: Colors.transparent,
                 child: Text(
-                  "Zona - ${DateFormat('dd-MM-yyyy HH:mm:ss').format(widget.logAlert.time).toString()}",
+                  "Zona - ${DateFormat('dd-MM-yyyy').format(widget.logAlert.time).toString()} | ${widget.logAlert.time.hour.toString().padLeft(2, '0')}: ${widget.logAlert.time.minute.toString().padLeft(2, '0')}",
                   textAlign: TextAlign.left,
                   style: GoogleFonts.barlow(
-                    fontSize: 14.0,
+                    fontSize: 16.0,
                     wordSpacing: 1,
-                    letterSpacing: 0.01,
-                    fontWeight: FontWeight.normal,
+                    letterSpacing: 0.001,
+                    fontWeight: FontWeight.bold,
                     color: Colors.white,
                   ),
                 ),

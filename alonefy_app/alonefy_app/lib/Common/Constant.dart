@@ -5,12 +5,12 @@ class Constant {
   static const codeMessageBird = '';
   static const urlTerms = 'https://alertfriends.app/politica_privacidad/';
   static const personalInformation = 'Datos personales';
-  static const selectGender = 'Selecciona el género';
-  static const selectCity = 'Selecciona la ciudad';
+  static const selectGender = 'Seleccione el género';
+  static const selectCity = 'Seleccione la provincia';
   static const maritalStatus = 'Estado civil';
   static const styleLive = 'Modo de vida';
   static const telephone = 'Teléfono';
-  static const telephonePlaceholder = 'Ingresa un teléfono';
+  static const telephonePlaceholder = 'Ingrese un teléfono';
   static const nameUser = 'Nombre';
   static const namePlaceholder = 'Ingresa un nombre';
   static const lastName = 'Apellido';
@@ -46,6 +46,9 @@ class Constant {
   static const onBoardingPageFourSubtitle =
       'AlertFriends activará una alerta inmediata si te ocurre algo';
 
+  static const sendSms = "Se ha enviado el código. Por favor, revise su sms";
+  static const sendEmail =
+      "Se ha enviado el código. Por favor, revise su correo electrónico";
   static const sendSMSWhatsapp = 'Enviar SMS y whatsapp transcurridos:';
   static const onBoardingPageFiveTitle =
       'Sientete ahora más seguro/a viviendo solo/a';
@@ -63,7 +66,7 @@ class Constant {
   static const hoursSleepAndWakeup =
       '¿A que hora te acuestas cada día, a que horas te levantas?';
   static const casefallText =
-      '¿Deseas que, en caso de alerta, enviemos tu ubicación a tus contactos?';
+      '¿Deseas que, en caso de alerta, enviemos la ubicación a sus contactos?';
 
   static const permissionApp = 'Permisos que se usan en la app';
 
@@ -129,9 +132,9 @@ class Constant {
       "Se produjo algún error, compruebe su conexión";
 
   static const String validateCodeEmail =
-      'Introduce el código enviado a tu correo';
+      'Por favor, Introduca el código enviado a su correo';
   static const String validateCodeSms =
-      'Introduce el código enviado a tu teléfono';
+      'Por favor, Introduca el código enviado a su teléfono.';
 
   static const String alertMessageValidateUser =
       'Debe tener el teléfono e email validado para continuar.';
@@ -157,7 +160,7 @@ class Constant {
   static const String restoredCorrectly = "Se restauro correctamente";
 
   static const String errorGenericConextion =
-      "Se produjo un error, verifique su conexion a internet e intente de nuevo.";
+      "Se ha producido un error. Por favor, verifique su conexión a internet e inténtelo de nuevo.";
 
   static const String changeGeneric = "Cambios guardados correctamente";
 
@@ -166,7 +169,7 @@ class Constant {
   static const String codeValid = "Código válido";
   static const String codeInvalid = "Código inválido";
   static const String saveData = "Datos guardados";
-  static const String ok = "Ok";
+  static const String ok = "OK";
 
   static const String zoneRisk = "Zona de riesgo";
   static const String dateRisk = "Cita de riesgo";
@@ -185,8 +188,8 @@ class Constant {
   };
 
   static const Map<String, String> gender = {
-    '0': 'Femenino',
-    '1': 'Masculino',
+    '0': 'Mujer',
+    '1': 'Hombre',
     '2': 'Otro/a',
   };
 

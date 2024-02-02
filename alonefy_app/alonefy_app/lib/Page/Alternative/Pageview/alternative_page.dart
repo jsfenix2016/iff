@@ -1,8 +1,7 @@
-import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:get/get.dart';
 import 'package:ifeelefine/Common/Constant.dart';
 import 'package:ifeelefine/Common/button_style_custom.dart';
-import 'package:ifeelefine/Common/colorsPalette.dart';
+
 import 'package:ifeelefine/Common/text_style_font.dart';
 import 'package:ifeelefine/Provider/prefencesUser.dart';
 import 'package:ifeelefine/Page/HomePage/Pageview/home_page.dart';
@@ -27,11 +26,13 @@ class _AlternativePagePageState extends State<AlternativePage> {
   void initState() {
     initPref();
     starTap();
+
     super.initState();
   }
 
   Future<void> initPref() async {
     await _prefs.initPrefs();
+    _prefs.saveLastScreenRoute("alternative");
   }
 
   @override

@@ -1,26 +1,21 @@
+import 'dart:collection';
+
 import 'package:get/get.dart';
-
 import 'package:ifeelefine/Common/Constant.dart';
-
 import 'package:ifeelefine/Common/manager_alerts.dart';
 import 'package:ifeelefine/Common/text_style_font.dart';
 import 'package:ifeelefine/Common/utils.dart';
-
 import 'package:ifeelefine/Model/restdaybd.dart';
 import 'package:ifeelefine/Page/PreviewActivitiesFilteredByDate/PageView/previewActivitiesByDate_page.dart';
-
 import 'package:ifeelefine/Page/UserRest/Controller/userRestController.dart';
-
 import 'package:flutter/material.dart';
-import 'package:ifeelefine/Page/UserRest/PageView/previewRestTime.dart';
 import 'package:ifeelefine/Page/UserRest/Widgets/rowSelectTimer.dart';
-import 'package:ifeelefine/Provider/prefencesUser.dart';
 import 'package:ifeelefine/Utils/Widgets/elevatedButtonFilling.dart';
 import 'package:ifeelefine/Utils/Widgets/listDayweekCustom.dart';
 import 'package:ifeelefine/Utils/Widgets/widgetLogo.dart';
 import 'package:ifeelefine/Common/decoration_custom.dart';
 import 'package:ifeelefine/main.dart';
-import 'package:notification_center/notification_center.dart';
+import 'package:collection/collection.dart';
 
 class UserRestPage extends StatefulWidget {
   const UserRestPage({super.key});
@@ -44,9 +39,32 @@ class _UserRestPageState extends State<UserRestPage> {
 
   List<RestDayBD> tempRestDays = [];
 
+  List<RestDayBD> sortWeekdays(List<RestDayBD> weekdays) {
+    return weekdays
+      ..sort((a, b) => LinkedHashMap.from({
+            'L': 1,
+            'M': 2,
+            'X': 3,
+            'J': 4,
+            'V': 5,
+            'S': 6,
+            'D': 7,
+          })[a.day]
+              .compareTo(LinkedHashMap.from({
+            'L': 1,
+            'M': 2,
+            'X': 3,
+            'J': 4,
+            'V': 5,
+            'S': 6,
+            'D': 7,
+          })[b.day]));
+  }
+
   @override
   void initState() {
     super.initState();
+    getInactivity();
     starTap();
     if (tempRestDays.isEmpty) {
       for (var element in Constant.tempListShortDay) {
@@ -60,6 +78,55 @@ class _UserRestPageState extends State<UserRestPage> {
         tempRestDays.add(restDay);
       }
     }
+  }
+
+  List<RestDayBD> selecDicActivity = <RestDayBD>[];
+  List<RestDayBD> selecDicActivityTemp = <RestDayBD>[];
+  Map<String, List<RestDayBD>> groupedProducts = {};
+  List<RestDayBD> tempSave = <RestDayBD>[];
+
+  List<RestDayBD> lista = [];
+
+  Future<void> getInactivity() async {
+    groupedProducts = {};
+    selecDicActivity = [];
+    selecDicActivityTemp = [];
+    lista = [];
+    selecDicActivity = await userRestVC.getUserRest();
+
+    if (selecDicActivity.isEmpty) {
+      for (var element in Constant.tempListShortDay) {
+        RestDayBD restDay = RestDayBD(
+            day: element,
+            timeSleep: timeLblPM,
+            timeWakeup: timeLblAM,
+            selection: 0,
+            isSelect: false);
+
+        selecDicActivity.add(restDay);
+      }
+    }
+    if (tempSave.isEmpty) {
+      tempSave = selecDicActivity;
+    }
+
+    List<RestDayBD> sortedWeekdays = sortWeekdays(selecDicActivity);
+    selecDicActivity = sortedWeekdays;
+
+    groupedProducts =
+        groupBy(selecDicActivity, (product) => product.selection.toString());
+    for (var element in groupedProducts.values) {
+      selecDicActivityTemp.add(element.first);
+    }
+    selecDicActivityTemp.sort((a, b) => a.selection.compareTo(b.selection));
+
+    groupedProducts.forEach((key, value) {
+      for (var element in value) {
+        lista.add(element);
+      }
+    });
+
+    setState(() {});
   }
 
   @override

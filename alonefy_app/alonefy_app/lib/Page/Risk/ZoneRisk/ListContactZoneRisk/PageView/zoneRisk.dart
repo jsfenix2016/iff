@@ -39,6 +39,7 @@ class _ZoneRiskPageState extends State<ZoneRiskPage> {
   List<ContactZoneRiskBD> listContact = [];
   late ContactZoneRiskBD contactTemp;
   var indexSelect = -1;
+
   @override
   void initState() {
     NotificationCenter().subscribe('getContactZoneRisk', refreshListZoneRisk);
@@ -49,6 +50,7 @@ class _ZoneRiskPageState extends State<ZoneRiskPage> {
   }
 
   Future refreshListZoneRisk() async {
+    riskVC.update();
     setState(() {});
   }
 
@@ -418,7 +420,7 @@ class _ZoneRiskPageState extends State<ZoneRiskPage> {
                     if (user.idUser == "-1") {
                       Route route = MaterialPageRoute(
                         builder: (context) =>
-                            const UserConfigPage(isMenu: false),
+                            const UserConfigPage(isMenu: true),
                       );
                       Future.sync(
                           () => Navigator.pushReplacement(context, route));

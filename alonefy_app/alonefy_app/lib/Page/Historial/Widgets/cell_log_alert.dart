@@ -20,51 +20,56 @@ class _CellLogAlertsState extends State<CellLogAlerts> {
       width: 300,
       child: Stack(
         children: [
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              IconButton(
-                iconSize: 35,
-                color: ColorPalette.principal,
-                onPressed: () {},
-                icon: searchImageForIcon(widget.logAlert.type),
-              ),
-              Container(
-                color: Colors.transparent,
-                height: 70,
-                width: 200,
-                child: Stack(children: [
-                  Positioned(
-                    top: 10,
-                    child: Text(
-                      widget.logAlert.type,
-                      textAlign: TextAlign.left,
-                      style: GoogleFonts.barlow(
-                        fontSize: 16.0,
-                        wordSpacing: 1,
-                        letterSpacing: 0.001,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
+          Container(
+            color: Colors.transparent,
+            height: 70,
+            width: 300,
+            child: Row(
+              mainAxisSize: MainAxisSize.max,
+              children: [
+                IconButton(
+                  iconSize: 35,
+                  color: ColorPalette.principal,
+                  onPressed: () {},
+                  icon: searchImageForIcon(widget.logAlert.type),
+                ),
+                Container(
+                  color: Colors.transparent,
+                  height: 70,
+                  width: 200,
+                  child: Stack(children: [
+                    Positioned(
+                      top: 10,
+                      child: Text(
+                        widget.logAlert.type.replaceAll("- ", "\n"),
+                        textAlign: TextAlign.left,
+                        style: GoogleFonts.barlow(
+                          fontSize: 16.0,
+                          wordSpacing: 1,
+                          letterSpacing: 0.001,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
                       ),
                     ),
-                  ),
-                  Positioned(
-                    top: 40,
-                    child: Text(
-                      '${widget.logAlert.time.day}-${widget.logAlert.time.month}-${widget.logAlert.time.year} | ${widget.logAlert.time.hour.toString().padLeft(2, '0')}:${widget.logAlert.time.minute.toString().padLeft(2, '0')}',
-                      textAlign: TextAlign.left,
-                      style: GoogleFonts.barlow(
-                        fontSize: 16.0,
-                        wordSpacing: 1,
-                        letterSpacing: 0.001,
-                        fontWeight: FontWeight.normal,
-                        color: Colors.white,
+                    Positioned(
+                      top: widget.logAlert.type.contains('- ') ? 50 : 40,
+                      child: Text(
+                        '${widget.logAlert.time.day}-${widget.logAlert.time.month}-${widget.logAlert.time.year} | ${widget.logAlert.time.hour.toString().padLeft(2, '0')}:${widget.logAlert.time.minute.toString().padLeft(2, '0')}',
+                        textAlign: TextAlign.left,
+                        style: GoogleFonts.barlow(
+                          fontSize: 16.0,
+                          wordSpacing: 1,
+                          letterSpacing: 0.001,
+                          fontWeight: FontWeight.normal,
+                          color: Colors.white,
+                        ),
                       ),
                     ),
-                  ),
-                ]),
-              ),
-            ],
+                  ]),
+                ),
+              ],
+            ),
           ),
         ],
       ),

@@ -93,7 +93,7 @@ class _UserEditPageState extends State<UserEditPage> {
 
     for (var data in countryres) {
       var model = StatusModel.StatusModel();
-      print(data.translations!.es == null ? data.name : data.translations!.es);
+
       model.name =
           data.translations!.es == null ? data.name : data.translations!.es;
       model.emoji = data.emoji;
@@ -212,7 +212,7 @@ class _UserEditPageState extends State<UserEditPage> {
                   children: <Widget>[
                     const SizedBox(height: 20),
                     Text(
-                      "V. 1.12",
+                      "V. 1.19",
                       style: textForTitleApp(),
                     ),
                     const SizedBox(height: 20),
@@ -258,8 +258,12 @@ class _UserEditPageState extends State<UserEditPage> {
                                   padding: const EdgeInsets.all(8.0),
                                   child: Text(
                                     (user != null && user!.gender != "")
-                                        ? user!.gender
-                                        : Constant.selectGender,
+                                        ? user!.gender == "Otro/a"
+                                            ? "Prefiero no decir"
+                                            : user!.gender
+                                        : Constant.selectGender == "Otro/a"
+                                            ? "Prefiero no decir"
+                                            : user!.gender,
                                     style: textNormal16White(),
                                   ),
                                 ),
@@ -270,9 +274,13 @@ class _UserEditPageState extends State<UserEditPage> {
                                     .toList()
                                     .map(
                                       (e) => DropdownMenuItem<String>(
-                                        value: Constant.gender[e],
+                                        value: Constant.gender[e] == "Otro/a"
+                                            ? "Prefiero no decir"
+                                            : Constant.gender[e],
                                         child: Text(
-                                          Constant.gender[e] ?? "",
+                                          Constant.gender[e] == "Otro/a"
+                                              ? "Prefiero no decir"
+                                              : Constant.gender[e] ?? "",
                                           style: textNormal16White(),
                                         ),
                                       ),
@@ -495,7 +503,7 @@ class _UserEditPageState extends State<UserEditPage> {
                                       left: 16.0, right: 16, top: 12),
                                   child: Text(
                                     selectState.isEmpty
-                                        ? "Selecciona la ciudad"
+                                        ? Constant.selectCity
                                         : selectState,
                                     style: textNormal16White(),
                                   ),
@@ -533,19 +541,14 @@ class _UserEditPageState extends State<UserEditPage> {
                                         content:
                                             const Text('¿Desea darse de baja?'),
                                         actions: <Widget>[
-                                          IconButton(
-                                              icon: const Icon(
-                                                Icons.cancel,
-                                              ),
-                                              tooltip: 'Cancelar',
-                                              onPressed: () async {
-                                                Navigator.of(context).pop(true);
-                                              }),
-                                          IconButton(
-                                              icon: const Icon(
-                                                Icons.delete,
-                                              ),
-                                              tooltip: 'Borrar',
+                                          TextButton(
+                                            child: const Text("Cancelar"),
+                                            onPressed: () => {
+                                              Navigator.of(context).pop(true),
+                                            },
+                                          ),
+                                          TextButton(
+                                              child: const Text("Confirmar"),
                                               onPressed: () async {
                                                 Navigator.of(context).pop(true);
                                                 setState(() {

@@ -4,7 +4,9 @@ import 'package:ifeelefine/Common/Constant.dart';
 import 'package:ifeelefine/Common/initialize_models_bd.dart';
 import 'package:ifeelefine/Common/notificationService.dart';
 import 'package:ifeelefine/Common/text_style_font.dart';
+import 'package:ifeelefine/Common/utils.dart';
 import 'package:ifeelefine/Controllers/mainController.dart';
+import 'package:ifeelefine/Data/hiveRisk_data.dart';
 import 'package:ifeelefine/Model/contactRiskBD.dart';
 import 'package:ifeelefine/Page/Risk/DateRisk/ListDateRisk/Controller/riskPageController.dart';
 import 'package:ifeelefine/Page/Risk/DateRisk/ListDateRisk/Widget/list_contact_risk.dart';
@@ -28,22 +30,70 @@ class _RiskPageState extends State<RiskPage> {
   RiskController riskVC = Get.put(RiskController());
 
   late ContactRiskBD contactTemp;
-
+  bool _shouldReloadData = false;
   @override
   void initState() {
-    NotificationCenter().subscribe('getContactRisk', refreshView);
     initContact();
     Future.sync(() => RedirectViewNotifier.setStoredContext(context));
     super.initState();
+    NotificationCenter().subscribe('getContactRisk', refreshView);
     starTap();
   }
 
-  void refreshView() {
-    setState(() {});
+  void refreshView(int id) {
+    riskVC.update();
   }
 
   void initContact() {
     contactTemp = initContactRisk();
+  }
+
+  @override
+  void didChangeDependencies() async {
+    super.didChangeDependencies();
+
+    // Si _shouldReloadData es verdadero, realiza la lógica de recarga aquí.
+    if (prefs.getCancelIdDate != -1) {
+      // Lógica para recargar datos
+      print('Recargando datos...');
+
+      // Puedes llamar a funciones o realizar cualquier acción necesaria.
+      // Por ejemplo, si estás utilizando un FutureBuilder, puedes reiniciar el Future.
+    }
+    var list = await const HiveDataRisk().getcontactRiskbd;
+
+    int indexSelect = list.indexWhere((item) =>
+        item.isActived == true &&
+        parseContactRiskDate(item.timefinish).isBefore(DateTime.now()));
+    print(list);
+    if (indexSelect != -1) {
+      var temp = list[indexSelect];
+      print(temp.isFinishTime);
+      var c = await const HiveDataRisk().getContactRiskBD(temp.id);
+      c!.isFinishTime = true;
+      c.isprogrammed = false;
+      c!.isActived = false;
+      var ct = await const HiveDataRisk().updateContactRisk(c);
+      var listte = await const HiveDataRisk().getcontactRiskbd;
+      riskVC.getContactsRisk();
+    }
+    int indexActive = list.indexWhere((item) =>
+        item.isprogrammed == true &&
+        parseContactRiskDate(item.timeinit).isBefore(DateTime.now()));
+
+    if (indexActive != -1) {
+      var temp = list[indexActive];
+      print(temp.isFinishTime);
+      var c = await const HiveDataRisk().getContactRiskBD(temp.id);
+      c!.isFinishTime = false;
+      c!.isActived = true;
+      c.isprogrammed = false;
+      var ct = await const HiveDataRisk().updateContactRisk(c);
+      var listte = await const HiveDataRisk().getcontactRiskbd;
+      riskVC.getContactsRisk();
+    }
+    // Importante: Reinicia la variable _shouldReloadData después de la recarga.
+    _shouldReloadData = false;
   }
 
   @override
@@ -117,21 +167,27 @@ class _RiskPageState extends State<RiskPage> {
                       if (user.idUser == "-1") {
                         Route route = MaterialPageRoute(
                           builder: (context) =>
-                              const UserConfigPage(isMenu: false),
+                              const UserConfigPage(isMenu: true),
                         );
                         Future.sync(
                             () => Navigator.pushReplacement(context, route));
                         return;
                       }
-                      Future.sync(() => Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => EditRiskPage(
-                                contactRisk: contactTemp,
-                                index: riskVC.contactList.obs.value.length,
-                              ),
-                            ),
-                          ));
+                      Get.off(
+                        EditRiskPage(
+                          contactRisk: contactTemp,
+                          index: riskVC.contactList.obs.value.length,
+                        ),
+                      );
+                      // Future.sync(() => Navigator.push(
+                      //       context,
+                      //       MaterialPageRoute(
+                      //         builder: (context) => EditRiskPage(
+                      //           contactRisk: contactTemp,
+                      //           index: riskVC.contactList.obs.value.length,
+                      //         ),
+                      //       ),
+                      //     ));
                     },
                     mensaje: Constant.newDate,
                     img: 'assets/images/plussWhite.png',

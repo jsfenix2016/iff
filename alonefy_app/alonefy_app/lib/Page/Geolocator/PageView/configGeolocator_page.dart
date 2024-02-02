@@ -9,6 +9,7 @@ import 'package:ifeelefine/Common/utils.dart';
 
 import 'package:ifeelefine/Page/Geolocator/Controller/configGeolocatorController.dart';
 import 'package:ifeelefine/Page/Premium/Controller/premium_controller.dart';
+import 'package:ifeelefine/Views/menu_controller.dart';
 import 'package:ifeelefine/main.dart';
 import 'package:notification_center/notification_center.dart';
 
@@ -135,7 +136,11 @@ class _ConfigGeolocatorState extends State<ConfigGeolocator> {
     setState(() {});
     showSaveAlert(context, "Permiso guardado",
         "El permiso del mapa se ha guardado correctamente.");
-    NotificationCenter().notify('refreshMenu');
+    try {
+      NotificationCenter().notify('refreshMenu');
+    } catch (e) {
+      print(e);
+    }
   }
 
   Future _isActivePermission() async {

@@ -66,6 +66,7 @@ class ContactRiskService {
           headers: Constant.headers);
 
       var status = response.statusCode;
+      print(status);
     } catch (e) {
       print(e);
     }
@@ -84,7 +85,11 @@ class ContactRiskService {
       final resp = await http.put(postUri,
           headers: {'Content-Type': mime ?? 'image/jpeg'}, body: bytes);
 
-      var status = resp.statusCode;
+      if (resp.statusCode == 200) {
+        print(resp.statusCode);
+      } else {
+        print("error");
+      }
     } catch (e) {
       print(e);
     }

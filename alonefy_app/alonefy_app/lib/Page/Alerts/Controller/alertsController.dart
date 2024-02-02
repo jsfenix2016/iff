@@ -10,8 +10,6 @@ import 'package:collection/collection.dart';
 
 import '../../../Model/ApiRest/AlertApi.dart';
 
-final _prefs = PreferenceUser();
-
 class AlertsController extends GetxController {
   RxMap<String, List<LogAlertsBD>> contactList =
       <String, List<LogAlertsBD>>{}.obs;
@@ -51,7 +49,81 @@ class AlertsController extends GetxController {
     groupedProducts = groupBy(
         temp, (product) => format.parse(product.time.toString()).toString());
     contactList.value = groupedProducts;
+
     return groupedProducts;
+  }
+
+  Future<RxMap<String, Map<String, List<LogAlertsBD>>>> getAllMov2() async {
+    Map<String, Map<String, List<LogAlertsBD>>> groupedProducts = {};
+
+    RxMap<String, Map<String, List<LogAlertsBD>>> groupedAlerts =
+        RxMap<String, Map<String, List<LogAlertsBD>>>();
+    late final List<LogAlertsBD> allMovTime = [];
+    late final List<LogAlertsBD> allMov = [];
+    List<LogAlertsBD> temp = [];
+    List<LogAlertsBD> box = await const HiveData().getAlerts();
+
+    for (var element in box) {
+      // if (element.type.contains("Inactividad")) {
+      allMovTime.add(element);
+      // }
+    }
+
+    allMovTime.sort((a, b) {
+      //sorting in descending order
+      return b.time.compareTo(a.time);
+    });
+
+    for (var element in allMovTime) {
+      allMov.add(element);
+    }
+
+    temp = removeDuplicates(allMov);
+    // var format = DateFormat('dd-MM-yyyy');
+
+    // Inicializa la estructura del mapa anidado
+    for (var alert in temp) {
+      var inputFormat = DateFormat('yyyy-MM-dd');
+      var inputDate = inputFormat.parse(alert.time.toString());
+      var outputFormat = DateFormat('dd-MM-yyyy');
+      var ar = outputFormat.format(inputDate);
+      var dateTime1 = DateFormat('dd-MM-yyyy').parse(ar);
+
+      final dateKey = dateTime1.toString();
+      final typeKey = alert.groupBy;
+      print(typeKey);
+      print('idGroup: ${alert.id}');
+      print('type: ${alert.type}');
+
+      if (alert.type.contains("Movimiento rudo") ||
+          alert.type.contains("Caida")) {
+        groupedProducts.putIfAbsent(dateKey, () => {});
+        groupedProducts[dateKey]!.putIfAbsent(typeKey, () => []);
+        groupedProducts[dateKey]![typeKey]!.add(alert);
+      } else {
+        groupedProducts.putIfAbsent(dateKey, () => {});
+        groupedProducts[dateKey]!.putIfAbsent(typeKey, () => []);
+        groupedProducts[dateKey]![typeKey]!.add(alert);
+      }
+      // if (typeKey.contains("-1")) {
+      //   groupedProducts.putIfAbsent(dateKey, () => {});
+      //   groupedProducts[dateKey]!.putIfAbsent(typeKey, () => []);
+      //   groupedProducts[dateKey]![typeKey]!.add(alert);
+      // }
+      // if (typeKey.contains("1")) {
+      //   groupedProducts.putIfAbsent(dateKey, () => {});
+      //   groupedProducts[dateKey]!.putIfAbsent(typeKey, () => []);
+      //   groupedProducts[dateKey]![typeKey]!.add(alert);
+      // }
+      // if (typeKey.contains("2")) {
+      //   groupedProducts.putIfAbsent(dateKey, () => {});
+      //   groupedProducts[dateKey]!.putIfAbsent(typeKey, () => []);
+      //   groupedProducts[dateKey]![typeKey]!.add(alert);
+      // }
+    }
+    groupedAlerts.value = groupedProducts;
+    // contactList.value = groupedProducts;
+    return groupedAlerts;
   }
 
   List<LogAlertsBD> removeDuplicates(List<LogAlertsBD> originalList) {
@@ -65,7 +137,8 @@ class AlertsController extends GetxController {
             id: alert.id,
             type: alert.typeaction,
             photoDate: [],
-            time: alert.startdate);
+            time: alert.startdate,
+            groupBy: alert.groupBy);
 
         await const HiveData().saveUserPositionBD(alertBD);
       }

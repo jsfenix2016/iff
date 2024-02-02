@@ -27,11 +27,12 @@ class _EditImagePageState extends State<EditImagePage> {
   File? foto;
   Uint8List? bytesTemp;
   String img64 = "";
-  final controller = CropController();
+  late CropController controller;
 
   @override
   void initState() {
     super.initState();
+    controller = CropController();
   }
 
   @override
@@ -53,73 +54,77 @@ class _EditImagePageState extends State<EditImagePage> {
       ),
       extendBodyBehindAppBar: true,
       body: SafeArea(
-        child: Container(
-          decoration: decorationCustom(),
-          width: size.width,
-          height: size.height,
+        child: SingleChildScrollView(
+          physics: const NeverScrollableScrollPhysics(),
           child: Container(
-            height: 500,
-            color: Colors.transparent,
-            child: Column(
-              mainAxisSize: MainAxisSize.max,
-              children: [
-                Container(
-                  height: 600,
-                  color: Colors.transparent,
-                  child: Padding(
-                    padding: const EdgeInsets.all(1.0),
-                    child: CropPreview(
-                      maskOptions: const MaskOptions(aspectRatio: 1),
-                      controller: controller,
-                      bytes: widget.bytes,
-                      mode: CropMode.oval,
-                      hitSize: 100,
+            decoration: decorationCustom(),
+            width: size.width,
+            height: size.height,
+            child: Container(
+              height: size.height,
+              color: Colors.transparent,
+              child: Column(
+                mainAxisSize: MainAxisSize.max,
+                children: [
+                  Container(
+                    height: size.height - 300,
+                    color: Colors.transparent,
+                    child: Padding(
+                      padding: const EdgeInsets.all(1.0),
+                      child: CropPreview(
+                        maskOptions: const MaskOptions(aspectRatio: 1),
+                        controller: controller,
+                        bytes: widget.bytes,
+                        mode: CropMode.oval,
+                        hitSize: 30,
+                        dragPointSize: 10,
+                      ),
                     ),
                   ),
-                ),
-                img64 != ""
-                    ? Image.memory(bytesTemp!,
-                        fit: BoxFit.cover, width: 100, height: 100.0)
-                    : SizedBox.shrink(),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  child: SizedBox(
-                    width: double.infinity,
-                    child: ElevateButtonFilling(
-                      showIcon: false,
-                      onChanged: (value) async {
-                        bytesTemp = await controller.crop();
-                        img64 = base64Encode(bytesTemp!);
-                        Directory appDocDirectory =
-                            await getApplicationDocumentsDirectory();
+                  img64 != ""
+                      ? Image.memory(bytesTemp!,
+                          fit: BoxFit.cover, width: 100, height: 100.0)
+                      : SizedBox.shrink(),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: SizedBox(
+                      width: double.infinity,
+                      child: ElevateButtonFilling(
+                        showIcon: false,
+                        onChanged: (value) async {
+                          bytesTemp = await controller.crop();
+                          img64 = base64Encode(bytesTemp!);
+                          Directory appDocDirectory =
+                              await getApplicationDocumentsDirectory();
 
-                        final file = File(join(appDocDirectory.uri.path,
-                            'crop_${DateTime.now()}.jpg'));
+                          final file = File(join(appDocDirectory.uri.path,
+                              'crop_${DateTime.now()}.jpg'));
 
-                        await file.exists().then((isThere) {
-                          isThere
-                              ? print('')
-                              : Directory(
-                                      '${appDocDirectory.uri.path}${DateTime.now()}')
-                                  .createSync(recursive: true);
-                        });
-                        file.writeAsBytesSync(bytesTemp!,
-                            mode: FileMode.append);
+                          await file.exists().then((isThere) {
+                            isThere
+                                ? print('')
+                                : Directory(
+                                        '${appDocDirectory.uri.path}${DateTime.now()}')
+                                    .createSync(recursive: true);
+                          });
+                          file.writeAsBytesSync(bytesTemp!,
+                              mode: FileMode.append);
 
-                        // File newcrop =
-                        //     convertUint8ListToFile(bytes!, "crop.jpg");
+                          // File newcrop =
+                          //     convertUint8ListToFile(bytes!, "crop.jpg");
 
-                        setState(() {
-                          // widget.selectPhoto(file);
-                          Navigator.of(context).pop(file);
-                        });
-                      },
-                      mensaje: "Recortar",
-                      img: '',
+                          setState(() {
+                            // widget.selectPhoto(file);
+                            Navigator.of(context).pop(file);
+                          });
+                        },
+                        mensaje: "Recortar",
+                        img: '',
+                      ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),

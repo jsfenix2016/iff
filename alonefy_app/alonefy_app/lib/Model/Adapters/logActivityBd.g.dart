@@ -2,7 +2,7 @@ part of '../logActivityBd.dart';
 
 class LogActivityBDAdapter extends TypeAdapter<LogActivityBD> {
   @override
-  final int typeId = HiveConstantAdapterInit.idLogActivityBDAdapter;
+  final int typeId = 7;
 
   @override
   LogActivityBD read(BinaryReader reader) {
@@ -11,17 +11,22 @@ class LogActivityBDAdapter extends TypeAdapter<LogActivityBD> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return LogActivityBD(
-        time: fields[0] as DateTime, movementType: fields[1] as String);
+      time: fields[0] as DateTime,
+      movementType: fields[1] as String,
+      groupBy: fields[2] as String,
+    );
   }
 
   @override
   void write(BinaryWriter writer, LogActivityBD obj) {
     writer
-      ..writeByte(2)
+      ..writeByte(3)
       ..writeByte(0)
       ..write(obj.time)
       ..writeByte(1)
-      ..write(obj.movementType);
+      ..write(obj.movementType)
+      ..writeByte(2)
+      ..write(obj.groupBy);
   }
 
   @override

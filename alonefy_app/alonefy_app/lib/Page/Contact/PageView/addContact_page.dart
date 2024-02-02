@@ -12,8 +12,9 @@ import 'package:ifeelefine/Provider/prefencesUser.dart';
 import 'package:ifeelefine/Utils/Widgets/widgetLogo.dart';
 import 'package:ifeelefine/Views/contact_page.dart';
 import 'package:ifeelefine/main.dart';
+import 'package:notification_center/notification_center.dart';
 
-import '../../../Controllers/contactUserController.dart';
+import '../Controller/contactUserController.dart';
 import '../../../Utils/Widgets/elevatedButtonFilling.dart';
 import 'package:ifeelefine/Common/decoration_custom.dart';
 
@@ -37,6 +38,7 @@ class _AddContactPageState extends State<AddContactPage> {
     // TODO: implement initState
     super.initState();
     // _checkPermissionIsEnabled();
+    NotificationCenter().subscribe('getContactBD', getContactBD);
     contactlistTemp = contactlist;
     getContactBD();
     getContactList(context);
@@ -47,7 +49,7 @@ class _AddContactPageState extends State<AddContactPage> {
     if (listContactDB.length != 0) {
       gotoContactlist();
     }
-    setState(() {});
+    controller.update();
   }
 
   void getContactList(BuildContext context) async {
@@ -82,7 +84,9 @@ class _AddContactPageState extends State<AddContactPage> {
         }),
       ),
     );
-
+    if (cont == null) {
+      return;
+    }
     if (cont!.name.first.isNotEmpty) {
       await const HiveData().saveUserContact(contactBD);
       // Get.off(const ContactList(

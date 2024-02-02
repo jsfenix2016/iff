@@ -11,9 +11,11 @@ import 'package:ifeelefine/Model/userbd.dart';
 import 'package:ifeelefine/Page/Premium/Controller/premium_controller.dart';
 import 'package:ifeelefine/Page/Premium/PageView/premium_page.dart';
 import 'package:ifeelefine/Page/UseMobil/Controller/useMobileController.dart';
+import 'package:ifeelefine/Page/UserRest/Controller/userRestController.dart';
 
 import 'package:ifeelefine/Page/UserRest/PageView/configurationUserRest_page.dart';
 import 'package:flutter/material.dart';
+import 'package:ifeelefine/Page/UserRest/PageView/previewRestTime.dart';
 import 'package:ifeelefine/Provider/prefencesUser.dart';
 import 'package:ifeelefine/Utils/Widgets/elevatedButtonFilling.dart';
 import 'package:ifeelefine/Utils/Widgets/widgetLogo.dart';
@@ -31,6 +33,8 @@ class UseMobilePage extends StatefulWidget {
 
 class _UseMobilePageState extends State<UseMobilePage> {
   final UseMobilController useMobilVC = Get.put(UseMobilController());
+  final UserRestController userRestVC = Get.put(UserRestController());
+
   var indexSelect = 0;
   UserBD? userbd;
 
@@ -337,12 +341,25 @@ class _UseMobilePageState extends State<UseMobilePage> {
 
                           if (result) {
                             // Get.off(() => const UserRestPage());
-                            await Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => const UserRestPage(),
-                              ),
-                            );
+
+                            var listrest = await userRestVC.getUserRest();
+                            if (listrest.isNotEmpty) {
+                              await Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => PreviewRestTimePage(
+                                    isMenu: false,
+                                  ),
+                                ),
+                              );
+                            } else {
+                              await Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => const UserRestPage(),
+                                ),
+                              );
+                            }
                           }
                         },
                         mensaje: 'Continuar',

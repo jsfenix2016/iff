@@ -2,9 +2,9 @@ import 'package:flutter/foundation.dart';
 import 'package:hive/hive.dart';
 import 'package:ifeelefine/Data/hive_constant_adapterInit.dart';
 
-part 'Adapters/contactRiskBD.g.dart';
+part 'ApiRest/contactRiskBD.g.dart';
 
-@HiveType(typeId: HiveConstantAdapterInit.idContactRiskBDAdapter)
+@HiveType(typeId: 5)
 class ContactRiskBD {
   ContactRiskBD(
       {required this.id,
@@ -25,7 +25,8 @@ class ContactRiskBD {
       required this.photoDate,
       required this.saveContact,
       required this.createDate,
-      required this.taskIds});
+      required this.taskIds,
+      required this.finish});
 
   @HiveField(0)
   int id;
@@ -82,4 +83,7 @@ class ContactRiskBD {
 
   @HiveField(18)
   List<String>? taskIds;
+
+  @HiveField(19)
+  bool finish;
 }

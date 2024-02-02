@@ -21,6 +21,7 @@ class ContactRiskApi {
   late String awsUploadCustomContactPresignedUrl;
   List<String>? awsDownloadPresignedUrls;
   late String awsDownloadCustomContactPresignedUrl;
+  late bool finished;
 
   ContactRiskApi(
       {required this.phoneNumber,
@@ -34,7 +35,8 @@ class ContactRiskApi {
       required this.endDateTime,
       required this.customContactPhoneNumber,
       required this.notifyPredefinedContacts,
-      required this.sendLocation});
+      required this.sendLocation,
+      required this.finished});
 
   ContactRiskApi.fromContact(
       ContactRiskBD contactRisk, this.phoneNumber, this.totalImagesToUpload) {
@@ -49,6 +51,7 @@ class ContactRiskApi {
     customContactPhoneNumber = contactRisk.phones;
     notifyPredefinedContacts = contactRisk.sendWhatsapp;
     sendLocation = contactRisk.sendLocation;
+    finished = contactRisk.finish;
   }
 
   ContactRiskApi.fromApi(
@@ -69,7 +72,8 @@ class ContactRiskApi {
       required this.awsUploadCustomContactPresignedUrl,
       required this.awsUploadPresignedUrls,
       required this.awsDownloadPresignedUrls,
-      required this.awsDownloadCustomContactPresignedUrl});
+      required this.awsDownloadCustomContactPresignedUrl,
+      required this.finished});
 
   Map<String, dynamic> toJson() => {
         'phoneNumber': phoneNumber.replaceAll(" ", ""),
@@ -83,7 +87,8 @@ class ContactRiskApi {
         'customContactPhoneNumber': customContactPhoneNumber,
         'notifyPredefinedContacts': notifyPredefinedContacts,
         'sendLocation': sendLocation,
-        'totalImagesToUpload': totalImagesToUpload
+        'totalImagesToUpload': totalImagesToUpload,
+        'finished': finished,
       };
 
   factory ContactRiskApi.fromJson(Map<String, dynamic> json) {
@@ -106,6 +111,7 @@ class ContactRiskApi {
         awsUploadPresignedUrls: json['awsUploadPresignedUrls'] != null
             ? dynamicToStringList(json['awsUploadPresignedUrls'])
             : [],
+        finished: json['finished'],
         awsUploadCustomContactPresignedUrl:
             json['awsUploadCustomContactPresignedUrl'] ?? "",
         awsDownloadPresignedUrls: json['awsDownloadPresignedUrls'] != null

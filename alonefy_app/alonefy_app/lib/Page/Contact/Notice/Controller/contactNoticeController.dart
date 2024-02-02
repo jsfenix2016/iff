@@ -2,6 +2,7 @@ import 'package:get/get.dart';
 import 'package:ifeelefine/Data/hive_constant_adapterInit.dart';
 import 'package:ifeelefine/Data/hive_data.dart';
 import 'package:ifeelefine/Model/contact.dart';
+import 'package:ifeelefine/Page/Contact/ListContact/Controller/list_contact_controller.dart';
 import 'package:ifeelefine/Page/Contact/Service/contactService.dart';
 import 'package:ifeelefine/main.dart';
 import 'package:notification_center/notification_center.dart';
@@ -9,6 +10,18 @@ import 'package:notification_center/notification_center.dart';
 import '../../../../Controllers/mainController.dart';
 
 class ContactNoticeController extends GetxController {
+  RxList<ContactBD> contactList = <ContactBD>[].obs;
+  Future<RxList<ContactBD>> getAllContactDB() async {
+    await inicializeHiveBD();
+    try {
+      contactList.value = await const HiveData().listUserContactbd;
+      print(contactList.value.toList());
+      return contactList;
+    } catch (error) {
+      return contactList;
+    }
+  }
+
   Future<List<ContactBD>> getAllContact() async {
     await inicializeHiveBD();
     final listContact = await const HiveData().listUserContactbd;

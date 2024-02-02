@@ -7,6 +7,7 @@ import 'package:ifeelefine/Common/text_style_font.dart';
 import 'package:ifeelefine/Common/utils.dart';
 import 'package:ifeelefine/Model/logAlertsBD.dart';
 import 'package:ifeelefine/Page/Alerts/Controller/alertsController.dart';
+import 'package:ifeelefine/Page/Alerts/Widget/alert_list_group_widget.dart';
 import 'package:ifeelefine/Page/Alerts/Widget/list_alert.dart';
 import 'package:ifeelefine/Page/Disamble/Pageview/disambleIfeelfine_page.dart';
 
@@ -35,10 +36,14 @@ class _AlertsPageState extends State<AlertsPage> {
       RxMap<String, List<LogAlertsBD>>());
   bool _isLoading = true;
 
+  RxMap<String, Map<String, List<LogAlertsBD>>> newGroup =
+      RxMap<String, Map<String, List<LogAlertsBD>>>();
   Future<void> getLog() async {
     groupedProducts.value = {};
 
     groupedProducts.value = await alertsVC.getAllMov();
+    newGroup = await alertsVC.getAllMov2();
+    newGroup.values;
     _group.value = groupedProducts;
     _isLoading = false;
     setState(() {});
@@ -51,6 +56,7 @@ class _AlertsPageState extends State<AlertsPage> {
     var req = await alertsVC.deleteAlerts(context, listLog);
     if (req == 0) {
       NotificationCenter().notify('getAlerts');
+      setState(() {});
       getLog();
     }
   }
@@ -65,7 +71,7 @@ class _AlertsPageState extends State<AlertsPage> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    final listData = groupedProducts.entries.toList();
+
     RedirectViewNotifier.setStoredContext(context);
     return LoadingIndicator(
       isLoading: _isLoading,
@@ -92,8 +98,8 @@ class _AlertsPageState extends State<AlertsPage> {
               decoration: decorationCustom2(),
               width: size.width,
               height: size.height,
-              child: ListAlert(
-                listData: listData,
+              child: AlertListWidget(
+                groupedAlerts: newGroup,
                 onChangedDelete: (List<LogAlertsBD> value) {
                   deleteForDayMov(context, value);
                 },

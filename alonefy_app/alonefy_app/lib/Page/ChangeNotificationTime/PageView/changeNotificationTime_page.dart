@@ -7,7 +7,7 @@ import 'package:ifeelefine/Common/manager_alerts.dart';
 import 'package:ifeelefine/Common/notificationService.dart';
 import 'package:ifeelefine/Common/text_style_font.dart';
 
-import 'package:ifeelefine/Controllers/contactUserController.dart';
+import 'package:ifeelefine/Page/Contact/Controller/contactUserController.dart';
 import 'package:ifeelefine/Page/Premium/Controller/premium_controller.dart';
 import 'package:ifeelefine/main.dart';
 

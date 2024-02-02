@@ -21,6 +21,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import 'package:ifeelefine/main.dart';
+import 'package:notification_center/notification_center.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import '../Provider/prefencesUser.dart';
@@ -145,15 +146,33 @@ class _RingTonePageState extends State<RingTonePage>
     print(ringtonesRaw);
     switch (status) {
       case PermissionStatus.denied:
+        _prefs.setAcceptedScheduleExactAlarm = PreferencePermission.noAccepted;
         return false;
       case PermissionStatus.granted:
+        _prefs.setAcceptedScheduleExactAlarm = PreferencePermission.allow;
         return true;
       case PermissionStatus.restricted:
+        _prefs.setAcceptedScheduleExactAlarm = PreferencePermission.noAccepted;
         return false;
       case PermissionStatus.limited:
+        _prefs.setAcceptedScheduleExactAlarm = PreferencePermission.noAccepted;
         return true;
       case PermissionStatus.permanentlyDenied:
+        _prefs.setAcceptedScheduleExactAlarm = PreferencePermission.noAccepted;
         return false;
+      case PermissionStatus.provisional:
+        // TODO: Handle this case.
+        break;
+    }
+    try {
+      NotificationCenter().notify('refreshPermission');
+    } catch (e) {
+      print(e);
+    }
+    try {
+      NotificationCenter().notify('refreshMenu');
+    } catch (e) {
+      print(e);
     }
   }
 

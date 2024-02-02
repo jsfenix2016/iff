@@ -1,31 +1,34 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_contacts/flutter_contacts.dart';
+
 import 'package:get/get.dart';
-import 'package:ifeelefine/Common/Constant.dart';
 import 'package:ifeelefine/Common/utils.dart';
+
 import 'package:ifeelefine/Data/hiveRisk_data.dart';
 import 'package:ifeelefine/Data/hive_data.dart';
-import 'package:ifeelefine/Model/contact.dart';
-import 'package:ifeelefine/Model/contactRiskBD.dart';
+
 import 'package:ifeelefine/Model/contactZoneRiskBD.dart';
+import 'package:ifeelefine/Page/Disamble/Controller/disambleController.dart';
 import 'package:ifeelefine/Page/Risk/ZoneRisk/Service/zone_risk_service.dart';
 import 'package:ifeelefine/Model/logAlertsBD.dart';
-import 'package:notification_center/notification_center.dart';
-import 'package:permission_handler/permission_handler.dart';
+import 'package:ifeelefine/Provider/prefencesUser.dart';
+
+import 'package:uuid/uuid.dart';
 
 import '../../../../../Controllers/mainController.dart';
 import '../../../../../Model/ApiRest/ZoneRiskApi.dart';
-import 'package:ifeelefine/Common/manager_alerts.dart';
 
 class EditZoneController extends GetxController {
   Future<void> saveActivityLog(ContactZoneRiskBD contact) async {
+    var uuid = Uuid().v4();
     LogAlertsBD mov = LogAlertsBD(
         id: 0,
         type: "Zona de riesgo",
         time: DateTime.now(),
-        video: contact.photo);
+        video: contact.video,
+        groupBy: uuid);
     MainController().saveUserRiskLog(mov);
-    //await const HiveData().saveUserPositionBD(mov);
+    prefs.setIdZoneGroup = uuid;
+    await const HiveData().saveUserPositionBD(mov);
   }
 
   Future<bool> saveContactZoneRisk(
@@ -90,12 +93,14 @@ class EditZoneController extends GetxController {
           contactZoneRiskApi.awsDownloadCustomContactPresignedUrl.isNotEmpty) {
         bytes = await ZoneRiskService().getZoneRiskImage(
             contactZoneRiskApi.awsDownloadCustomContactPresignedUrl);
+        print(bytes);
       }
       var videoBytes;
-      if (contactZoneRiskApi.awsDownloadVideoPresignedUrl != null &&
-          contactZoneRiskApi.awsDownloadVideoPresignedUrl.isNotEmpty) {
-        videoBytes = await ZoneRiskService()
-            .getZoneRiskImage(contactZoneRiskApi.awsDownloadVideoPresignedUrl);
+      if (contactZoneRiskApi.awsDownloadVideoPresignedUrls != null &&
+          contactZoneRiskApi.awsDownloadVideoPresignedUrls.isNotEmpty) {
+        videoBytes = await ZoneRiskService().getZoneRiskImage(
+            contactZoneRiskApi.awsDownloadVideoPresignedUrls.first);
+        print(videoBytes);
       }
       var contact = ContactZoneRiskBD(
           id: contactZoneRiskApi.id,

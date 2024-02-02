@@ -56,5 +56,6 @@ ContactRiskBD initContactRisk() {
       photoDate: [],
       saveContact: false,
       createDate: DateTime.now(),
-      taskIds: []);
+      taskIds: [],
+      finish: false);
 }

@@ -43,9 +43,8 @@ class UserApi {
   late List<UserRestApi> sleepHours;
   late List<AlertApi> logAlert;
 
-
-  UserApi({
-      required this.phoneNumber,
+  UserApi(
+      {required this.phoneNumber,
       required this.fcmToken,
       required this.idUser,
       required this.name,
@@ -77,7 +76,6 @@ class UserApi {
       required this.sleepHours,
       required this.logAlert});
 
-
   UserApi.id(this.idUser);
 
   factory UserApi.fromJson(Map<String, dynamic> json) {
@@ -103,16 +101,19 @@ class UserApi {
         activateContacts: json['activateContacts'] ?? false,
         activateAlarm: json['activateAlarm'] ?? false,
         fallTime: json['fallTime'] ?? 5,
-        lastMovement: json['lastMovement'] != null ? jsonToDatetime(json['lastMovement'], getDefaultPattern()) : DateTime.now(),
+        lastMovement: json['lastMovement'] != null
+            ? jsonToDatetime(json['lastMovement'], getDefaultPattern())
+            : DateTime.now(),
         currentlyDeactivated: json['currentlyDeactivated'] ?? false,
         awsDownloadPresignedUrl: json['awsDownloadPresignedUrl'],
         contact: jsonToGenericList<ContactApi>(json, "contact"),
         contactRisk: jsonToGenericList<ContactRiskApi>(json, "contactRisk"),
         zoneRisk: jsonToGenericList<ZoneRiskApi>(json, "zoneRisk"),
-        activities: jsonToGenericList<ActivityDayApiResponse>(json, "activities"),
-        inactivityTimes: jsonToGenericList<UseMobilApi>(json, "inactivityTimes"),
+        activities:
+            jsonToGenericList<ActivityDayApiResponse>(json, "activities"),
+        inactivityTimes:
+            jsonToGenericList<UseMobilApi>(json, "inactivityTimes"),
         sleepHours: jsonToGenericList<UserRestApi>(json, "sleepHours"),
-        logAlert: jsonToGenericList<AlertApi>(json, "logAlert")
-    );
+        logAlert: jsonToGenericList<AlertApi>(json, "logAlert"));
   }
 }

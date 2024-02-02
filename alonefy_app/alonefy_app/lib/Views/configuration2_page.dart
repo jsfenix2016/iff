@@ -233,7 +233,7 @@ class _UserConfigPageState2 extends State<UserConfigPage2> {
                       hint: Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Text(
-                          "Selecciona la ciudad",
+                          Constant.selectCity,
                           style: GoogleFonts.barlow(
                             fontSize: 16.0,
                             wordSpacing: 1,

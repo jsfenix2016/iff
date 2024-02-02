@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:ifeelefine/Common/idleLogic.dart';
 
 import 'package:ifeelefine/Model/contactRiskBD.dart';
+import 'package:ifeelefine/Page/Disamble/Controller/disambleController.dart';
 import 'package:ifeelefine/main.dart';
 
 class LogicDateRisk {
@@ -15,7 +16,8 @@ class LogicDateRisk {
       if (contact.sendWhatsapp) {
         IdleLogic().notifyContact();
       }
-      mainController.saveUserLog("Envío de SMS a contacto cita", now);
+      mainController.saveUserLog(
+          "Envío de SMS a contacto cita", now, prefs.getIdDateGroup);
     });
   }
 }

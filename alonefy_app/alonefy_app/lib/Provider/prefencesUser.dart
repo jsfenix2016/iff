@@ -26,7 +26,7 @@ class PreferenceUser {
   }
 
   get getTimerCancelZone {
-    return _prefs.getInt('timerCancelZone') ?? 60;
+    return _prefs.getInt('timerCancelZone') ?? 30;
   }
 
   set setTimerCancelZone(int value) {
@@ -55,6 +55,70 @@ class PreferenceUser {
 
   set onboarding(bool value) {
     _prefs.setBool('onboard', value);
+  }
+
+  get getListDate {
+    return _prefs.getBool('listDate') ?? false;
+  }
+
+  set setListDate(bool value) {
+    _prefs.setBool('listDate', value);
+  }
+
+  get getCancelDate {
+    return _prefs.getBool('cancelDate') ?? false;
+  }
+
+  set setCancelDate(bool value) {
+    _prefs.setBool('cancelDate', value);
+  }
+
+  get getCancelIdDate {
+    return _prefs.getInt('cancelIdDate') ?? -1;
+  }
+
+  set setCancelIdDate(int value) {
+    _prefs.setInt('cancelIdDate', value);
+  }
+
+  get getCancelIdDateTemp {
+    return _prefs.getInt('cancelIdDateTemp') ?? -1;
+  }
+
+  set setCancelIdDateTemp(int value) {
+    _prefs.setInt('cancelIdDateTemp', value);
+  }
+
+  get getIdDateGroup {
+    return _prefs.getString('IdDateGroup') ?? '-1';
+  }
+
+  set setIdDateGroup(String value) {
+    _prefs.setString('IdDateGroup', value);
+  }
+
+  get getIdZoneGroup {
+    return _prefs.getString('IdZoneGroup') ?? '-1';
+  }
+
+  set setIdZoneGroup(String value) {
+    _prefs.setString('IdZoneGroup', value);
+  }
+
+  get getIdInactiveGroup {
+    return _prefs.getString('IdInactiveGroup') ?? '-1';
+  }
+
+  set setIdInactiveGroup(String value) {
+    _prefs.setString('IdInactiveGroup', value);
+  }
+
+  get getIdDropGroup {
+    return _prefs.getString('IdDropGroup') ?? '-1';
+  }
+
+  set setIdDropGroup(String value) {
+    _prefs.setString('IdDropGroup', value);
   }
 
   get isFirstConfig {
@@ -204,6 +268,14 @@ class PreferenceUser {
     _prefs.setBool('DetectedFall', value);
   }
 
+  get getContactEnabled {
+    return _prefs.getBool('ContactEnabled') ?? false;
+  }
+
+  set setContactEnabled(bool value) {
+    _prefs.setBool('ContactEnabled', value);
+  }
+
   get getFallTime {
     return _prefs.getString('FallTime') ?? "5 min";
   }
@@ -292,6 +364,22 @@ class PreferenceUser {
     _prefs.setBool('EnableIFF', value);
   }
 
+  get getEnableTimer {
+    return _prefs.getBool('EnableTimer') ?? true;
+  }
+
+  set setEnableTimer(bool value) {
+    _prefs.setBool('EnableTimer', value);
+  }
+
+  get getEnableTimerDrop {
+    return _prefs.getBool('EnableTimerDrop') ?? true;
+  }
+
+  set setEnableTimerDrop(bool value) {
+    _prefs.setBool('EnableTimerDrop', value);
+  }
+
   get getStartDateTimeDisambleIFF {
     return _prefs.getString('StartDateTimeDisambleIFF') ?? "";
   }
@@ -306,6 +394,14 @@ class PreferenceUser {
 
   get getDisambleIFFForActivity {
     return _prefs.getInt('DisambleForActivity') ?? 5;
+  }
+
+  set setCountFinish(bool value) {
+    _prefs.setBool('CountFinish', value);
+  }
+
+  get getCountFinish {
+    return _prefs.getBool('CountFinish') ?? false;
   }
 
   set setNotificationAudio(String audioPath) {

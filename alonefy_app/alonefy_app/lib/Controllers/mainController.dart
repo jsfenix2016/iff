@@ -7,6 +7,7 @@ import 'package:ifeelefine/Common/utils.dart';
 import 'package:ifeelefine/Data/hive_constant_adapterInit.dart';
 import 'package:ifeelefine/Data/hive_data.dart';
 import 'package:ifeelefine/Model/ApiRest/AlertApi.dart';
+import 'package:ifeelefine/Model/contact.dart';
 import 'package:ifeelefine/Model/logActivityBd.dart';
 import 'package:ifeelefine/Model/logAlertsBD.dart';
 import 'package:ifeelefine/Model/userbd.dart';
@@ -14,6 +15,8 @@ import 'package:ifeelefine/Page/Alerts/Service/alerts_service.dart';
 import 'package:ifeelefine/Page/LogActivity/Controller/logActivity_controller.dart';
 import 'package:ifeelefine/Services/mainService.dart';
 import 'package:ifeelefine/main.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import 'package:notification_center/notification_center.dart';
 
 class MainController extends GetxController {
   final MainService contactServ = Get.put(MainService());
@@ -30,9 +33,29 @@ class MainController extends GetxController {
     }
   }
 
-  Future<void> saveUserLog(String messaje, DateTime time) async {
+  Future<bool> uptadeCOntact(String phoneNumber, String status) async {
     await inicializeHiveBD();
-    LogAlertsBD mov = LogAlertsBD(id: -1, type: messaje, time: time);
+
+    var contact = await const HiveData().getContactBD(phoneNumber);
+
+    if (contact != null) {
+      //ACCEPTED - DENIED
+      contactTemp = contact;
+      contactTemp!.requestStatus = status;
+      var resp = await const HiveData().updateContactBackGround(contactTemp!);
+      if (resp != null) {
+        contactTemp = resp;
+      }
+
+      return true;
+    }
+    return false;
+  }
+
+  Future<void> saveUserLog(String messaje, DateTime time, String group) async {
+    await inicializeHiveBD();
+    LogAlertsBD mov =
+        LogAlertsBD(id: -1, type: messaje, time: time, groupBy: group);
 
     final MainController mainController = Get.put(MainController());
     user = await mainController.getUserData();
@@ -60,10 +83,13 @@ class MainController extends GetxController {
     const HiveData().saveUserPositionBD(alert);
   }
 
-  Future<void> saveActivityLog(DateTime dateTime, String movementType) async {
-    LogActivityBD activityBD =
-        LogActivityBD(time: dateTime, movementType: movementType);
+  Future<void> saveActivityLog(
+      DateTime dateTime, String movementType, String group) async {
+    LogActivityBD activityBD = LogActivityBD(
+        time: dateTime, movementType: movementType, groupBy: group);
     timerSendDropNotification.cancel();
+    await inicializeHiveBD();
+
     await logActivityController.saveLogActivity(activityBD);
     await logActivityController.saveLastMovement();
     print(" ----timerSendDropNotification.cancel----");

@@ -2,17 +2,23 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_contacts/flutter_contacts.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:ifeelefine/Common/Constant.dart';
 import 'package:ifeelefine/Data/hiveRisk_data.dart';
 import 'package:ifeelefine/Data/hive_constant_adapterInit.dart';
 import 'package:ifeelefine/Data/hive_data.dart';
 import 'package:ifeelefine/Model/contactRiskBD.dart';
+import 'package:ifeelefine/Page/Disamble/Controller/disambleController.dart';
+import 'package:ifeelefine/Page/Geolocator/Controller/configGeolocatorController.dart';
 import 'package:ifeelefine/Page/Risk/DateRisk/ListDateRisk/Controller/riskPageController.dart';
 import 'package:ifeelefine/Page/Risk/DateRisk/Service/contactRiskService.dart';
 import 'package:ifeelefine/Model/logAlertsBD.dart';
+import 'package:ifeelefine/Provider/prefencesUser.dart';
+import 'package:ifeelefine/Services/mainService.dart';
 import 'package:notification_center/notification_center.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:uuid/uuid.dart';
 
 import '../../../../Common/utils.dart';
 import '../../../../Controllers/mainController.dart';
@@ -21,11 +27,15 @@ import 'package:ifeelefine/Common/manager_alerts.dart';
 
 class EditRiskController extends GetxController {
   Future<void> saveActivityLog(ContactRiskBD contact) async {
+    var uuid = Uuid().v4();
+
     LogAlertsBD mov = LogAlertsBD(
-        id: 0,
-        type: "Cita de riesgo",
+        id: contact.id,
+        type: "Cita",
         time: DateTime.now(),
-        photoDate: contact.photoDate);
+        photoDate: contact.photoDate,
+        groupBy: uuid);
+    prefs.setIdDateGroup = uuid;
     await const HiveData().saveUserPositionBD(mov);
   }
 
@@ -55,7 +65,9 @@ class EditRiskController extends GetxController {
           contactRiskApiResponse.awsUploadPresignedUrls != null &&
           contactRiskApiResponse.awsUploadPresignedUrls!.isNotEmpty) {
         var index = 0;
+
         for (var url in contactRiskApiResponse.awsUploadPresignedUrls!) {
+          print(url);
           await ContactRiskService().updateImage(url, contact.photoDate[index]);
           index++;
         }
@@ -65,9 +77,20 @@ class EditRiskController extends GetxController {
         final save = await const HiveDataRisk().saveContactRisk(contact);
         if (save) {
           saveActivityLog(contact);
-          // NotificationCenter().notify('getContactRisk');
-          RiskController riskVC = Get.find<RiskController>();
-          riskVC.update();
+          RiskController? riskVC;
+          try {
+            riskVC = Get.find<RiskController>();
+          } catch (e) {
+            // Si Get.find lanza un error, eso significa que el controlador no está en el árbol de widgets.
+            // En ese caso, usamos Get.put para agregar el controlador al árbol de widgets.
+            riskVC = Get.put(RiskController());
+          }
+
+// Ahora, puedes utilizar riskVC normalmente sabiendo que está disponible.
+          if (riskVC != null) {
+            riskVC.update();
+            // NotificationCenter().notify('getContactRisk');
+          }
 
           return true;
         } else {
@@ -81,8 +104,7 @@ class EditRiskController extends GetxController {
     }
   }
 
-  Future<bool> updateContactRisk(
-      BuildContext context, ContactRiskBD contact) async {
+  Future<bool> updateContactRisk(ContactRiskBD contact) async {
     try {
       final MainController mainController = Get.put(MainController());
       var user = await mainController.getUserData();
@@ -105,10 +127,34 @@ class EditRiskController extends GetxController {
           index++;
         }
       }
-
+      print("contact id ${contact.id}");
       var update = await const HiveDataRisk().updateContactRisk(contact);
       if (update.id != -1) {
-        // NotificationCenter().notify('getContactRisk');
+        PreferenceUser prefs = PreferenceUser();
+        await prefs.initPrefs();
+
+        prefs.setCancelIdDate = update.id;
+
+        print("contact id update ${contact.id}");
+        await prefs.refreshData();
+        RiskController? riskVC;
+        try {
+          riskVC = Get.find<RiskController>();
+        } catch (e) {
+          // Si Get.find lanza un error, eso significa que el controlador no está en el árbol de widgets.
+          // En ese caso, usamos Get.put para agregar el controlador al árbol de widgets.
+          riskVC = Get.put(RiskController());
+        }
+
+// Ahora, puedes utilizar riskVC normalmente sabiendo que está disponible.
+        if (riskVC != null) {
+          riskVC.update();
+          try {
+            NotificationCenter().notify('getContactRisk');
+          } catch (e) {
+            print(e);
+          }
+        }
 
         return true;
       }
@@ -125,8 +171,9 @@ class EditRiskController extends GetxController {
     if (contactRisk != null) {
       contactRisk.isActived = true;
       contactRisk.isprogrammed = false;
-
-      await const HiveDataRisk().updateContactRisk(contactRisk);
+      contactRisk.isFinishTime = false;
+      var contactTemp =
+          await const HiveDataRisk().updateContactRisk(contactRisk);
 
       final MainController mainController = Get.put(MainController());
       var user = await mainController.getUserData();
@@ -136,10 +183,26 @@ class EditRiskController extends GetxController {
               user.telephone.contains('+34')
                   ? user.telephone.replaceAll("+34", "")
                   : user.telephone,
-              contactRisk.photoDate.length),
-          contactRisk.id);
+              contactTemp.photoDate.length),
+          contactTemp.id);
+      RiskController? riskVC;
+      try {
+        riskVC = Get.find<RiskController>();
+      } catch (e) {
+        // Si Get.find lanza un error, eso significa que el controlador no está en el árbol de widgets.
+        // En ese caso, usamos Get.put para agregar el controlador al árbol de widgets.
+        riskVC = Get.put(RiskController());
+      }
 
-      NotificationCenter().notify('getContactRisk');
+// Ahora, puedes utilizar riskVC normalmente sabiendo que está disponible.
+      if (riskVC != null) {
+        riskVC.update();
+        try {
+          NotificationCenter().notify('getContactRisk');
+        } catch (e) {
+          print(e);
+        }
+      }
     }
   }
 
@@ -148,11 +211,11 @@ class EditRiskController extends GetxController {
     var contactRisk = await const HiveDataRisk().getContactRiskBD(id);
 
     if (contactRisk != null) {
-      contactRisk.isActived = true;
+      contactRisk.isActived = false;
       contactRisk.isprogrammed = false;
       contactRisk.isFinishTime = true;
+      contactRisk.finish = false;
       contactRisk.taskIds = getTaskIdList(data['task_ids'].toString());
-      await const HiveDataRisk().updateContactRisk(contactRisk);
 
       final MainController mainController = Get.put(MainController());
       var user = await mainController.getUserData();
@@ -164,8 +227,24 @@ class EditRiskController extends GetxController {
                   : user.telephone,
               contactRisk.photoDate.length),
           contactRisk.id);
+      RiskController? riskVC;
+      try {
+        riskVC = Get.find<RiskController>();
+      } catch (e) {
+        // Si Get.find lanza un error, eso significa que el controlador no está en el árbol de widgets.
+        // En ese caso, usamos Get.put para agregar el controlador al árbol de widgets.
+        riskVC = Get.put(RiskController());
+      }
 
-      NotificationCenter().notify('getContactRisk');
+// Ahora, puedes utilizar riskVC normalmente sabiendo que está disponible.
+      if (riskVC != null) {
+        riskVC.update();
+        try {
+          NotificationCenter().notify('getContactRisk');
+        } catch (e) {
+          print(e);
+        }
+      }
     }
   }
 
@@ -204,7 +283,8 @@ class EditRiskController extends GetxController {
           photoDate: photoDate,
           saveContact: true,
           createDate: DateTime.now(),
-          taskIds: []);
+          taskIds: [],
+          finish: contactRiskApi.finished);
       await const HiveDataRisk().saveContactRisk(contact);
     }
   }
@@ -215,8 +295,9 @@ class EditRiskController extends GetxController {
       // Map info
       await const HiveDataRisk().deleteDate(contact);
       Future.sync(() => ContactRiskService().deleteContactsRisk(contact.id));
-
       saveContactRisk(context, contact);
+      // updateContactRisk(contact);
+
       return true;
     } catch (error) {
       return false;
@@ -228,10 +309,71 @@ class EditRiskController extends GetxController {
     try {
       // Map info
       await const HiveDataRisk().deleteDate(contact);
+
       await ContactRiskService().deleteContactsRisk(contact.id);
       return true;
     } catch (error) {
       return false;
+    }
+  }
+
+  Future checkPermission(BuildContext context) async {
+    PreferencePermission preferencePermission = PreferencePermission.init;
+    LocationPermission permission;
+    bool serviceEnabled;
+    final _locationController = Get.put(ConfigGeolocatorController());
+
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      // Location services are not enabled don't continue
+      // accessing the position and request users of the
+      // App to enable the location services.
+
+      return Future.error('Location services are disabled.');
+    }
+
+    permission = await Geolocator.requestPermission();
+
+    if (permission == LocationPermission.deniedForever &&
+        preferencePermission == PreferencePermission.init) {
+    } else {
+      if (permission == LocationPermission.denied ||
+          permission == LocationPermission.deniedForever) {
+        switch (preferencePermission) {
+          case PreferencePermission.init:
+            _locationController.activateLocation(PreferencePermission.denied);
+            //_prefs.setAcceptedSendLocation = PreferencePermission.denied;
+            break;
+          case PreferencePermission.denied:
+            _locationController
+                .activateLocation(PreferencePermission.deniedForever);
+            //_prefs.setAcceptedSendLocation = PreferencePermission.deniedForever;
+            break;
+          case PreferencePermission.deniedForever:
+            //_prefs.setAcceptedSendLocation = PreferencePermission.deniedForever;
+            _locationController
+                .activateLocation(PreferencePermission.deniedForever);
+            if (permission == LocationPermission.deniedForever) {
+              showPermissionDialog(context, Constant.enablePermission);
+            }
+            break;
+          case PreferencePermission.allow:
+            //_prefs.setAcceptedSendLocation = PreferencePermission.deniedForever;
+            _locationController
+                .activateLocation(PreferencePermission.deniedForever);
+            break;
+          case PreferencePermission.noAccepted:
+            //_prefs.setAcceptedSendLocation = PreferencePermission.deniedForever;
+            _locationController
+                .activateLocation(PreferencePermission.deniedForever);
+            break;
+        }
+      } else {
+        //_prefs.setAcceptedSendLocation = PreferencePermission.allow;
+        _locationController.activateLocation(PreferencePermission.allow);
+      }
+
+      preferencePermission = prefs.getAcceptedSendLocation;
     }
   }
 }

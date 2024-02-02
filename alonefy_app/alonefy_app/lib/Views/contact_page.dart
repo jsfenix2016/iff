@@ -9,9 +9,10 @@ import 'package:ifeelefine/Common/manager_alerts.dart';
 import 'package:ifeelefine/Common/text_style_font.dart';
 import 'package:ifeelefine/Common/utils.dart';
 
-import 'package:ifeelefine/Controllers/contactUserController.dart';
+import 'package:ifeelefine/Page/Contact/Controller/contactUserController.dart';
 import 'package:ifeelefine/Data/hive_data.dart';
 import 'package:ifeelefine/Model/contact.dart';
+import 'package:ifeelefine/Page/Contact/ListContact/Controller/list_contact_controller.dart';
 
 import 'package:ifeelefine/Page/Contact/Widget/filter_contact.dart';
 import 'package:ifeelefine/Page/FallDetected/Pageview/fall_activation_page.dart';
@@ -182,7 +183,9 @@ class _ContactListState extends State<ContactList> {
         }),
       ),
     );
-
+    if (cont == null) {
+      return;
+    }
     if (cont!.name.first.isNotEmpty) {
       getContactBD();
     }
@@ -276,9 +279,11 @@ class _ContactListState extends State<ContactList> {
                                                 listContact[index]);
                                             listContact.removeAt(index);
                                             listContactVisible.removeAt(index);
-
+                                            NotificationCenter()
+                                                .notify('getContactBD');
                                             indexSelect = 0;
                                             Navigator.of(context).pop();
+                                            setState(() {});
                                           },
                                         ),
                                         TextButton(
@@ -451,7 +456,14 @@ class _ContactListState extends State<ContactList> {
                               builder: (context) => const InitGeolocator()),
                         );
                       } else {
-                        NotificationCenter().notify('getContact');
+                        late ListContactController controller =
+                            Get.put(ListContactController());
+                        controller.update();
+                        try {
+                          NotificationCenter().notify('getContact');
+                        } catch (e) {
+                          print(e);
+                        }
                       }
                     }
                   },

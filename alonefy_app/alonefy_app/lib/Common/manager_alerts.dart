@@ -93,7 +93,7 @@ void showSaveAlert(BuildContext context, String title, String message) {
           content: Text(message),
           actions: <Widget>[
             TextButton(
-              child: const Text("Ok"),
+              child: const Text("OK"),
               onPressed: () => Navigator.of(context).pop(),
             )
           ],
@@ -112,7 +112,7 @@ Future<void> showSaveAlertWithAction(BuildContext context, String title,
           actions: <Widget>[
             TextButton(
               onPressed: onChanged,
-              child: const Text("Ok"),
+              child: const Text("OK"),
             )
           ],
         );

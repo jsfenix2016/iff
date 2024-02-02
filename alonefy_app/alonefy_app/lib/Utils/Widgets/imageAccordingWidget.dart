@@ -11,8 +11,10 @@ class ImageFanWidget extends StatefulWidget {
       {super.key,
       required this.onChanged,
       required this.listImg,
-      required this.isEdit});
+      required this.isEdit,
+      required this.onChangedEdit});
   final ValueChanged<List<File>> onChanged;
+  final ValueChanged<Uint8List> onChangedEdit;
   final List<Uint8List> listImg;
   final bool isEdit;
   @override
@@ -36,7 +38,13 @@ class _ImageFanWidgetState extends State<ImageFanWidget> {
         file = File(image.path);
         imagePaths.removeAt(index);
         imagePaths.insert(index, file);
-        widget.onChanged(imagePaths);
+        if (widget.isEdit) {
+          var bytes = file.readAsBytesSync();
+
+          widget.onChangedEdit(bytes);
+        } else {
+          widget.onChanged(imagePaths);
+        }
       }
     });
   }
@@ -72,51 +80,54 @@ class _ImageFanWidgetState extends State<ImageFanWidget> {
             imageRotation = 0.3;
           }
 
-          return GestureDetector(
-            onTap: () {
-              _pickImage(index);
-            },
-            child: Transform.translate(
-              offset: imageOffset,
-              child: Transform.rotate(
-                angle: imageRotation,
-                child: isImageSelected
-                    ? (widget.listImg.isNotEmpty)
-                        ? Image.memory(
-                            widget.listImg[index],
-                            width: 45,
-                            height: 45,
-                            fit: BoxFit.cover,
-                          )
-                        : Image.file(
-                            imagePath,
-                            width: 45,
-                            height: 45,
-                            fit: BoxFit.cover,
-                          )
-                    : Container(
-                        width: 45,
-                        height: 45,
-                        decoration: BoxDecoration(
-                          boxShadow: [
-                            BoxShadow(
-                              color: const Color.fromARGB(255, 153, 169, 255)
-                                  .withOpacity(0.4),
-                              spreadRadius: 1,
-                              blurRadius: 6,
-                              offset: const Offset(0, 3),
+          return AbsorbPointer(
+            absorbing: !widget.isEdit,
+            child: GestureDetector(
+              onTap: () {
+                _pickImage(index);
+              },
+              child: Transform.translate(
+                offset: imageOffset,
+                child: Transform.rotate(
+                  angle: imageRotation,
+                  child: isImageSelected
+                      ? (widget.listImg.isNotEmpty)
+                          ? Image.memory(
+                              widget.listImg[index],
+                              width: 45,
+                              height: 45,
+                              fit: BoxFit.cover,
+                            )
+                          : Image.file(
+                              imagePath,
+                              width: 45,
+                              height: 45,
+                              fit: BoxFit.cover,
+                            )
+                      : Container(
+                          width: 45,
+                          height: 45,
+                          decoration: BoxDecoration(
+                            boxShadow: [
+                              BoxShadow(
+                                color: const Color.fromARGB(255, 153, 169, 255)
+                                    .withOpacity(0.4),
+                                spreadRadius: 1,
+                                blurRadius: 6,
+                                offset: const Offset(0, 3),
+                              ),
+                            ],
+                            borderRadius: const BorderRadius.all(
+                              Radius.circular(0.0),
                             ),
-                          ],
-                          borderRadius: const BorderRadius.all(
-                            Radius.circular(0.0),
-                          ),
-                          border: Border.all(color: ColorPalette.principal),
-                          image: const DecorationImage(
-                            image: AssetImage("assets/images/icons8.png"),
-                            fit: BoxFit.fill,
+                            border: Border.all(color: ColorPalette.principal),
+                            image: const DecorationImage(
+                              image: AssetImage("assets/images/icons8.png"),
+                              fit: BoxFit.fill,
+                            ),
                           ),
                         ),
-                      ),
+                ),
               ),
             ),
           );

@@ -24,12 +24,10 @@ void showFlutterNotification(RemoteMessage message) {
 Future<void> initializeFirebase() async {
   //await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await Firebase.initializeApp();
-  await FirebaseMessaging.instance.getInitialMessage();
+  // await FirebaseMessaging.instance.getInitialMessage();
   onActionSelected("get_apns_token");
   FirebaseMessaging.onMessage.listen(showFlutterNotification);
-  FirebaseMessaging.onMessageOpenedApp.listen((event) {
-    if (event.data.isNotEmpty) {}
-  });
+
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
   await FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(

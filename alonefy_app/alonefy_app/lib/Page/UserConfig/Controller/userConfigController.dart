@@ -30,7 +30,7 @@ class UserConfigCOntroller extends GetxController {
 
       // Utiliza la variable local dentro del espacio asyncronizado
       await Future.delayed(const Duration(milliseconds: 10), () {
-        showSaveAlert(context, Constant.info, "Se ha enviado el código");
+        showSaveAlert(context, Constant.info, Constant.sendSms);
       });
     } else {
       // Utiliza la variable local dentro del espacio asyncronizado
@@ -38,15 +38,15 @@ class UserConfigCOntroller extends GetxController {
         showSaveAlert(context, Constant.info, Constant.errorGenericConextion);
       });
     }
-    await Future.delayed(const Duration(seconds: 3), () async {
+    await Future.delayed(const Duration(seconds: 5), () async {
       var resqEamil = await userVC.validateEmailWithMessageBird(user.email);
       if (resqEamil["ok"]) {
         prefs.setHrefMail = (resqEamil["href"]);
 
         // Utiliza la variable local dentro del espacio asyncronizado
-        // await Future.delayed(const Duration(milliseconds: 10), () {
-        //   showSaveAlert(context, Constant.info, "Se ha enviado el código");
-        // });
+        await Future.delayed(const Duration(milliseconds: 10), () {
+          showSaveAlert(context, Constant.info, Constant.sendEmail);
+        });
       } else {
         // Utiliza la variable local dentro del espacio asyncronizado
         await Future.delayed(const Duration(milliseconds: 10), () {

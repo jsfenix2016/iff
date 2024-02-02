@@ -3,9 +3,7 @@ import 'dart:io';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:geolocator/geolocator.dart';
-import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
+
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ifeelefine/Common/Constant.dart';
 import 'package:ifeelefine/Common/colorsPalette.dart';
@@ -15,6 +13,7 @@ import 'package:ifeelefine/Common/utils.dart';
 import 'package:ifeelefine/Page/PermissionUser/Controller/permission_controller.dart';
 import 'package:ifeelefine/Provider/prefencesUser.dart';
 import 'package:ifeelefine/main.dart';
+import 'package:notification_center/notification_center.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import '../../Geolocator/Controller/configGeolocatorController.dart';
@@ -22,7 +21,6 @@ import 'package:ifeelefine/Common/decoration_custom.dart';
 import 'package:ifeelefine/Common/manager_alerts.dart';
 
 final _prefs = PreferenceUser();
-final _locationController = Get.put(ConfigGeolocatorController());
 
 class PermitionUserPage extends StatefulWidget {
   const PermitionUserPage({super.key});
@@ -32,42 +30,50 @@ class PermitionUserPage extends StatefulWidget {
 }
 
 class _PermitionUserPageState extends State<PermitionUserPage> {
-  List<String> permissionsName = [
+  final List<String> permissionsName = [
     //'Permitir trabajar la App en segundo plano',
     'Permitir notificaciones',
     'Permitir el uso de la cámara',
     'Permitir acceso a contactos',
     'Permitir compartir ubicación del smartphone',
     'Permitir emitir sonido de alerta en el estado silencio',
-    'Permitir envío de SMS y llamadas'
   ];
-  List<Permission> permissions = [
-    //Permission.accessMediaLocation,
+
+  final List<Permission> permissions = [
     Permission.notification,
     Permission.camera,
     Permission.contacts,
     Permission.location,
     Permission.scheduleExactAlarm,
-    Permission.sms
-  ];
-  late bool accessContact = false;
-  List<bool> permissionStatus = [
-    //false,
-    false,
-    false,
-    false,
-    false,
-    false,
-    false
   ];
 
+  late List<bool> permissionStatus;
+
+  @override
+  void initState() {
+    super.initState();
+    NotificationCenter().subscribe('refreshPermission', _refreshPermission);
+    permissionStatus = List.generate(permissions.length, (_) => false);
+    getPermissions();
+    _refreshPermission();
+    starTap();
+  }
+
+  void _refreshPermission() async {
+    // Retrieve the list of contacts from the device
+    // var contacts = await FlutterContacts.getContacts();
+    // Set the list of contacts in the state
+    await _prefs.initPrefs();
+    // permissionStatusI = _prefs.getlistConfigPage;
+    _prefs.refreshData();
+  }
+
   void requestPermission(int index) async {
-    PermissionStatus permission = await permissions[index].request();
+    final PermissionStatus permission = await permissions[index].request();
 
     if (permission.isPermanentlyDenied) {
       showPermissionDialog(context, Constant.enablePermission);
-    } else if (permission.isDenied) {
-    } else {
+    } else if (permission.isGranted) {
       setState(() {
         permissionStatus[index] = true;
       });
@@ -81,17 +87,39 @@ class _PermitionUserPageState extends State<PermitionUserPage> {
       }
     }
 
-    if (permissions[index] == Permission.sms) {
+    if (permissions[index] == Permission.contacts) {
+      contactlist = await getContacts(context);
       setState(() {
         permissionStatus[index] = true;
       });
     }
   }
 
+  void requestPermissionDenied(int index) async {
+    final PermissionStatus permission = await permissions[index].request();
+
+    if (permission.isPermanentlyDenied) {
+      showPermissionDialog(context, Constant.enablePermission);
+    } else if (permission.isDenied) {
+    } else {
+      setState(() {
+        permissionStatus[index] = false;
+      });
+    }
+
+    if (permissions[index] == Permission.contacts) {
+      contactlist = [];
+      _prefs.getAcceptedContacts == PreferencePermission.denied;
+      setState(() {
+        permissionStatus[index] = false;
+      });
+    }
+  }
+
   Future<bool> checkScheduleExactAlarmPermission() async {
     if (Platform.isAndroid) {
-      var androidInfo = await DeviceInfoPlugin().androidInfo;
-      var sdkInt = androidInfo.version.sdkInt;
+      final androidInfo = await DeviceInfoPlugin().androidInfo;
+      final sdkInt = androidInfo.version.sdkInt;
       print('Android (SDK $sdkInt)');
 
       return sdkInt < 33;
@@ -101,7 +129,7 @@ class _PermitionUserPageState extends State<PermitionUserPage> {
   }
 
   void savePermissions() async {
-    var response =
+    final response =
         await PermissionController().savePermissions(permissionStatus);
 
     if (response) {
@@ -112,44 +140,44 @@ class _PermitionUserPageState extends State<PermitionUserPage> {
 
   void getPermissions() async {
     for (var i = 0; i < permissions.length; i++) {
-      PermissionStatus status = await permissions[i].status;
+      final PermissionStatus status = await permissions[i].status;
       switch (i) {
         case 0:
-          permissionStatus[i] = status.isGranted &&
-              _prefs.getAcceptedNotification == PreferencePermission.allow;
+          print(
+              "Notification: ${_prefs.getAcceptedNotification}, isGranted: ${status.isGranted}");
+          permissionStatus[i] = status.isGranted;
+          print("Notification: ${permissionStatus[i]}");
           break;
         case 1:
+          print(
+              "AcceptedCamera: ${_prefs.getAcceptedCamera}, isGranted: ${status.isGranted}");
           permissionStatus[i] = status.isGranted &&
-              _prefs.getAcceptedCamera == PreferencePermission.allow;
+                  _prefs.getAcceptedCamera == PreferencePermission.allow ||
+              _prefs.getAcceptedCamera == PreferencePermission.init;
+          print("AcceptedCamera: ${permissionStatus[i]}");
           break;
         case 2:
-          permissionStatus[i] = status.isGranted &&
-              _prefs.getAcceptedContacts == PreferencePermission.allow;
+          print(
+              "getAcceptedContacts: ${_prefs.getAcceptedContacts}, isGranted: ${status.isGranted}");
+          final si = status.isGranted;
+          permissionStatus[i] = si;
+          print("getAcceptedContacts: ${permissionStatus[i]}");
           break;
         case 3:
-          permissionStatus[i] = status.isGranted &&
-              _prefs.getAcceptedSendLocation == PreferencePermission.allow;
+          print(
+              "getAcceptedSendLocation: ${_prefs.getAcceptedSendLocation}, isGranted: ${status.isGranted}");
+          permissionStatus[i] = status.isGranted;
+          print("getAcceptedSendLocation: ${permissionStatus[i]}");
           break;
         case 4:
-          permissionStatus[i] = _prefs.getAcceptedScheduleExactAlarm ==
-              PreferencePermission.allow;
-          break;
-        case 5:
-          permissionStatus[i] = _prefs.getAceptedSendSMS;
+          print(
+              "getAcceptedScheduleExactAlarm: ${_prefs.getAcceptedScheduleExactAlarm}, isGranted: ${status.isGranted}");
+          permissionStatus[i] = status.isGranted;
+          print("getAcceptedScheduleExactAlarm: ${permissionStatus[i]}");
           break;
       }
     }
     setState(() {});
-  }
-
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    getPermissions();
-    starTap();
-    // _getContacts();
-    //showPermition();
   }
 
   @override
@@ -192,7 +220,6 @@ class _PermitionUserPageState extends State<PermitionUserPage> {
                 child: ListView.builder(
                   itemCount: permissionsName.length,
                   itemBuilder: (context, index) {
-                    String permission = permissionsName[index];
                     return ListTile(
                       contentPadding:
                           const EdgeInsets.fromLTRB(32.0, 0, 32.0, 0),
@@ -206,21 +233,20 @@ class _PermitionUserPageState extends State<PermitionUserPage> {
                             if (value) {
                               requestPermission(index);
                             } else {
+                              requestPermissionDenied(index);
                               setState(() {
                                 permissionStatus[index] = value;
                               });
-                              //savePermission(index, value);
                             }
                           },
                         ),
                       ),
-                      title: Text(
+                      title: Text(permissionsName[index],
                           style: GoogleFonts.barlow(
                             fontSize: 18.0,
                             fontWeight: FontWeight.w500,
                             color: CupertinoColors.white,
-                          ),
-                          permissionsName[index]),
+                          )),
                     );
                   },
                 ),

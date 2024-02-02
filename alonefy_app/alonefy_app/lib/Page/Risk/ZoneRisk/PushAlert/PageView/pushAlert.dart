@@ -199,16 +199,6 @@ class _PushAlertPageState extends State<PushAlertPage> {
             fileback!.path, filefront == null ? '' : filefront!.path);
         if (taskIds.isNotEmpty) {
           _prefs.setSelectContactRisk = widget.contactZone.id;
-
-          // if (info.brand == 'samsung' && info.model.contains("SM-G")) {
-          //   if (_cameraControllerfront.value.isInitialized) {
-          //     await _cameraControllerfront.initialize();
-          //   }
-          // }
-
-          // Get.offAll(
-          //   CancelAlertPage(taskIds: taskIds),
-          // );
         } else {
           Future.sync(() =>
               {showSaveAlert(context, Constant.info, Constant.changeGeneric)});

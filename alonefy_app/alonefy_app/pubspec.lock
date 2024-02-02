@@ -101,10 +101,10 @@ packages:
     dependency: "direct dev"
     description:
       name: build_runner
-      sha256: "10c6bcdbf9d049a0b666702cf1cee4ddfdc38f02a19d35ae392863b47519848b"
+      sha256: "67d591d602906ef9201caf93452495ad1812bea2074f04e25dbd7c133785821b"
       url: "https://pub.dev"
     source: hosted
-    version: "2.4.6"
+    version: "2.4.7"
   build_runner_core:
     dependency: transitive
     description:
@@ -418,18 +418,18 @@ packages:
     dependency: "direct main"
     description:
       name: flutter_background_service
-      sha256: "50809e60ff1df3278b743f1e4b1045eb8a0c555b4e30576b8736f0ceb6a03003"
+      sha256: "94d9a143852729140e17254a53769383b03738cd92b6e588a8762003e6cd9dd9"
       url: "https://pub.dev"
     source: hosted
-    version: "5.0.3"
+    version: "5.0.5"
   flutter_background_service_android:
     dependency: "direct main"
     description:
       name: flutter_background_service_android
-      sha256: "1a3372bb20893c9b99c58ca0a4007f8edffc661b0f64cc97ff7bc65164e5f3cc"
+      sha256: "30863ebafd8214b8e76d5e5c9f27887dc5cc303fcf3e89f71534f621fc486782"
       url: "https://pub.dev"
     source: hosted
-    version: "6.2.0"
+    version: "6.2.2"
   flutter_background_service_ios:
     dependency: transitive
     description:
@@ -510,14 +510,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "7.0.0+1"
-  flutter_overlay_window:
-    dependency: "direct main"
-    description:
-      name: flutter_overlay_window
-      sha256: "5bab855f641b4fca176c9002cd351b53cce518102721e4aec60eda3c74054360"
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.4.3"
   flutter_plugin_android_lifecycle:
     dependency: transitive
     description:
@@ -1216,6 +1208,22 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.2.1"
+  rx_notifier:
+    dependency: "direct main"
+    description:
+      name: rx_notifier
+      sha256: "08201324c0a2c6987c13798277f9bab592fcc2dfde362d21789f60eed8bd9ea2"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.3.0"
+  rx_notifier_annotation:
+    dependency: transitive
+    description:
+      name: rx_notifier_annotation
+      sha256: "362496563d617aa6fa21ab9c131f66348f3266b6580d69ecc23d2c23a52070a2"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.0"
   rxdart:
     dependency: transitive
     description:

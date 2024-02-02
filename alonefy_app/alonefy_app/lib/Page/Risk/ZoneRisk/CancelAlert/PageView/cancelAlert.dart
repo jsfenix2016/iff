@@ -92,9 +92,9 @@ class _CancelAlertState extends State<CancelAlertPage> {
 
     _prefs.setlistTaskIdsCancel = [];
     _prefs.setSelectContactRisk = -1;
-    prefs.setTimerCancelZone = 60;
+    prefs.setTimerCancelZone = 30;
 
-    countTimer.value = 60;
+    countTimer.value = 30;
     if (contactSelect!.save == false) {
       riskVC.deleteContactRisk(context, contactSelect!);
     }
@@ -144,10 +144,10 @@ class _CancelAlertState extends State<CancelAlertPage> {
         () {
           if (secondsRemaining < 1) {
             timer.cancel();
-            prefs.setTimerCancelZone = 60;
-            countTimer.value = 60;
+            prefs.setTimerCancelZone = 30;
+            countTimer.value = 30;
             showSaveAlert(context, Constant.info,
-                "El servidor de AlertFriends envío una alerta con tu última ubicación.");
+                "El servidor de AlertFriends envió una alerta con tu última ubicación.");
             // gotoHome();
           } else {
             secondsRemaining -= 1;

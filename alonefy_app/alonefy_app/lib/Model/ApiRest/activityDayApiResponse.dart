@@ -1,4 +1,3 @@
-import 'package:http/http.dart' as http;
 import 'package:ifeelefine/Common/utils.dart';
 import 'package:ifeelefine/Model/ApiRest/activityDayApi.dart';
 

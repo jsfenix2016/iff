@@ -118,6 +118,7 @@ class ZoneRiskService {
           headers: {'Content-Type': mime ?? 'video/mp4'}, body: bytes);
 
       var status = resp.statusCode;
+      print(status);
     } catch (e) {
       print(e);
     }
@@ -158,3 +159,40 @@ class ZoneRiskService {
     }
   }
 }
+// Future<Uint8List?> getZoneRiskImage(String url) async {
+//     final resp = await http.get(Uri.parse(url));
+
+//     var documentDirectory = await getApplicationDocumentsDirectory();
+//     var firstPath = "${documentDirectory.path}/images";
+//     var filePathAndName = '${documentDirectory.path}/images/video';
+//     await Directory(firstPath).create(recursive: true);
+//     File file = File(filePathAndName);
+
+//     if (resp.statusCode == 200) {
+//       // Obtener el directorio de almacenamiento temporal
+//       // Directory tempDir = await getApplicationDocumentsDirectory();
+
+//       // // Guardar el video en un archivo temporal en el directorio de almacenamiento temporal
+//       // // var filePath = path.join(tempDir.path, 'video.mp4');
+//       // await Directory(tempDir.path).create(recursive: true);
+//       // var file = File(filePath);
+//       try {
+//         // await file.writeAsBytes(resp.bodyBytes, mode: FileMode.append);
+//         file.writeAsBytesSync(resp.bodyBytes);
+//         // Leer el archivo y convertirlo en Uint8List
+//         Uint8List videoBytes = await file.readAsBytes();
+
+//         // Eliminar el archivo temporal (opcional)
+//         // await file.delete();
+
+//         return videoBytes;
+//       } catch (e) {
+//         print('Error al leer el archivo: $e');
+//         return null;
+//       }
+//       // Eliminar el archivo temporal (opcional)
+//       // await file.delete();
+//     } else {
+//       return null;
+//     }
+//   }

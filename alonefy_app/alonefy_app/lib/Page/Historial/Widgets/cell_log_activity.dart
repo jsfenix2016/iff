@@ -13,6 +13,10 @@ class CellLogActivity extends StatefulWidget {
 class _CellLogActivityState extends State<CellLogActivity> {
   @override
   Widget build(BuildContext context) {
+    var a = widget.logActive.movementType.contains('-');
+    if (a) {
+      var temp2 = widget.logActive.movementType.split('-');
+    }
     return Padding(
         padding: const EdgeInsets.fromLTRB(0, 8, 0, 0),
         child: Column(

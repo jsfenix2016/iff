@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:ifeelefine/Common/Constant.dart';
+
 import 'package:ifeelefine/Common/colorsPalette.dart';
 import 'package:ifeelefine/Common/text_style_font.dart';
 import 'package:ifeelefine/Common/utils.dart';
@@ -8,14 +8,15 @@ import 'package:ifeelefine/Model/logAlertsBD.dart';
 import 'package:ifeelefine/Page/Disamble/Pageview/disambleIfeelfine_page.dart';
 import 'package:ifeelefine/Utils/Widgets/elevatedButtonFilling.dart';
 import 'package:ifeelefine/main.dart';
-import 'package:notification_center/notification_center.dart';
-
 import '../Controller/alertsController.dart';
 
 class ListAlert extends StatefulWidget {
-  ListAlert({super.key, required this.listData, required this.onChangedDelete});
-  List<MapEntry<String, List<LogAlertsBD>>> listData;
+  const ListAlert(
+      {super.key, required this.listData, required this.onChangedDelete});
+
+  final List<MapEntry<String, List<LogAlertsBD>>> listData;
   final ValueChanged<List<LogAlertsBD>> onChangedDelete;
+
   @override
   State<ListAlert> createState() => _ListAlertState();
 }
@@ -23,29 +24,6 @@ class ListAlert extends StatefulWidget {
 class _ListAlertState extends State<ListAlert> {
   final AlertsController alertsVC = Get.find<AlertsController>();
   late List<LogAlertsBD> listLog;
-  // Map<String, List<LogAlertsBD>> groupedProducts = {};
-  // late List<LogAlertsBD> listLog;
-  // final _group = ValueNotifier<Map<String, List<LogAlertsBD>>>({});
-
-  // Future<Map<String, List<LogAlertsBD>>> getLog() async {
-  //   groupedProducts = {};
-
-  //   groupedProducts = await alertsVC.getAllMov();
-  //   _group.value = groupedProducts;
-
-  //   return groupedProducts;
-  // }
-
-  // Future<void> deleteForDayMov(
-  //     BuildContext context, List<LogAlertsBD> listLog) async {
-  //   groupedProducts = {};
-
-  //   var req = await alertsVC.deleteAlerts(context, listLog);
-  //   if (req == 0) {
-  //     NotificationCenter().notify('getAlerts');
-  //     // getLog();
-  //   }
-  // }
 
   @override
   void initState() {

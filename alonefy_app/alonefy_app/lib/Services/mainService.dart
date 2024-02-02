@@ -13,7 +13,7 @@ class MainService {
           body: jsonEncode(taskIds));
 
       if (response.statusCode == 200) {
-        print("cancelar notificacion: ${taskIds.first}");
+        print("cancelada notificacion: ${taskIds.first}");
         return true;
       } else {
         return false;

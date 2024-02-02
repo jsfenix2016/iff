@@ -237,7 +237,7 @@ class _EditZoneRiskPageState extends State<EditZoneRiskPage> {
                       });
                       goToPush(contactRisk);
                     },
-                    child: const Text("Ok"),
+                    child: const Text("OK"),
                   )
                 ],
               );
@@ -251,6 +251,15 @@ class _EditZoneRiskPageState extends State<EditZoneRiskPage> {
   }
 
   void saveContactZoneRisk(BuildContext context) async {
+    if (contactSelect == null || contactSelect.phones.isEmpty) {
+      showSaveAlert(context, Constant.info, "Debe seleccionar un contacto".tr);
+      return;
+    }
+    if (widget.contactRisk.code == ',,,' || widget.contactRisk.code == "") {
+      showSaveAlert(context, Constant.info,
+          "Por favor, establece tu clave de cancelación");
+      return;
+    }
     var contactRisk = ContactZoneRiskBD(
         id: widget.contactRisk.id,
         photo: contactSelect.photo,
@@ -289,6 +298,10 @@ class _EditZoneRiskPageState extends State<EditZoneRiskPage> {
 
   void _showContactListScreen(BuildContext context) async {
     Contact? cont;
+    if (contactlist.isEmpty &&
+        _prefs.getAcceptedContacts == PreferencePermission.allow) {
+      contactlist = await getContacts(context);
+    }
     await Navigator.push(
       context,
       MaterialPageRoute(
