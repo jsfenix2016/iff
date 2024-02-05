@@ -134,6 +134,11 @@ class _UserRestPageState extends State<UserRestPage> {
     final size = MediaQuery.of(context).size;
 
     return Scaffold(
+      appBar: AppBar(
+        iconTheme: const IconThemeData(
+          color: Colors.white, //change your color here
+        ),
+      ),
       backgroundColor: Colors.black,
       body: MediaQuery(
         data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),

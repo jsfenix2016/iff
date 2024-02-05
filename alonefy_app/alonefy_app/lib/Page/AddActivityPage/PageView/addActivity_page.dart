@@ -167,6 +167,9 @@ class _AddActivityPageState extends State<AddActivityPage>
       child: Scaffold(
         backgroundColor: Colors.black,
         appBar: AppBar(
+          iconTheme: const IconThemeData(
+            color: Colors.white, //change your color here
+          ),
           backgroundColor: Colors.brown,
           title: Text(
             Constant.titleNavBar,
@@ -431,8 +434,9 @@ class _AddActivityPageState extends State<AddActivityPage>
                             await controller.saveActivityApi(activity);
                         if (activityApiResponse != null) {
                           activity.id = activityApiResponse.id;
-                          Future.sync(
-                              () => controller.saveActivity(context, activity));
+                          var saveAct =
+                              await controller.saveActivity(context, activity);
+                          if (saveAct != -1) {}
                           NotificationCenter()
                               .notify('refreshPreviewActivities');
                         }

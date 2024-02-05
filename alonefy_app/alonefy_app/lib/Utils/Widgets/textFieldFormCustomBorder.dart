@@ -3,6 +3,7 @@ import 'package:ifeelefine/Common/Constant.dart';
 import 'package:ifeelefine/Common/colorsPalette.dart';
 
 import 'package:flutter/material.dart';
+import 'package:ifeelefine/Common/text_style_font.dart';
 
 class TextFieldFormCustomBorder extends StatefulWidget {
   const TextFieldFormCustomBorder({
@@ -40,6 +41,7 @@ class TextFieldFormCustomBorderState extends State<TextFieldFormCustomBorder> {
     return Padding(
       padding: const EdgeInsets.only(left: 3.0, right: 3.0),
       child: TextFormField(
+        cursorColor: Colors.white,
         keyboardType: widget.typeInput,
         onChanged: (value) {
           widget.onChanged(value);
@@ -50,47 +52,23 @@ class TextFieldFormCustomBorderState extends State<TextFieldFormCustomBorder> {
           prefix: (widget.labelText == Constant.telephone)
               ? const Text('+34 ')
               : null,
-          // suffixIcon: (widget.labelText == Constant.email ||
-          //         widget.labelText == Constant.telephone)
-          //     ? const Text(
-          //         '*',
-          //         style: TextStyle(color: Colors.red, fontSize: 40),
-          //       )
-          //     : null,
           hintText: widget.mesaje,
           labelText: widget.labelText,
           focusedBorder: OutlineInputBorder(
             borderSide: const BorderSide(color: ColorPalette.principal),
             borderRadius: BorderRadius.circular(100.0),
           ),
+          focusColor: Colors.white,
           enabledBorder: OutlineInputBorder(
             borderSide: const BorderSide(
                 width: 1, color: ColorPalette.principal), //<-- SEE HERE
             borderRadius: BorderRadius.circular(100.0),
           ),
-          hintStyle: GoogleFonts.barlow(
-            fontSize: 16.0,
-            wordSpacing: 1,
-            letterSpacing: 0.001,
-            fontWeight: FontWeight.w400,
-            color: Colors.white,
-          ),
-          filled: true,
-          labelStyle: GoogleFonts.barlow(
-            fontSize: 16.0,
-            wordSpacing: 1,
-            letterSpacing: 0.001,
-            fontWeight: FontWeight.w400,
-            color: Colors.white,
-          ),
+          hintStyle: textNormal16White(),
+          filled: false,
+          labelStyle: textNormal16White(),
         ),
-        style: GoogleFonts.barlow(
-          fontSize: 16.0,
-          wordSpacing: 1,
-          letterSpacing: 0.001,
-          fontWeight: FontWeight.w400,
-          color: Colors.white,
-        ),
+        style: textNormal16White(),
         onSaved: (value) => {widget.onChanged(value!)},
         validator: (value) {
           return widget.placeholder;

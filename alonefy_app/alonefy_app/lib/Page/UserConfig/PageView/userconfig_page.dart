@@ -350,7 +350,7 @@ class _UserConfigPageState extends State<UserConfigPage> {
                 content: Text(Constant.saveData.tr),
                 actions: <Widget>[
                   TextButton(
-                    child: const Text(Constant.ok),
+                    child: Text(Constant.ok, style: textBold16Black()),
                     onPressed: () {
                       Get.offAll(
                         () => UserConfigPage2(

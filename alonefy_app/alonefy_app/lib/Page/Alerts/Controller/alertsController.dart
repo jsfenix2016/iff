@@ -45,7 +45,10 @@ class AlertsController extends GetxController {
 
     temp = removeDuplicates(allMov);
     var format = DateFormat('dd-MM-yyyy');
-
+    temp.sort((a, b) {
+      //sorting in descending order
+      return a.time.compareTo(b.time);
+    });
     groupedProducts = groupBy(
         temp, (product) => format.parse(product.time.toString()).toString());
     contactList.value = groupedProducts;

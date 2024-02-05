@@ -9,9 +9,7 @@ import 'package:ifeelefine/Services/mainService.dart';
 import 'package:ifeelefine/main.dart';
 
 class HelpPage extends StatefulWidget {
-  const HelpPage({
-    super.key,
-  });
+  const HelpPage({super.key});
 
   @override
   State<HelpPage> createState() => _HelpPageState();
@@ -19,13 +17,15 @@ class HelpPage extends StatefulWidget {
 
 class _HelpPageState extends State<HelpPage> {
   PreferenceUser prefs = PreferenceUser();
+  List<String> taskIdList = [];
   @override
   void initState() {
     super.initState();
     initPrefs();
     starTap();
     print(rxIdTask.value);
-    print(rxlistTask);
+    taskIdList = prefs.getlistTaskIdsCancel;
+    // print(rxlistTask);
   }
 
   void initPrefs() async {
@@ -77,7 +77,7 @@ class _HelpPageState extends State<HelpPage> {
                           "Inactividad - hubo actividad ",
                           DateTime.now(),
                           prefs.getIdInactiveGroup);
-                      MainService().cancelAllNotifications(rxlistTask);
+                      MainService().cancelAllNotifications(taskIdList);
 
                       Navigator.of(context).pop();
                     },
@@ -136,7 +136,7 @@ class _HelpPageState extends State<HelpPage> {
                   onTap: () {
                     mainController.saveUserLog("Inactividad - solicito ayuda ",
                         DateTime.now(), prefs.getIdInactiveGroup);
-                    MainService().sendAlertToContactImmediately(rxlistTask);
+                    MainService().sendAlertToContactImmediately(taskIdList);
                     Navigator.of(context).pop();
                   },
                   child: Container(

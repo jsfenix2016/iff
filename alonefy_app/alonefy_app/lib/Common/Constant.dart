@@ -36,7 +36,8 @@ class Constant {
       'Ante una situación de riesgo cuando estás solo/a';
   static const onBoardingPageTwoSubtitle =
       'Si AlertFriends no detecta actividad o movimiento en tu smartphone, avisa al amigo o familiar que desees';
-
+  static const textUninstall =
+      'Recuerde que si desea desinstalar la aplicación, antes deberá darse de baja del servicio en: Confguración/Datos personales/Darse de baja';
   static const onBoardingPageTreeTitle = 'Cuando una cita privada no vaya bien';
   static const onBoardingPageTreeSubtitle =
       'AlertFriends avisa a tus amigo/as de confianza y envía tu ubicación';

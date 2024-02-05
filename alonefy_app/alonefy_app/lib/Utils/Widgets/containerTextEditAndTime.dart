@@ -100,6 +100,7 @@ class _ContainerTextEditTime extends State<ContainerTextEditTime> {
                 child: Padding(
                   padding: const EdgeInsets.all(4.0),
                   child: TextFormField(
+                    cursorColor: Colors.white,
                     key: Key(activityTemp),
                     style: const TextStyle(
                         fontSize: 18, color: ColorPalette.principal),
@@ -123,7 +124,7 @@ class _ContainerTextEditTime extends State<ContainerTextEditTime> {
                             color: ColorPalette.principal), //<-- SEE HERE
                       ),
                       hintStyle: TextStyle(color: ColorPalette.principal),
-                      filled: true,
+                      filled: false,
                       labelStyle: TextStyle(color: ColorPalette.principal),
                     ),
                   ),

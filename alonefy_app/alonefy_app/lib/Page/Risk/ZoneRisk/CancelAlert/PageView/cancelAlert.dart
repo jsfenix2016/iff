@@ -73,9 +73,8 @@ class _CancelAlertState extends State<CancelAlertPage> {
       code.textCode4 = parts[3];
     }
 
-    listTask = widget.taskIds;
-    if (listTask.isNotEmpty) {
-      _prefs.setlistTaskIdsCancel = listTask;
+    if (widget.taskIds.isNotEmpty) {
+      _prefs.setlistTaskIdsCancel = widget.taskIds;
     }
 
     taskdIds =
@@ -87,7 +86,7 @@ class _CancelAlertState extends State<CancelAlertPage> {
     code.textCode2 = '';
     code.textCode3 = '';
     code.textCode4 = '';
-    // NotificationCenter().notify('getContactZoneRisk');
+
     stopTimer();
 
     _prefs.setlistTaskIdsCancel = [];

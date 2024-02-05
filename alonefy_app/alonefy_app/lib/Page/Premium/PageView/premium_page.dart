@@ -82,6 +82,9 @@ class _PremiumPageState extends State<PremiumPage> {
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: AppBar(
+        iconTheme: const IconThemeData(
+          color: Colors.white, //change your color here
+        ),
         backgroundColor: Colors.brown,
         title: Text(
           "Suscripciones",
@@ -94,41 +97,16 @@ class _PremiumPageState extends State<PremiumPage> {
           height: size.height,
           decoration: decorationCustom(),
           child: SingleChildScrollView(
-            child: Stack(
-              children: [
-                Container(
-                  height: size.height,
-                  width: size.width,
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: const Alignment(0, 1),
-                      colors: <Color>[
-                        Colors.black,
-                        Colors.black.withAlpha(450),
-                        Colors.transparent,
-                      ],
-                      tileMode: TileMode.mirror,
-                    ),
-                  ),
-                ),
-                Positioned(
-                    top: 0,
-                    left: 0,
-                    right: 0,
-                    //child: SizedBox(
-                    //  child: Image.asset(
-                    //    fit: BoxFit.fitWidth,
-                    //    'assets/images/${widget.img}',
-                    //    height: 360,
-                    //  ),
-                    //),
-                    child: getPremiumImageGradient(widget.img)),
-                Positioned(
-                  top: 24,
-                  left: 32,
-                  right: 32,
-                  child: Center(
+            child: Container(
+              height: size.height,
+              width: size.width,
+              color: Colors.black,
+              child: Stack(
+                children: [
+                  getPremiumImageGradient(widget.img),
+                  Padding(
+                    padding:
+                        const EdgeInsets.only(top: 56.0, left: 32, right: 32),
                     child: RichText(
                       textAlign: TextAlign.center,
                       text: TextSpan(
@@ -143,89 +121,71 @@ class _PremiumPageState extends State<PremiumPage> {
                         children: <TextSpan>[
                           TextSpan(
                             text: widget.subtitle,
-                            style: GoogleFonts.barlow(
-                              fontSize: 24.0,
-                              wordSpacing: 1,
-                              letterSpacing: 0.001,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
-                            ),
+                            style: textBold24White(),
                           ),
                         ],
                       ),
                     ),
                   ),
-                ),
-
-                Positioned(
-                  top: 250,
-                  left: 0,
-                  right: 0,
-                  child: Align(
-                    alignment: Alignment.center,
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Container(
-                          width: 180,
-                          height: 111,
-                          decoration: const BoxDecoration(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(20)),
-                              color: ColorPalette.backgroundDarkGrey2),
-                          child: Column(
+                  Padding(
+                    padding: const EdgeInsets.only(top: 250.0),
+                    child: Align(
+                      alignment: Alignment.center,
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Container(
+                            width: 180,
+                            height: 117,
+                            decoration: const BoxDecoration(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(20)),
+                                color: ColorPalette.backgroundDarkGrey2),
+                            child: Column(
+                              children: [
+                                Padding(
+                                  padding:
+                                      const EdgeInsets.fromLTRB(16, 12, 16, 0),
+                                  child: Text(
+                                    'Seguridad ilimitada',
+                                    textAlign: TextAlign.center,
+                                    style: textBold22black(),
+                                  ),
+                                ),
+                                Padding(
+                                  padding:
+                                      const EdgeInsets.fromLTRB(16, 2, 16, 0),
+                                  child: Text(
+                                    _prefs.getPremiumPrice,
+                                    textAlign: TextAlign.center,
+                                    style: textBold24White(),
+                                  ),
+                                )
+                              ],
+                            ),
+                          ),
+                          Column(
                             children: [
-                              Padding(
-                                padding:
-                                    const EdgeInsets.fromLTRB(16, 12, 16, 0),
-                                child: Text(
-                                  'Seguridad ilimitada',
-                                  textAlign: TextAlign.center,
-                                  style: GoogleFonts.barlow(
-                                    fontSize: 22.0,
-                                    wordSpacing: 1,
-                                    letterSpacing: 1.2,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.black,
-                                  ),
-                                ),
+                              const SizedBox(
+                                height: 40,
                               ),
-                              Padding(
-                                padding: EdgeInsets.fromLTRB(16, 8, 16, 0),
-                                child: Text(
-                                  _prefs.getPremiumPrice,
-                                  textAlign: TextAlign.center,
-                                  style: GoogleFonts.barlow(
-                                    fontSize: 24.0,
-                                    wordSpacing: 1,
-                                    letterSpacing: 1.2,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                              )
+                              getListOfComments(),
+                              const SizedBox(
+                                height: 10,
+                              ),
+                              getHorizontalSlide()
                             ],
                           ),
-                        ),
-                        SizedBox(
-                          height: 40,
-                        ),
-                        getListOfComments(),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        Positioned(
-                            bottom: 30,
-                            left: 32,
-                            right: 32,
-                            child: getHorizontalSlide())
-                      ],
+                        ],
+                      ),
                     ),
                   ),
-                ),
-                //getListOfComments(),
-              ],
+                ],
+              )
+
+              //getListOfComments(),
+              ,
             ),
           ),
         ),
@@ -363,13 +323,7 @@ class _PremiumPageState extends State<PremiumPage> {
                 child: Text(
                   "Obtener Premium",
                   textAlign: TextAlign.center,
-                  style: GoogleFonts.barlow(
-                    fontSize: 18.0,
-                    wordSpacing: 1,
-                    letterSpacing: 1,
-                    fontWeight: FontWeight.w700,
-                    color: Colors.black,
-                  ),
+                  style: textBold18Black(),
                 ),
               ),
             ),

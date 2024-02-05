@@ -51,6 +51,7 @@ class _ContentCodeState extends State<ContentCode> {
       width: 50,
       color: Colors.transparent,
       child: TextFormField(
+        cursorColor: Colors.white,
         initialValue: code,
         inputFormatters: <TextInputFormatter>[
           FilteringTextInputFormatter.allow(RegExp(r'\d+')),
@@ -70,6 +71,7 @@ class _ContentCodeState extends State<ContentCode> {
         key: Key(key),
         textCapitalization: TextCapitalization.sentences,
         decoration: const InputDecoration(
+          filled: false,
           focusedBorder: UnderlineInputBorder(
             borderSide: BorderSide(color: ColorPalette.principal),
           ),
@@ -78,7 +80,6 @@ class _ContentCodeState extends State<ContentCode> {
                 BorderSide(width: 2, color: Colors.white), //<-- SEE HERE
           ),
           hintStyle: TextStyle(color: ColorPalette.principal),
-          filled: true,
           labelStyle: TextStyle(color: ColorPalette.principal),
         ),
         style: GoogleFonts.barlow(

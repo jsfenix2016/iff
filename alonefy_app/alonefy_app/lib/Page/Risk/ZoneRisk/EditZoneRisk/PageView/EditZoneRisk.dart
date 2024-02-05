@@ -237,7 +237,7 @@ class _EditZoneRiskPageState extends State<EditZoneRiskPage> {
                       });
                       goToPush(contactRisk);
                     },
-                    child: const Text("OK"),
+                    child: Text("OK", style: textBold16Black()),
                   )
                 ],
               );
@@ -345,6 +345,9 @@ class _EditZoneRiskPageState extends State<EditZoneRiskPage> {
       child: Scaffold(
         backgroundColor: Colors.black,
         appBar: AppBar(
+          iconTheme: const IconThemeData(
+            color: Colors.white, //change your color here
+          ),
           backgroundColor: Colors.brown,
           title: Text(
             "Edición de zona de riesgo",

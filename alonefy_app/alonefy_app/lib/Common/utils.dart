@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
@@ -11,6 +12,7 @@ import 'package:get/get.dart';
 import 'package:ifeelefine/Common/Constant.dart';
 import 'package:ifeelefine/Common/manager_alerts.dart';
 import 'package:ifeelefine/Common/notificationService.dart';
+import 'package:ifeelefine/Common/text_style_font.dart';
 import 'package:ifeelefine/Model/ApiRest/ContactApi.dart';
 import 'package:ifeelefine/Model/ApiRest/ZoneRiskApi.dart';
 import 'package:ifeelefine/Page/Geolocator/Controller/configGeolocatorController.dart';
@@ -506,7 +508,7 @@ void showAlert(BuildContext context, String mensaje) {
           content: Text(mensaje),
           actions: <Widget>[
             TextButton(
-              child: const Text("OK"),
+              child: Text("OK", style: textBold16Black()),
               onPressed: () => Navigator.of(context).pop(),
             )
           ],
@@ -918,6 +920,9 @@ int hourToInt(String time) {
 }
 
 int stringTimeToInt(String strTime) {
+  if (strTime.isEmpty) {
+    return -1;
+  }
   var time = strTime.replaceAll(" min", "");
   time = time.replaceAll(" hora", "");
 
@@ -1130,13 +1135,70 @@ Future<bool> getEnableIFF() async {
 }
 
 Future<bool> requestPermission(Permission permission) async {
-  PermissionStatus status = await permission.request();
+  bool permissionGranted = false;
+  const maxRetryAttempts = 10;
+  int retryAttempts = 0;
 
-  if (status.isPermanentlyDenied) {
-    return false;
-  } else if (status.isDenied) {
-    return false;
-  } else {
-    return true;
+  while (!permissionGranted && retryAttempts < maxRetryAttempts) {
+    try {
+      PermissionStatus status = await permission.request();
+
+      if (status.isPermanentlyDenied || status.isDenied) {
+        // Permiso denegado o denegado permanentemente.
+        // No se concede el permiso.
+        permissionGranted = false;
+      } else {
+        // Permiso concedido.
+        permissionGranted = true;
+      }
+    } catch (e) {
+      // Manejar cualquier error que ocurra durante la solicitud de permisos.
+      print(
+          'Error al solicitar permisos: $e, cual fallo:${permission.toString()}');
+      retryAttempts++;
+      // Esperar un tiempo antes de intentar nuevamente (opcional).
+      await Future.delayed(const Duration(seconds: 1));
+    }
+  }
+
+  return permissionGranted;
+}
+
+class PermissionService {
+  static Completer<void>? _permissionSemaphore;
+
+  static Future<bool> requestPermission(Permission permission) async {
+    _permissionSemaphore ??= Completer<void>();
+    // bool permissionGranted = false;
+    // Esperar a que se libere el semáforo antes de continuar.
+    await _permissionSemaphore!.future;
+
+    try {
+      // Establecer el semáforo como ocupado para bloquear otras solicitudes.
+      _permissionSemaphore!.complete();
+
+      // Realizar la solicitud de permisos.
+      PermissionStatus status = await permission.request();
+
+      // Manejar el resultado de la solicitud de permisos aquí.
+      // ...
+      if (status.isPermanentlyDenied || status.isDenied) {
+        // Permiso denegado o denegado permanentemente.
+        // No se concede el permiso.
+        // permissionGranted = false;
+        return false;
+      } else {
+        // Permiso concedido.
+        // permissionGranted = true;
+        return true;
+      }
+    } catch (e) {
+      // Manejar cualquier error que pueda ocurrir durante la solicitud de permisos.
+      print('Error al solicitar permisos: $e');
+      return false;
+    } finally {
+      // Reiniciar el semáforo para permitir que otras solicitudes continúen.
+      _permissionSemaphore = Completer<void>();
+    }
   }
 }

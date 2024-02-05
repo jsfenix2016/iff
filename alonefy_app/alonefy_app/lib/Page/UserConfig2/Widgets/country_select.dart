@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:ifeelefine/Common/colorsPalette.dart';
+
 import 'package:ifeelefine/Common/decoration_custom.dart';
 import 'package:ifeelefine/Common/text_style_font.dart';
-import 'package:ifeelefine/Common/utils.dart';
-import 'package:ifeelefine/Model/user.dart';
+
 import 'package:country_state_city_picker/model/select_status_model.dart'
     as StatusModel;
 
@@ -13,7 +11,7 @@ class CountryListScreen extends StatefulWidget {
   final void Function(String) onCountrySelected;
 
   const CountryListScreen(
-      {required this.countries, required this.onCountrySelected});
+      {super.key, required this.countries, required this.onCountrySelected});
 
   @override
   State<CountryListScreen> createState() => _CountryListScreenState();
@@ -32,6 +30,9 @@ class _CountryListScreenState extends State<CountryListScreen> {
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: AppBar(
+        iconTheme: const IconThemeData(
+          color: Colors.white, //change your color here
+        ),
         backgroundColor: Colors.brown,
         title: TextField(
           style: textNomral18White(),

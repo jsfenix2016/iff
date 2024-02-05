@@ -15,6 +15,7 @@ import 'package:ifeelefine/Page/HomePage/Widget/avatar_content.dart';
 import 'package:ifeelefine/Page/HomePage/Widget/container_top_button.dart';
 import 'package:ifeelefine/Page/HomePage/Widget/customNavbar.dart';
 import 'package:ifeelefine/Page/Risk/DateRisk/ListDateRisk/Controller/riskPageController.dart';
+import 'package:ifeelefine/Page/Risk/DateRisk/Pageview/cancelDatePage.dart';
 
 import 'package:ifeelefine/Page/Risk/ZoneRisk/ListContactZoneRisk/Controller/listContactZoneController.dart';
 
@@ -58,7 +59,6 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   User? user;
   UserBD? userbd;
 
-  List<LogAlertsBD> temp = [];
   late AppLifecycleState _appLifecycleState;
 
   bool notCofingAll = false;
@@ -70,27 +70,15 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     WidgetsBinding.instance.addObserver(this);
     starTap();
     getUserData();
-    getAlerts();
+    // getAlerts();
     homeVC.getpermission();
 
     _prefs.saveLastScreenRoute("home");
 
-    NotificationCenter().subscribe('getAlerts', getAlerts);
     NotificationCenter().subscribe('getUserData', getUserData);
-    Future.sync(() => RedirectViewNotifier.setStoredContext(context));
-    // RedirectViewNotifier.onTapRedirectCancelZone();
-    try {
-      NotificationCenter().notify('refreshMenu');
-    } catch (e) {
-      print(e);
-    }
-    NotificationCenter().subscribe('refreshView', _refreshView);
-  }
+    RedirectViewNotifier.setStoredContext(context);
 
-  void _refreshView() {
-    userVC.update();
-    riskVC.update();
-    setState(() {});
+    NotificationCenter().notify('refreshMenu');
   }
 
   @override
@@ -106,8 +94,14 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
         _appLifecycleState = state;
         if (state.name.contains("paused")) {
           print(state.name);
-          if (_prefs.getUseMobilConfig) {
-            Get.offAll(HomePage());
+          if (_prefs.getLastScreenRoute.toString() == "cancelDate") {
+            print(prefs.getlistTaskIdsCancel);
+            Get.offAll(CancelDatePage(
+              taskIds: prefs.getlistTaskIdsCancel,
+            ));
+          }
+          if (_prefs.getUseMobilConfig && !_prefs.getOpenGalery) {
+            Get.offAll(const HomePage());
           }
         }
       },
@@ -115,23 +109,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
 
     switch (state) {
       case AppLifecycleState.resumed:
-        // isOppenedApp = true;
-        // FlutterBackgroundService().invoke("setAsForeground");
-        Future.sync(() => RedirectViewNotifier.setStoredContext(context));
-//         RiskController? riskVC;
-//         try {
-//           riskVC = Get.find<RiskController>();
-//         } catch (e) {
-//           // Si Get.find lanza un error, eso significa que el controlador no está en el árbol de widgets.
-//           // En ese caso, usamos Get.put para agregar el controlador al árbol de widgets.
-//           riskVC = Get.put(RiskController());
-//         }
-
-// // Ahora, puedes utilizar riskVC normalmente sabiendo que está disponible.
-//         if (riskVC != null) {
-//           riskVC.update();
-//           // NotificationCenter().notify('getContactRisk');
-//         }
+        RedirectViewNotifier.setStoredContext(context);
 
         ContactNoticeController? contactNotiVC;
         try {
@@ -141,35 +119,24 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
           // En ese caso, usamos Get.put para agregar el controlador al árbol de widgets.
           contactNotiVC = Get.put(ContactNoticeController());
         }
-
-// Ahora, puedes utilizar riskVC normalmente sabiendo que está disponible.
+        // Ahora, puedes utilizar riskVC normalmente sabiendo que está disponible.
         if (contactNotiVC != null) {
           contactNotiVC.update();
-          // NotificationCenter().notify('getContactRisk');
         }
         Get.appUpdate();
         break;
       case AppLifecycleState.inactive:
-        // RedirectViewNotifier.setStoredContext(context);
-        // isOppenedApp = true;
         break;
       case AppLifecycleState.paused:
-        // RedirectViewNotifier.setStoredContext(context);
-        // isOppenedApp = true;
-
         break;
       case AppLifecycleState.detached:
-
-        // RedirectViewNotifier.setStoredContext(context);
-        // isOppenedApp = false;
+        break;
+      case AppLifecycleState.hidden:
+        // TODO: Handle this case.
         break;
     }
 
     print(_appLifecycleState);
-  }
-
-  Future getAlerts() async {
-    temp = await homeVC.getAllMov();
   }
 
   Future getUserData() async {
@@ -180,8 +147,6 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
       user = user;
     }
     requestAlarmPermission();
-
-    setState(() {});
   }
 
   Future<void> requestAlarmPermission() async {
@@ -267,7 +232,6 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                     ),
                   ),
                 ),
-
                 Positioned(
                   top: 103,
                   child: Container(
@@ -293,7 +257,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
 
                         Future.sync(() => showSaveAlert(context, Constant.info,
                             Constant.saveImageAvatar.tr));
-                        NotificationCenter().notify('refreshView');
+                        setState(() {});
                       }
                     },
                   ),
@@ -305,16 +269,12 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                     width: 345,
                     color: Colors.transparent,
                     child: Text(
-                      'Recuerde que si desea desinstalar la aplicación, antes deberá darse de baja del servicio en: Confguración/Datos personales/Darse de baja',
+                      Constant.textUninstall,
                       style: textNormal14White(),
                       textAlign: TextAlign.center,
                     ),
                   ),
                 ),
-
-                // SwipeableContainer(
-                //   temp: temp,
-                // ),
                 const CustomNavbar(),
               ],
             ),

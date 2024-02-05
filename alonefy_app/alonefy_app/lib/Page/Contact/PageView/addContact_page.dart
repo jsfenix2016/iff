@@ -3,6 +3,7 @@ import 'package:flutter_contacts/contact.dart';
 import 'package:get/get.dart';
 
 import 'package:google_fonts/google_fonts.dart';
+import 'package:ifeelefine/Common/text_style_font.dart';
 import 'package:ifeelefine/Common/utils.dart';
 import 'package:ifeelefine/Data/hive_data.dart';
 import 'package:ifeelefine/Model/contact.dart';
@@ -200,14 +201,16 @@ class _AddContactPageState extends State<AddContactPage> {
                                             'Ya has seleccionado un contacto para situaciones de emergencia, ¿Quieres agregar otro?'),
                                         actions: <Widget>[
                                           TextButton(
-                                            child: const Text("Continuar"),
+                                            child: Text("Continuar",
+                                                style: textBold16Black()),
                                             onPressed: () => {
                                               Navigator.of(context).pop(),
                                               gotoContactlist()
                                             },
                                           ),
                                           TextButton(
-                                            child: const Text("Agregar nuevo"),
+                                            child: Text("Agregar nuevo",
+                                                style: textBold16Black()),
                                             onPressed: () => {
                                               if (_prefs.getUserPremium)
                                                 {

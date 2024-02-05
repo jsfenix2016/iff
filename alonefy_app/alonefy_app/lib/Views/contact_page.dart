@@ -271,7 +271,8 @@ class _ContactListState extends State<ContactList> {
                                           "¿Está seguro de que desea eliminar el contacto?"),
                                       actions: <Widget>[
                                         TextButton(
-                                          child: const Text("Borrar"),
+                                          child: Text("Borrar",
+                                              style: textBold16Black()),
                                           onPressed: () {
                                             isAutorice = false;
                                             isDeleteContact = true;
@@ -287,7 +288,8 @@ class _ContactListState extends State<ContactList> {
                                           },
                                         ),
                                         TextButton(
-                                          child: const Text("Cancelar"),
+                                          child: Text("Cancelar",
+                                              style: textBold16Black()),
                                           onPressed: () =>
                                               Navigator.of(context).pop(),
                                         )

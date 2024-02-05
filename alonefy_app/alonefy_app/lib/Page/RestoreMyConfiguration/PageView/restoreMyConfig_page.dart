@@ -47,6 +47,9 @@ class _RestoreMyConfigPageState extends State<RestoreMyConfigPage> {
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: AppBar(
+        iconTheme: const IconThemeData(
+          color: Colors.white, //change your color here
+        ),
         backgroundColor: Colors.brown,
         title: Text(
           Constant.titleNavBar,
@@ -159,6 +162,7 @@ class _RestoreMyConfigPageState extends State<RestoreMyConfigPage> {
                         child: TextField(
                           cursorColor: Colors.white,
                           decoration: const InputDecoration(
+                            filled: false,
                             contentPadding:
                                 EdgeInsets.fromLTRB(8.0, 0.0, 8.0, 0.0),
                             focusedBorder: OutlineInputBorder(

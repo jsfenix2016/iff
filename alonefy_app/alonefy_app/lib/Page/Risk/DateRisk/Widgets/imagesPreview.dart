@@ -3,10 +3,10 @@ import 'package:flutter/material.dart';
 class ImageListWidget extends StatefulWidget {
   final List<String> imageUrls;
 
-  ImageListWidget({required this.imageUrls});
+  const ImageListWidget({super.key, required this.imageUrls});
 
   @override
-  _ImageListWidgetState createState() => _ImageListWidgetState();
+  State<ImageListWidget> createState() => _ImageListWidgetState();
 }
 
 class _ImageListWidgetState extends State<ImageListWidget> {

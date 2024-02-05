@@ -43,16 +43,17 @@ class _EditContactState extends State<EditContact> {
   @override
   Widget build(BuildContext context) {
     RedirectViewNotifier.setStoredContext(context);
-    return WillPopScope(
-      onWillPop: () async {
+    return PopScope(
+      onPopInvoked: (didPop) {
         // Aquí puedes ejecutar acciones personalizadas antes de volver atrás
         // Por ejemplo, mostrar un diálogo de confirmación
-
-        return true;
       },
       child: Scaffold(
         backgroundColor: Colors.black,
         appBar: AppBar(
+          iconTheme: const IconThemeData(
+            color: Colors.white, //change your color here
+          ),
           backgroundColor: Colors.brown,
           title: Text(
             "Editar contacto",
@@ -73,7 +74,6 @@ class _EditContactState extends State<EditContact> {
                 ),
                 Flexible(
                   child: Container(
-                    height: 500,
                     color: Colors.transparent,
                     width: double.infinity,
                     margin: const EdgeInsets.all(2),
@@ -220,13 +220,19 @@ class _EditContactState extends State<EditContact> {
                           Navigator.of(context).pop();
                         }
                       } else {
-                        late ListContactController controller =
-                            Get.put(ListContactController());
-                        controller.update();
-                        NotificationCenter().notify('getContact');
-                        Future.sync(() => showSaveAlert(
-                            context, Constant.info, 'Guardado correctamente'));
-                        Navigator.of(context).pop();
+                        if (isAutorice) {
+                          late ListContactController controller =
+                              Get.put(ListContactController());
+                          controller.update();
+                          NotificationCenter().notify('getContact');
+                          showSaveAlert(
+                              context, Constant.info, 'Guardado correctamente');
+                        } else {
+                          showSaveAlert(context, Constant.info,
+                              'Debe solicitar la autorización del contacto antes de guardar.');
+                        }
+
+                        // Navigator.of(context).pop();
                       }
                     }
                   },

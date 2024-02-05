@@ -79,6 +79,9 @@ class _DesactivePageState extends State<DesactivePage> {
       backgroundColor: Colors.black,
       extendBodyBehindAppBar: false,
       appBar: AppBar(
+        iconTheme: const IconThemeData(
+          color: Colors.white, //change your color here
+        ),
         backgroundColor: Colors.brown,
         title: Text(
           Constant.titleNavBar,

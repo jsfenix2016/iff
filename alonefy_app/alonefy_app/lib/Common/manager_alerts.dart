@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ifeelefine/Common/notificationService.dart';
+import 'package:ifeelefine/Common/text_style_font.dart';
 import 'package:ifeelefine/Services/mainService.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -11,14 +12,17 @@ void showPermissionDialog(BuildContext context, String message) {
     builder: (context) {
       return AlertDialog(
         title: const Text("Abrir permisos"),
-        content: Text(message),
+        content: Text(
+          message,
+          style: textBold16Black(),
+        ),
         actions: <Widget>[
           TextButton(
-            child: const Text("Cerrar"),
+            child: Text("Cerrar", style: textBold16Black()),
             onPressed: () => Navigator.of(context).pop(),
           ),
           TextButton(
-            child: const Text("Abrir"),
+            child: Text("Abrir", style: textBold16Black()),
             onPressed: () => openAppSettings(),
           )
         ],
@@ -37,14 +41,14 @@ void showAlertDialog(String message, List<String> listid) async {
             "No detectamos una acción en la notificación, necesitas ayuda?"),
         actions: <Widget>[
           TextButton(
-            child: const Text("NO"),
+            child: Text("NO", style: textBold16Black()),
             onPressed: () => {
               Navigator.of(context).pop(),
               MainService().cancelAllNotifications(listid)
             },
           ),
           TextButton(
-            child: const Text("SI"),
+            child: Text("SI", style: textBold16Black()),
             onPressed: () => {
               MainService().sendAlertToContactImmediately(listid),
               Navigator.of(context).pop(),
@@ -66,13 +70,13 @@ void showLocalPermissionDialog(
         content: Text(message),
         actions: <Widget>[
           TextButton(
-              child: const Text("No"),
+              child: Text("No", style: textBold16Black()),
               onPressed: () {
                 response(false);
                 Navigator.of(context).pop();
               }),
           TextButton(
-            child: const Text("Sí"),
+            child: Text("Sí", style: textBold16Black()),
             onPressed: () {
               response(true);
               Navigator.of(context).pop();
@@ -93,7 +97,7 @@ void showSaveAlert(BuildContext context, String title, String message) {
           content: Text(message),
           actions: <Widget>[
             TextButton(
-              child: const Text("OK"),
+              child: Text("OK", style: textBold16Black()),
               onPressed: () => Navigator.of(context).pop(),
             )
           ],
@@ -112,7 +116,7 @@ Future<void> showSaveAlertWithAction(BuildContext context, String title,
           actions: <Widget>[
             TextButton(
               onPressed: onChanged,
-              child: const Text("OK"),
+              child: Text("OK", style: textBold16Black()),
             )
           ],
         );

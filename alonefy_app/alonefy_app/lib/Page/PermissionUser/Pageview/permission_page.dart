@@ -188,6 +188,9 @@ class _PermitionUserPageState extends State<PermitionUserPage> {
       backgroundColor: Colors.black,
       extendBodyBehindAppBar: false,
       appBar: AppBar(
+        iconTheme: const IconThemeData(
+          color: Colors.white, //change your color here
+        ),
         backgroundColor: Colors.brown,
         title: Text(
           Constant.titleNavBar,

@@ -42,7 +42,7 @@ class _ContactNoticePageState extends State<ContactNoticePage> {
     super.initState();
     starTap();
     NotificationCenter().subscribe('getContact', refreshContact);
-    Future.sync(() => RedirectViewNotifier.setStoredContext(context));
+    RedirectViewNotifier.setStoredContext(context);
     getContact();
   }
 
@@ -57,9 +57,7 @@ class _ContactNoticePageState extends State<ContactNoticePage> {
   Future getContact() async {
     var list = await refreshListContact();
     listContact = list.value;
-    // listContact = await controller.getAllContact();
 
-    // controller.update();
     setState(() {});
   }
 
@@ -113,6 +111,9 @@ class _ContactNoticePageState extends State<ContactNoticePage> {
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: AppBar(
+        iconTheme: const IconThemeData(
+          color: Colors.white, //change your color here
+        ),
         backgroundColor: Colors.brown,
         title: Text(
           Constant.titleNavBar,

@@ -3,6 +3,7 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:ifeelefine/Common/colorsPalette.dart';
+import 'package:ifeelefine/Provider/prefencesUser.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io'; // Importa el paquete para trabajar con archivos
 
@@ -23,7 +24,7 @@ class ImageFanWidget extends StatefulWidget {
 
 class _ImageFanWidgetState extends State<ImageFanWidget> {
   List<File> imagePaths = [File(''), File(''), File('')];
-
+  final prefs = PreferenceUser();
   Offset imageOffset = const Offset(0, 0);
   double imageRotation = -0.3;
   File imagePath = File("");
@@ -84,6 +85,7 @@ class _ImageFanWidgetState extends State<ImageFanWidget> {
             absorbing: !widget.isEdit,
             child: GestureDetector(
               onTap: () {
+                prefs.setOpenGalery = true;
                 _pickImage(index);
               },
               child: Transform.translate(

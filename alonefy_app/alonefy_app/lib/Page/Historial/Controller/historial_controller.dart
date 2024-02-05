@@ -4,15 +4,14 @@ import 'package:ifeelefine/Common/utils.dart';
 import 'package:ifeelefine/Data/hiveRisk_data.dart';
 import 'package:ifeelefine/Data/hive_data.dart';
 import 'package:ifeelefine/Model/logActivity.dart';
-import 'package:ifeelefine/Model/logActivityBd.dart';
+
 import 'package:ifeelefine/Model/logAlertsBD.dart';
-import 'package:ifeelefine/Provider/prefencesUser.dart';
+
 import 'package:intl/intl.dart';
 import 'package:collection/collection.dart';
-import 'package:jiffy/jiffy.dart';
 
 class HistorialController extends GetxController {
-  List<LogActivity> _activities = [];
+  List<LogActivity> activities = [];
   List<String> datetimes = [];
 
   Future<int> deleteAlerts(BuildContext context, List<LogAlertsBD> time) async {
@@ -81,7 +80,6 @@ class HistorialController extends GetxController {
     var dateRisk = await const HiveDataRisk().getcontactRiskbd;
     var zoneRisk = await const HiveDataRisk().getcontactZoneRiskbd;
 
-    var format = DateFormat('dd-MM-yyyy');
     if (dateRisk.isNotEmpty) {
       for (var dateTem in dateRisk) {
         var inputFormat = DateFormat('yyyy-MM-dd HH:mm');
@@ -130,7 +128,7 @@ class HistorialController extends GetxController {
 
         if (activityItem.movementType != "Zona" ||
             activityItem.movementType != "Cita") {
-          tempDynamic.add(tempAct);
+          // tempDynamic.add(tempAct);
         } else {
           print("object");
         }

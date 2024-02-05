@@ -182,6 +182,9 @@ class _PreviewRestTimePageState extends State<PreviewRestTimePage> {
       extendBodyBehindAppBar: true,
       appBar: widget.isMenu
           ? AppBar(
+              iconTheme: const IconThemeData(
+                color: Colors.white, //change your color here
+              ),
               backgroundColor: Colors.brown,
               title: Text(
                 widget.isMenu ? "Configuración" : "tiempo de sueño",

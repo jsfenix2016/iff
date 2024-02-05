@@ -103,9 +103,8 @@ class _CancelDatePageState extends State<CancelDatePage> {
       code.textCode4 = parts[3];
     }
 
-    listTask = widget.taskIds;
-    if (listTask.isNotEmpty) {
-      _prefs.setlistTaskIdsCancel = listTask;
+    if (widget.taskIds.isNotEmpty) {
+      _prefs.setlistTaskIdsCancel = widget.taskIds;
     }
 
     taskdIds =
@@ -123,7 +122,7 @@ class _CancelDatePageState extends State<CancelDatePage> {
       contactRiskTemp.isprogrammed = false;
       contactRiskTemp.code = ",,,";
       contactRiskTemp.isFinishTime = false;
-      contactRiskTemp.finish = false;
+
       bool res = false;
       if (contactRiskTemp.taskIds != null &&
           contactRiskTemp.taskIds!.isNotEmpty) {
@@ -143,8 +142,6 @@ class _CancelDatePageState extends State<CancelDatePage> {
       } else {
         contactRiskTemp.finish = true;
         res = await editVC.updateContactRisk(contactRiskTemp);
-
-        // res = await editVC.updateNewContactRisk(context, contactRiskTemp);
       }
 
       if (res) {
@@ -173,18 +170,11 @@ class _CancelDatePageState extends State<CancelDatePage> {
 // Ahora, puedes utilizar riskVC normalmente sabiendo que está disponible.
         if (riskVC != null) {
           riskVC.update();
-          // try {
-          //   NotificationCenter().notify('getContactRisk');
-          // } catch (e) {
-          //   print(e);
-          // }
         }
         await Get.off(const HomePage());
       }
     }
     isLoading = false;
-    // riskVC.update();
-    // Navigator.of(context).pop();
   }
 
   void stopTimer() {
@@ -274,6 +264,9 @@ class _CancelDatePageState extends State<CancelDatePage> {
         child: Scaffold(
           backgroundColor: Colors.black,
           appBar: AppBar(
+            iconTheme: const IconThemeData(
+              color: Colors.white, //change your color here
+            ),
             backgroundColor: Colors.brown,
             title: Text(
               "Finalizar cita",

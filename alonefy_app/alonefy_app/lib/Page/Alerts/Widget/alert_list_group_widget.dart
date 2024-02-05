@@ -188,7 +188,10 @@ class _AlertListWidgetState extends State<AlertListWidget> {
                                   itemBuilder:
                                       (BuildContext context, int indexAlert) {
                                     var listAlerts = alertTypes[alertType]!;
-
+                                    listAlerts.sort((a, b) {
+                                      //sorting in descending order
+                                      return b.time.compareTo(a.time);
+                                    });
                                     return GestureDetector(
                                       onTap: () {
                                         print(
@@ -246,7 +249,7 @@ class _AlertListWidgetState extends State<AlertListWidget> {
                                                                 .type
                                                                 .toString()
                                                                 .contains('-')
-                                                            ? 60
+                                                            ? 70
                                                             : 50,
                                                         color:
                                                             Colors.transparent,
@@ -300,28 +303,28 @@ class _AlertListWidgetState extends State<AlertListWidget> {
                                     );
                                   },
                                 ),
-                                Positioned(
-                                  bottom: 0,
-                                  child: Padding(
-                                    padding: const EdgeInsets.only(left: 0.0),
-                                    child: ElevateButtonFilling(
-                                      showIcon: false,
-                                      onChanged: (value) {
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (context) =>
-                                                const DesactivePage(
-                                              isMenu: false,
-                                            ),
-                                          ),
-                                        );
-                                      },
-                                      mensaje: "Desactivar",
-                                      img: '',
-                                    ),
-                                  ),
-                                ),
+                                // Positioned(
+                                //   bottom: 0,
+                                //   child: Padding(
+                                //     padding: const EdgeInsets.only(left: 0.0),
+                                //     child: ElevateButtonFilling(
+                                //       showIcon: false,
+                                //       onChanged: (value) {
+                                //         Navigator.push(
+                                //           context,
+                                //           MaterialPageRoute(
+                                //             builder: (context) =>
+                                //                 const DesactivePage(
+                                //               isMenu: false,
+                                //             ),
+                                //           ),
+                                //         );
+                                //       },
+                                //       mensaje: "Desactivar",
+                                //       img: '',
+                                //     ),
+                                //   ),
+                                // ),
                               ],
                             ),
                           ),

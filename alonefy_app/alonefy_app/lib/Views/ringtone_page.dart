@@ -263,6 +263,9 @@ class _RingTonePageState extends State<RingTonePage>
       extendBodyBehindAppBar: false,
       key: scaffoldKey,
       appBar: AppBar(
+        iconTheme: const IconThemeData(
+          color: Colors.white, //change your color here
+        ),
         backgroundColor: Colors.brown,
         title: Text(
           Constant.titleNavBar,
@@ -406,6 +409,16 @@ class _RingTonePageState extends State<RingTonePage>
   }
 
   void saveNotificationAudio() async {
+    if (ringtonesTemp.length == ringtonesTemp.length - 1) {
+      _prefs.setNotificationAudio = '';
+      final service = FlutterBackgroundService();
+      var isRunning = await service.isRunning();
+      if (isRunning) {
+        service.invoke("stopService");
+      }
+      await service.startService();
+      await activateService();
+    }
     for (var i = 0; i <= ringtonesTemp.length; i++) {
       if (ringtonesEnabled[i]) {
         _prefs.setNotificationAudio = ringtonesTemp[i];
@@ -421,7 +434,14 @@ class _RingTonePageState extends State<RingTonePage>
       }
 
       if (i == ringtonesTemp.length - 1) {
-        _prefs.setNotificationAudio = 'my_foreground';
+        _prefs.setNotificationAudio = '';
+        final service = FlutterBackgroundService();
+        var isRunning = await service.isRunning();
+        if (isRunning) {
+          service.invoke("stopService");
+        }
+        await service.startService();
+        await activateService();
       }
     }
   }

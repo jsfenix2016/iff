@@ -94,10 +94,13 @@ class _ContainerSelectTime extends State<ContainerSelectTime> {
                 child: Padding(
                   padding: const EdgeInsets.all(4.0),
                   child: TextFormField(
+                    cursorColor: Colors.white,
                     onTap: () => displayTimePickerPM(context),
                     controller: _timeCAM,
                     decoration: const InputDecoration(
-                        labelText: 'PM', border: OutlineInputBorder()),
+                        filled: false,
+                        labelText: 'PM',
+                        border: OutlineInputBorder()),
                   ),
                 ),
               ),
@@ -105,10 +108,13 @@ class _ContainerSelectTime extends State<ContainerSelectTime> {
                 child: Padding(
                   padding: const EdgeInsets.all(4.0),
                   child: TextFormField(
+                    cursorColor: Colors.white,
                     onTap: () => displayTimePicker(context),
                     controller: _timeC,
                     decoration: const InputDecoration(
-                        labelText: 'AM', border: OutlineInputBorder()),
+                        filled: false,
+                        labelText: 'AM',
+                        border: OutlineInputBorder()),
                   ),
                 ),
               ),

@@ -1,8 +1,6 @@
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/gestures.dart';
-import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ifeelefine/Common/Constant.dart';
 import 'package:ifeelefine/Common/button_style_custom.dart';
@@ -24,7 +22,6 @@ import 'package:country_state_city_picker/model/select_status_model.dart'
     as StatusModel;
 import 'package:ifeelefine/Utils/Widgets/loading_page.dart';
 import 'package:ifeelefine/main.dart';
-import 'package:onboarding/onboarding.dart';
 
 class UserEditPage extends StatefulWidget {
   const UserEditPage({super.key});
@@ -79,8 +76,18 @@ class _UserEditPageState extends State<UserEditPage> {
     _country = await getCounty();
     // await getAllState();
     // _states.addAll(await editVC.getState());
-
-    indexCountry = _country.indexWhere((item) => item == user!.country);
+    var country = user!.country.split(" ").last;
+    try {
+      indexCountry = _country.indexWhere((item) => item == country);
+    } catch (e) {
+      print(e);
+    }
+    // if (indexCountry == -1) {
+    //   for (Country i in countryres.length) {
+    //     if (countryres[i] == country) {}
+    //   }
+    //   indexCountry;
+    // }
     selectCountry = user!.country;
     selectState = user!.city;
 
@@ -110,11 +117,10 @@ class _UserEditPageState extends State<UserEditPage> {
   }
 
   void selectDropState() async {
-    indexState = liststate.value.indexWhere((item) => item == user?.city);
+    indexState = liststate.indexWhere((item) => item == user?.city);
     if (indexState < 0) indexState = 0;
 
-    selectState =
-        (indexState < 0) ? liststate.value[0] : liststate.value[indexState];
+    selectState = (indexState < 0) ? liststate[0] : liststate[indexState];
     getTraslateState(countryres.isEmpty ? [] : countryres[indexCountry - 1]);
     setState(() {
       isloading = false;
@@ -191,6 +197,9 @@ class _UserEditPageState extends State<UserEditPage> {
       isLoading: isloading,
       child: Scaffold(
         appBar: AppBar(
+          iconTheme: const IconThemeData(
+            color: Colors.white, //change your color here
+          ),
           backgroundColor: Colors.brown,
           title: Text(
             "Editar perfil",
@@ -212,7 +221,7 @@ class _UserEditPageState extends State<UserEditPage> {
                   children: <Widget>[
                     const SizedBox(height: 20),
                     Text(
-                      "V. 1.19",
+                      "V. 1.0.20",
                       style: textForTitleApp(),
                     ),
                     const SizedBox(height: 20),
@@ -542,13 +551,15 @@ class _UserEditPageState extends State<UserEditPage> {
                                             const Text('¿Desea darse de baja?'),
                                         actions: <Widget>[
                                           TextButton(
-                                            child: const Text("Cancelar"),
+                                            child: Text("Cancelar",
+                                                style: textBold16Black()),
                                             onPressed: () => {
                                               Navigator.of(context).pop(true),
                                             },
                                           ),
                                           TextButton(
-                                              child: const Text("Confirmar"),
+                                              child: Text("Confirmar",
+                                                  style: textBold16Black()),
                                               onPressed: () async {
                                                 Navigator.of(context).pop(true);
                                                 setState(() {
@@ -617,6 +628,7 @@ class _UserEditPageState extends State<UserEditPage> {
     return Padding(
       padding: const EdgeInsets.only(left: 5.0, right: 5.0),
       child: TextFormField(
+        cursorColor: Colors.white,
         onChanged: (valor) {
           onChanged(valor);
         },
@@ -626,6 +638,7 @@ class _UserEditPageState extends State<UserEditPage> {
         initialValue: text,
         textCapitalization: TextCapitalization.sentences,
         decoration: InputDecoration(
+          filled: false,
           hintText: text,
           labelText: labeltext,
           suffixIcon: labeltext.contains(Constant.email)
@@ -639,7 +652,6 @@ class _UserEditPageState extends State<UserEditPage> {
                 width: 1, color: ColorPalette.principal), //<-- SEE HERE
           ),
           hintStyle: textNormal16White(),
-          filled: true,
           labelStyle: textNormal16White(),
         ),
         style: textNormal16White(),
@@ -657,13 +669,14 @@ class _UserEditPageState extends State<UserEditPage> {
     return Padding(
       padding: const EdgeInsets.only(left: 3.0, right: 3.0),
       child: TextFormField(
+        cursorColor: Colors.white,
         readOnly: true,
         keyboardType: TextInputType.number,
         onChanged: (value) {
           user?.telephone = value;
         },
         key: Key(phone),
-        initialValue: '$phone',
+        initialValue: phone,
         textCapitalization: TextCapitalization.sentences,
         decoration: InputDecoration(
           hintText: '+34',
@@ -677,7 +690,7 @@ class _UserEditPageState extends State<UserEditPage> {
                 width: 1, color: ColorPalette.principal), //<-- SEE HERE
           ),
           hintStyle: textNormal16White(),
-          filled: true,
+          filled: false,
           labelStyle: textNormal16White(),
         ),
         style: textNormal16White(),

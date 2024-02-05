@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ifeelefine/Common/Constant.dart';
-import 'package:ifeelefine/Common/colorsPalette.dart';
+
 import 'package:ifeelefine/Common/manager_alerts.dart';
 import 'package:ifeelefine/Common/notificationService.dart';
 import 'package:ifeelefine/Common/text_style_font.dart';
@@ -234,6 +234,9 @@ class _EditUseMobilPageState extends State<EditUseMobilPage> {
       key: scaffoldKey,
       extendBodyBehindAppBar: true,
       appBar: AppBar(
+        iconTheme: const IconThemeData(
+          color: Colors.white, //change your color here
+        ),
         backgroundColor: Colors.brown,
         title: Text(
           Constant.titleNavBar,

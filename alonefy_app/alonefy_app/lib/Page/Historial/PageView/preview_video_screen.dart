@@ -33,6 +33,9 @@ class _PreviewVideoState extends State<PreviewVideoPage>
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: AppBar(
+        iconTheme: const IconThemeData(
+          color: Colors.white, //change your color here
+        ),
         title: Text('Video zona de riesgo', style: textForTitleApp()),
         elevation: 0,
         backgroundColor: Colors.black26,

@@ -337,12 +337,16 @@ class HiveData {
   }
 
   Future<int> saveActivity(ActivityDayBD activity) async {
-    Box<ActivityDayBD> box =
-        await Hive.openBox<ActivityDayBD>('listActivityDayBD');
+    try {
+      Box<ActivityDayBD> box =
+          await Hive.openBox<ActivityDayBD>('listActivityDayBD');
 
-    box.add(activity);
+      box.add(activity);
 
-    return 0;
+      return 0;
+    } catch (error) {
+      return -1;
+    }
   }
 
   Future<int> saveActivities(List<ActivityDayBD> activities) async {

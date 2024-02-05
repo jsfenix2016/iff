@@ -19,7 +19,7 @@ class LoadingIndicator extends StatelessWidget {
           Container(
             color: Colors.black.withOpacity(0.5),
             child: const Center(
-              child: CircularProgressIndicator(),
+              child: CircularProgressIndicator(color: Colors.white),
             ),
           ),
       ],

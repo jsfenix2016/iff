@@ -60,7 +60,9 @@ class _ZoneRiskPageState extends State<ZoneRiskPage> {
       var resp = await riskVC.getContactsZoneRisk();
       int indexSelect =
           resp.indexWhere((item) => item.id == prefs.getIsSelectContactRisk);
-      var contactSelect = resp[indexSelect];
+      if (indexSelect != -1) {
+        var contactSelect = resp[indexSelect];
+      }
 
       // Future.delayed(const Duration(seconds: 3), () async {
       //   await Navigator.push(
@@ -360,6 +362,9 @@ class _ZoneRiskPageState extends State<ZoneRiskPage> {
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: AppBar(
+        iconTheme: const IconThemeData(
+          color: Colors.white, //change your color here
+        ),
         backgroundColor: Colors.brown,
         title: Text(
           "Zona de riesgo",

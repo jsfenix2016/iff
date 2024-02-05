@@ -12,7 +12,7 @@ class StatesListScreen extends StatefulWidget {
   final void Function(String) onStatesSelected;
 
   const StatesListScreen(
-      {required this.states, required this.onStatesSelected});
+      {super.key, required this.states, required this.onStatesSelected});
 
   @override
   State<StatesListScreen> createState() => _StatesListScreenState();
@@ -31,6 +31,9 @@ class _StatesListScreenState extends State<StatesListScreen> {
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: AppBar(
+        iconTheme: const IconThemeData(
+          color: Colors.white, //change your color here
+        ),
         backgroundColor: Colors.brown,
         title: TextField(
           style: textNomral18White(),
@@ -40,7 +43,7 @@ class _StatesListScreenState extends State<StatesListScreen> {
             });
           },
           decoration: InputDecoration(
-              hintText: "Buscar estado", hintStyle: textNomral18White()),
+              hintText: "Buscar provincia", hintStyle: textNomral18White()),
         ),
       ),
       body: MediaQuery(

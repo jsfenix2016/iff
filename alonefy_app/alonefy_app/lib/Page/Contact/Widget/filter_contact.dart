@@ -56,6 +56,9 @@ class _FilterContactListScreenState extends State<FilterContactListScreen> {
         child: Scaffold(
           backgroundColor: Colors.black,
           appBar: AppBar(
+            iconTheme: const IconThemeData(
+              color: Colors.white, //change your color here
+            ),
             backgroundColor: Colors.brown,
             title: TextField(
               style: textForTitleApp(),

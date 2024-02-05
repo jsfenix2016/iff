@@ -73,6 +73,7 @@ class _AvatarContentState extends State<AvatarUserContent> {
   Widget _mostrarFoto() {
     return GestureDetector(
       onTap: (() async {
+        prefs.setOpenGalery = (true);
         getImageGallery(ImageSource.gallery);
       }),
       child: Container(

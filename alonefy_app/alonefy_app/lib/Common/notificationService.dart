@@ -60,13 +60,39 @@ class RedirectViewNotifier with ChangeNotifier {
   static Future<void> onTapNotification(
       NotificationResponse? response, List<String> taskIds, int id) async {
     if (response?.payload == null) return;
-
+    prefs.saveLastScreenRoute("cancelDate");
     prefs.setSelectContactRisk = id;
-    Future.delayed(const Duration(seconds: 2), () async {
-      await Get.offAll(CancelDatePage(
-        taskIds: taskIds,
-      ));
-    });
+
+    if (_storedContext != null) {
+      await Navigator.pushReplacement(
+        _storedContext!,
+        MaterialPageRoute(
+            builder: (context) => CancelDatePage(
+                  taskIds: taskIds,
+                )),
+      );
+    }
+    // try {
+    //   await Get.offAll(CancelDatePage(
+    //     taskIds: taskIds,
+    //   ));
+    // } catch (e) {
+    //   if (_storedContext != null) {
+    //     await Navigator.pushReplacement(
+    //       _storedContext!,
+    //       MaterialPageRoute(
+    //           builder: (context) => CancelDatePage(
+    //                 taskIds: taskIds,
+    //               )),
+    //     );
+    //   } else {
+    //     Future.delayed(const Duration(seconds: 2), () async {
+    //       await Get.offAll(CancelDatePage(
+    //         taskIds: taskIds,
+    //       ));
+    //     });
+    //   }
+    // }
   }
 
   // static Future<void> onTapRedirectCancelZone() async {
@@ -170,7 +196,7 @@ class RedirectViewNotifier with ChangeNotifier {
         if (id != prefs.getCancelIdDate) {
           mainController.saveUserLog(
               "Cita finalizada", DateTime.now(), prefs.getIdDateGroup);
-
+          prefs.setFinishIdDate = true;
           prefs.setListDate = true;
           editRiskController.updateContactRiskWhenDateFinished(id, data);
           showDateFinishNotifications(message, id);
@@ -205,7 +231,7 @@ class RedirectViewNotifier with ChangeNotifier {
 
     String sound = prefs.getNotificationAudio;
 
-    timerTempDown = Timer.periodic(const Duration(seconds: 1), (Timer t) async {
+    timerTempDown = Timer.periodic(const Duration(seconds: 2), (Timer t) async {
       // Actualizar el contenido de la notificación en tiempo real
       prefs.refreshData();
 
@@ -277,6 +303,7 @@ class RedirectViewNotifier with ChangeNotifier {
         await flutterLocalNotificationsPlugin.cancel(0);
         timerTempDown.cancel();
       } else {
+        if (prefs.getEnableTimer == false) return;
         await flutterLocalNotificationsPlugin.show(
           0,
           title,
@@ -353,13 +380,21 @@ class RedirectViewNotifier with ChangeNotifier {
       // updateNotification('Advertencia', temp, platformChannelSpecifics,
       //     'Inactived_$message', 100);
 
-      await flutterLocalNotificationsPlugin.show(
-        100,
-        "Advertencia",
-        temp,
-        platformChannelSpecifics,
-        payload: 'Inactived_$message',
-      );
+      if (prefs.getEnableTimer == false || countdown <= 0) {
+        t.cancel();
+
+        await flutterLocalNotificationsPlugin.cancel(0);
+        timerTempDown.cancel();
+      } else {
+        if (prefs.getEnableTimer == false) return;
+        await flutterLocalNotificationsPlugin.show(
+          100,
+          "Advertencia",
+          temp,
+          platformChannelSpecifics,
+          payload: 'Inactived_$message',
+        );
+      }
 
       countdown--;
 
@@ -372,17 +407,6 @@ class RedirectViewNotifier with ChangeNotifier {
         await flutterLocalNotificationsPlugin.cancel(100);
       }
     });
-  }
-
-  static void updateNotification(String title, String updatedContent,
-      NotificationDetails anddetail, String payload, int id) async {
-    await flutterLocalNotificationsPlugin.show(
-      id,
-      title,
-      updatedContent,
-      anddetail,
-      payload: payload,
-    );
   }
 
   // void startTimer() {
@@ -486,6 +510,7 @@ class RedirectViewNotifier with ChangeNotifier {
       } else {
         // updateNotification(
         //     title!, temp, platformChannelSpecifics, 'Drop_$taskIds', 19);
+        if (prefs.getEnableTimerDrop == false) return;
         await flutterLocalNotificationsPlugin.show(
           19,
           title,
@@ -668,14 +693,20 @@ class RedirectViewNotifier with ChangeNotifier {
         ],
       ),
     );
-
-    await flutterLocalNotificationsPlugin.show(
-      17,
-      title,
-      body,
-      platformChannelSpecifics,
-      payload: 'DateRisk_${taskIds}id=$id',
-    );
+    if (flutterLocalNotificationsPlugin.isBlank == null) {
+      print("object");
+    }
+    try {
+      await flutterLocalNotificationsPlugin.show(
+        17,
+        title,
+        body,
+        platformChannelSpecifics,
+        payload: 'DateRisk_${taskIds}id=$id',
+      );
+    } catch (e) {
+      print(e);
+    }
   }
 
   static Future<void> showContactResponseNotification(

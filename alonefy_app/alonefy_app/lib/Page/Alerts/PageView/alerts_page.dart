@@ -86,6 +86,9 @@ class _AlertsPageState extends State<AlertsPage> {
           backgroundColor: Colors.black,
           key: scaffoldKey,
           appBar: AppBar(
+            iconTheme: const IconThemeData(
+              color: Colors.white, //change your color here
+            ),
             backgroundColor: Colors.brown,
             title: Text(
               "Alertas",
@@ -161,6 +164,10 @@ class _AlertsPageState extends State<AlertsPage> {
                             itemCount: listData[i].value.toList().length,
                             itemBuilder: (BuildContext context, int index) {
                               var listAlerts = listData[i].value.toList();
+                              listAlerts.sort((a, b) {
+                                //sorting in descending order
+                                return b.time.compareTo(a.time);
+                              });
                               listLog = listAlerts;
                               return ListTile(
                                 title: Container(
@@ -233,27 +240,27 @@ class _AlertsPageState extends State<AlertsPage> {
                   ),
                 ),
               ),
-              Positioned(
-                bottom: 0,
-                child: Padding(
-                  padding: const EdgeInsets.only(left: 50.0),
-                  child: ElevateButtonFilling(
-                    showIcon: false,
-                    onChanged: (value) {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const DesactivePage(
-                            isMenu: false,
-                          ),
-                        ),
-                      );
-                    },
-                    mensaje: "Desactivar",
-                    img: '',
-                  ),
-                ),
-              ),
+              // Positioned(
+              //   bottom: 0,
+              //   child: Padding(
+              //     padding: const EdgeInsets.only(left: 50.0),
+              //     child: ElevateButtonFilling(
+              //       showIcon: false,
+              //       onChanged: (value) {
+              //         Navigator.push(
+              //           context,
+              //           MaterialPageRoute(
+              //             builder: (context) => const DesactivePage(
+              //               isMenu: false,
+              //             ),
+              //           ),
+              //         );
+              //       },
+              //       mensaje: "Desactivar",
+              //       img: '',
+              //     ),
+              //   ),
+              // ),
             ],
           ),
         );

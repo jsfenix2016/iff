@@ -4,17 +4,22 @@ import 'dart:io';
 import 'dart:math';
 import 'dart:ui';
 
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:flutter_contacts/contact.dart';
 import 'package:flutter_timezone/flutter_timezone.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:ifeelefine/Common/initialize_models_bd.dart';
 import 'package:ifeelefine/Data/hiveRisk_data.dart';
 import 'package:ifeelefine/Model/contact.dart';
 import 'package:ifeelefine/Model/contactRiskBD.dart';
+import 'package:ifeelefine/Page/HomePage/Pageview/home_page.dart';
 
 import 'package:ifeelefine/Page/Risk/DateRisk/Controller/editRiskController.dart';
 import 'package:ifeelefine/Page/Risk/DateRisk/ListDateRisk/Controller/riskPageController.dart';
+import 'package:ifeelefine/Page/UseMobil/PageView/configurationUseMobile_page.dart';
+import 'package:ifeelefine/Page/UserConfig2/Page/configuration2_page.dart';
 
 import 'package:ifeelefine/Views/menuconfig_page.dart';
 
@@ -79,11 +84,11 @@ bool ismove = true;
 bool timerActive = true;
 
 bool isMovRude = false;
-
+late final AndroidDeviceInfo info;
 bool notActionPush = false;
-String idTask = "";
-List<String> listTask = [];
-RxList<String> rxlistTask = [''].obs;
+// String idTask = "";
+// List<String> listTask = [];
+// RxList<String> rxlistTask = [''].obs;
 RxString rxIdTask = ''.obs;
 RxString name = "".obs;
 
@@ -190,7 +195,7 @@ bool isCancelZone = true;
 
 int secondsRemaining = 30; //5 minutes = 300 seconds
 const platform = MethodChannel('custom_notification');
-
+int accelerometerMoveNormal = 10;
 Timer? timerCancelZone;
 StreamController<int> controllerTimer = StreamController<int>.broadcast();
 Stream subscription = Stream.periodic(const Duration(hours: 1));
@@ -244,7 +249,12 @@ Future<void> main() async {
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
 
   await requestPermission(Permission.notification);
+  final deviceInfo = DeviceInfoPlugin();
+  final androidInfo = await deviceInfo.androidInfo;
 
+  if (androidInfo.brand == 'samsung' && androidInfo.model.contains("SM-G")) {
+    accelerometerMoveNormal = 15;
+  }
   runApp(
     GetMaterialApp(
       debugShowCheckedModeBanner: false,
@@ -260,13 +270,13 @@ Future<void> main() async {
   );
 }
 
-Future<void> startCustomNotification() async {
-  try {
-    await platform.invokeMethod('startCustomNotification');
-  } on PlatformException catch (e) {
-    print("Error: ${e.message}");
-  }
-}
+// Future<void> startCustomNotification() async {
+//   try {
+//     await platform.invokeMethod('startCustomNotification');
+//   } on PlatformException catch (e) {
+//     print("Error: ${e.message}");
+//   }
+// }
 
 void starTap() {
   if (timerSendLocation.isActive) {
@@ -301,6 +311,7 @@ Future<void> activateService() async {
     enableLights: true,
     // sound: RawResourceAndroidNotificationSound(sound)
   );
+
   await flutterLocalNotificationsPlugin
       .resolvePlatformSpecificImplementation<
           AndroidFlutterLocalNotificationsPlugin>()
@@ -335,11 +346,10 @@ Future<void> activateService() async {
     ),
   );
 
-  // if (_prefs.getAcceptedNotification == PreferencePermission.allow ||
-  //     _prefs.getDetectedFall ||
-  //     _prefs.getAcceptedSendLocation == PreferencePermission.allow) {
-  service.startService();
-  // }
+  if (_prefs.getAcceptedNotification == PreferencePermission.allow &&
+      _prefs.getUseMobilConfig) {
+    service.startService();
+  }
 
   const AndroidInitializationSettings initializationSettingsAndroid =
       AndroidInitializationSettings('ic_bg_service_small');
@@ -437,9 +447,11 @@ void onDidReceiveBackgroundNotificationResponse(
     NotificationResponse notificationResponse) async {
   await inicializeHiveBD();
   await prefs.initPrefs();
-  var aid = Uuid().v4().toString();
-  mainController.saveActivityLog(DateTime.now(), "Movimiento normal", aid);
+  // var aid = Uuid().v4().toString();
+  // mainController.saveActivityLog(DateTime.now(), "Movimiento normal", aid);
   _logRudeMovementTimer = 0;
+  _prefs.setEnableTimer = false;
+  _prefs.setEnableTimerDrop = false;
   if (timerTempDown.isActive) {
     timerTempDown.cancel();
   }
@@ -464,10 +476,10 @@ void onDidReceiveBackgroundNotificationResponse(
         _prefs.setEnableTimerDrop = false;
         String taskIds = notificationResponse.payload!.replaceAll("Drop_", "");
         var taskIdList = getTaskIdList(taskIds);
-        idTask = taskIds;
+        // idTask = taskIds;
         rxIdTask.value = taskIds;
-        rxlistTask.value = taskIdList;
-        listTask = taskIdList;
+        // rxlistTask.value = taskIdList;
+        // listTask = taskIdList;
         notActionPush = true;
 
         RedirectViewNotifier.onTapNotificationBody(
@@ -484,10 +496,11 @@ void onDidReceiveBackgroundNotificationResponse(
         String taskIds =
             notificationResponse.payload!.replaceAll("Inactived_", "");
         var taskIdList = getTaskIdList(taskIds);
-        idTask = taskIds;
-        listTask = taskIdList;
+        // idTask = taskIds;
+        // listTask = taskIdList;
         rxIdTask.value = taskIds;
-        rxlistTask.value = taskIdList;
+        // rxlistTask.value = taskIdList;
+        _prefs.setlistTaskIdsCancel = taskIdList;
         notActionPush = true;
         if (timerTempDown.isActive) {
           timerTempDown.cancel();
@@ -529,13 +542,12 @@ void onDidReceiveBackgroundNotificationResponse(
         String taskIds =
             notificationResponse.payload!.replaceAll("DateRisk_", "");
 
-        _prefs.saveLastScreenRoute("cancelDate");
-
         var taskIdList = getTaskIdList(taskIds);
-        idTask = taskIds;
-        listTask = taskIdList;
+        // idTask = taskIds;
+        // listTask = taskIdList;
         rxIdTask.value = taskIds;
-        rxlistTask.value = taskIdList;
+        // rxlistTask.value = taskIdList;
+        _prefs.setlistTaskIdsCancel = taskIdList;
         notActionPush = true;
         var contactRisk = await const HiveDataRisk().getcontactRiskbd;
         if (taskIds.isEmpty) {
@@ -555,22 +567,16 @@ void onDidReceiveBackgroundNotificationResponse(
           }
 
           var contactRiskTemp = tempcontact;
-          // contactRiskTemp.id = int.parse(id);
-          // contactRiskTemp.isActived = true;
-          // contactRiskTemp.isprogrammed = false;
-          // contactRiskTemp.isFinishTime = true;
+
           if (contactRiskTemp.id != -1) {
             await erisk.updateContactRisk(contactRiskTemp);
           }
-          // if (contactRiskTemp.id != prefs.getCancelIdDate) {
-          //   RedirectViewNotifier.onTapNotification(
-          //       notificationResponse, taskIdList, (contactRiskTemp.id));
-          // }
 
           return;
         }
+        _prefs.saveLastScreenRoute("cancelDate");
         for (var element in contactRisk) {
-          if (element.isFinishTime) {
+          if (element.isActived || element.isFinishTime) {
             RedirectViewNotifier.onTapNotification(
                 notificationResponse, taskIdList, (element.id));
           }
@@ -962,24 +968,26 @@ Future<bool> onIosBackground(ServiceInstance service) async {
   return true;
 }
 
+Duration sensorInterval = SensorInterval.normalInterval;
 void accelerometer() async {
   //Initialization Settings for Android
   await _prefs.initPrefs();
-
+  print(sensorInterval);
+  print(accelerometerMoveNormal);
   _streamSubscriptions.add(
     accelerometerEvents.listen(
       (AccelerometerEvent event) {
         double accelerationMagnitude =
             sqrt(event.x * event.x + event.y * event.y + event.z * event.z);
-        _prefs.refreshData();
-        // onData(accelerationMagnitude);
+        // print('_prefs.getEnableIFF ${_prefs.getUseMobilConfig}');
         if (accelerationMagnitude > 45) {
           isMovRude = true;
-          print('_prefs.getUserFree ${_prefs.getUserFree}');
-          print('_prefs.getDetectedFall ${_prefs.getDetectedFall}');
-          print('_prefs.getEnableIFF ${_prefs.getEnableIFF}');
-          if (_prefs.getUserFree) return;
-          if (_prefs.getDetectedFall == false) return;
+          // print('_prefs.getUserFree ${_prefs.getUserFree}');
+
+          // print('_prefs.getEnableIFF ${_prefs.getEnableIFF}');
+
+          // if (_prefs.getUserFree) return;
+
           if (_prefs.getEnableIFF == false) return;
 
           if (_logRudeMovementTimer >= _logRudeMovementTimerRefresh) {
@@ -995,11 +1003,15 @@ void accelerometer() async {
             });
             return;
           }
-          if (accelerationMagnitude < 45 && accelerationMagnitude > 10) {
+          print(accelerometerMoveNormal);
+          if (accelerationMagnitude < 45 &&
+              accelerationMagnitude > accelerometerMoveNormal) {
+            _prefs.refreshData();
             if (_prefs.getEnableIFF &&
                 _logActivityTimer >= _logActivityTimerRefresh) {
               if (_prefs.getUseMobilConfig) {
                 print('Movimiento normal');
+
                 mainController.saveActivityLog(DateTime.now(),
                     "Movimiento normal", Uuid().v4().toString());
                 isMovRude = false;
@@ -1012,8 +1024,61 @@ void accelerometer() async {
           }
         }
       },
+      onError: (e) {
+        print(e);
+      },
+      cancelOnError: true,
     ),
   );
+
+  // _streamSubscriptions.add(
+  //   accelerometerEvents.listen(
+  //     (AccelerometerEvent event) {
+  //       double accelerationMagnitude =
+  //           sqrt(event.x * event.x + event.y * event.y + event.z * event.z);
+  //       _prefs.refreshData();
+  //       // onData(accelerationMagnitude);
+  //       if (accelerationMagnitude > 45) {
+  //         isMovRude = true;
+  //         print('_prefs.getUserFree ${_prefs.getUserFree}');
+  //         print('_prefs.getDetectedFall ${_prefs.getDetectedFall}');
+  //         print('_prefs.getEnableIFF ${_prefs.getEnableIFF}');
+  //         if (_prefs.getUserFree) return;
+  //         if (_prefs.getDetectedFall == false) return;
+  //         if (_prefs.getEnableIFF == false) return;
+
+  //         if (_logRudeMovementTimer >= _logRudeMovementTimerRefresh) {
+  //           mainController.saveDrop();
+  //           _logRudeMovementTimer = 0;
+  //         }
+  //       } else {
+  //         if (isMovRude) {
+  //           desactivedtimerSendDropNotification =
+  //               Timer(const Duration(seconds: 20), () async {
+  //             isMovRude = false;
+  //             desactivedtimerSendDropNotification.cancel();
+  //           });
+  //           return;
+  //         }
+  //         if (accelerationMagnitude < 45 && accelerationMagnitude > 10) {
+  //           if (_prefs.getEnableIFF &&
+  //               _logActivityTimer >= _logActivityTimerRefresh) {
+  //             if (_prefs.getUseMobilConfig) {
+  //               print('Movimiento normal');
+  //               mainController.saveActivityLog(DateTime.now(),
+  //                   "Movimiento normal", Uuid().v4().toString());
+  //               isMovRude = false;
+  //             }
+  //             _logActivityTimer = 0;
+  //           }
+
+  //           ismove = false;
+  //           timerActive = true;
+  //         }
+  //       }
+  //     },
+  //   ),
+  // );
 }
 
 // void sendMessageContact() async {
@@ -1055,9 +1120,14 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    Future.sync(() => RedirectViewNotifier.setStoredContext(context));
+    RedirectViewNotifier.setStoredContext(context);
     getContactList(context);
     return MaterialApp(
+      theme: ThemeData(
+        focusColor: Colors.white,
+        useMaterial3: true,
+        primaryColor: Colors.white,
+      ),
       builder: (context, child) {
         // Configura el factor de escala de texto a 1.0 para evitar el escalado de texto
         return MediaQuery(

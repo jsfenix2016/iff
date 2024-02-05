@@ -81,6 +81,14 @@ class PreferenceUser {
     _prefs.setInt('cancelIdDate', value);
   }
 
+  get getFinishIdDate {
+    return _prefs.getBool('FinishIdDate') ?? false;
+  }
+
+  set setFinishIdDate(bool value) {
+    _prefs.setBool('FinishIdDate', value);
+  }
+
   get getCancelIdDateTemp {
     return _prefs.getInt('cancelIdDateTemp') ?? -1;
   }
@@ -290,6 +298,14 @@ class PreferenceUser {
 
   set setUseMobilConfig(bool value) {
     _prefs.setBool('UseMobilConfig', value);
+  }
+
+  get getOpenGalery {
+    return _prefs.getBool('OpenGalery') ?? false;
+  }
+
+  set setOpenGalery(bool value) {
+    _prefs.setBool('OpenGalery', value);
   }
 
   get getUserPremium {

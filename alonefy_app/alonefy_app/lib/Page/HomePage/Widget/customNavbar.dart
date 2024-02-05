@@ -63,173 +63,205 @@ class _CustomNavbarState extends State<CustomNavbar> {
                 ),
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.only(top: 40.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  Column(
-                    mainAxisSize: MainAxisSize.min,
+            Center(
+              child: Container(
+                color: Colors.transparent,
+                height: 82,
+                width: size.width,
+                child: Center(
+                  child: Row(
                     children: [
-                      IconButton(
-                        alignment: Alignment.topCenter,
-                        iconSize: 70,
-                        icon: Column(
-                          children: [
-                            Container(
-                              height: 39,
-                              width: 35.7,
-                              decoration: const BoxDecoration(
-                                image: DecorationImage(
-                                  image:
-                                      AssetImage('assets/images/alertas.png'),
-                                  fit: BoxFit.fill,
-                                ),
-                                color: Colors.transparent,
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Container(
+                            width: size.width / 5,
+                            color: Colors.transparent,
+                            child: IconButton(
+                              alignment: Alignment.topCenter,
+                              iconSize: 70,
+                              icon: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Container(
+                                    height: 39,
+                                    width: 35.7,
+                                    decoration: const BoxDecoration(
+                                      image: DecorationImage(
+                                        image: AssetImage(
+                                            'assets/images/alertas.png'),
+                                        fit: BoxFit.fill,
+                                      ),
+                                      color: Colors.transparent,
+                                    ),
+                                  ),
+                                  Text(
+                                    Constant.history,
+                                    textAlign: TextAlign.center,
+                                    style: textNormal9White(),
+                                  ),
+                                ],
                               ),
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          const HistorialPage()),
+                                );
+                                // setBottomBarIndex(0);
+                              },
+                              splashColor: Colors.white,
                             ),
-                            Text(
-                              Constant.history,
-                              textAlign: TextAlign.center,
-                              style: textNormal9White(),
+                          ),
+                        ],
+                      ),
+                      Container(
+                        width: size.width / 5,
+                        color: Colors.transparent,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          mainAxisSize: MainAxisSize.max,
+                          children: [
+                            IconButton(
+                              alignment: Alignment.topCenter,
+                              iconSize: 70,
+                              icon: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Container(
+                                    height: 39,
+                                    width: 35.7,
+                                    decoration: const BoxDecoration(
+                                      image: DecorationImage(
+                                        image: AssetImage(
+                                            'assets/images/actividad 1.png'),
+                                        fit: BoxFit.fill,
+                                      ),
+                                      color: Colors.transparent,
+                                    ),
+                                  ),
+                                  Text(
+                                    Constant.activity,
+                                    textAlign: TextAlign.center,
+                                    style: textNormal9White(),
+                                  ),
+                                ],
+                              ),
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          const LogActivityPage()),
+                                );
+                                // setBottomBarIndex(0);
+                              },
+                              splashColor: Colors.white,
                             ),
                           ],
                         ),
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => const HistorialPage()),
-                          );
-                          // setBottomBarIndex(0);
-                        },
-                        splashColor: Colors.white,
                       ),
-                    ],
-                  ),
-                  Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      IconButton(
-                        alignment: Alignment.topCenter,
-                        iconSize: 70,
-                        icon: Column(
+                      Container(
+                        width: size.width / 5.65,
+                        color: Colors.transparent,
+                        height: 85,
+                      ),
+                      Container(
+                        width: size.width / 5,
+                        color: Colors.transparent,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          mainAxisSize: MainAxisSize.max,
                           children: [
-                            Container(
-                              height: 39,
-                              width: 35.7,
-                              decoration: const BoxDecoration(
-                                image: DecorationImage(
-                                  image: AssetImage(
-                                      'assets/images/actividad 1.png'),
-                                  fit: BoxFit.fill,
-                                ),
-                                color: Colors.transparent,
+                            IconButton(
+                              alignment: Alignment.topCenter,
+                              iconSize: 70,
+                              icon: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Container(
+                                    height: 39,
+                                    width: 35.7,
+                                    decoration: const BoxDecoration(
+                                      image: DecorationImage(
+                                        image: AssetImage(
+                                            'assets/images/cita-de-riesgo 1.png'),
+                                        fit: BoxFit.fill,
+                                      ),
+                                      color: Colors.transparent,
+                                    ),
+                                  ),
+                                  Text(
+                                    Constant.dateRisk,
+                                    textAlign: TextAlign.center,
+                                    style: textNormal9White(),
+                                  ),
+                                ],
                               ),
-                            ),
-                            Text(
-                              Constant.activity,
-                              textAlign: TextAlign.center,
-                              style: textNormal9White(),
+                              onPressed: () async {
+                                await Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => const RiskPage()),
+                                );
+                                // setBottomBarIndex(0);
+                              },
+                              splashColor: Colors.white,
                             ),
                           ],
                         ),
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => const LogActivityPage()),
-                          );
-                          // setBottomBarIndex(0);
-                        },
-                        splashColor: Colors.white,
                       ),
-                    ],
-                  ),
-                  Container(
-                    width: 15,
-                    height: 85,
-                    color: Colors.transparent,
-                  ),
-                  Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      IconButton(
-                        alignment: Alignment.topCenter,
-                        iconSize: 70,
-                        icon: Column(
+                      Container(
+                        width: size.width / 4.5,
+                        color: Colors.transparent,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          mainAxisSize: MainAxisSize.max,
                           children: [
-                            Container(
-                              height: 39,
-                              width: 35.7,
-                              decoration: const BoxDecoration(
-                                image: DecorationImage(
-                                  image: AssetImage(
-                                      'assets/images/cita-de-riesgo 1.png'),
-                                  fit: BoxFit.fill,
-                                ),
-                                color: Colors.transparent,
+                            IconButton(
+                              alignment: Alignment.topCenter,
+                              iconSize: 70,
+                              icon: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Container(
+                                    height: 39,
+                                    width: 35.7,
+                                    decoration: const BoxDecoration(
+                                      image: DecorationImage(
+                                        image: AssetImage(
+                                            'assets/images/zona-riesgo 1.png'),
+                                        fit: BoxFit.fill,
+                                      ),
+                                      color: Colors.transparent,
+                                    ),
+                                  ),
+                                  Text(
+                                    Constant.zoneRisk,
+                                    textAlign: TextAlign.center,
+                                    style: textNormal9White(),
+                                  ),
+                                ],
                               ),
-                            ),
-                            Text(
-                              Constant.dateRisk,
-                              textAlign: TextAlign.center,
-                              style: textNormal9White(),
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          const ZoneRiskPage()),
+                                );
+                                // setBottomBarIndex(0);
+                              },
+                              splashColor: Colors.white,
                             ),
                           ],
                         ),
-                        onPressed: () async {
-                          await Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => const RiskPage()),
-                          );
-                          // setBottomBarIndex(0);
-                        },
-                        splashColor: Colors.white,
                       ),
                     ],
                   ),
-                  Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      IconButton(
-                        alignment: Alignment.topCenter,
-                        iconSize: 70,
-                        icon: Column(
-                          children: [
-                            Container(
-                              height: 39,
-                              width: 35.7,
-                              decoration: const BoxDecoration(
-                                image: DecorationImage(
-                                  image: AssetImage(
-                                      'assets/images/zona-riesgo 1.png'),
-                                  fit: BoxFit.fill,
-                                ),
-                                color: Colors.transparent,
-                              ),
-                            ),
-                            Text(
-                              Constant.zoneRisk,
-                              textAlign: TextAlign.center,
-                              style: textNormal9White(),
-                            ),
-                          ],
-                        ),
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => const ZoneRiskPage()),
-                          );
-                          // setBottomBarIndex(0);
-                        },
-                        splashColor: Colors.white,
-                      ),
-                    ],
-                  ),
-                ],
+                ),
               ),
             )
           ],

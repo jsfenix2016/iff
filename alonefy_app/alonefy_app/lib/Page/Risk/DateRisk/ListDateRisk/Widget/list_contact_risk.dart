@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ifeelefine/Common/Constant.dart';
 import 'package:ifeelefine/Common/initialize_models_bd.dart';
+import 'package:ifeelefine/Common/text_style_font.dart';
 import 'package:ifeelefine/Model/contactRiskBD.dart';
 import 'package:ifeelefine/Page/Disamble/Controller/disambleController.dart';
 import 'package:ifeelefine/Page/Risk/DateRisk/ListDateRisk/Controller/riskPageController.dart';
@@ -129,15 +130,17 @@ class _ListContactRiskState extends State<ListContactRisk> {
                               return AlertDialog(
                                 title: const Text("Información"),
                                 content: const Text(
-                                    "Si continua eliminara la configuracion de la notificación"),
+                                    "Si continua eliminara la configuración de la notificación"),
                                 actions: <Widget>[
                                   TextButton(
-                                    child: const Text("Cerrar"),
+                                    child: Text("Cerrar",
+                                        style: textBold16Black()),
                                     onPressed: () =>
                                         Navigator.of(context).pop(),
                                   ),
                                   TextButton(
-                                    child: const Text(Constant.continueTxt),
+                                    child: Text(Constant.continueTxt,
+                                        style: textBold16Black()),
                                     onPressed: () => {
                                       deleteContactRisk(context, contactTemp),
                                     },

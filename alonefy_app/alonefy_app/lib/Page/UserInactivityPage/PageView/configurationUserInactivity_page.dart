@@ -7,6 +7,7 @@ import 'package:grouped_list/grouped_list.dart';
 import 'package:ifeelefine/Common/Constant.dart';
 import 'package:ifeelefine/Common/button_style_custom.dart';
 import 'package:ifeelefine/Common/colorsPalette.dart';
+import 'package:ifeelefine/Common/text_style_font.dart';
 import 'package:ifeelefine/Common/utils.dart';
 import 'package:ifeelefine/Model/activityDay.dart';
 import 'package:ifeelefine/Model/activitydaybd.dart';
@@ -191,11 +192,11 @@ class _UserInactivityPageState extends State<UserInactivityPage> {
           content: Text(mensaje),
           actions: <Widget>[
             TextButton(
-              child: const Text("cerrar"),
+              child: Text("cerrar", style: textBold16Black()),
               onPressed: () => Navigator.of(context).pop(),
             ),
             TextButton(
-              child: const Text(Constant.continueTxt),
+              child: Text(Constant.continueTxt, style: textBold16Black()),
               onPressed: () => {
                 Navigator.push(
                   context,

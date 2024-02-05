@@ -2,13 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ifeelefine/Common/notificationService.dart';
 import 'package:ifeelefine/Common/text_style_font.dart';
-import 'package:ifeelefine/Common/utils.dart';
-import 'package:ifeelefine/Model/logActivity.dart';
+
 import 'package:ifeelefine/Model/logActivityBd.dart';
 import 'package:ifeelefine/Model/logAlertsBD.dart';
 import 'package:ifeelefine/Page/Historial/Controller/historial_controller.dart';
 import 'package:ifeelefine/Page/Historial/Widgets/cell_date_risk.dart';
-import 'package:ifeelefine/Page/Historial/Widgets/cell_log_activity.dart';
+
 import 'package:ifeelefine/Page/Historial/Widgets/cell_log_alert.dart';
 import 'package:ifeelefine/Page/Historial/Widgets/cell_zone_risk.dart';
 import 'package:ifeelefine/Utils/Widgets/loading_page.dart';
@@ -68,7 +67,7 @@ class _HistorialPageState extends State<HistorialPage> {
 
   Widget alertDate(LogAlertsBD logAlert) {
     return LimitedBox(
-      maxHeight: 140,
+      maxHeight: 160,
       child: GestureDetector(
         onTap: () {},
         child: ListTile(
@@ -94,7 +93,7 @@ class _HistorialPageState extends State<HistorialPage> {
 
   Widget alertLogWidget(LogAlertsBD logAlert) {
     return LimitedBox(
-      maxHeight: 80,
+      maxHeight: 100,
       child: GestureDetector(
         onTap: () {},
         child: ListTile(
@@ -141,6 +140,9 @@ class _HistorialPageState extends State<HistorialPage> {
         backgroundColor: Colors.black,
         key: scaffoldKey,
         appBar: AppBar(
+          iconTheme: const IconThemeData(
+            color: Colors.white, //change your color here
+          ),
           backgroundColor: Colors.brown,
           title: Text(
             "Historial",

@@ -61,7 +61,7 @@ class RestoreController extends GetxController {
       _saveLocation(userApi);
       _saveTermsAndConditions(userApi);
       _saveFall(userApi);
-      _saveContactPermission(userApi);
+
       _saveScheduleExactAlarm(userApi);
       _saveCameraPermission(userApi);
 
@@ -170,10 +170,13 @@ class RestoreController extends GetxController {
       () async {
         await ContactUserController().saveFromApi(contactsApi);
         if (contactsApi.isNotEmpty) {
-          bool enable = await requestPermission(Permission.contacts);
-          if (enable) {
-            _prefs.setAcceptedContacts = PreferencePermission.allow;
-          }
+          Future.sync(() async {
+            var contacts =
+                await PermissionService.requestPermission(Permission.contacts);
+            if (contacts) {
+              _prefs.setAcceptedCamera = PreferencePermission.allow;
+            }
+          });
         }
       },
     );
@@ -181,7 +184,13 @@ class RestoreController extends GetxController {
 
   void _saveLocation(UserApi? userApi) {
     if (userApi != null && userApi.activateLocation) {
-      requestPermission(Permission.location);
+      Future.sync(() async {
+        var cameraenabled =
+            await PermissionService.requestPermission(Permission.location);
+        if (cameraenabled) {
+          _prefs.setAcceptedCamera = PreferencePermission.allow;
+        }
+      });
       _prefs.setAcceptedSendLocation = PreferencePermission.allow;
       refreshMenu("configGeo");
     }
@@ -194,19 +203,11 @@ class RestoreController extends GetxController {
     }
   }
 
-  void _saveContactPermission(UserApi? userApi) async {
-    if (userApi != null && userApi.activateContacts) {
-      bool allow = await requestPermission(Permission.contacts);
-      if (allow) {
-        _prefs.setAcceptedContacts = PreferencePermission.allow;
-      }
-    }
-  }
-
   void _saveCameraPermission(UserApi? userApi) {
     if (userApi != null && userApi.activateCamera) {
       Future.sync(() async {
-        bool cameraenabled = await requestPermission(Permission.camera);
+        var cameraenabled =
+            await PermissionService.requestPermission(Permission.camera);
         if (cameraenabled) {
           _prefs.setAcceptedCamera = PreferencePermission.allow;
         }
@@ -216,7 +217,14 @@ class RestoreController extends GetxController {
 
   void _saveNotifications(UserApi? userApi) {
     if (userApi != null && userApi.activateNotifications) {
-      requestPermission(Permission.notification);
+      Future.sync(() async {
+        var notification =
+            await PermissionService.requestPermission(Permission.notification);
+        if (notification) {
+          _prefs.setAcceptedCamera = PreferencePermission.allow;
+        }
+      });
+
       updateFirebaseToken();
       _prefs.setAcceptedNotification = userApi.activateNotifications
           ? PreferencePermission.allow

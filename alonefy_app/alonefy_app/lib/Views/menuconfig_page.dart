@@ -28,6 +28,7 @@ import 'package:ifeelefine/Page/UserRest/PageView/previewRestTime.dart';
 import 'package:ifeelefine/Provider/prefencesUser.dart';
 
 import 'package:ifeelefine/Page/PermissionUser/Pageview/permission_page.dart';
+import 'package:ifeelefine/Views/menu_controller.dart';
 import 'package:ifeelefine/Views/ringtone_page.dart';
 import 'package:ifeelefine/main.dart';
 import 'package:jiffy/jiffy.dart';
@@ -56,7 +57,7 @@ class MenuConfigurationPage extends StatefulWidget {
 
 class _MenuConfigurationPageState extends State<MenuConfigurationPage> {
   final _prefs = PreferenceUser();
-
+  var menuVC = Get.put(MenuControllerLateral());
   @override
   void initState() {
     print(permissionStatusI);
@@ -73,7 +74,7 @@ class _MenuConfigurationPageState extends State<MenuConfigurationPage> {
     await _prefs.initPrefs();
     // permissionStatusI = _prefs.getlistConfigPage;
     validateConfig();
-    setState(() {});
+    menuVC.update();
   }
 
   void redirectToConfigUser() {
@@ -99,11 +100,11 @@ class _MenuConfigurationPageState extends State<MenuConfigurationPage> {
                     'Para usar esta funcionalidad, debes configurar tus datos'),
                 actions: <Widget>[
                   TextButton(
-                    child: const Text("Cancelar"),
+                    child: Text("Cancelar", style: textBold16Black()),
                     onPressed: () => Navigator.of(context).pop(),
                   ),
                   TextButton(
-                    child: const Text("Configurar"),
+                    child: Text("Configurar", style: textBold16Black()),
                     onPressed: () => redirectToConfigUser(),
                   )
                 ],
@@ -328,6 +329,9 @@ class _MenuConfigurationPageState extends State<MenuConfigurationPage> {
       backgroundColor: Colors.black,
       extendBodyBehindAppBar: true,
       appBar: AppBar(
+        iconTheme: const IconThemeData(
+          color: Colors.white, //change your color here
+        ),
         backgroundColor: Colors.brown,
         elevation: 0,
         title: Text(
@@ -342,88 +346,95 @@ class _MenuConfigurationPageState extends State<MenuConfigurationPage> {
           width: size.width,
           height: size.height,
           child: SafeArea(
-            child: Stack(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(0, 50, 0, 100),
-                  child: ListView.builder(
-                    itemCount: permissionStatusI.length,
-                    itemBuilder: (context, index) {
-                      return GestureDetector(
-                        onTap: () {
-                          routeIndexSelect(index);
-                        },
-                        child: Padding(
-                          padding: const EdgeInsets.all(16.0),
-                          child: Stack(
-                            children: [
-                              Container(
-                                decoration: const BoxDecoration(
-                                  color: Colors.transparent,
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(8)),
-                                ),
-                                height: 50,
-                                width: 312,
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.max,
-                                  children: [
-                                    Padding(
-                                      padding: const EdgeInsets.only(left: 8.0),
-                                      child: Container(
-                                        height: permissionStatusI[index].heigth,
-                                        width: permissionStatusI[index].weigth,
-                                        decoration: BoxDecoration(
-                                          image: DecorationImage(
-                                            image: AssetImage(
-                                                permissionStatusI[index].icon),
-                                            fit: BoxFit.fill,
-                                          ),
-                                          color: Colors.transparent,
-                                        ),
-                                      ),
-                                    ),
-                                    const SizedBox(
-                                      width: 12,
-                                    ),
-                                    Expanded(
-                                      flex: 1,
-                                      child: Text(
-                                        permissionStatusI[index].name,
-                                        maxLines: 2,
-                                        textAlign: TextAlign.left,
-                                        style: textNormal16White(),
-                                      ),
-                                    ),
-                                    Visibility(
-                                      visible: permissionStatusI[index].config,
-                                      child: ClipRRect(
-                                        borderRadius: const BorderRadius.all(
-                                            Radius.circular(50)),
+            child: GetBuilder<MenuControllerLateral>(builder: (context) {
+              return Stack(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(0, 50, 0, 100),
+                    child: ListView.builder(
+                      itemCount: permissionStatusI.length,
+                      itemBuilder: (context, index) {
+                        return GestureDetector(
+                          onTap: () {
+                            routeIndexSelect(index);
+                          },
+                          child: Padding(
+                            padding: const EdgeInsets.all(16.0),
+                            child: Stack(
+                              children: [
+                                Container(
+                                  decoration: const BoxDecoration(
+                                    color: Colors.transparent,
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(8)),
+                                  ),
+                                  height: 50,
+                                  width: 312,
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.max,
+                                    children: [
+                                      Padding(
+                                        padding:
+                                            const EdgeInsets.only(left: 8.0),
                                         child: Container(
-                                          color: Colors.red,
-                                          width: 10,
-                                          height: 10,
+                                          height:
+                                              permissionStatusI[index].heigth,
+                                          width:
+                                              permissionStatusI[index].weigth,
+                                          decoration: BoxDecoration(
+                                            image: DecorationImage(
+                                              image: AssetImage(
+                                                  permissionStatusI[index]
+                                                      .icon),
+                                              fit: BoxFit.fill,
+                                            ),
+                                            color: Colors.transparent,
+                                          ),
                                         ),
                                       ),
-                                    ),
-                                  ],
+                                      const SizedBox(
+                                        width: 12,
+                                      ),
+                                      Expanded(
+                                        flex: 1,
+                                        child: Text(
+                                          permissionStatusI[index].name,
+                                          maxLines: 2,
+                                          textAlign: TextAlign.left,
+                                          style: textNormal16White(),
+                                        ),
+                                      ),
+                                      Visibility(
+                                        visible:
+                                            permissionStatusI[index].config,
+                                        child: ClipRRect(
+                                          borderRadius: const BorderRadius.all(
+                                              Radius.circular(50)),
+                                          child: Container(
+                                            color: Colors.red,
+                                            width: 10,
+                                            height: 10,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
-                        ),
-                      );
-                    },
+                        );
+                      },
+                    ),
                   ),
-                ),
-                Positioned(
-                    bottom: 32,
-                    left: 32,
-                    right: 32,
-                    child: getHorizontalSlide()),
-              ],
-            ),
+                  Positioned(
+                      bottom: 32,
+                      left: 32,
+                      right: 32,
+                      child: getHorizontalSlide()),
+                ],
+              );
+            }),
           ),
         ),
       ),

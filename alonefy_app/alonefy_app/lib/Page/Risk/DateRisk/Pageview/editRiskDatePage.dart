@@ -42,8 +42,6 @@ import 'package:jiffy/jiffy.dart';
 import 'package:ifeelefine/Common/decoration_custom.dart';
 import 'package:permission_handler/permission_handler.dart';
 
-final _prefs = PreferenceUser();
-
 class EditRiskPage extends StatefulWidget {
   const EditRiskPage(
       {super.key, required this.contactRisk, required this.index});
@@ -58,7 +56,7 @@ class _EditRiskPageState extends State<EditRiskPage> {
   EditRiskController editVC = Get.put(EditRiskController());
   RiskController riskVC = Get.find<RiskController>();
   TextEditingController controllerText = TextEditingController();
-
+  final _prefs = PreferenceUser();
   var isTimeInit = false;
   var isTimeFinish = false;
   var sendWhatsappSMS = false;
@@ -96,6 +94,12 @@ class _EditRiskPageState extends State<EditRiskPage> {
 
   // late bool isActive = false;
   bool contactPermissionEnabled = false;
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
   @override
   void initState() {
     // Agregar un día a la fecha actual
@@ -170,7 +174,8 @@ class _EditRiskPageState extends State<EditRiskPage> {
   }
 
   Future isActivePermissionContact() async {
-    bool contactEnable = await requestPermission(Permission.contacts);
+    bool contactEnable =
+        await PermissionService.requestPermission(Permission.contacts);
 
     if (contactEnable == false) {
       showSaveAlert(
@@ -185,7 +190,8 @@ class _EditRiskPageState extends State<EditRiskPage> {
 
   Future _isActivePermission() async {
     try {
-      var isAccepted = await requestPermission(Permission.location);
+      var isAccepted =
+          await PermissionService.requestPermission(Permission.location);
     } catch (e) {
       print(e);
     }
@@ -193,7 +199,8 @@ class _EditRiskPageState extends State<EditRiskPage> {
 
   // Función para solicitar permiso de acceso a la galería
   Future<void> requestGalleryPermission() async {
-    bool cameraEnable = await requestPermission(Permission.camera);
+    bool cameraEnable =
+        await PermissionService.requestPermission(Permission.camera);
     if (!cameraEnable) {
       await cameraPermissions(_prefs.getAcceptedCamera);
     }
@@ -544,6 +551,9 @@ class _EditRiskPageState extends State<EditRiskPage> {
       child: Scaffold(
         backgroundColor: Colors.black,
         appBar: AppBar(
+          iconTheme: const IconThemeData(
+            color: Colors.white, //change your color here
+          ),
           backgroundColor: Colors.brown,
           title: Text(
             "Edición de mensaje de cita",
@@ -948,6 +958,7 @@ class _EditRiskPageState extends State<EditRiskPage> {
                             Padding(
                               padding: const EdgeInsets.all(8.0),
                               child: TextFormField(
+                                cursorColor: Colors.white,
                                 onChanged: (valor) {
                                   titleMessage = valor;
                                   widget.contactRisk.titleMessage = valor;
@@ -969,7 +980,7 @@ class _EditRiskPageState extends State<EditRiskPage> {
                                         color: Colors.white), //<-- SEE HERE
                                   ),
                                   hintStyle: TextStyle(color: Colors.white),
-                                  filled: true,
+                                  filled: false,
                                   labelStyle: TextStyle(color: Colors.white),
                                 ),
                                 style: textNormal14White(),
@@ -994,7 +1005,7 @@ class _EditRiskPageState extends State<EditRiskPage> {
                                   ),
                                   hintStyle:
                                       const TextStyle(color: Colors.white),
-                                  filled: true,
+                                  filled: false,
                                   labelStyle:
                                       const TextStyle(color: Colors.white),
                                 ),
@@ -1027,7 +1038,7 @@ class _EditRiskPageState extends State<EditRiskPage> {
                                     ImageFanWidget(
                                       onChanged: (List<File> value) async {
                                         imagePaths = value;
-
+                                        prefs.setOpenGalery = false;
                                         setState(() {});
                                       },
                                       listImg: widget.contactRisk.photoDate,

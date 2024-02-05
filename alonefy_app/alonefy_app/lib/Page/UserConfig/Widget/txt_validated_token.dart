@@ -58,10 +58,12 @@ class _TextValidateTokenState extends State<TextValidateToken> {
               height: 40,
               width: 156,
               child: TextFormField(
+                cursorColor: Colors.white,
                 keyboardType: TextInputType.number,
                 initialValue: widget.code,
                 textCapitalization: TextCapitalization.sentences,
                 decoration: InputDecoration(
+                  filled: false,
                   focusedBorder: OutlineInputBorder(
                     borderSide: const BorderSide(color: ColorPalette.principal),
                     borderRadius: BorderRadius.circular(100.0),

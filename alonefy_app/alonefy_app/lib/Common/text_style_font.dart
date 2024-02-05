@@ -9,7 +9,7 @@ TextStyle textNormal9White() {
     fontSize: 9.0,
     wordSpacing: 1,
     letterSpacing: 0.001,
-    fontWeight: FontWeight.normal,
+    fontWeight: FontWeight.w400,
     color: Colors.white,
   );
 }
@@ -19,7 +19,7 @@ TextStyle textNormal14White() {
     fontSize: 14.0,
     wordSpacing: 1,
     letterSpacing: 1,
-    fontWeight: FontWeight.normal,
+    fontWeight: FontWeight.w400,
     color: Colors.white,
   );
 }
@@ -59,7 +59,7 @@ TextStyle textNomral18White() {
     fontSize: 18.0,
     wordSpacing: 1,
     letterSpacing: 1.2,
-    fontWeight: FontWeight.normal,
+    fontWeight: FontWeight.w400,
     color: Colors.white,
   );
 }
@@ -69,7 +69,7 @@ TextStyle textNormal20White() {
     fontSize: 20.0,
     wordSpacing: 1,
     letterSpacing: 0.001,
-    fontWeight: FontWeight.normal,
+    fontWeight: FontWeight.w400,
     color: Colors.white,
   );
 }
@@ -79,7 +79,7 @@ TextStyle textBold20White() {
     fontSize: 20.0,
     wordSpacing: 1,
     letterSpacing: 0.001,
-    fontWeight: FontWeight.bold,
+    fontWeight: FontWeight.w700,
     color: Colors.white,
   );
 }
@@ -89,7 +89,7 @@ TextStyle textBold16White() {
     fontSize: 16.0,
     wordSpacing: 1,
     letterSpacing: 0.001,
-    fontWeight: FontWeight.bold,
+    fontWeight: FontWeight.w700,
     color: Colors.white,
   );
 }
@@ -100,7 +100,7 @@ TextStyle textBold24PrincipalColor() {
     wordSpacing: 1,
     letterSpacing: 0.0001,
     height: 1.39,
-    fontWeight: FontWeight.bold,
+    fontWeight: FontWeight.w700,
     color: ColorPalette.principal,
   );
 }
@@ -110,7 +110,7 @@ TextStyle textNormal24White() {
     fontSize: 24.0,
     wordSpacing: 1,
     letterSpacing: 0.001,
-    fontWeight: FontWeight.normal,
+    fontWeight: FontWeight.w400,
     color: Colors.white,
   );
 }
@@ -120,7 +120,7 @@ TextStyle textBold24White() {
     fontSize: 24.0,
     wordSpacing: 1,
     letterSpacing: 0.001,
-    fontWeight: FontWeight.bold,
+    fontWeight: FontWeight.w700,
     color: Colors.white,
   );
 }
@@ -130,7 +130,7 @@ TextStyle textBold36White() {
     fontSize: 36.0,
     wordSpacing: 1,
     letterSpacing: 0.001,
-    fontWeight: FontWeight.bold,
+    fontWeight: FontWeight.w700,
     color: Colors.white,
   );
 }
@@ -140,7 +140,27 @@ TextStyle textBold16Black() {
     fontSize: 16.0,
     wordSpacing: 1,
     letterSpacing: 0.001,
-    fontWeight: FontWeight.bold,
+    fontWeight: FontWeight.w700,
+    color: Colors.black,
+  );
+}
+
+TextStyle textBold18Black() {
+  return GoogleFonts.barlow(
+    fontSize: 18.0,
+    wordSpacing: 1,
+    letterSpacing: 0.001,
+    fontWeight: FontWeight.w700,
+    color: Colors.black,
+  );
+}
+
+TextStyle textBold22black() {
+  return GoogleFonts.barlow(
+    fontSize: 22.0,
+    wordSpacing: 1,
+    letterSpacing: 0.001,
+    fontWeight: FontWeight.w700,
     color: Colors.black,
   );
 }
