@@ -219,13 +219,19 @@ class _ListContactState extends State<ListContact> {
                     ),
                   );
                 }
-                return const Center(child: CircularProgressIndicator());
+                return const Center(
+                    child: CircularProgressIndicator(
+                  color: ColorPalette.calendarNumber,
+                ));
               },
             );
           } else if (snapshot.hasError) {
             return const Text("");
           } else {
-            return const Center(child: CircularProgressIndicator());
+            return const Center(
+                child: CircularProgressIndicator(
+              color: ColorPalette.calendarNumber,
+            ));
           }
         },
       );

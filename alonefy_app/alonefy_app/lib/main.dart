@@ -73,10 +73,9 @@ GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 /// OPTIONAL when use custom notification
 FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
     FlutterLocalNotificationsPlugin();
-final service = FlutterBackgroundService();
-final List<StreamSubscription<dynamic>> _streamSubscriptions =
-    <StreamSubscription<dynamic>>[];
 
+final List<StreamSubscription<dynamic>> _streamSubscriptions2 =
+    <StreamSubscription<dynamic>>[];
 Duration dismbleTime = const Duration();
 PreferenceUser _prefs = PreferenceUser();
 
@@ -84,11 +83,8 @@ bool ismove = true;
 bool timerActive = true;
 
 bool isMovRude = false;
-late final AndroidDeviceInfo info;
+
 bool notActionPush = false;
-// String idTask = "";
-// List<String> listTask = [];
-// RxList<String> rxlistTask = [''].obs;
 RxString rxIdTask = ''.obs;
 RxString name = "".obs;
 
@@ -99,7 +95,7 @@ Timer desactivedtimerSendDropNotification =
     Timer(const Duration(seconds: 10), () {});
 Timer timerSendLocation = Timer(const Duration(seconds: 15), () {});
 
-Timer timerTempDown = Timer(const Duration(seconds: 1), () {});
+Timer? timerTempDown;
 Timer timerDropTempDown = Timer(const Duration(seconds: 1), () {});
 int countdown = 60;
 int countdownDrop = 60;
@@ -152,7 +148,7 @@ List<MenuConfigModel> permissionStatusI = [
   MenuConfigModel(
       "Cambiar envió ubicación", 'assets/images/Group 1082.png', 24, 24, true),
   MenuConfigModel("Cambiar tiempo notificaciónes",
-      'assets/images/Group 1099.png', 22, 17.15, true),
+      'assets/images/Group 1099.png', 22, 17.15, false),
   MenuConfigModel("Cambiar sonido notificaciones",
       'assets/images/Group 1102.png', 22, 22.08, false),
   MenuConfigModel(
@@ -278,25 +274,16 @@ Future<void> main() async {
 //   }
 // }
 
-void starTap() {
-  if (timerSendLocation.isActive) {
-    print('timer active ${timerSendLocation.isActive}');
-    timerSendLocation.cancel();
-  }
-  timerSendLocation = Timer(const Duration(seconds: 15), () {
-    print('Movimiento normal');
-    mainController.saveActivityLog(
-        DateTime.now(), "Movimiento normal", Uuid().v4().toString());
-    timerSendLocation.cancel();
-  });
-}
-
 ///Esta funcion se utiliza para activar los servicios en segundo plano
 ///se utilizan las variables getAceptedSendLocation, getDetectedFall para permitir o no su activación.
 ///VARIABLES: Esta variable sale de preferer donde almacenamos su valor booleano
 ///getAceptedSendLocation:  indica que el usuario acepto el envio de la ubicacion actual a su contacto
 ///getDetectedFall:  indica que el usuario acepto la funcionalidad del acelerometro para poder detectar movimientos bruscos
 Future<void> activateService() async {
+  if (_prefs.isFirstConfig == false) {
+    return;
+  }
+
   var textDescrip =
       'AlertFriends está activada y estamos comprobando que te encuentres bien';
 
@@ -304,7 +291,7 @@ Future<void> activateService() async {
     "my_foreground", // id
     'AlertFriends – Personal Protection', // title
     description:
-        'AlertFriends está activada y estamos comprobando que te encuentres bien.', // description
+        'AlertFriends está activada y estamos comprobando que te encuentres bien', // description
     importance: Importance.max, // importance must be at low or higher level
     playSound: true,
     showBadge: false,
@@ -320,7 +307,7 @@ Future<void> activateService() async {
       .resolvePlatformSpecificImplementation<
           AndroidFlutterLocalNotificationsPlugin>()
       ?.requestPermission();
-
+  final service = FlutterBackgroundService();
   await service.configure(
     androidConfiguration: AndroidConfiguration(
       // this will be executed when app is in foreground or background in separated isolate
@@ -346,10 +333,7 @@ Future<void> activateService() async {
     ),
   );
 
-  if (_prefs.getAcceptedNotification == PreferencePermission.allow &&
-      _prefs.getUseMobilConfig) {
-    service.startService();
-  }
+  service.startService();
 
   const AndroidInitializationSettings initializationSettingsAndroid =
       AndroidInitializationSettings('ic_bg_service_small');
@@ -435,7 +419,6 @@ Future<void> activateService() async {
       await flutterLocalNotificationsPlugin.getNotificationAppLaunchDetails();
 
   if (details != null && details.didNotificationLaunchApp) {
-    print("object ${details.notificationResponse!.payload}");
     await inicializeHiveBD();
     await _prefs.initPrefs();
     onDidReceiveBackgroundNotificationResponse(details.notificationResponse!);
@@ -447,13 +430,13 @@ void onDidReceiveBackgroundNotificationResponse(
     NotificationResponse notificationResponse) async {
   await inicializeHiveBD();
   await prefs.initPrefs();
-  // var aid = Uuid().v4().toString();
-  // mainController.saveActivityLog(DateTime.now(), "Movimiento normal", aid);
+  var aid = Uuid().v4().toString();
+  mainController.saveActivityLog(DateTime.now(), "Movimiento normal", aid);
   _logRudeMovementTimer = 0;
   _prefs.setEnableTimer = false;
   _prefs.setEnableTimerDrop = false;
-  if (timerTempDown.isActive) {
-    timerTempDown.cancel();
+  if (timerTempDown!.isActive) {
+    timerTempDown!.cancel();
   }
   if (timerDropTempDown.isActive) {
     timerDropTempDown.cancel();
@@ -502,8 +485,8 @@ void onDidReceiveBackgroundNotificationResponse(
         // rxlistTask.value = taskIdList;
         _prefs.setlistTaskIdsCancel = taskIdList;
         notActionPush = true;
-        if (timerTempDown.isActive) {
-          timerTempDown.cancel();
+        if (timerTempDown!.isActive) {
+          timerTempDown!.cancel();
         }
         RedirectViewNotifier.onTapNotificationBody(
             notificationResponse, taskIdList);
@@ -517,8 +500,8 @@ void onDidReceiveBackgroundNotificationResponse(
         String taskIds =
             notificationResponse.actionId!.replaceAll("Inactived_", "");
         var taskIdList = getTaskIdList(taskIds);
-        if (timerTempDown.isActive) {
-          timerTempDown.cancel();
+        if (timerTempDown!.isActive) {
+          timerTempDown!.cancel();
         }
         if (timerDropTempDown.isActive) {
           timerDropTempDown.cancel();
@@ -591,8 +574,8 @@ void onDidReceiveBackgroundNotificationResponse(
         String taskIds =
             notificationResponse.actionId!.replaceAll("helpID_", "");
         var taskIdList = getTaskIdList(taskIds);
-        if (timerTempDown.isActive) {
-          timerTempDown.cancel();
+        if (timerTempDown!.isActive) {
+          timerTempDown!.cancel();
         }
         if (timerDropTempDown.isActive) {
           timerDropTempDown.cancel();
@@ -627,8 +610,8 @@ void onDidReceiveBackgroundNotificationResponse(
         ismove = false;
         timerActive = true;
 
-        if (timerTempDown.isActive) {
-          timerTempDown.cancel();
+        if (timerTempDown!.isActive) {
+          timerTempDown!.cancel();
         }
 
         if (notificationResponse.payload!.contains("DateRisk_")) {
@@ -641,6 +624,8 @@ void onDidReceiveBackgroundNotificationResponse(
         if (notificationResponse.payload!.contains("Inactived_")) {
           mainController.saveUserLog("Inactividad - Actividad detectada ",
               DateTime.now(), prefs.getIdInactiveGroup);
+          await flutterLocalNotificationsPlugin.cancel(100);
+          await flutterLocalNotificationsPlugin.cancel(0);
         }
 
         if (notificationResponse.payload!.contains("Drop_")) {
@@ -669,8 +654,8 @@ void onDidReceiveBackgroundNotificationResponse(
             notificationResponse.actionId!.indexOf('id='),
             notificationResponse.actionId!.length);
 
-        if (timerTempDown.isActive) {
-          timerTempDown.cancel();
+        if (timerTempDown!.isActive) {
+          timerTempDown!.cancel();
         }
         if (timerDropTempDown.isActive) {
           timerDropTempDown.cancel();
@@ -727,10 +712,8 @@ void onDidReceiveBackgroundNotificationResponse(
               "Cita - Cancelada", DateTime.now(), prefs.getIdDateGroup);
         }
         MainService().cancelAllNotifications(taskIdList);
-        // NotificationCenter().notify('getContactRisk', data: id);
+
         return Future.value();
-        // RedirectViewNotifier.onTapNotification(
-        // notificationResponse, taskIdList, int.parse(id));
       }
       if (notificationResponse.actionId!.contains("premium")) {
         RedirectViewNotifier.onTapPremiumNotification(notificationResponse);
@@ -761,12 +744,10 @@ void onDidReceiveBackgroundNotificationResponse(
               tempcontact = temp;
             }
           }
-          // int indexSelect =
-          //     resp.indexWhere((item) => (item.id) == int.parse(id));
+
           var contactRiskTemp = tempcontact;
           contactRiskTemp.id = int.parse(id);
-          // contactRiskTemp.isActived = false;
-          // contactRiskTemp.isprogrammed = false;
+
           contactRiskTemp.isFinishTime = true;
           await erisk.updateContactRisk(contactRiskTemp);
           riskVC.update();
@@ -780,7 +761,6 @@ void onDidReceiveBackgroundNotificationResponse(
         }
         RedirectViewNotifier.onTapNotification(
             notificationResponse, taskIdList, int.parse(id));
-        // MainService().cancelAllNotifications(taskIdList);
 
         return Future.value();
       }
@@ -799,18 +779,6 @@ Future<TZDateTime> mainConvertTimeTZ(int hour) async {
       TZDateTime(tz.local, now.year, now.month, now.day, 0, hour);
 
   return scheduleDate;
-}
-
-tz.TZDateTime _nextInstanceOfTenAM() {
-  tz.initializeTimeZones();
-  final tz.TZDateTime now = tz.TZDateTime.now(tz.local);
-  tz.TZDateTime scheduledDate = tz.TZDateTime(
-      tz.local, now.year, now.month, now.day, now.hour, now.minute + 1, 30);
-  print(scheduledDate);
-  if (scheduledDate.isBefore(now)) {
-    scheduledDate = scheduledDate.add(const Duration(minutes: 1));
-  }
-  return scheduledDate;
 }
 
 // Inicializar el ID de la notificación
@@ -844,7 +812,34 @@ void onStart(ServiceInstance service) async {
     service.stopSelf();
   });
 
-  accelerometer();
+  Timer.periodic(
+    const Duration(days: 30),
+    (timer) {
+      _prefs.refreshData();
+      if (_prefs.getUsedFreeDays == false &&
+          _prefs.getDayFree != "0" &&
+          _prefs.getUserFree) {
+        DateTime dateTime = DateTime.parse(_prefs.getDayFree);
+
+        DateTime fechaActual = DateTime.now();
+
+        // Calcular la diferencia entre las fechas en días
+        int diferenciaEnDias = fechaActual.difference(dateTime).inDays;
+
+        // Verificar si han pasado 30 días
+        bool hanPasado30Dias = diferenciaEnDias >= 30;
+
+        if (hanPasado30Dias) {
+          _prefs.setUsedFreeDays = true;
+          _prefs.setUserFree = true;
+          _prefs.setUserPremium = false;
+          _prefs.setDayFree = "0";
+          var premiumController = Get.put(PremiumController());
+          premiumController.updatePremiumAPI(false);
+        }
+      }
+    },
+  );
 
   Timer.periodic(const Duration(seconds: 5), (timer) async {
     if (Platform.isAndroid) {
@@ -876,7 +871,7 @@ void onStart(ServiceInstance service) async {
 
     var timeGetDisamble = _prefs.getDisambleIFF;
     var timeDisamble = deactivateTimeToMinutes(timeGetDisamble) * 60;
-    print(timer.tick.toString());
+
     if (!timeDisamble.isEqual(0)) {
       if (increaceTimerDisamble >= timeDisamble) {
         _prefs.setEnableIFF = true;
@@ -884,36 +879,7 @@ void onStart(ServiceInstance service) async {
         _prefs.setDisambleIFF = "0 hora";
       }
     }
-
-    Timer.periodic(
-      const Duration(days: 30),
-      (timer) {
-        _prefs.refreshData();
-        if (_prefs.getUsedFreeDays == false &&
-            _prefs.getDayFree != "0" &&
-            _prefs.getUserFree) {
-          DateTime dateTime = DateTime.parse(_prefs.getDayFree);
-
-          DateTime fechaActual = DateTime.now();
-
-          // Calcular la diferencia entre las fechas en días
-          int diferenciaEnDias = fechaActual.difference(dateTime).inDays;
-
-          // Verificar si han pasado 30 días
-          bool hanPasado30Dias = diferenciaEnDias >= 30;
-
-          if (hanPasado30Dias) {
-            _prefs.setUsedFreeDays = true;
-            _prefs.setUserFree = true;
-            _prefs.setUserPremium = false;
-            _prefs.setDayFree = "0";
-            var premiumController = Get.put(PremiumController());
-            premiumController.updatePremiumAPI(false);
-          }
-        }
-      },
-    );
-
+    accelerometer();
     // Timer.periodic(const Duration(seconds: 1), (timer) async {
     //   if (Platform.isAndroid) {
     //     if (service is AndroidServiceInstance) {
@@ -968,129 +934,70 @@ Future<bool> onIosBackground(ServiceInstance service) async {
   return true;
 }
 
-Duration sensorInterval = SensorInterval.normalInterval;
-void accelerometer() async {
+void accelerometer() {
   //Initialization Settings for Android
-  await _prefs.initPrefs();
-  print(sensorInterval);
-  print(accelerometerMoveNormal);
-  _streamSubscriptions.add(
-    accelerometerEvents.listen(
-      (AccelerometerEvent event) {
-        double accelerationMagnitude =
-            sqrt(event.x * event.x + event.y * event.y + event.z * event.z);
-        // print('_prefs.getEnableIFF ${_prefs.getUseMobilConfig}');
-        if (accelerationMagnitude > 45) {
-          isMovRude = true;
-          // print('_prefs.getUserFree ${_prefs.getUserFree}');
+  Duration sensorInterval = SensorInterval.normalInterval;
+  Future.microtask(() async => {await _prefs.initPrefs()});
 
-          // print('_prefs.getEnableIFF ${_prefs.getEnableIFF}');
+  try {
+    _streamSubscriptions2.add(
+      accelerometerEventStream(samplingPeriod: sensorInterval).listen(
+        (AccelerometerEvent event) {
+          double accelerationMagnitude =
+              sqrt(event.x * event.x + event.y * event.y + event.z * event.z);
 
-          // if (_prefs.getUserFree) return;
+          // print("2 -> $accelerationMagnitude");
+          if (accelerationMagnitude > 45) {
+            isMovRude = true;
 
-          if (_prefs.getEnableIFF == false) return;
+            if (_prefs.getUserFree) return;
 
-          if (_logRudeMovementTimer >= _logRudeMovementTimerRefresh) {
-            mainController.saveDrop();
-            _logRudeMovementTimer = 0;
-          }
-        } else {
-          if (isMovRude) {
-            desactivedtimerSendDropNotification =
-                Timer(const Duration(seconds: 20), () async {
-              isMovRude = false;
-              desactivedtimerSendDropNotification.cancel();
-            });
-            return;
-          }
-          print(accelerometerMoveNormal);
-          if (accelerationMagnitude < 45 &&
-              accelerationMagnitude > accelerometerMoveNormal) {
-            _prefs.refreshData();
-            if (_prefs.getEnableIFF &&
-                _logActivityTimer >= _logActivityTimerRefresh) {
-              if (_prefs.getUseMobilConfig) {
-                print('Movimiento normal');
-
-                mainController.saveActivityLog(DateTime.now(),
-                    "Movimiento normal", Uuid().v4().toString());
+            if (_prefs.getEnableIFF == false) return;
+            if (_prefs.getUseMobilConfig) return;
+            if (_logRudeMovementTimer >= _logRudeMovementTimerRefresh) {
+              mainController.saveDrop();
+              _logRudeMovementTimer = 0;
+            }
+          } else {
+            if (isMovRude) {
+              desactivedtimerSendDropNotification =
+                  Timer(const Duration(seconds: 20), () async {
                 isMovRude = false;
-              }
-              _logActivityTimer = 0;
+                desactivedtimerSendDropNotification.cancel();
+              });
+              return;
             }
 
-            ismove = false;
-            timerActive = true;
+            if (accelerationMagnitude < 45 &&
+                accelerationMagnitude > accelerometerMoveNormal) {
+              _prefs.refreshData();
+              if (_prefs.getEnableIFF &&
+                  _logActivityTimer >= _logActivityTimerRefresh) {
+                if (_prefs.getUseMobilConfig) {
+                  print('Movimiento normal');
+
+                  mainController.saveActivityLog(DateTime.now(),
+                      "Movimiento normal", Uuid().v4().toString());
+                  isMovRude = false;
+                }
+                _logActivityTimer = 0;
+              }
+
+              ismove = false;
+              timerActive = true;
+            }
           }
-        }
-      },
-      onError: (e) {
-        print(e);
-      },
-      cancelOnError: true,
-    ),
-  );
-
-  // _streamSubscriptions.add(
-  //   accelerometerEvents.listen(
-  //     (AccelerometerEvent event) {
-  //       double accelerationMagnitude =
-  //           sqrt(event.x * event.x + event.y * event.y + event.z * event.z);
-  //       _prefs.refreshData();
-  //       // onData(accelerationMagnitude);
-  //       if (accelerationMagnitude > 45) {
-  //         isMovRude = true;
-  //         print('_prefs.getUserFree ${_prefs.getUserFree}');
-  //         print('_prefs.getDetectedFall ${_prefs.getDetectedFall}');
-  //         print('_prefs.getEnableIFF ${_prefs.getEnableIFF}');
-  //         if (_prefs.getUserFree) return;
-  //         if (_prefs.getDetectedFall == false) return;
-  //         if (_prefs.getEnableIFF == false) return;
-
-  //         if (_logRudeMovementTimer >= _logRudeMovementTimerRefresh) {
-  //           mainController.saveDrop();
-  //           _logRudeMovementTimer = 0;
-  //         }
-  //       } else {
-  //         if (isMovRude) {
-  //           desactivedtimerSendDropNotification =
-  //               Timer(const Duration(seconds: 20), () async {
-  //             isMovRude = false;
-  //             desactivedtimerSendDropNotification.cancel();
-  //           });
-  //           return;
-  //         }
-  //         if (accelerationMagnitude < 45 && accelerationMagnitude > 10) {
-  //           if (_prefs.getEnableIFF &&
-  //               _logActivityTimer >= _logActivityTimerRefresh) {
-  //             if (_prefs.getUseMobilConfig) {
-  //               print('Movimiento normal');
-  //               mainController.saveActivityLog(DateTime.now(),
-  //                   "Movimiento normal", Uuid().v4().toString());
-  //               isMovRude = false;
-  //             }
-  //             _logActivityTimer = 0;
-  //           }
-
-  //           ismove = false;
-  //           timerActive = true;
-  //         }
-  //       }
-  //     },
-  //   ),
-  // );
+        },
+        onError: (e) {
+          print(e);
+        },
+        cancelOnError: true,
+      ),
+    );
+  } catch (e) {
+    print('Error al suscribirse al acelerómetro: $e');
+  }
 }
-
-// void sendMessageContact() async {
-//   Duration useMobil =
-//       await IdleLogic().convertStringToDuration(_prefs.getHabitsTime);
-//   timerSendSMS = Timer(useMobil, () {
-//     timerActive = false;
-
-//     IdleLogic().notifyContact();
-//     mainController.saveUserLog("Envío de SMS a contacto ", now);
-//   });
-// }
 
 class MyApp extends StatefulWidget {
   const MyApp({super.key, required this.initApp});
@@ -1145,6 +1052,9 @@ class _MyAppState extends State<MyApp> {
 
 void sendLocation() async {
   if (_prefs.getAcceptedSendLocation == PreferencePermission.allow) {
+    var locationenabled =
+        await PermissionService.requestPermission(Permission.location);
+    if (locationenabled) {}
     var position = await determinePosition();
     _locationController.sendLocation(
         position.latitude.toString(), position.longitude.toString());
@@ -1157,7 +1067,7 @@ Future<Position> determinePosition() async {
   // Test if location services are enabled.
   serviceEnabled = await Geolocator.isLocationServiceEnabled();
   if (!serviceEnabled) {
-    return Future.error('Location services are disabled.');
+    return Future.error('Location services are disabled');
   }
 
   return await Geolocator.getCurrentPosition();

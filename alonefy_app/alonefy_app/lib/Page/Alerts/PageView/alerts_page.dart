@@ -29,33 +29,33 @@ class _AlertsPageState extends State<AlertsPage> {
 
   final scaffoldKey = GlobalKey<ScaffoldState>();
 
-  RxMap<String, List<LogAlertsBD>> groupedProducts =
-      RxMap<String, List<LogAlertsBD>>();
+  // RxMap<String, List<LogAlertsBD>> groupedProducts =
+  //     RxMap<String, List<LogAlertsBD>>();
   late List<LogAlertsBD> listLog;
-  final _group = ValueNotifier<RxMap<String, List<LogAlertsBD>>>(
-      RxMap<String, List<LogAlertsBD>>());
+  // final _group = ValueNotifier<RxMap<String, List<LogAlertsBD>>>(
+  // RxMap<String, List<LogAlertsBD>>());
   bool _isLoading = true;
 
   RxMap<String, Map<String, List<LogAlertsBD>>> newGroup =
       RxMap<String, Map<String, List<LogAlertsBD>>>();
   Future<void> getLog() async {
-    groupedProducts.value = {};
+    // groupedProducts.value = {};
 
-    groupedProducts.value = await alertsVC.getAllMov();
+    // groupedProducts.value = await alertsVC.getAllMov();
     newGroup = await alertsVC.getAllMov2();
     newGroup.values;
-    _group.value = groupedProducts;
+    // _group.value = groupedProducts;
     _isLoading = false;
     setState(() {});
   }
 
   Future<void> deleteForDayMov(
       BuildContext context, List<LogAlertsBD> listLog) async {
-    groupedProducts.value = {};
+    // groupedProducts.value = {};
 
     var req = await alertsVC.deleteAlerts(context, listLog);
     if (req == 0) {
-      NotificationCenter().notify('getAlerts');
+      // NotificationCenter().notify('getAlerts');
       setState(() {});
       getLog();
     }

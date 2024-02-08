@@ -158,7 +158,7 @@ class BoundMultipartStream {
           _subscription.cancel();
           break;
         default:
-          throw StateError('This code should never be reached.');
+          throw StateError('This code should never be reached');
       }
     }
   }

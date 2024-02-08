@@ -16,13 +16,13 @@ class _CellLogAlertsState extends State<CellLogAlerts> {
   Widget build(BuildContext context) {
     return Container(
       color: Colors.transparent,
-      height: 70,
+      height: 80,
       width: 300,
       child: Stack(
         children: [
           Container(
             color: Colors.transparent,
-            height: 70,
+            height: widget.logAlert.type.contains('- ') ? 80 : 70,
             width: 300,
             child: Row(
               mainAxisSize: MainAxisSize.max,
@@ -35,20 +35,28 @@ class _CellLogAlertsState extends State<CellLogAlerts> {
                 ),
                 Container(
                   color: Colors.transparent,
-                  height: 70,
+                  height: widget.logAlert.type.contains('- ') ? 80 : 70,
                   width: 200,
                   child: Stack(children: [
                     Positioned(
-                      top: 10,
-                      child: Text(
-                        widget.logAlert.type.replaceAll("- ", "\n"),
-                        textAlign: TextAlign.left,
-                        style: GoogleFonts.barlow(
-                          fontSize: 16.0,
-                          wordSpacing: 1,
-                          letterSpacing: 0.001,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
+                      top: widget.logAlert.type.contains('- ') ? 0 : 10,
+                      child: SizedBox(
+                        width: 200,
+                        child: Padding(
+                          padding: const EdgeInsets.only(right: 0.0),
+                          child: Text(
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 2,
+                            widget.logAlert.type.replaceAll("- ", "\n"),
+                            textAlign: TextAlign.left,
+                            style: GoogleFonts.barlow(
+                              fontSize: 16.0,
+                              wordSpacing: 1,
+                              letterSpacing: 0.001,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
+                          ),
                         ),
                       ),
                     ),

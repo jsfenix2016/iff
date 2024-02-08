@@ -9,6 +9,7 @@ import 'package:ifeelefine/Provider/prefencesUser.dart';
 import 'package:ifeelefine/main.dart';
 
 import 'package:jiffy/jiffy.dart';
+import 'package:uuid/uuid.dart';
 
 import '../../../Controllers/mainController.dart';
 
@@ -37,13 +38,15 @@ class DisambleController extends GetxController {
         prefs.setDisambleIFF = deactivateTime;
       } else {
         prefs.setEnableIFF = true;
-
+        var aid = Uuid().v4().toString();
+        mainController.saveActivityLog(
+            DateTime.now(), "Movimiento normal", aid);
         prefs.setDisambleIFF = "0 hora";
       }
 
       Future.sync(() => {
             showSaveAlert(context, "Tiempo guardado",
-                "El tiempo en el que queda desactivado la aplicación se ha guardado correctamente.")
+                "El tiempo en el que queda desactivado la aplicación se ha guardado correctamente")
           });
     } else {
       Future.sync(() => {

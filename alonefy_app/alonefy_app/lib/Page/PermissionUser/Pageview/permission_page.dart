@@ -134,7 +134,7 @@ class _PermitionUserPageState extends State<PermitionUserPage> {
 
     if (response) {
       showSaveAlert(context, "Permisos guardados",
-          "Los permisos se han guardado correctamente.");
+          "Los permisos se han guardado correctamente");
     }
   }
 

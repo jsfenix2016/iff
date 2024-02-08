@@ -14,6 +14,7 @@ import 'package:ifeelefine/Common/colorsPalette.dart';
 
 import 'package:ifeelefine/Common/notificationService.dart';
 import 'package:ifeelefine/Common/text_style_font.dart';
+import 'package:ifeelefine/Common/utils.dart';
 import 'package:ifeelefine/Page/UserConfig/Controller/userConfigController.dart';
 import 'package:ifeelefine/Model/user.dart';
 
@@ -26,7 +27,7 @@ import 'package:permission_handler/permission_handler.dart';
 
 import '../Provider/prefencesUser.dart';
 import 'package:ifeelefine/Common/decoration_custom.dart';
-import 'package:flutter/services.dart' show MethodChannel, rootBundle;
+import 'package:flutter/services.dart' show MethodChannel;
 import 'package:flutter_system_ringtones/flutter_system_ringtones.dart';
 
 final _prefs = PreferenceUser();
@@ -64,9 +65,9 @@ class _RingTonePageState extends State<RingTonePage>
   //   'alarm with reverberation 30031': 'alarm1withreverberation30031',
   //   'alarm carorhome 62554': 'alarmcarorhome62554',
   //   'rocky': 'alarmclockshort6402',
-  //   'ringtonespinkpanther',
-  //   'biohazardalarm143105',
-  //   'civildefensesiren128262',
+  //   'pinkpanther':'ringtonespinkpanther',
+  //   'biohazardalarm':'biohazardalarm143105',
+  //   'civildefensesiren':'civildefensesiren128262',
   //   'clockalarm',
   //   'fanfaretrumpets6185',
   //   'friendrequest14878',
@@ -142,8 +143,6 @@ class _RingTonePageState extends State<RingTonePage>
       status = await Permission.storage.request();
     }
 
-    // ringtonesRaw = await fetchToneResources();
-    print(ringtonesRaw);
     switch (status) {
       case PermissionStatus.denied:
         _prefs.setAcceptedScheduleExactAlarm = PreferencePermission.noAccepted;
@@ -188,10 +187,10 @@ class _RingTonePageState extends State<RingTonePage>
     });
 
     try {
-      final temp1 =
-          await FlutterSystemRingtonesPlatform.instance.getNotifications();
-      final temp2 = await FlutterSystemRingtones.getRingtoneSounds();
-      final temp = await FlutterSystemRingtones.getAlarmSounds();
+      // final temp1 =
+      //     await FlutterSystemRingtonesPlatform.instance.getNotifications();
+      // final temp2 = await FlutterSystemRingtones.getRingtoneSounds();
+      // final temp = await FlutterSystemRingtones.getAlarmSounds();
       //ringtones = temp;
 
       var count = 0;
@@ -210,7 +209,7 @@ class _RingTonePageState extends State<RingTonePage>
 
       setState(() {});
     } catch (e) {
-      debugPrint('Failed to get platform version.');
+      debugPrint('Failed to get platform version');
     }
 
     if (!mounted) return;
@@ -409,40 +408,24 @@ class _RingTonePageState extends State<RingTonePage>
   }
 
   void saveNotificationAudio() async {
-    if (ringtonesTemp.length == ringtonesTemp.length - 1) {
-      _prefs.setNotificationAudio = '';
-      final service = FlutterBackgroundService();
-      var isRunning = await service.isRunning();
-      if (isRunning) {
-        service.invoke("stopService");
-      }
-      await service.startService();
-      await activateService();
-    }
-    for (var i = 0; i <= ringtonesTemp.length; i++) {
-      if (ringtonesEnabled[i]) {
-        _prefs.setNotificationAudio = ringtonesTemp[i];
+    int selectedRingtoneIndex = -1;
 
-        final service = FlutterBackgroundService();
-        var isRunning = await service.isRunning();
-        if (isRunning) {
-          service.invoke("stopService");
-        }
-        await service.startService();
-        await activateService();
+    // Busca el índice de la primera notificación seleccionada
+    for (int i = 0; i < ringtonesTemp.length; i++) {
+      if (ringtonesEnabled[i]) {
+        selectedRingtoneIndex = i;
         break;
       }
-
-      if (i == ringtonesTemp.length - 1) {
-        _prefs.setNotificationAudio = '';
-        final service = FlutterBackgroundService();
-        var isRunning = await service.isRunning();
-        if (isRunning) {
-          service.invoke("stopService");
-        }
-        await service.startService();
-        await activateService();
-      }
     }
+
+    // Si se encontró un índice seleccionado
+    if (selectedRingtoneIndex != -1) {
+      _prefs.setNotificationAudio = ringtonesTemp[selectedRingtoneIndex];
+    } else {
+      _prefs.setNotificationAudio =
+          ''; // Establece el tono de notificación en vacío
+    }
+
+    resetServicesBackground(); // Reinicia los servicios en segundo plano
   }
 }

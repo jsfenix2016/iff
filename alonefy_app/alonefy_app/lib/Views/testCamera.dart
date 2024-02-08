@@ -7,6 +7,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ifeelefine/Common/Constant.dart';
+import 'package:ifeelefine/Common/colorsPalette.dart';
 
 import 'package:ifeelefine/Common/utils.dart';
 
@@ -219,7 +220,9 @@ class _TestCameraPageState extends State<TestCameraPage> {
                           ? Container(
                               color: Colors.white,
                               child: const Center(
-                                child: CircularProgressIndicator(),
+                                child: CircularProgressIndicator(
+                                  color: ColorPalette.calendarNumber,
+                                ),
                               ),
                             )
                           : CameraPreview(firstCameraController),
@@ -231,7 +234,9 @@ class _TestCameraPageState extends State<TestCameraPage> {
                           ? Container(
                               color: Colors.white,
                               child: const Center(
-                                child: CircularProgressIndicator(),
+                                child: CircularProgressIndicator(
+                                  color: ColorPalette.calendarNumber,
+                                ),
                               ),
                             )
                           : CameraPreview(secondCameraController),

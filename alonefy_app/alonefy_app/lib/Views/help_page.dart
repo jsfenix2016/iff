@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:google_fonts/google_fonts.dart';
+
+import 'package:ifeelefine/Common/Constant.dart';
 
 import 'package:ifeelefine/Common/decoration_custom.dart';
+import 'package:ifeelefine/Common/text_style_font.dart';
+import 'package:ifeelefine/Common/utils.dart';
+import 'package:ifeelefine/Page/HomePage/Pageview/home_page.dart';
 import 'package:ifeelefine/Provider/prefencesUser.dart';
 
 import 'package:ifeelefine/Services/mainService.dart';
@@ -23,7 +27,7 @@ class _HelpPageState extends State<HelpPage> {
     super.initState();
     initPrefs();
     starTap();
-    print(rxIdTask.value);
+
     taskIdList = prefs.getlistTaskIdsCancel;
     // print(rxlistTask);
   }
@@ -57,13 +61,7 @@ class _HelpPageState extends State<HelpPage> {
                     child: Text(
                       'Hola ${user == null ? "NULL" : name.obs}\n¿Estas bien?',
                       textAlign: TextAlign.center,
-                      style: GoogleFonts.barlow(
-                        fontSize: 24.0,
-                        wordSpacing: 1,
-                        letterSpacing: 0.001,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.white,
-                      ),
+                      style: textSemibold24White(),
                     ),
                   ),
                 ),
@@ -78,8 +76,8 @@ class _HelpPageState extends State<HelpPage> {
                           DateTime.now(),
                           prefs.getIdInactiveGroup);
                       MainService().cancelAllNotifications(taskIdList);
-
-                      Navigator.of(context).pop();
+                      prefs.saveLastScreenRoute("home");
+                      Get.offAll(const HomePage());
                     },
                     child: Container(
                       decoration: BoxDecoration(
@@ -95,13 +93,7 @@ class _HelpPageState extends State<HelpPage> {
                       child: Center(
                         child: Text(
                           "SÍ",
-                          style: GoogleFonts.barlow(
-                            fontSize: 48.0,
-                            wordSpacing: 1,
-                            letterSpacing: 0.001,
-                            fontWeight: FontWeight.w700,
-                            color: Colors.white,
-                          ),
+                          style: textBold48White(),
                         ),
                       ),
                     ),
@@ -117,15 +109,9 @@ class _HelpPageState extends State<HelpPage> {
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Text(
-                      'El proceso de notificar a tus contactos está inicializado.',
+                      Constant.initNotifiContact,
                       textAlign: TextAlign.center,
-                      style: GoogleFonts.barlow(
-                        fontSize: 24.0,
-                        wordSpacing: 1,
-                        letterSpacing: 0.001,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.white,
-                      ),
+                      style: textSemibold24White(),
                     ),
                   ),
                 ),
@@ -137,7 +123,9 @@ class _HelpPageState extends State<HelpPage> {
                     mainController.saveUserLog("Inactividad - solicito ayuda ",
                         DateTime.now(), prefs.getIdInactiveGroup);
                     MainService().sendAlertToContactImmediately(taskIdList);
-                    Navigator.of(context).pop();
+
+                    prefs.saveLastScreenRoute("home");
+                    Get.offAll(const HomePage());
                   },
                   child: Container(
                     decoration: BoxDecoration(
@@ -156,15 +144,9 @@ class _HelpPageState extends State<HelpPage> {
                         height: 80,
                         child: Center(
                           child: Text(
-                            "Necesito ayuda",
+                            Constant.ineedHelp,
                             textAlign: TextAlign.center,
-                            style: GoogleFonts.barlow(
-                              fontSize: 26.0,
-                              wordSpacing: 1,
-                              letterSpacing: 0.001,
-                              fontWeight: FontWeight.w700,
-                              color: Colors.white,
-                            ),
+                            style: textBold26White(),
                           ),
                         ),
                       ),

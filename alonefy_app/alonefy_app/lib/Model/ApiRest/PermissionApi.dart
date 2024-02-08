@@ -4,21 +4,24 @@ class PermissionApi {
   late bool activateCamera;
   late bool activateContacts;
   late bool activateAlarm;
+  late bool activateLocation;
 
-  PermissionApi({
-    required this.phoneNumber,
-    required this.activateNotifications,
-    required this.activateCamera,
-    required this.activateContacts,
-    required this.activateAlarm});
+  PermissionApi(
+      {required this.phoneNumber,
+      required this.activateNotifications,
+      required this.activateCamera,
+      required this.activateContacts,
+      required this.activateAlarm,
+      required this.activateLocation});
 
   Map<String, dynamic> toJson() => {
-    'phoneNumber': phoneNumber,
-    'activateNotifications': activateNotifications,
-    'activateCamera': activateCamera,
-    'activateContacts': activateContacts,
-    'activateAlarm': activateAlarm
-  };
+        'phoneNumber': phoneNumber,
+        'activateNotifications': activateNotifications,
+        'activateCamera': activateCamera,
+        'activateContacts': activateContacts,
+        'activateAlarm': activateAlarm,
+        'activateLocation': activateLocation
+      };
 
   factory PermissionApi.fromJson(Map<String, dynamic> json) {
     return PermissionApi(
@@ -27,6 +30,6 @@ class PermissionApi {
         activateCamera: json['activateCamera'],
         activateContacts: json['activateContacts'],
         activateAlarm: json['activateAlarm'],
-    );
+        activateLocation: json['activateLocation']);
   }
 }

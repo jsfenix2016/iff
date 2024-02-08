@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:ifeelefine/Common/Constant.dart';
 import 'package:ifeelefine/Common/notificationService.dart';
 import 'package:ifeelefine/Common/text_style_font.dart';
+import 'package:ifeelefine/Common/utils.dart';
 
 import 'package:ifeelefine/Page/Disamble/Controller/disambleController.dart';
 
@@ -159,7 +160,7 @@ class _DesactivePageState extends State<DesactivePage> {
                                       desactiveIFeelFine = "0 hora";
                                     }
                                     var count = 0;
-                                    for (var disambleEnabled
+                                    for (bool disambleEnabled
                                         in listDisambleEnabled) {
                                       listDisambleEnabled[count] = false;
 

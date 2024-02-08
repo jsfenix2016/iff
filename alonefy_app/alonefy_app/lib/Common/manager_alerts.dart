@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ifeelefine/Common/Constant.dart';
 import 'package:ifeelefine/Common/notificationService.dart';
 import 'package:ifeelefine/Common/text_style_font.dart';
 import 'package:ifeelefine/Services/mainService.dart';
@@ -37,8 +38,7 @@ void showAlertDialog(String message, List<String> listid) async {
     builder: (context) {
       return AlertDialog(
         title: const Text("Información"),
-        content: Text(
-            "No detectamos una acción en la notificación, necesitas ayuda?"),
+        content: const Text(Constant.notAccion),
         actions: <Widget>[
           TextButton(
             child: Text("NO", style: textBold16Black()),

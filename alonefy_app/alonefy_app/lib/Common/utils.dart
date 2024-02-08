@@ -5,6 +5,7 @@ import 'dart:io';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:flutter_timezone/flutter_timezone.dart';
 import 'package:geolocator/geolocator.dart';
@@ -25,6 +26,7 @@ import 'package:notification_center/notification_center.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:intl/intl.dart';
+import 'package:uuid/uuid.dart';
 
 import '../Model/ApiRest/AlertApi.dart';
 import '../Model/ApiRest/ContactRiskApi.dart';
@@ -57,6 +59,27 @@ Map<String, String> getAge() {
   return ages;
 }
 
+void resetServicesBackground() async {
+  final service = FlutterBackgroundService();
+  var isRunning = await service.isRunning();
+  if (isRunning) {
+    service.invoke("stopService");
+  }
+  await service.startService();
+  await activateService();
+}
+
+void starTap() {
+  if (timerSendLocation.isActive) {
+    timerSendLocation.cancel();
+  }
+  timerSendLocation = Timer(const Duration(seconds: 15), () {
+    mainController.saveActivityLog(
+        DateTime.now(), "Movimiento normal", Uuid().v4().toString());
+    timerSendLocation.cancel();
+  });
+}
+
 void refreshMenu(String menu) async {
   List<String>? temp = [];
 
@@ -75,6 +98,7 @@ void refreshMenu(String menu) async {
   _prefs.setlistConfigPage = temp;
   try {
     NotificationCenter().notify('refreshMenu');
+    NotificationCenter().notify('refreshView');
   } catch (e) {
     print(e);
   }
@@ -87,36 +111,34 @@ Future<List<MenuConfigModel>> validateConfig() async {
     return permissionStatusI;
   }
 
-  for (var element in await _prefs.getlistConfigPage) {
+  for (var element in temp) {
     switch (element) {
       case "config2":
-        menuConfig.insert(0, false);
+        menuConfig[0] = (false);
         break;
       case "restDay":
-        menuConfig.insert(1, false);
+        menuConfig[1] = (false);
         break;
       case "useMobil":
-        menuConfig.insert(2, false);
+        menuConfig[2] = (false);
         break;
       case "previewActivity":
-        menuConfig.insert(3, false);
+        menuConfig[3] = (false);
         break;
 
       case "addContact":
-        menuConfig.insert(4, false);
+        menuConfig[4] = (false);
         break;
       case "fallActivation":
-        menuConfig.insert(5, false);
+        menuConfig[5] = (false);
         break;
       case "configGeo":
-        menuConfig.insert(6, false);
+        menuConfig[6] = (false);
         break;
       case "inactivityDay":
-        menuConfig.insert(7, false);
+        menuConfig[7] = (false);
         break;
-      case "config2":
-        menuConfig.insert(8, false);
-        break;
+
       default:
     }
   }
@@ -137,7 +159,7 @@ Future<List<MenuConfigModel>> validateConfig() async {
     MenuConfigModel("Cambiar envío ubicación", 'assets/images/Group 1082.png',
         24, 24, menuConfig[6]),
     MenuConfigModel("Cambiar tiempo notificaciónes",
-        'assets/images/Group 1099.png', 22, 17.15, menuConfig[4]),
+        'assets/images/Group 1099.png', 22, 17.15, false),
     MenuConfigModel("Cambiar sonido notificaciones",
         'assets/images/Group 1102.png', 22, 22.08, false),
     MenuConfigModel("Ajustes de mi smartphone", 'assets/images/mobile.png', 22,
@@ -154,10 +176,10 @@ Future<List<MenuConfigModel>> validateConfig() async {
 
   // Verifica el resultado
   if (contieneTrue) {
-    print('La lista contiene al menos un true.');
+    print('La lista contiene al menos un true');
     _prefs.config = false;
   } else {
-    print('La lista no contiene ningún true.');
+    print('La lista no contiene ningún true');
     _prefs.config = true;
   }
 
@@ -719,7 +741,7 @@ Future<Position> determinePosition() async {
     // App to enable the location services.
     //_prefs.setAcceptedSendLocation = PreferencePermission.noAccepted;
     _locationController.activateLocation(PreferencePermission.noAccepted);
-    return Future.error('Location services are disabled.');
+    return Future.error('Location services are disabled');
   }
 
   if (_prefs.getAcceptedSendLocation != PreferencePermission.allow &&
@@ -746,7 +768,7 @@ Future<Position> determinePosition() async {
     //_prefs.setAcceptedSendLocation = PreferencePermission.noAccepted;
     _locationController.activateLocation(PreferencePermission.noAccepted);
     return Future.error(
-        'Location permissions are permanently denied, we cannot request permissions.');
+        'Location permissions are permanently denied, we cannot request permissions');
   }
 
   // When we reach here, permissions are granted and we can

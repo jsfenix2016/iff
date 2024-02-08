@@ -52,7 +52,7 @@ import Flutter
     func endBackgroundTaskIfActive() {
       let isBackgroundTaskActive = backgroundTask != .invalid
       if isBackgroundTaskActive {
-        print("Background task ended.")
+        print("Background task ended")
         UIApplication.shared.endBackgroundTask(backgroundTask)
         backgroundTask = .invalid
       }

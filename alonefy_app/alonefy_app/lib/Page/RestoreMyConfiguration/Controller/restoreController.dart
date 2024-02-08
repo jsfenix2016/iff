@@ -165,34 +165,34 @@ class RestoreController extends GetxController {
   }
 
   void _saveContacts(List<ContactApi> contactsApi) {
-    refreshMenu("addContact");
     Future.sync(
       () async {
         await ContactUserController().saveFromApi(contactsApi);
         if (contactsApi.isNotEmpty) {
-          Future.sync(() async {
-            var contacts =
-                await PermissionService.requestPermission(Permission.contacts);
-            if (contacts) {
-              _prefs.setAcceptedCamera = PreferencePermission.allow;
-            }
-          });
+          refreshMenu("addContact");
+          // Future.sync(() async {
+          //   var contacts =
+          //       await PermissionService.requestPermission(Permission.contacts);
+          //   if (contacts) {
+          //     _prefs.setAcceptedContacts = PreferencePermission.allow;
+          //   }
+          // });
         }
       },
     );
   }
 
-  void _saveLocation(UserApi? userApi) {
+  void _saveLocation(UserApi? userApi) async {
     if (userApi != null && userApi.activateLocation) {
-      Future.sync(() async {
-        var cameraenabled =
-            await PermissionService.requestPermission(Permission.location);
-        if (cameraenabled) {
-          _prefs.setAcceptedCamera = PreferencePermission.allow;
+      Future.delayed(const Duration(seconds: 6), () async {
+        var sendLocation = await requestPermission(Permission.location);
+        if (sendLocation) {
+          _prefs.setAcceptedSendLocation = PreferencePermission.allow;
+          refreshMenu("configGeo");
         }
       });
-      _prefs.setAcceptedSendLocation = PreferencePermission.allow;
-      refreshMenu("configGeo");
+
+      // _prefs.setAcceptedSendLocation = PreferencePermission.allow;
     }
   }
 
@@ -205,7 +205,7 @@ class RestoreController extends GetxController {
 
   void _saveCameraPermission(UserApi? userApi) {
     if (userApi != null && userApi.activateCamera) {
-      Future.sync(() async {
+      Future.delayed(const Duration(seconds: 8), () async {
         var cameraenabled =
             await PermissionService.requestPermission(Permission.camera);
         if (cameraenabled) {
@@ -217,11 +217,11 @@ class RestoreController extends GetxController {
 
   void _saveNotifications(UserApi? userApi) {
     if (userApi != null && userApi.activateNotifications) {
-      Future.sync(() async {
+      Future.delayed(const Duration(seconds: 10), () async {
         var notification =
             await PermissionService.requestPermission(Permission.notification);
         if (notification) {
-          _prefs.setAcceptedCamera = PreferencePermission.allow;
+          _prefs.setAcceptedNotification = PreferencePermission.allow;
         }
       });
 
@@ -233,16 +233,23 @@ class RestoreController extends GetxController {
           _prefs.getDetectedFall ||
           _prefs.getAcceptedSendLocation == PreferencePermission.allow) {
         _prefs.setProtected =
-            "AlertFriends está activada y estamos comprobando que te encuentres bien.";
+            "AlertFriends está activada y estamos comprobando que te encuentres bien";
       }
     }
   }
 
   Future<void> _saveScheduleExactAlarm(UserApi? userApi) async {
-    if (userApi != null) {
-      _prefs.setAcceptedScheduleExactAlarm = userApi.activateAlarm
-          ? PreferencePermission.allow
-          : PreferencePermission.noAccepted;
+    if (userApi != null && userApi.activateAlarm) {
+      Future.delayed(const Duration(seconds: 13), () async {
+        var notification = await PermissionService.requestPermission(
+            Permission.scheduleExactAlarm);
+        if (notification) {
+          _prefs.setAcceptedScheduleExactAlarm = PreferencePermission.allow;
+        } else {
+          _prefs.setAcceptedScheduleExactAlarm =
+              PreferencePermission.noAccepted;
+        }
+      });
     }
   }
 

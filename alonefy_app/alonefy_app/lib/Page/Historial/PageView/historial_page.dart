@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ifeelefine/Common/notificationService.dart';
 import 'package:ifeelefine/Common/text_style_font.dart';
+import 'package:ifeelefine/Common/utils.dart';
 
 import 'package:ifeelefine/Model/logActivityBd.dart';
 import 'package:ifeelefine/Model/logAlertsBD.dart';
@@ -53,7 +54,7 @@ class _HistorialPageState extends State<HistorialPage> {
 
     var req = await alertsVC.deleteAlerts(context, time);
     if (req == 0) {
-      NotificationCenter().notify('getAlerts');
+      // NotificationCenter().notify('getAlerts');
       getLog();
     }
   }

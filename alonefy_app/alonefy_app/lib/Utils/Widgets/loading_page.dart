@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ifeelefine/Common/colorsPalette.dart';
 
 class LoadingIndicator extends StatelessWidget {
   final bool isLoading;
@@ -19,7 +20,9 @@ class LoadingIndicator extends StatelessWidget {
           Container(
             color: Colors.black.withOpacity(0.5),
             child: const Center(
-              child: CircularProgressIndicator(color: Colors.white),
+              child: CircularProgressIndicator(
+                color: ColorPalette.calendarNumber,
+              ),
             ),
           ),
       ],

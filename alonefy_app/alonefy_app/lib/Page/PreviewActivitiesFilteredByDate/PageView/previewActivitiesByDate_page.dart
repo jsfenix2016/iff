@@ -68,6 +68,7 @@ class _PreviewActivitiesByDateState extends State<PreviewActivitiesByDate>
       // _prefs.saveLastScreenRoute("previewActivity");
     }
     refreshMenu('previewActivity');
+
     starTap();
     WidgetsBinding.instance.addObserver(this);
     _from = DateTime(_from.year, _from.month, _from.day);

@@ -7,6 +7,7 @@ import 'package:ifeelefine/Common/manager_alerts.dart';
 
 import 'package:ifeelefine/Common/notificationService.dart';
 import 'package:ifeelefine/Common/text_style_font.dart';
+import 'package:ifeelefine/Common/utils.dart';
 
 import 'package:ifeelefine/Model/contact.dart';
 import 'package:ifeelefine/Page/Contact/EditContact/PageView/editContact.dart';
@@ -32,7 +33,7 @@ class ContactNoticePage extends StatefulWidget {
 }
 
 class _ContactNoticePageState extends State<ContactNoticePage> {
-  final ContactNoticeController controller = Get.put(ContactNoticeController());
+  ContactNoticeController controller = Get.put(ContactNoticeController());
   final PreferenceUser _prefs = PreferenceUser();
   late List<ContactBD> listContact = [];
   List<Contact> contactlist = [];
@@ -55,10 +56,10 @@ class _ContactNoticePageState extends State<ContactNoticePage> {
   }
 
   Future getContact() async {
-    var list = await refreshListContact();
-    listContact = list.value;
-
-    setState(() {});
+    // var list = await refreshListContact();
+    // listContact = list.value;
+    controller.update();
+    // setState(() {});
   }
 
   void _showCountryListScreen(BuildContext context) async {

@@ -1,5 +1,6 @@
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:ifeelefine/Common/initialize_models_bd.dart';
+import 'package:ifeelefine/Data/hive_constant_adapterInit.dart';
 
 import 'package:ifeelefine/Model/activitydaybd.dart';
 import 'package:ifeelefine/Model/contact.dart';
@@ -45,6 +46,7 @@ class HiveData {
   }
 
   Future<UserBD> get getuserbd async {
+    await inicializeHiveBD();
     final Box<UserBD> box = await Hive.openBox<UserBD>('userBD');
     UserBD person = initUserBD();
 

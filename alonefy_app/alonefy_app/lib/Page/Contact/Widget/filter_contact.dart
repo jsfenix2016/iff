@@ -4,6 +4,7 @@ import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:ifeelefine/Common/decoration_custom.dart';
 
 import 'package:ifeelefine/Common/text_style_font.dart';
+import 'package:ifeelefine/Common/utils.dart';
 
 import 'package:ifeelefine/Utils/Widgets/loading_page.dart';
 import 'package:ifeelefine/Utils/Widgets/widgedContact.dart';

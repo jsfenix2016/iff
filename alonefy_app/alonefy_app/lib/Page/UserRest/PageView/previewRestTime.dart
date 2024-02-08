@@ -34,7 +34,7 @@ class PreviewRestTimePage extends StatefulWidget {
 class _PreviewRestTimePageState extends State<PreviewRestTimePage> {
   final scaffoldKey = GlobalKey<ScaffoldState>();
   final UserRestController restVC = Get.put(UserRestController());
-  final PreferenceUser _prefs = PreferenceUser();
+
   late String timeLblAM = "00:00:00"; //AM
   late String timeLblPM = "00:00:00"; //PM
 

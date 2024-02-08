@@ -20,6 +20,7 @@ import 'package:ifeelefine/Page/UserRest/PageView/configurationUserRest_page.dar
 import 'package:ifeelefine/Page/UserRest/PageView/previewRestTime.dart';
 import 'package:ifeelefine/Views/contact_page.dart';
 import 'package:flutter/material.dart';
+import 'package:ifeelefine/Views/help_page.dart';
 
 final Map<String, Widget Function(BuildContext)> appRoute = {
   "home": (BuildContext context) => const HomePage(),
@@ -55,4 +56,5 @@ final Map<String, Widget Function(BuildContext)> appRoute = {
         taskIds: [],
       ),
   "alternative": (BuildContext context) => const AlternativePage(),
+  "help": (BuildContext context) => const HelpPage(),
 };

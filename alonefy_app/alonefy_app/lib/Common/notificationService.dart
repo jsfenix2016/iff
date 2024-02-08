@@ -21,10 +21,9 @@ import 'package:ifeelefine/Page/Premium/PageView/premium_page.dart';
 import 'package:ifeelefine/Page/Risk/DateRisk/Controller/editRiskController.dart';
 import 'package:ifeelefine/Page/Risk/DateRisk/Pageview/cancelDatePage.dart';
 
-import 'package:ifeelefine/Page/Risk/ZoneRisk/ListContactZoneRisk/Controller/listContactZoneController.dart';
 import 'package:ifeelefine/Provider/prefencesUser.dart';
-
 import 'package:ifeelefine/Views/help_page.dart';
+
 import 'package:ifeelefine/main.dart';
 import 'package:notification_center/notification_center.dart';
 import 'package:uuid/uuid.dart';
@@ -42,15 +41,20 @@ class RedirectViewNotifier with ChangeNotifier {
 
   static Future<void> onTapNotificationBody(
       NotificationResponse? response, List<String> taskIds) async {
-    if (response?.payload == null) return;
-
-    // var contactRisk = await const HiveDataRisk().getContactRiskBD(id);
-    Future.delayed(const Duration(seconds: 1), () {
+    // if (response?.payload == null) return;
+    prefs.saveLastScreenRoute("help");
+    // Future.delayed(const Duration(seconds: 1), () {
+    //   Navigator.push(
+    //     _storedContext!,
+    //     MaterialPageRoute(builder: (context) => const HelpPage()),
+    //   );
+    // });
+    if (_storedContext != null) {
       Navigator.push(
         _storedContext!,
         MaterialPageRoute(builder: (context) => const HelpPage()),
       );
-    });
+    }
   }
 
   static Future<void> onRefreshContact(NotificationResponse? response) async {
@@ -72,41 +76,7 @@ class RedirectViewNotifier with ChangeNotifier {
                 )),
       );
     }
-    // try {
-    //   await Get.offAll(CancelDatePage(
-    //     taskIds: taskIds,
-    //   ));
-    // } catch (e) {
-    //   if (_storedContext != null) {
-    //     await Navigator.pushReplacement(
-    //       _storedContext!,
-    //       MaterialPageRoute(
-    //           builder: (context) => CancelDatePage(
-    //                 taskIds: taskIds,
-    //               )),
-    //     );
-    //   } else {
-    //     Future.delayed(const Duration(seconds: 2), () async {
-    //       await Get.offAll(CancelDatePage(
-    //         taskIds: taskIds,
-    //       ));
-    //     });
-    //   }
-    // }
   }
-
-  // static Future<void> onTapRedirectCancelZone() async {
-  //   if (_storedContext == null) return;
-  //   await inicializeHiveBD();
-  //   print(prefs.getIsSelectContactRisk);
-  //   if (prefs.getIsSelectContactRisk != -1) {
-  //     ListContactZoneController riskVC = ListContactZoneController();
-  //     var resp = await riskVC.getContactsZoneRisk();
-  //     print(resp);
-  //     int indexSelect =
-  //         resp.indexWhere((item) => item.id == prefs.getIsSelectContactRisk);
-  //   }
-  // }
 
   static Future<void> onTapPremiumNotification(
       NotificationResponse? response) async {
@@ -156,32 +126,48 @@ class RedirectViewNotifier with ChangeNotifier {
     });
   }
 
+  static void createlogInactividad(String typeAction) {
+    var uuid = const Uuid();
+    String newUuid = uuid.v4();
+    final mainController = Get.put(MainController());
+    mainController.saveUserLog(typeAction, DateTime.now(), newUuid);
+    prefs.setIdInactiveGroup = newUuid;
+  }
+
+  static void createLogDrop(String typeAction) {
+    var uuid = const Uuid();
+    String newUuid = uuid.v4();
+    final mainController = Get.put(MainController());
+    mainController.saveUserLog(typeAction, DateTime.now(), newUuid);
+
+    prefs.setIdDropGroup = newUuid;
+    prefs.setEnableTimerDrop = true;
+  }
+
   static Future<void> manageNotifications(RemoteMessage message) async {
     var data = message.data;
     await inicializeHiveBD();
     await prefs.initPrefs();
+    prefs.setEnableTimer = true;
 
     if (data.containsValue(Constant.inactive) ||
-        data.containsValue(Constant.drop) ||
-        data.containsValue("DROP_NOTIFY_SELF")) {
-      final mainController = Get.put(MainController());
+        data.containsValue(Constant.drop)) {
       if (data.containsValue(Constant.inactive)) {
-        var uuid = const Uuid();
-        String newUuid = uuid.v4();
-        mainController.saveUserLog("Inactividad ", DateTime.now(), newUuid);
-        prefs.setIdInactiveGroup = newUuid;
-        prefs.setEnableTimer = true;
+        createlogInactividad("Inactividad");
         showHelpNotification(message);
       } else {
-        var uuid = const Uuid();
-        String newUuid = uuid.v4();
-        mainController.saveUserLog("Caida", DateTime.now(), newUuid);
-
-        mainController.saveActivityLog(DateTime.now(), "Caida", newUuid);
-        prefs.setIdDropGroup = newUuid;
-        prefs.setEnableTimerDrop = true;
+        createLogDrop("Caida");
         showDropNotification(message);
       }
+    }
+    if (data.containsValue(Constant.dropSelf) ||
+        data.containsValue(Constant.inactivitySelf)) {
+      if (data.containsValue(Constant.inactivitySelf)) {
+        createlogInactividad("Inactividad - No respondió la notificación");
+      } else {
+        createLogDrop("Caida - No respondió la notificación");
+      }
+      getNewNotification(message);
     } else if (data.containsValue(Constant.startRiskDate) ||
         data.containsValue(Constant.finishRiskDate)) {
       final editRiskController = Get.put(EditRiskController());
@@ -194,6 +180,7 @@ class RedirectViewNotifier with ChangeNotifier {
         }
       } else {
         if (id != prefs.getCancelIdDate) {
+          final mainController = Get.put(MainController());
           mainController.saveUserLog(
               "Cita finalizada", DateTime.now(), prefs.getIdDateGroup);
           prefs.setFinishIdDate = true;
@@ -207,6 +194,7 @@ class RedirectViewNotifier with ChangeNotifier {
       String status = data['status'];
 
       if (phoneNumber.isNotEmpty) {
+        final mainController = Get.put(MainController());
         mainController.uptadeCOntact(
             phoneNumber,
             status.contains("ACCEPTED")
@@ -231,110 +219,91 @@ class RedirectViewNotifier with ChangeNotifier {
 
     String sound = prefs.getNotificationAudio;
 
-    timerTempDown = Timer.periodic(const Duration(seconds: 2), (Timer t) async {
-      // Actualizar el contenido de la notificación en tiempo real
-      prefs.refreshData();
+    var temp = body!;
 
-      String updatedContent =
-          '${countdown ~/ 60}:${(countdown % 60).toString().padLeft(2, '0')}';
-      notificationContentController.add(updatedContent);
-      var temp = body!.replaceAll(
-          ",", ", En $updatedContent se notificara a tus contactos, ");
+    var bigTextStyleInformation =
+        BigTextStyleInformation(body.toString(), htmlFormatBigText: true);
 
-      var bigTextStyleInformation =
-          BigTextStyleInformation(temp, htmlFormatBigText: true);
+    var androidPlatformChannelSpecifics = AndroidNotificationDetails(
+      sound, // id
+      'AlertFriends – PERSONAL PROTECTION', // title
+      icon: '@mipmap/logo_alertfriends_v2',
+      color: ColorPalette.principal,
+      importance: Importance.max,
+      styleInformation: bigTextStyleInformation,
+      priority: Priority.high,
 
-      var androidPlatformChannelSpecifics = AndroidNotificationDetails(
-        sound, // id
+      playSound: true,
+      ongoing: true,
+      enableLights: true,
+      groupKey: 'Inactive',
+      enableVibration: true,
+      channelShowBadge: true,
+      onlyAlertOnce: true,
+      autoCancel: false,
 
-        'AlertFriends – PERSONAL PROTECTION', // title
-        icon: '@mipmap/logo_alertfriends_v2',
-        color: ColorPalette.principal,
-        importance: Importance.max,
-        styleInformation: bigTextStyleInformation,
-        priority: Priority.high,
+      visibility: NotificationVisibility.public,
 
-        playSound: true,
-        ongoing: true,
-        enableLights: true,
-        groupKey: 'Inactive',
-        enableVibration: true,
-        channelShowBadge: true,
-        onlyAlertOnce: true,
-        autoCancel: false,
+      sound: RawResourceAndroidNotificationSound(sound),
 
-        visibility: NotificationVisibility.public,
-        // largeIcon: const DrawableResourceAndroidBitmap(
-        //     '@drawable/logo_alertfriends_v2_background'),
-        sound: RawResourceAndroidNotificationSound(sound),
+      actions: actionButtonNotify(taskIds),
+    );
 
-        actions: <AndroidNotificationAction>[
-          AndroidNotificationAction(
-            "helpID_$taskIds",
-            "PEDIR AYUDA",
-            titleColor: Colors.red,
-            icon: const DrawableResourceAndroidBitmap(
-                '@mipmap/logo_alertfriends_v2'),
-            showsUserInterface: false,
-            cancelNotification: true,
-          ),
-          AndroidNotificationAction(
-            "imgoodId_$taskIds",
-            "ESTOY BIEN",
-            titleColor: Colors.green,
-            icon: const DrawableResourceAndroidBitmap(
-                '@mipmap/logo_alertfriends_v2'),
-            showsUserInterface: false,
-            cancelNotification: true,
-          ),
-        ],
-      );
+    var platformChannelSpecifics =
+        NotificationDetails(android: androidPlatformChannelSpecifics);
 
-      var platformChannelSpecifics =
-          NotificationDetails(android: androidPlatformChannelSpecifics);
-      countdown--;
-      // Actualizar la notificación local
-      if (prefs.getEnableTimer == false || countdown <= 0) {
-        t.cancel();
-
-        mainController.saveUserLog("Inactividad - se notificó a tus contactos",
-            DateTime.now(), prefs.getIdInactiveGroup);
-
-        await flutterLocalNotificationsPlugin.cancel(0);
-        timerTempDown.cancel();
-      } else {
-        if (prefs.getEnableTimer == false) return;
-        await flutterLocalNotificationsPlugin.show(
-          0,
-          title,
-          temp,
-          platformChannelSpecifics,
-          payload: 'Inactived_$taskIds',
-        );
-      }
-
-      if (countdown <= 0) {
-        t.cancel();
-        await flutterLocalNotificationsPlugin.cancel(0);
-        timerTempDown.cancel();
-      }
-    });
+    await flutterLocalNotificationsPlugin.show(
+      0,
+      title,
+      temp,
+      platformChannelSpecifics,
+      payload: 'Inactived_$taskIds',
+    );
   }
 
-  Future<void> getNewNotification(String message, List<String> listid) async {
+  static List<AndroidNotificationAction> actionButtonNotify(String task) {
+    var a = <AndroidNotificationAction>[
+      AndroidNotificationAction(
+        "helpID_$task",
+        "PEDIR AYUDA",
+        titleColor: Colors.red,
+        icon:
+            const DrawableResourceAndroidBitmap('@mipmap/logo_alertfriends_v2'),
+        showsUserInterface: false,
+        cancelNotification: true,
+      ),
+      AndroidNotificationAction(
+        "imgoodId_$task",
+        "ESTOY BIEN",
+        titleColor: Colors.green,
+        icon:
+            const DrawableResourceAndroidBitmap('@mipmap/logo_alertfriends_v2'),
+        showsUserInterface: false,
+        cancelNotification: true,
+      ),
+    ];
+
+    return a;
+  }
+
+  static Future<void> getNewNotification(RemoteMessage message) async {
     // String sound = prefs.getNotificationAudio;
+    if (message.data.isEmpty) return;
+    String? taskIds = message.data['task_ids']; //getTaskIds(message.data);
+
+    taskIds ??= "";
 
     timerTempDown = Timer.periodic(const Duration(seconds: 1), (Timer t) async {
       // Actualizar el contenido de la notificación en tiempo real
       prefs.refreshData();
 
       String updatedContent =
-          '${countdown ~/ 60}:${(countdown % 60).toString().padLeft(2, '0')}';
+          '${(countdown ~/ 60).toString().padLeft(2, '0')}:${(countdown % 60).toString().padLeft(2, '0')}';
       notificationContentController.add(updatedContent);
       var temp =
           'No detectamos una acción en la notificación, necesitas ayuda?!'
               .replaceAll(
-                  ",", ",En $updatedContent se notificara a tus contactos, ");
+                  ",", ", En $updatedContent se notificara a tus contactos, ");
 
       var bigTextStyleInformation =
           BigTextStyleInformation(temp, htmlFormatBigText: true);
@@ -344,6 +313,7 @@ class RedirectViewNotifier with ChangeNotifier {
         playSound: false,
         importance: Importance.high,
         priority: Priority.max,
+        icon: '@mipmap/logo_alertfriends_v2',
         color: ColorPalette.principal,
         styleInformation: bigTextStyleInformation,
         groupKey: "New",
@@ -353,40 +323,27 @@ class RedirectViewNotifier with ChangeNotifier {
         largeIcon: const DrawableResourceAndroidBitmap(
             '@drawable/logo_alertfriends_v2_background'),
         visibility: NotificationVisibility.public,
-        actions: <AndroidNotificationAction>[
-          AndroidNotificationAction(
-            "helpID_$message",
-            "PEDIR AYUDA",
-            icon: const DrawableResourceAndroidBitmap(
-                '@mipmap/logo_alertfriends_v2'),
-            showsUserInterface: false,
-            cancelNotification: true,
-          ),
-          AndroidNotificationAction(
-            "imgoodId_$message",
-            "ESTOY BIEN",
-            icon: const DrawableResourceAndroidBitmap(
-                '@mipmap/logo_alertfriends_v2'),
-            showsUserInterface: false,
-            cancelNotification: true,
-          ),
-        ],
+        actions: actionButtonNotify(taskIds!),
       );
 
       var platformChannelSpecifics =
           NotificationDetails(android: androidPlatformChannelSpecifics);
 
-      // Actualizar la notificación local
-      // updateNotification('Advertencia', temp, platformChannelSpecifics,
-      //     'Inactived_$message', 100);
-
       if (prefs.getEnableTimer == false || countdown <= 0) {
         t.cancel();
-
+        countdown = 60;
+        await flutterLocalNotificationsPlugin.cancel(100);
         await flutterLocalNotificationsPlugin.cancel(0);
-        timerTempDown.cancel();
+        timerTempDown!.cancel();
       } else {
-        if (prefs.getEnableTimer == false) return;
+        if (prefs.getEnableTimer == false) {
+          t.cancel();
+          timerTempDown!.cancel();
+          await flutterLocalNotificationsPlugin.cancel(100);
+          await flutterLocalNotificationsPlugin.cancel(0);
+
+          return;
+        }
         await flutterLocalNotificationsPlugin.show(
           100,
           "Advertencia",
@@ -400,7 +357,7 @@ class RedirectViewNotifier with ChangeNotifier {
 
       if (countdown <= 0) {
         t.cancel();
-        countdown = 300;
+        countdown = 60;
         mainController.saveUserLog(
             "Caida - no hubo respuesta", DateTime.now(), prefs.getIdDropGroup);
 
@@ -408,23 +365,6 @@ class RedirectViewNotifier with ChangeNotifier {
       }
     });
   }
-
-  // void startTimer() {
-  //   Timer.periodic(const Duration(seconds: 1), (Timer t) {
-  //     // Actualizar el contenido de la notificación en tiempo real
-  //     String updatedContent =
-  //         'Tiempo restante: ${countdown ~/ 60}:${(countdown % 60).toString().padLeft(2, '0')}';
-  //     notificationContentController.add(updatedContent);
-
-  //     // Actualizar la notificación local
-  //     // updateNotification(updatedContent);
-  //     countdown--;
-
-  //     if (countdown <= 0) {
-  //       t.cancel();
-  //     }
-  //   });
-  // }
 
   static Future<void> showDropNotification(RemoteMessage message) async {
     /// OPTIONAL, using custom notification channel id
@@ -475,24 +415,7 @@ class RedirectViewNotifier with ChangeNotifier {
             '@drawable/logo_alertfriends_v2_background'),
         sound: RawResourceAndroidNotificationSound(sound),
 
-        actions: <AndroidNotificationAction>[
-          AndroidNotificationAction(
-            "helpID_$taskIds",
-            "PEDIR AYUDA",
-            icon: const DrawableResourceAndroidBitmap(
-                '@mipmap/logo_alertfriends_v2'),
-            showsUserInterface: false,
-            cancelNotification: true,
-          ),
-          AndroidNotificationAction(
-            "imgoodId_$taskIds",
-            "ESTOY BIEN",
-            icon: const DrawableResourceAndroidBitmap(
-                '@mipmap/logo_alertfriends_v2'),
-            showsUserInterface: false,
-            cancelNotification: true,
-          ),
-        ],
+        actions: actionButtonNotify(taskIds!),
       );
 
       var platformChannelSpecifics =
@@ -510,7 +433,10 @@ class RedirectViewNotifier with ChangeNotifier {
       } else {
         // updateNotification(
         //     title!, temp, platformChannelSpecifics, 'Drop_$taskIds', 19);
-        if (prefs.getEnableTimerDrop == false) return;
+        if (prefs.getEnableTimerDrop == false) {
+          await flutterLocalNotificationsPlugin.cancel(19);
+          return;
+        }
         await flutterLocalNotificationsPlugin.show(
           19,
           title,
@@ -694,7 +620,7 @@ class RedirectViewNotifier with ChangeNotifier {
       ),
     );
     if (flutterLocalNotificationsPlugin.isBlank == null) {
-      print("object");
+      print("flutterLocalNotificationsPlugin vacio");
     }
     try {
       await flutterLocalNotificationsPlugin.show(
@@ -759,15 +685,12 @@ class RedirectViewNotifier with ChangeNotifier {
           'free',
           icon: '@mipmap/logo_alertfriends_v2',
           color: ColorPalette.principal,
-
           importance: Importance.max,
-
           enableLights: true,
           playSound: true,
           enableVibration: true,
           channelShowBadge: false,
           priority: Priority.high,
-
           largeIcon:
               DrawableResourceAndroidBitmap('@mipmap/logo_alertfriends_v2'),
           actions: <AndroidNotificationAction>[
@@ -780,8 +703,6 @@ class RedirectViewNotifier with ChangeNotifier {
               cancelNotification: true,
             ),
           ],
-          // sound: RawResourceAndroidNotificationSound(
-          //     "content://media/internal/audio/media/26.wav"),
         ),
       ),
       payload: 'free',
@@ -801,15 +722,12 @@ class RedirectViewNotifier with ChangeNotifier {
           'premium',
           icon: '@mipmap/logo_alertfriends_v2',
           color: ColorPalette.principal,
-
           importance: Importance.max,
-
           enableLights: true,
           playSound: true,
           enableVibration: true,
           channelShowBadge: false,
           priority: Priority.high,
-
           largeIcon:
               DrawableResourceAndroidBitmap('@mipmap/logo_alertfriends_v2'),
           actions: <AndroidNotificationAction>[
@@ -822,8 +740,6 @@ class RedirectViewNotifier with ChangeNotifier {
               cancelNotification: true,
             ),
           ],
-          // sound: RawResourceAndroidNotificationSound(
-          //     "content://media/internal/audio/media/26.wav"),
         ),
       ),
       payload: 'premium',
@@ -834,19 +750,6 @@ class RedirectViewNotifier with ChangeNotifier {
     // RemoteNotification? notification = message.notification;
     String? title = 'title';
     String? body = 'body';
-
-    // await prefs.initPrefs();
-    // String sound = prefs.getNotificationAudio;
-
-    // FlutterLocalNotificationsPlugin notifications =
-    //     FlutterLocalNotificationsPlugin();
-
-    // var initializationSettingsAndroid =
-    //     const AndroidInitializationSettings('@mipmap/logo_alertfriends_v2');
-
-    // var initializationSettings =
-    //     InitializationSettings(android: initializationSettingsAndroid);
-    // await notifications.initialize(initializationSettings);
 
     var platformChannelSpecifics = const NotificationDetails(
       android: AndroidNotificationDetails(
@@ -862,9 +765,6 @@ class RedirectViewNotifier with ChangeNotifier {
         category: AndroidNotificationCategory.alarm,
         // icon: '@mipmap/ic_launcher',
         visibility: NotificationVisibility.public,
-        // largeIcon: DrawableResourceAndroidBitmap('@mipmap/ic_launcher'),
-        // styleInformation: BigTextStyleInformation(''),
-        // sound: RawResourceAndroidNotificationSound(sound),
       ),
     );
 

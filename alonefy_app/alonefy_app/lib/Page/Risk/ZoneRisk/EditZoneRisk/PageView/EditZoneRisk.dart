@@ -118,7 +118,7 @@ class _EditZoneRiskPageState extends State<EditZoneRiskPage> {
     }
 
     showSaveAlert(context, "Permiso guardado",
-        "El permiso del mapa se ha guardado correctamente.");
+        "El permiso del mapa se ha guardado correctamente");
   }
 
   Future _isActivePermission() async {
@@ -152,7 +152,7 @@ class _EditZoneRiskPageState extends State<EditZoneRiskPage> {
       setState(() {
         isActive = false;
       });
-      return Future.error('Location services are disabled.');
+      return Future.error('Location services are disabled');
     }
 
     permission = await Geolocator.requestPermission();
@@ -569,7 +569,9 @@ class _EditZoneRiskPageState extends State<EditZoneRiskPage> {
                                     ),
                                   ),
                                   child: const Center(
-                                    child: CircularProgressIndicator(),
+                                    child: CircularProgressIndicator(
+                                      color: ColorPalette.calendarNumber,
+                                    ),
                                   ),
                                 ),
                             ],

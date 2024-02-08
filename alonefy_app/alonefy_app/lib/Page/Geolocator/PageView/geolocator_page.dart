@@ -344,6 +344,10 @@ class _InitGeolocatorState extends State<InitGeolocator> {
                     child: ElevateButtonFilling(
                       showIcon: false,
                       onChanged: (value) {
+                        print(isActive);
+                        if (isActive) {
+                          refreshMenu('configGeo');
+                        }
                         // Get.offAll(() => const ConditionGeneralPage());
                         Future.sync(() async => {
                               await Navigator.push(

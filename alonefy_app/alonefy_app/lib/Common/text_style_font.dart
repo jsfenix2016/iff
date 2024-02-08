@@ -34,6 +34,16 @@ TextStyle textNormal16Black() {
   );
 }
 
+TextStyle textNormal18White() {
+  return GoogleFonts.barlow(
+    fontSize: 18.0,
+    wordSpacing: 1,
+    letterSpacing: 0.001,
+    fontWeight: FontWeight.w700,
+    color: const Color.fromRGBO(222, 222, 222, 1),
+  );
+}
+
 TextStyle textNormal16White() {
   return GoogleFonts.barlow(
     fontSize: 16.0,
@@ -162,5 +172,35 @@ TextStyle textBold22black() {
     letterSpacing: 0.001,
     fontWeight: FontWeight.w700,
     color: Colors.black,
+  );
+}
+
+TextStyle textSemibold24White() {
+  return GoogleFonts.barlow(
+    fontSize: 24.0,
+    wordSpacing: 1,
+    letterSpacing: 0.001,
+    fontWeight: FontWeight.w600,
+    color: Colors.white,
+  );
+}
+
+TextStyle textBold26White() {
+  return GoogleFonts.barlow(
+    fontSize: 26.0,
+    wordSpacing: 1,
+    letterSpacing: 0.001,
+    fontWeight: FontWeight.w700,
+    color: Colors.white,
+  );
+}
+
+TextStyle textBold48White() {
+  return GoogleFonts.barlow(
+    fontSize: 48.0,
+    wordSpacing: 1,
+    letterSpacing: 0.001,
+    fontWeight: FontWeight.w700,
+    color: Colors.white,
   );
 }

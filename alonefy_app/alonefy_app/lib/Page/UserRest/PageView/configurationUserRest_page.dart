@@ -134,11 +134,7 @@ class _UserRestPageState extends State<UserRestPage> {
     final size = MediaQuery.of(context).size;
 
     return Scaffold(
-      appBar: AppBar(
-        iconTheme: const IconThemeData(
-          color: Colors.white, //change your color here
-        ),
-      ),
+      extendBodyBehindAppBar: true,
       backgroundColor: Colors.black,
       body: MediaQuery(
         data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
@@ -295,9 +291,9 @@ class _UserRestPageState extends State<UserRestPage> {
       noSelectDay++;
       await processSelectedInfo();
 
-      showSaveAlert(context, Constant.info, "Faltan días por seleccionar.");
+      showSaveAlert(context, Constant.info, "Faltan días por seleccionar");
     } else {
-      showSaveAlert(context, Constant.info, "Puede continuar.");
+      showSaveAlert(context, Constant.info, "Puede continuar");
       isVisibleBtn = true;
     }
     setState(() {});

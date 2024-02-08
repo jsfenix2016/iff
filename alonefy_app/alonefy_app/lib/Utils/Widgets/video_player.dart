@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:ifeelefine/Common/colorsPalette.dart';
 
 import 'package:video_player/video_player.dart';
 
@@ -82,7 +83,10 @@ class _VideoPlayerState extends State<VideoPlayerCustom>
       future: _initializeVideoPlayerFuture,
       builder: (context, state) {
         if (state.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
+          return const Center(
+              child: CircularProgressIndicator(
+            color: ColorPalette.calendarNumber,
+          ));
         } else {
           if (_videoPlayerController.value.isInitialized) {
             Duration elapsedTimeTemp = Duration(
@@ -99,7 +103,9 @@ class _VideoPlayerState extends State<VideoPlayerCustom>
               child: VideoPlayer(_videoPlayerController),
             ),
             isLoading
-                ? const CircularProgressIndicator()
+                ? const CircularProgressIndicator(
+                    color: ColorPalette.calendarNumber,
+                  )
                 : const SizedBox.shrink(),
             Positioned(
               bottom: 0,

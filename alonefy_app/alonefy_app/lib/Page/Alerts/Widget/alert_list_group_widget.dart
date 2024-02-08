@@ -37,11 +37,11 @@ class _AlertListWidgetState extends State<AlertListWidget> {
         return Container(
           decoration: const BoxDecoration(
             color: Colors.transparent,
-            borderRadius: BorderRadius.all(Radius.circular(20)),
+            borderRadius: BorderRadius.all(Radius.circular(10)),
           ),
           width: 290,
           child: Padding(
-            padding: const EdgeInsets.only(top: 15.0),
+            padding: const EdgeInsets.only(top: 10.0),
             child: Container(
               decoration: const BoxDecoration(
                 color: Color.fromRGBO(11, 11, 10, 0.6),
@@ -54,7 +54,6 @@ class _AlertListWidgetState extends State<AlertListWidget> {
                     title: Container(
                       color: Colors.transparent,
                       height: 50,
-                      width: 320,
                       child: Stack(
                         children: [
                           Container(
@@ -137,13 +136,13 @@ class _AlertListWidgetState extends State<AlertListWidget> {
                                       widget.groupedAlerts.keys
                                           .elementAt(indexGroup)
                               ? alertTypes[alertType]!.length * 121
-                              : 121,
+                              : 101,
                           decoration: const BoxDecoration(
                             color: Color.fromARGB(153, 50, 50, 45),
                             borderRadius: BorderRadius.all(Radius.circular(20)),
                           ),
                           child: Container(
-                            width: 330,
+                            width: 320,
                             decoration: const BoxDecoration(
                               color: Color.fromARGB(153, 50, 50, 45),
                               borderRadius:
@@ -219,31 +218,37 @@ class _AlertListWidgetState extends State<AlertListWidget> {
                                         setState(() {});
                                       },
                                       child: ListTile(
-                                        title: Container(
-                                          color: Colors.transparent,
-                                          height: 80,
-                                          width: 330,
-                                          child: Stack(
-                                            children: [
-                                              Container(
-                                                width: 320,
-                                                color: Colors.transparent,
-                                                child: Row(
-                                                  mainAxisSize:
-                                                      MainAxisSize.min,
-                                                  children: [
-                                                    IconButton(
-                                                      iconSize: 35,
-                                                      color: ColorPalette
-                                                          .principal,
-                                                      onPressed: () {},
-                                                      icon: searchImageForIcon(
-                                                          listAlerts[indexAlert]
-                                                              .type),
-                                                    ),
-                                                    Expanded(
-                                                      flex: 1,
-                                                      child: Container(
+                                        title: Center(
+                                          child: Container(
+                                            color: Colors.transparent,
+                                            height: listAlerts[indexAlert]
+                                                    .type
+                                                    .toString()
+                                                    .contains('-')
+                                                ? 80
+                                                : 60,
+                                            width: 300,
+                                            child: Stack(
+                                              children: [
+                                                Container(
+                                                  width: 300,
+                                                  color: Colors.transparent,
+                                                  child: Row(
+                                                    mainAxisSize:
+                                                        MainAxisSize.min,
+                                                    children: [
+                                                      IconButton(
+                                                        iconSize: 35,
+                                                        color: ColorPalette
+                                                            .principal,
+                                                        onPressed: () {},
+                                                        icon: searchImageForIcon(
+                                                            listAlerts[
+                                                                    indexAlert]
+                                                                .type),
+                                                      ),
+                                                      Container(
+                                                        width: 220,
                                                         height: listAlerts[
                                                                     indexAlert]
                                                                 .type
@@ -278,25 +283,26 @@ class _AlertListWidgetState extends State<AlertListWidget> {
                                                           ),
                                                         ]),
                                                       ),
-                                                    ),
-                                                  ],
+                                                    ],
+                                                  ),
                                                 ),
-                                              ),
-                                              indexAlert > 0 &&
-                                                      indexAlert <
-                                                          listAlerts.length
-                                                  ? Positioned(
-                                                      left: 25,
-                                                      top: 140 /
-                                                          2, // La posición horizontal de la línea
-                                                      child: CustomPaint(
-                                                        painter: _LinePainter(),
+                                                indexAlert > 0 &&
+                                                        indexAlert <
+                                                            listAlerts.length
+                                                    ? Positioned(
+                                                        left: 25,
+                                                        top: 140 /
+                                                            2, // La posición horizontal de la línea
+                                                        child: CustomPaint(
+                                                          painter:
+                                                              _LinePainter(),
+                                                        ),
+                                                      )
+                                                    : const SizedBox(
+                                                        height: 0,
                                                       ),
-                                                    )
-                                                  : const SizedBox(
-                                                      height: 0,
-                                                    ),
-                                            ],
+                                              ],
+                                            ),
                                           ),
                                         ),
                                       ),

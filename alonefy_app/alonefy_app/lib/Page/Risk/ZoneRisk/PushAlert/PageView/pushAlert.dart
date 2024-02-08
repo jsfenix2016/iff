@@ -6,6 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:ifeelefine/Common/Constant.dart';
 import 'package:ifeelefine/Common/manager_alerts.dart';
 import 'package:ifeelefine/Common/text_style_font.dart';
+import 'package:ifeelefine/Common/utils.dart';
 import 'package:ifeelefine/Model/contactZoneRiskBD.dart';
 
 import 'package:ifeelefine/Page/Risk/ZoneRisk/CancelAlert/PageView/cancelAlert.dart';
@@ -134,7 +135,7 @@ class _PushAlertPageState extends State<PushAlertPage> {
     if (!_cameraController.value.isRecordingVideo) {
       Future.sync(() => {
             showSaveAlert(context, Constant.info,
-                'Nose ha iniciado la grabación toque de nuevo la pantalla.')
+                'Nose ha iniciado la grabación toque de nuevo la pantalla')
           });
     }
   }
@@ -175,54 +176,53 @@ class _PushAlertPageState extends State<PushAlertPage> {
       _isLoading = true;
       _isRecording = false;
     });
-    if (_prefs.getUserFree == false || _prefs.getUserPremium) {
+
+    if (!_prefs.getUserFree || _prefs.getUserPremium) {
       try {
         if (_cameraController.value.isRecordingVideo) {
           fileback = await _cameraController.stopVideoRecording();
         }
-      } catch (e) {
-        print(e);
-      }
 
-      if (info.brand == 'samsung' && info.model.contains("SM-G")) {
-        if (_cameraControllerfront.value.isRecordingVideo) {
-          try {
+        if (info.brand == 'samsung' && info.model.contains("SM-G")) {
+          if (_cameraControllerfront.value.isRecordingVideo) {
             filefront = await _cameraControllerfront.stopVideoRecording();
-          } catch (e) {
-            print(e);
           }
         }
-      }
-      if (fileback!.path.isNotEmpty) {
-        // Detener la grabación de video y detener el timer
-        var taskIds = await pushVC.updateVideo(widget.contactZone,
-            fileback!.path, filefront == null ? '' : filefront!.path);
-        if (taskIds.isNotEmpty) {
-          _prefs.setSelectContactRisk = widget.contactZone.id;
-        } else {
-          Future.sync(() =>
-              {showSaveAlert(context, Constant.info, Constant.changeGeneric)});
-        }
 
-        setState(() => _isLoading = false);
-      } else {
-        setState(() => _isLoading = false);
-        Future.sync(() => {
-              showSaveAlert(context, Constant.info,
-                  "Se produjo un error al detener la grabación")
-            });
+        if (fileback != null && fileback!.path.isNotEmpty) {
+          // Detener la grabación de video y detener el timer
+          var taskIds = await pushVC.updateVideo(
+            widget.contactZone,
+            fileback!.path,
+            filefront == null ? '' : filefront!.path,
+          );
+
+          if (taskIds.isNotEmpty) {
+            _prefs.setSelectContactRisk = widget.contactZone.id;
+          } else {
+            showSaveAlert(context, Constant.info, Constant.changeGeneric);
+          }
+        } else {
+          showSaveAlert(
+            context,
+            Constant.info,
+            "Se produjo un error al detener la grabación",
+          );
+        }
+      } catch (e) {
+        print(e);
+        showSaveAlert(
+          context,
+          Constant.info,
+          "Se produjo un error al detener la grabación",
+        );
       }
+
+      setState(() => _isLoading = false);
     } else {
       var taskIds = await pushVC.updateVideo(widget.contactZone, '', '');
-      if (taskIds.isNotEmpty) {
-        // _prefs.setSelectContactRisk = widget.contactZone.id;
-
-        // Get.offAll(
-        //   CancelAlertPage(taskIds: taskIds),
-        // );
-      } else {
-        Future.sync(() =>
-            {showSaveAlert(context, Constant.info, Constant.changeGeneric)});
+      if (taskIds.isEmpty) {
+        showSaveAlert(context, Constant.info, Constant.changeGeneric);
       }
 
       setState(() => _isLoading = false);
@@ -351,7 +351,7 @@ class _PushAlertPageState extends State<PushAlertPage> {
                         child: Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: Text(
-                            'Mantén pulsada la pantalla en todo momento.',
+                            'Mantén pulsada la pantalla en todo momento',
                             textAlign: TextAlign.center,
                             style: GoogleFonts.barlow(
                               fontSize: 24.0,

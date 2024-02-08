@@ -52,26 +52,36 @@ class PushAlertController extends GetxController {
 
   void _saveBDInBackground(ContactZoneRiskBD contact, UserBD user) async {
     final receivePort = ReceivePort();
-    // await Isolate.spawn(
-    //   _backgroundTaskSaveBD,
-    //   {'contact': contact, 'UserBD': user, 'port': receivePort.sendPort},
-    // );
-
-    // receivePort.listen((data) {
-    //   print('Mensaje del isolate: $data');
-    // });
 
     try {
-      await Isolate.run(readAndParseJson(
-          {'contact': contact, 'UserBD': user, 'port': receivePort.sendPort}));
-    } on StateError catch (e, s) {
-      print(e.message); // In a bad state!
-      // Contains "eventualError"
-      print(s);
+      await Isolate.spawn(
+        _backgroundTaskSaveBD,
+        {'contact': contact, 'UserBD': user, 'port': receivePort.sendPort},
+      );
+
+      receivePort.listen((data) {
+        print('Mensaje del isolate: $data');
+      });
+    } catch (e, s) {
+      print(e); // Imprime el error
+      print(s); // Imprime el stack trace
     }
   }
 
-  static readAndParseJson(dynamic message) async {
+  void _backgroundTaskSaveBD(dynamic message) async {
+    final ContactZoneRiskBD contact = message['contact'];
+    final UserBD user = message['UserBD'];
+    final SendPort sendPort = message['port'];
+
+    try {
+      await readAndParseJson(
+          {'contact': contact, 'UserBD': user, 'port': sendPort});
+    } catch (e) {
+      print(e); // Maneja cualquier excepción aquí
+    }
+  }
+
+  Future<void> readAndParseJson(dynamic message) async {
     final ContactZoneRiskBD contact = message['contact'];
     final UserBD user = message['UserBD'];
     final SendPort sendPort = message['port'];
@@ -79,14 +89,14 @@ class PushAlertController extends GetxController {
     try {
       // Realiza la tarea en segundo plano, como guardar el video.
       await inicializeHiveBD();
-      // Supongamos que GallerySaver.saveVideo lanza una excepción si falla
       await const HiveDataRisk().updateContactZoneRisk(contact);
 
       var url = await ZoneRiskService().getVideoUrl(
-          user.telephone.contains('+34')
-              ? user.telephone.replaceAll("+34", "")
-              : user.telephone,
-          contact.id);
+        user.telephone.contains('+34')
+            ? user.telephone.replaceAll("+34", "")
+            : user.telephone,
+        contact.id,
+      );
 
       if (url != null && url.isNotEmpty) {
         ZoneRiskService().updateVideo(url, contact.video);
@@ -100,7 +110,7 @@ class PushAlertController extends GetxController {
     }
   }
 
-  void _backgroundTaskSaveBD(dynamic message) async {
+  void _backgroundTaskSaveBD2(dynamic message) async {
     final ContactZoneRiskBD contact = message['contact'];
     final UserBD user = message['UserBD'];
     final SendPort sendPort = message['port'];
@@ -131,18 +141,16 @@ class PushAlertController extends GetxController {
 
   Future<List<String>> updateVideo(
       ContactZoneRiskBD contact, String path, String pathFront) async {
-    PreferenceUser _prefs = PreferenceUser();
-    await _prefs.initPrefs();
+    PreferenceUser prefs = PreferenceUser();
+    await prefs.initPrefs();
     if (path.isNotEmpty) {
       _saveVideoInBackground(path);
       contact.video = await convertImageData(path);
     }
     if (pathFront.isNotEmpty) {
-      // await GallerySaver.saveVideo(pathFront);
       _saveVideoInBackground(pathFront);
-      // contact.video = await convertImageData(pathFront);
     }
-    _prefs.setSelectContactRisk = contact.id;
+    prefs.setSelectContactRisk = contact.id;
     final MainController mainController = Get.put(MainController());
     var user = await mainController.getUserData();
 

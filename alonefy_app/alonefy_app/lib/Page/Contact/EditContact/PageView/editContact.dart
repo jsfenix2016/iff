@@ -5,9 +5,11 @@ import 'package:ifeelefine/Common/Constant.dart';
 import 'package:ifeelefine/Common/manager_alerts.dart';
 import 'package:ifeelefine/Common/notificationService.dart';
 import 'package:ifeelefine/Common/text_style_font.dart';
+import 'package:ifeelefine/Common/utils.dart';
 import 'package:ifeelefine/Model/contact.dart';
 import 'package:ifeelefine/Page/Contact/EditContact/Controller/edit_controller.dart';
 import 'package:ifeelefine/Page/Contact/ListContact/Controller/list_contact_controller.dart';
+import 'package:ifeelefine/Page/Contact/Notice/Controller/contactNoticeController.dart';
 import 'package:ifeelefine/Utils/Widgets/elevateButtonCustomBorder.dart';
 import 'package:ifeelefine/Utils/Widgets/selectTimerCallSendSMS.dart';
 import 'package:ifeelefine/Utils/Widgets/widgedContact.dart';
@@ -211,25 +213,28 @@ class _EditContactState extends State<EditContact> {
                         bool uptade =
                             await contactVC.updateContact(context, contactBD);
                         if (uptade) {
-                          late ListContactController controller =
-                              Get.put(ListContactController());
+                          ContactNoticeController controller =
+                              Get.put(ContactNoticeController());
                           controller.update();
-                          NotificationCenter().notify('getContact');
-                          Future.sync(() => showSaveAlert(context,
-                              Constant.info, 'Actualizado correctamente'));
-                          Navigator.of(context).pop();
+
+                          setState(() {
+                            showSaveAlert(context, Constant.info,
+                                'Actualizado correctamente');
+                          });
+
+                          // Navigator.of(context).pop();
                         }
                       } else {
                         if (isAutorice) {
-                          late ListContactController controller =
-                              Get.put(ListContactController());
+                          ContactNoticeController controller =
+                              Get.put(ContactNoticeController());
                           controller.update();
                           NotificationCenter().notify('getContact');
                           showSaveAlert(
                               context, Constant.info, 'Guardado correctamente');
                         } else {
                           showSaveAlert(context, Constant.info,
-                              'Debe solicitar la autorización del contacto antes de guardar.');
+                              'Debe solicitar la autorización del contacto antes de guardar');
                         }
 
                         // Navigator.of(context).pop();

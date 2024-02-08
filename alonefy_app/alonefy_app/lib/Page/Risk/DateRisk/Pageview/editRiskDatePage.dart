@@ -765,15 +765,9 @@ class _EditRiskPageState extends State<EditRiskPage> {
                               padding:
                                   const EdgeInsets.only(left: 8.0, right: 8),
                               child: Text(
-                                "Después de la hora de fin llamar a:",
+                                Constant.beforeTimeCall,
                                 textAlign: TextAlign.center,
-                                style: GoogleFonts.barlow(
-                                  fontSize: 18.0,
-                                  wordSpacing: 1,
-                                  letterSpacing: 0.001,
-                                  fontWeight: FontWeight.w700,
-                                  color: const Color.fromRGBO(222, 222, 222, 1),
-                                ),
+                                style: textNormal18White(),
                               ),
                             ),
                           ),
@@ -814,7 +808,9 @@ class _EditRiskPageState extends State<EditRiskPage> {
                                     ),
                                   ),
                                   child: const Center(
-                                    child: CircularProgressIndicator(),
+                                    child: CircularProgressIndicator(
+                                      color: ColorPalette.calendarNumber,
+                                    ),
                                   ),
                                 ),
                             ],
@@ -1237,7 +1233,7 @@ class _EditRiskPageState extends State<EditRiskPage> {
                                                             title:
                                                                 'Tus citas más seguras con la versión Premium\n',
                                                             subtitle:
-                                                                '\nCuando acabes tu cita, avisaremos a tu contacto sino desactivas esta alarma.')),
+                                                                '\nCuando acabes tu cita, avisaremos a tu contacto sino desactivas esta alarma')),
                                               ).then((value) async {
                                                 if (value != null && value) {
                                                   _prefs.setUserFree = false;

@@ -65,7 +65,12 @@ class _EditUseMobilPageState extends State<EditUseMobilPage> {
   }
 
   Future<void> _init() async {
-    await Hive.close();
+    try {
+      await Hive.close();
+    } catch (e) {
+      print(e);
+    }
+
     var habits = _prefs.getHabitsTime;
     timeDic = editUseMobilVC.getMapWithHabitsTime(habits);
     getListUseMobilForDay();

@@ -65,7 +65,7 @@ class _ConfigGeolocatorState extends State<ConfigGeolocator> {
       setState(() {
         isActive = false;
       });
-      return Future.error('Location services are disabled.');
+      return Future.error('Location services are disabled');
     }
 
     permission = await Geolocator.requestPermission();
@@ -133,9 +133,9 @@ class _ConfigGeolocatorState extends State<ConfigGeolocator> {
         //_prefs.setAcceptedSendLocation = PreferencePermission.noAccepted;
       }
     }
+
     setState(() {});
-    showSaveAlert(context, "Permiso guardado",
-        "El permiso del mapa se ha guardado correctamente.");
+    showSaveAlert(context, "Información", Constant.changeGeneric);
     try {
       NotificationCenter().notify('refreshMenu');
     } catch (e) {
@@ -273,6 +273,7 @@ class _ConfigGeolocatorState extends State<ConfigGeolocator> {
                                   Get.put(PremiumController());
                               premiumController.updatePremiumAPI(true);
                               setState(() {});
+
                               refreshMenu('configGeo');
                             }
                           },
@@ -386,6 +387,7 @@ class _ConfigGeolocatorState extends State<ConfigGeolocator> {
           var premiumController = Get.put(PremiumController());
           premiumController.updatePremiumAPI(true);
           refreshMenu('configGeo');
+
           savePermission();
         }
       });

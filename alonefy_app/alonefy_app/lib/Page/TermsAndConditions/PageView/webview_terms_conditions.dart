@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:ifeelefine/Common/Constant.dart';
+import 'package:ifeelefine/Common/colorsPalette.dart';
 import 'package:ifeelefine/Common/text_style_font.dart';
-import 'package:ifeelefine/main.dart';
+import 'package:ifeelefine/Common/utils.dart';
 
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:webview_flutter_wkwebview/webview_flutter_wkwebview.dart';
@@ -47,7 +48,9 @@ class _WebViewTermsConditionsState extends State<WebViewTermsConditions> {
           onProgress: (int progress) {
             // Update loading bar.
             const Center(
-              child: CircularProgressIndicator(),
+              child: CircularProgressIndicator(
+                color: ColorPalette.calendarNumber,
+              ),
             );
           },
           onPageStarted: (String url) {},
@@ -104,6 +107,9 @@ class _WebViewTermsConditionsState extends State<WebViewTermsConditions> {
       },
       child: Scaffold(
         appBar: AppBar(
+          iconTheme: const IconThemeData(
+            color: Colors.white, //change your color here
+          ),
           backgroundColor: Colors.brown,
           title: Text(
             Constant.termsAndConditionTitle,

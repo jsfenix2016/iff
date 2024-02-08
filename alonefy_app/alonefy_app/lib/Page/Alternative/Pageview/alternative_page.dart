@@ -3,6 +3,7 @@ import 'package:ifeelefine/Common/Constant.dart';
 import 'package:ifeelefine/Common/button_style_custom.dart';
 
 import 'package:ifeelefine/Common/text_style_font.dart';
+import 'package:ifeelefine/Common/utils.dart';
 import 'package:ifeelefine/Provider/prefencesUser.dart';
 import 'package:ifeelefine/Page/HomePage/Pageview/home_page.dart';
 import 'package:flutter/material.dart';

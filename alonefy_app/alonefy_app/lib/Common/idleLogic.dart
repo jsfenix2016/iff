@@ -37,7 +37,7 @@ class IdleLogic {
           "recipient": numberCOntact,
           "originator": nameContact,
           'body':
-              "Hola $nameContact, AlertFriends no detecta actividad de ${user.name + user.lastname}, comunicate con el usuario puede estar en riesgo."
+              "Hola $nameContact, AlertFriends no detecta actividad de ${user.name + user.lastname}, comunicate con el usuario puede estar en riesgo"
         };
         final useMobil = durations[i];
         Timer(useMobil, () {
@@ -54,7 +54,7 @@ class IdleLogic {
       "recipient": contact.phones,
       "originator": contact.name,
       'body':
-          "Hola ${contact.name}, AlertFriends no detecta actividad de ${user.name + user.lastname}, su cita termino puede estar en riesgo, su ultima ubicación detectada $located."
+          "Hola ${contact.name}, AlertFriends no detecta actividad de ${user.name + user.lastname}, su cita termino puede estar en riesgo, su ultima ubicación detectada $located"
     };
     UsuarioProvider().sendSMS(authData);
   }

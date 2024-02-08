@@ -8,6 +8,7 @@ import 'package:ifeelefine/Common/colorsPalette.dart';
 import 'package:ifeelefine/Common/initialize_models_bd.dart';
 import 'package:ifeelefine/Common/manager_alerts.dart';
 import 'package:ifeelefine/Common/text_style_font.dart';
+import 'package:ifeelefine/Common/utils.dart';
 
 import 'package:ifeelefine/Model/contactRiskBD.dart';
 import 'package:ifeelefine/Page/Disamble/Controller/disambleController.dart';
@@ -42,7 +43,7 @@ class CancelDatePage extends StatefulWidget {
 class _CancelDatePageState extends State<CancelDatePage> {
   EditRiskController editVC = Get.put(EditRiskController());
   RiskController riskVC = Get.put(RiskController());
-  // String timeinit = "00:05";
+
   String codeTemp = ',,,';
   var code = CodeModel();
   late ContactRiskBD contactRiskTemp;
@@ -52,6 +53,7 @@ class _CancelDatePageState extends State<CancelDatePage> {
   bool isLoading = false;
   final PreferenceUser _prefs = PreferenceUser();
   bool _shouldReloadData = false;
+
   @override
   void dispose() {
     super.dispose();
@@ -74,41 +76,44 @@ class _CancelDatePageState extends State<CancelDatePage> {
   void getcontactRisk() async {
     await _prefs.initPrefs();
     _prefs.refreshData();
-    if (_prefs.getListDate == false && _prefs.getCountFinish == false) {
+
+    // Verificar si se necesita iniciar el temporizador
+    if (!_prefs.getListDate && !_prefs.getCountFinish) {
       startTimer();
     }
 
+    // Obtener los contactos de riesgo
     var resp = await riskVC.getContactsRisk();
 
-    int indexSelect = resp.indexWhere((item) =>
-        item.isFinishTime == true ||
-        item.isActived == true ||
-        item.isprogrammed == true);
+    // Buscar el primer contacto activo, programado o con tiempo de finalización
+    int indexSelect = resp.indexWhere(
+        (item) => item.isFinishTime || item.isActived || item.isprogrammed);
 
     if (indexSelect == -1) {
+      // Si no se encuentra ningún contacto activo, programado o con tiempo de finalización, navegar a la página de inicio
       _prefs.saveLastScreenRoute("home");
       await Get.off(const HomePage());
       return;
     }
+
+    // Obtener el contacto de riesgo seleccionado
     contactRiskTemp = resp[indexSelect];
 
-    List<String> parts = [];
-
-    if (contactRiskTemp.code != ",,," || contactRiskTemp.code != "") {
-      parts = contactRiskTemp.code.split(',');
-
-      code.textCode1 = parts[0];
-      code.textCode2 = parts[1];
-      code.textCode3 = parts[2];
-      code.textCode4 = parts[3];
+    // Actualizar los campos de código con la información del contacto
+    if (contactRiskTemp.code != ",,," && contactRiskTemp.code.isNotEmpty) {
+      List<String> parts = contactRiskTemp.code.split(',');
+      code.textCode1 = parts.length > 0 ? parts[0] : '';
+      code.textCode2 = parts.length > 1 ? parts[1] : '';
+      code.textCode3 = parts.length > 2 ? parts[2] : '';
+      code.textCode4 = parts.length > 3 ? parts[3] : '';
     }
 
+    // Actualizar los IDs de tareas canceladas
+    taskdIds =
+        widget.taskIds.isEmpty ? _prefs.getlistTaskIdsCancel : widget.taskIds;
     if (widget.taskIds.isNotEmpty) {
       _prefs.setlistTaskIdsCancel = widget.taskIds;
     }
-
-    taskdIds =
-        widget.taskIds.isEmpty ? _prefs.getlistTaskIdsCancel : widget.taskIds;
   }
 
   Future<void> saveDate() async {
@@ -136,8 +141,7 @@ class _CancelDatePageState extends State<CancelDatePage> {
 
       _prefs.saveLastScreenRoute("home");
 
-      if (contactRiskTemp.saveContact == false &&
-          contactRiskTemp.isFinishTime) {
+      if (contactRiskTemp.saveContact == false) {
         res = await editVC.deleteContactRisk(context, contactRiskTemp);
       } else {
         contactRiskTemp.finish = true;
@@ -206,6 +210,7 @@ class _CancelDatePageState extends State<CancelDatePage> {
       riskVC.deleteContactRisk(context, contactRiskTemp);
     }
     _prefs.saveLastScreenRoute("home");
+
     final service = FlutterBackgroundService();
     var isRunning = await service.isRunning();
     if (isRunning) {
@@ -226,7 +231,7 @@ class _CancelDatePageState extends State<CancelDatePage> {
           if (secondsRemaining < 1) {
             countTimer.value = 30;
             showSaveAlert(context, Constant.info,
-                "El servidor de AlertFriends envió una alerta con tu última ubicación.");
+                "El servidor de AlertFriends envió una alerta con tu última ubicación");
             timer.cancel();
             _prefs.setCountFinish = true;
             setState(() {});

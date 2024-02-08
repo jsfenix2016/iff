@@ -1,10 +1,11 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:ifeelefine/Common/Constant.dart';
 import 'package:ifeelefine/Common/notificationService.dart';
 import 'package:ifeelefine/Common/text_style_font.dart';
+import 'package:ifeelefine/Common/utils.dart';
 import 'package:ifeelefine/Utils/Widgets/video_player.dart';
-import 'package:ifeelefine/main.dart';
 
 class PreviewVideoPage extends StatefulWidget {
   final String filePath;
@@ -36,7 +37,7 @@ class _PreviewVideoState extends State<PreviewVideoPage>
         iconTheme: const IconThemeData(
           color: Colors.white, //change your color here
         ),
-        title: Text('Video zona de riesgo', style: textForTitleApp()),
+        title: Text(Constant.pageTitleVideoPreview, style: textForTitleApp()),
         elevation: 0,
         backgroundColor: Colors.black26,
       ),

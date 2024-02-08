@@ -269,7 +269,7 @@ class _ConditionGeneralPageState extends State<ConditionGeneralPage> {
                                             showSaveAlert(
                                                 context,
                                                 Constant.info,
-                                                'Debe leer y aceptar las condiciones de uso y el envio de mensajes para continuar.');
+                                                'Debe leer y aceptar las condiciones de uso y el envio de mensajes para continuar');
                                             return;
                                           }
                                         }

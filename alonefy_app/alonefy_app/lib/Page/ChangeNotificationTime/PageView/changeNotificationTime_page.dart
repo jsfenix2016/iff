@@ -6,6 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:ifeelefine/Common/manager_alerts.dart';
 import 'package:ifeelefine/Common/notificationService.dart';
 import 'package:ifeelefine/Common/text_style_font.dart';
+import 'package:ifeelefine/Common/utils.dart';
 
 import 'package:ifeelefine/Page/Contact/Controller/contactUserController.dart';
 import 'package:ifeelefine/Page/Premium/Controller/premium_controller.dart';
@@ -355,7 +356,7 @@ class _ChangeNotificationTimePageState
     updateContacts();
 
     showSaveAlert(context, "Tiempo de notificaciones guardado",
-        "El tiempo de las notificaciones se ha guardado correctamente.");
+        "El tiempo de las notificaciones se ha guardado correctamente");
   }
 
   void updateContacts() async {

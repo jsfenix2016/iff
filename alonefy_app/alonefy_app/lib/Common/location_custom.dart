@@ -77,7 +77,7 @@ class _LocationCustomState extends State<LocationCustom> {
       // Location services are not enabled don't continue
       // accessing the position and request users of the
       // App to enable the location services.
-      return Future.error('Location services are disabled.');
+      return Future.error('Location services are disabled');
     }
 
     permission = await Geolocator.checkPermission();
@@ -96,7 +96,7 @@ class _LocationCustomState extends State<LocationCustom> {
     if (permission == LocationPermission.deniedForever) {
       // Permissions are denied forever, handle appropriately.
       return Future.error(
-          'Location permissions are permanently denied, we cannot request permissions.');
+          'Location permissions are permanently denied, we cannot request permissions');
     }
 
     // When we reach here, permissions are granted and we can

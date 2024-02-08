@@ -14,7 +14,7 @@ import 'package:ifeelefine/Page/Premium/Controller/premium_controller.dart';
 import 'package:ifeelefine/Page/Premium/PageView/premium_page.dart';
 import 'package:ifeelefine/Page/PreviewActivitiesFilteredByDate/PageView/previewActivitiesByDate_page.dart';
 import 'package:ifeelefine/Page/UseMobil/Controller/useMobileController.dart';
-import 'package:ifeelefine/Page/UseMobil/PageView/configurationUseMobile_page.dart';
+
 import 'package:ifeelefine/Provider/prefencesUser.dart';
 
 import 'package:ifeelefine/Utils/Widgets/elevatedButtonFilling.dart';
@@ -23,6 +23,7 @@ import 'package:ifeelefine/Utils/Widgets/widgetLogo.dart';
 import 'package:ifeelefine/Common/decoration_custom.dart';
 import 'package:ifeelefine/main.dart';
 import 'package:notification_center/notification_center.dart';
+
 import 'package:slidable_button/slidable_button.dart';
 
 class FallActivationPage extends StatefulWidget {
@@ -182,7 +183,7 @@ class _FallActivationPageState extends State<FallActivationPage> {
                         Padding(
                           padding: const EdgeInsets.only(top: 20.0),
                           child: Text(
-                            'Detectar caídas.',
+                            'Detectar caídas',
                             textAlign: TextAlign.center,
                             style: GoogleFonts.barlow(
                               fontSize: 24.0,

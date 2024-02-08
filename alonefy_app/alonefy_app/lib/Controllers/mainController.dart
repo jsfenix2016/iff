@@ -7,7 +7,7 @@ import 'package:ifeelefine/Common/utils.dart';
 import 'package:ifeelefine/Data/hive_constant_adapterInit.dart';
 import 'package:ifeelefine/Data/hive_data.dart';
 import 'package:ifeelefine/Model/ApiRest/AlertApi.dart';
-import 'package:ifeelefine/Model/contact.dart';
+
 import 'package:ifeelefine/Model/logActivityBd.dart';
 import 'package:ifeelefine/Model/logAlertsBD.dart';
 import 'package:ifeelefine/Model/userbd.dart';
@@ -15,8 +15,6 @@ import 'package:ifeelefine/Page/Alerts/Service/alerts_service.dart';
 import 'package:ifeelefine/Page/LogActivity/Controller/logActivity_controller.dart';
 import 'package:ifeelefine/Services/mainService.dart';
 import 'package:ifeelefine/main.dart';
-import 'package:hive_flutter/hive_flutter.dart';
-import 'package:notification_center/notification_center.dart';
 
 class MainController extends GetxController {
   final MainService contactServ = Get.put(MainService());
@@ -96,8 +94,6 @@ class MainController extends GetxController {
   }
 
   Future<void> saveDrop() async {
-    print(
-        "inicializado el timer tiempo asignado por el usuario ${prefs.getFallTime}");
     var duration = Duration(minutes: stringTimeToInt(prefs.getFallTime));
 
     timerSendDropNotification = Timer(duration, () async {

@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ifeelefine/Common/utils.dart';
@@ -68,73 +70,84 @@ class HistorialController extends GetxController {
   }
 
   Future<Map<String, List<dynamic>>> getAllAlerts() async {
-    Map<String, List<dynamic>> groupedAlerts = {};
-    late final List<LogAlertsBD> allMovTime = [];
-    late final List<LogAlertsBD> allMov = [];
-    List<LogAlertsBD> temp = [];
-    List<dynamic> tempDynamic = [];
-    List<LogAlertsBD> box = await const HiveData().getAlerts();
+    final Map<String, List<dynamic>> groupedAlerts = {};
+    final List<LogAlertsBD> temp = [];
+    final List<dynamic> tempDynamic = [];
+    final List<LogAlertsBD> box = await const HiveData().getAlerts();
 
-    var activities = await const HiveData().listLogActivitybd;
+    final dateRisk = await const HiveDataRisk().getcontactRiskbd;
+    final zoneRisk = await const HiveDataRisk().getcontactZoneRiskbd;
 
-    var dateRisk = await const HiveDataRisk().getcontactRiskbd;
-    var zoneRisk = await const HiveDataRisk().getcontactZoneRiskbd;
+    void addTempDynamic(LogAlertsBD alert) {
+      tempDynamic.add(alert);
+    }
+
+    void addDateRisk(DateTime dateTime, int id, String type) {
+      final tempAct =
+          LogAlertsBD(id: id, time: dateTime, type: type, groupBy: '2');
+      addTempDynamic(tempAct);
+    }
+
+    void addZoneRisk(DateTime dateTime, int id, Uint8List? video) {
+      final tempAct = LogAlertsBD(
+          id: (id), time: dateTime, type: "Zona", video: video, groupBy: "3");
+      addTempDynamic(tempAct);
+    }
+
+    void convertAndAddZoneRisk(String createDate, int id, Uint8List? video) {
+      final inputFormat = DateFormat('yyyy-MM-dd HH:mm');
+      final inputDate = inputFormat.parse(createDate);
+      final outputFormat = DateFormat('dd-MM-yyyy HH:mm');
+      final ar = outputFormat.format(inputDate);
+      final dateTime1 = DateFormat('dd-MM-yyyy HH:mm').parse(ar);
+      addZoneRisk(dateTime1, id, video);
+    }
+
+    void convertAndAddDateRisk(String createDate, int id) {
+      final inputFormat = DateFormat('yyyy-MM-dd HH:mm');
+      final inputDate = inputFormat.parse(createDate);
+      final outputFormat = DateFormat('dd-MM-yyyy HH:mm');
+      final ar = outputFormat.format(inputDate);
+      final dateTime1 = DateFormat('dd-MM-yyyy HH:mm').parse(ar);
+      addDateRisk(dateTime1, id, "Cita");
+    }
 
     if (dateRisk.isNotEmpty) {
-      for (var dateTem in dateRisk) {
-        var inputFormat = DateFormat('yyyy-MM-dd HH:mm');
-        var inputDate = inputFormat.parse(dateTem.createDate.toString());
-        var outputFormat = DateFormat('dd-MM-yyyy HH:mm');
-        var ar = outputFormat.format(inputDate);
-        var dateTime1 = DateFormat('dd-MM-yyyy HH:mm').parse(ar);
+      dateRisk.forEach((dateTem) {
+        convertAndAddDateRisk(dateTem.createDate.toString(), dateTem.id);
+      });
+    }
 
-        var tempAct = LogAlertsBD(
-            id: dateTem.id,
-            time: dateTime1,
-            type: "Cita",
-            photoDate: dateTem.photoDate,
-            groupBy: '2');
-        tempDynamic.add(tempAct);
-      }
-    }
     if (zoneRisk.isNotEmpty) {
-      for (var date in zoneRisk) {
-        convertDateTimeToString(date.createDate);
-        // var ar = getFormatedDate(date.createDate);
-        var inputFormat = DateFormat('yyyy-MM-dd HH:mm');
-        var inputDate = inputFormat.parse(date.createDate.toString());
-        var outputFormat = DateFormat('dd-MM-yyyy HH:mm');
-        var ar = outputFormat.format(inputDate);
-        var dateTime1 = DateFormat('dd-MM-yyyy HH:mm').parse(ar);
-        // var datenew = DateFormat('dd-MM-yyyy HH:mm:ss').format(date.createDate);
-        var tempAct = LogAlertsBD(
-            id: date.id,
-            time: (dateTime1),
-            type: "Zona",
-            video: date.video,
-            groupBy: "3");
-        tempDynamic.add(tempAct);
-      }
+      zoneRisk.forEach((date) {
+        convertAndAddZoneRisk(date.createDate.toString(), date.id, date.video);
+      });
     }
+
+    final activities = await const HiveData().listLogActivitybd;
+
     if (activities.isNotEmpty) {
       for (var activityItem in activities) {
-        convertDateTimeToString(activityItem.time);
+        final tempAct = LogAlertsBD(
+          id: activityItem.key,
+          time: activityItem.time,
+          type: activityItem.movementType,
+          groupBy: activityItem.groupBy,
+        );
 
-        var tempAct = LogAlertsBD(
-            id: activityItem.key,
-            time: activityItem.time,
-            type: activityItem.movementType,
-            groupBy: activityItem.groupBy);
-
-        if (activityItem.movementType != "Zona" ||
+        if (activityItem.movementType != "Zona" &&
             activityItem.movementType != "Cita") {
-          // tempDynamic.add(tempAct);
+          // No hacemos nada
         } else {
-          print("object");
+          addTempDynamic(tempAct);
         }
       }
     }
-    if (activities.isNotEmpty) {
+
+    if (box.isNotEmpty) {
+      final List<LogAlertsBD> allMovTime = [];
+      final List<LogAlertsBD> allMov = [];
+
       for (var element in box) {
         allMovTime.add(element);
       }
@@ -145,26 +158,23 @@ class HistorialController extends GetxController {
 
       for (var element in allMovTime) {
         allMov.add(element);
-        // tempDynamic.add(element);
       }
 
-      temp = removeDuplicates(allMov);
+      final temp = removeDuplicates(allMov);
       temp.forEach((element) {
-        tempDynamic.add(element);
+        addTempDynamic(element);
       });
-      print(tempDynamic);
     }
 
-// Formatea las fechas para que coincidan con el formato de agrupación
-    groupedAlerts = groupBy(
+    // Formatea las fechas para que coincidan con el formato de agrupación
+    groupedAlerts.addAll(groupBy(
       tempDynamic,
       (product) => DateFormat('dd-MM-yyyy').format(product.time),
-    );
+    ));
 
+    // Ordena los grupos por fecha en orden descendente
     groupedAlerts.forEach((key, group) {
-      group.sort((a, b) {
-        return b.time.compareTo(a.time);
-      });
+      group.sort((a, b) => b.time.compareTo(a.time));
     });
 
     // Ordena los grupos por fecha en orden descendente

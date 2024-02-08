@@ -135,7 +135,7 @@ class _FallActivationConfigPageState extends State<FallActivationConfigPage> {
                   height: 42,
                   child: Center(
                     child: TextButton(
-                      child: Text('Guardar',
+                      child: Text(Constant.saveBtn,
                           textAlign: TextAlign.center,
                           style: GoogleFonts.barlow(
                             fontSize: 16.0,
@@ -334,7 +334,9 @@ class _FallActivationConfigPageState extends State<FallActivationConfigPage> {
     //_prefs.setDetectedFall = isActive;
     _fallController.setFallTime(fallTime);
     //_prefs.setFallTime = fallTime;
-    refreshMenu("previewActivity");
+    if (isActive) {
+      refreshMenu("previewActivity");
+    }
 
     showSaveAlert(context, "Tiempo de caída",
         "El tiempo de caída se ha guardado correctamente");

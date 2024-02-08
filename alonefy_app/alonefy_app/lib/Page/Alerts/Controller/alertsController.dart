@@ -108,21 +108,6 @@ class AlertsController extends GetxController {
         groupedProducts[dateKey]!.putIfAbsent(typeKey, () => []);
         groupedProducts[dateKey]![typeKey]!.add(alert);
       }
-      // if (typeKey.contains("-1")) {
-      //   groupedProducts.putIfAbsent(dateKey, () => {});
-      //   groupedProducts[dateKey]!.putIfAbsent(typeKey, () => []);
-      //   groupedProducts[dateKey]![typeKey]!.add(alert);
-      // }
-      // if (typeKey.contains("1")) {
-      //   groupedProducts.putIfAbsent(dateKey, () => {});
-      //   groupedProducts[dateKey]!.putIfAbsent(typeKey, () => []);
-      //   groupedProducts[dateKey]![typeKey]!.add(alert);
-      // }
-      // if (typeKey.contains("2")) {
-      //   groupedProducts.putIfAbsent(dateKey, () => {});
-      //   groupedProducts[dateKey]!.putIfAbsent(typeKey, () => []);
-      //   groupedProducts[dateKey]![typeKey]!.add(alert);
-      // }
     }
     groupedAlerts.value = groupedProducts;
     // contactList.value = groupedProducts;

@@ -99,9 +99,9 @@ class HomeController extends GetxController {
         ?.areNotificationsEnabled();
 
     if (areNotificationsEnabled ?? false) {
-      print('Las notificaciones están habilitadas.');
+      print('Las notificaciones están habilitadas');
     } else {
-      print('Las notificaciones están deshabilitadas.');
+      print('Las notificaciones están deshabilitadas');
     }
 
     if (androidInfo.version.sdkInt >= 33) {}

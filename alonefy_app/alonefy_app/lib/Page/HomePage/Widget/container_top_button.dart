@@ -56,7 +56,7 @@ class _ContainerTopButtonState extends State<ContainerTopButton> {
             left: 54,
             top: 18,
             child: Visibility(
-              visible: !widget.pref.getUserPremium || !widget.isconfig,
+              visible: widget.pref.getUserFree || widget.isconfig,
               child: Container(
                 decoration: const BoxDecoration(
                     borderRadius: BorderRadius.all(Radius.circular(

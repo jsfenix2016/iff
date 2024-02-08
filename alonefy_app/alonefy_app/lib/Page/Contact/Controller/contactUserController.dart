@@ -114,13 +114,13 @@ class ContactUserController extends GetxController {
 
   Future<void> updateContacts(
       List<ContactBD> contacts, emailTime, phoneTime, smsTime) async {
+    final MainController mainController = Get.put(MainController());
+    user = await mainController.getUserData();
+
     for (var contact in contacts) {
       contact.timeSendSMS = emailTime;
       contact.timeCall = phoneTime;
       contact.timeWhatsapp = smsTime;
-
-      final MainController mainController = Get.put(MainController());
-      user = await mainController.getUserData();
 
       ContactApi contactApi = convertToApi(contact, user!.telephone);
 

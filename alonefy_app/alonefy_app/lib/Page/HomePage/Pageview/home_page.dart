@@ -28,6 +28,7 @@ import 'package:ifeelefine/Provider/prefencesUser.dart';
 import 'package:ifeelefine/Page/Alerts/PageView/alerts_page.dart';
 
 import 'package:ifeelefine/Utils/Widgets/widgetLogo.dart';
+import 'package:ifeelefine/Views/help_page.dart';
 import 'package:ifeelefine/Views/menu_controller.dart';
 
 import 'package:ifeelefine/Views/menuconfig_page.dart';
@@ -51,7 +52,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   final UserConfigCOntroller userVC = Get.put(UserConfigCOntroller());
   final HomeController homeVC = Get.put(HomeController());
-  ListContactZoneController riskVC = ListContactZoneController();
+  ListContactZoneController riskVC = Get.put(ListContactZoneController());
   late String nameComplete;
 
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
@@ -77,6 +78,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
 
     NotificationCenter().subscribe('getUserData', getUserData);
     RedirectViewNotifier.setStoredContext(context);
+    NotificationCenter().subscribe('refreshView', refreshView);
 
     NotificationCenter().notify('refreshMenu');
   }
@@ -99,6 +101,9 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
             Get.offAll(CancelDatePage(
               taskIds: prefs.getlistTaskIdsCancel,
             ));
+          }
+          if (_prefs.getLastScreenRoute.toString() == "help") {
+            Get.offAll(const HelpPage());
           }
           if (_prefs.getUseMobilConfig && !_prefs.getOpenGalery) {
             Get.offAll(const HomePage());
@@ -147,6 +152,19 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
       user = user;
     }
     requestAlarmPermission();
+    setState(() {});
+  }
+
+  Future getAlerts() async {
+    var temp = await homeVC.getAllMov();
+  }
+
+  void refreshView() {
+    userVC.update();
+    riskVC.update();
+    validateConfig();
+    homeVC.update();
+    NotificationCenter().notify('refreshMenu');
   }
 
   Future<void> requestAlarmPermission() async {
@@ -165,13 +183,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     } else {
       nameComplete = "Usuario";
     }
-    permissionStatusI.forEach(
-      (element) {
-        if (element.config) {
-          notCofingAll = true;
-        }
-      },
-    );
+
     return Scaffold(
       backgroundColor: Colors.black,
       drawer: const MenuConfigurationPage(),
@@ -212,21 +224,27 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                           width: 150,
                           height: 80,
                           color: Colors.transparent,
-                          child: ContainerTopButton(
-                            goToAlert: (bool value) {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => const AlertsPage(),
-                                ),
-                              );
-                            },
-                            onOpenMenu: (bool value) {
-                              _scaffoldKey.currentState!.openDrawer();
-                            },
-                            pref: _prefs,
-                            isconfig: notCofingAll,
-                          ),
+                          child: GetBuilder<HomeController>(
+                              builder: (contextTemp) {
+                            notCofingAll = permissionStatusI
+                                .any((element) => element.config);
+                            return ContainerTopButton(
+                              goToAlert: (bool value) {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => const AlertsPage(),
+                                  ),
+                                );
+                                // Get.put(const AlertsPage());
+                              },
+                              onOpenMenu: (bool value) {
+                                _scaffoldKey.currentState!.openDrawer();
+                              },
+                              pref: _prefs,
+                              isconfig: notCofingAll,
+                            );
+                          }),
                         ),
                       ],
                     ),

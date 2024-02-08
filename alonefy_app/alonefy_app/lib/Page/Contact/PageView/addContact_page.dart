@@ -168,7 +168,7 @@ class _AddContactPageState extends State<AddContactPage> {
                                     height: 1.5),
                               ),
                               TextSpan(
-                                text: "avise en una situación de emergencia.",
+                                text: "avise en una situación de emergencia",
                                 style: GoogleFonts.barlow(
                                     fontSize: 24.0,
                                     wordSpacing: 1,

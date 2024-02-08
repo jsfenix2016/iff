@@ -329,7 +329,7 @@ class EditRiskController extends GetxController {
       // accessing the position and request users of the
       // App to enable the location services.
 
-      return Future.error('Location services are disabled.');
+      return Future.error('Location services are disabled');
     }
 
     permission = await Geolocator.requestPermission();

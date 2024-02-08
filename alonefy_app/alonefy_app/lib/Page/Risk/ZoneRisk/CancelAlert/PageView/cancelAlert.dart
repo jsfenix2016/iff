@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:ifeelefine/Common/Constant.dart';
 import 'package:ifeelefine/Common/colorsPalette.dart';
 import 'package:ifeelefine/Common/manager_alerts.dart';
+import 'package:ifeelefine/Common/utils.dart';
 import 'package:ifeelefine/Data/hiveRisk_data.dart';
 import 'package:ifeelefine/Model/contactZoneRiskBD.dart';
 import 'package:ifeelefine/Page/Disamble/Controller/disambleController.dart';
@@ -20,7 +21,7 @@ import 'package:ifeelefine/Services/mainService.dart';
 
 import 'package:ifeelefine/Utils/Widgets/elevatedButtonFilling.dart';
 import 'package:ifeelefine/main.dart';
-import 'package:notification_center/notification_center.dart';
+
 import 'package:ifeelefine/Common/decoration_custom.dart';
 
 class CancelAlertPage extends StatefulWidget {
@@ -58,25 +59,27 @@ class _CancelAlertState extends State<CancelAlertPage> {
   void getcontactRisk() async {
     await _prefs.initPrefs();
     var resp = await riskVC.getContactsZoneRisk();
-    int indexSelect =
-        resp.indexWhere((item) => item.id == _prefs.getIsSelectContactRisk);
-    contactSelect = resp[indexSelect];
 
-    List<String> parts = [];
+    // Encuentra el contacto seleccionado por el usuario
+    contactSelect = resp.firstWhere(
+      (item) => item.id == _prefs.getIsSelectContactRisk,
+    );
 
-    if (contactSelect!.code != "") {
-      parts = contactSelect!.code.split(',');
-
-      code.textCode1 = parts[0];
-      code.textCode2 = parts[1];
-      code.textCode3 = parts[2];
-      code.textCode4 = parts[3];
+    // Si se encontró un contacto seleccionado, actualiza los códigos
+    if (contactSelect != null && contactSelect!.code.isNotEmpty) {
+      List<String> parts = contactSelect!.code.split(',');
+      code.textCode1 = parts.length > 0 ? parts[0] : '';
+      code.textCode2 = parts.length > 1 ? parts[1] : '';
+      code.textCode3 = parts.length > 2 ? parts[2] : '';
+      code.textCode4 = parts.length > 3 ? parts[3] : '';
     }
 
+    // Si widget.taskIds no está vacío, actualiza la lista de IDs de tarea cancelada en las preferencias
     if (widget.taskIds.isNotEmpty) {
       _prefs.setlistTaskIdsCancel = widget.taskIds;
     }
 
+    // Actualiza la variable taskdIds con los valores correspondientes
     taskdIds =
         widget.taskIds.isEmpty ? _prefs.getlistTaskIdsCancel : widget.taskIds;
   }
@@ -146,7 +149,7 @@ class _CancelAlertState extends State<CancelAlertPage> {
             prefs.setTimerCancelZone = 30;
             countTimer.value = 30;
             showSaveAlert(context, Constant.info,
-                "El servidor de AlertFriends envió una alerta con tu última ubicación.");
+                "El servidor de AlertFriends envió una alerta con tu última ubicación");
             // gotoHome();
           } else {
             secondsRemaining -= 1;
@@ -288,7 +291,7 @@ class _CancelAlertState extends State<CancelAlertPage> {
                                   padding: const EdgeInsets.only(
                                       left: 27.0, top: 20, right: 27),
                                   child: Text(
-                                    "Si no cancelas, el servidor de AlertFriends enviará una alerta con tu última ubicación.",
+                                    "Si no cancelas, el servidor de AlertFriends enviará una alerta con tu última ubicación",
                                     textAlign: TextAlign.center,
                                     style: GoogleFonts.barlow(
                                       fontSize: 18.0,

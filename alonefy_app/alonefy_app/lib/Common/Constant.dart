@@ -66,9 +66,11 @@ class Constant {
   static const hoursRest = 'A que horas duermes';
   static const hoursSleepAndWakeup =
       '¿A que hora te acuestas cada día, a que horas te levantas?';
-  static const casefallText =
+  static const String casefallText =
       '¿Deseas que, en caso de alerta, enviemos la ubicación a sus contactos?';
-
+  static const String initNotifiContact =
+      'El proceso de notificar a tus contactos está inicializado';
+  static const ineedHelp = "Necesito ayuda";
   static const permissionApp = 'Permisos que se usan en la app';
 
   static const String onceTime = "Evento de una sola vez";
@@ -78,7 +80,9 @@ class Constant {
   static const String yearly = "Anual";
 
   static const String inactive = "INACTIVE";
+  static const String inactivitySelf = "INACTIVITY_NOTIFY_SELF";
   static const String drop = "DROP";
+  static const String dropSelf = "DROP_NOTIFY_SELF";
   static const String startRiskDate = "START_RISK_DATE";
   static const String finishRiskDate = "FINISH_RISK_DATE";
   static const String contactStatusChanged = "CONTACT_STATUS_CHANGED";
@@ -96,7 +100,8 @@ class Constant {
   static const String notification = "NOTIFICATION";
   static const String termsAndConditionTitle = "Términos y condiciones";
   static const String habitsActive =
-      'La función de los hábitos se encuentra activada.';
+      'La función de los hábitos se encuentra activada';
+  static const String beforeTimeCall = "Después de la hora de fin llamar a:";
   static const String titleNavBar = "Configuración";
   static const String confirmTitleAlert = 'Confirmar';
   static const String alertBody = '¿Se han leido los términos y condiciones?';
@@ -135,10 +140,10 @@ class Constant {
   static const String validateCodeEmail =
       'Por favor, Introduca el código enviado a su correo';
   static const String validateCodeSms =
-      'Por favor, Introduca el código enviado a su teléfono.';
+      'Por favor, Introduca el código enviado a su teléfono';
 
   static const String alertMessageValidateUser =
-      'Debe tener el teléfono e email validado para continuar.';
+      'Debe tener el teléfono e email validado para continuar';
 
   static const String tokenRequestTxt = 'Enviar código de verificación';
   static const String tokenRequestSendAgainTxt = 'Reenviar código';
@@ -153,7 +158,7 @@ class Constant {
       "Contacto guardado correctamente, se ha realizado la solicitud de autorización correctamente";
   static const String contactEditCorrectly = "Contacto editado correctamente";
   static const String timeMaxReachedInactivity =
-      "Se ha alcanzado el máximo de tiempos de inactividad. Para poder programar más, hazte Premium.";
+      "Se ha alcanzado el máximo de tiempos de inactividad. Para poder programar más, hazte Premium";
 
   static const String saveImageAvatar = "Se guardó la imagen correctamente";
 
@@ -161,7 +166,7 @@ class Constant {
   static const String restoredCorrectly = "Se restauro correctamente";
 
   static const String errorGenericConextion =
-      "Se ha producido un error. Por favor, verifique su conexión a internet e inténtelo de nuevo.";
+      "Se ha producido un error. Por favor, verifique su conexión a internet e inténtelo de nuevo";
 
   static const String changeGeneric = "Cambios guardados correctamente";
 
@@ -406,5 +411,9 @@ class Constant {
     7: "Domingo"
   };
 
+  static const String notAccion =
+      "No detectamos una acción en la notificación, necesitas ayuda?";
+
+  static const String pageTitleVideoPreview = 'Video zona de riesgo';
   // static const String
 }

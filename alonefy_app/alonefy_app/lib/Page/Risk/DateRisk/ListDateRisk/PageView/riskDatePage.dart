@@ -53,45 +53,9 @@ class _RiskPageState extends State<RiskPage> {
     super.didChangeDependencies();
 
     // Si _shouldReloadData es verdadero, realiza la lógica de recarga aquí.
-    if (prefs.getCancelIdDate != -1) {
-      // Lógica para recargar datos
-      print('Recargando datos...');
 
-      // Puedes llamar a funciones o realizar cualquier acción necesaria.
-      // Por ejemplo, si estás utilizando un FutureBuilder, puedes reiniciar el Future.
-    }
-    var list = await const HiveDataRisk().getcontactRiskbd;
+    riskVC.uptadeStatusDate();
 
-    int indexSelect = list.indexWhere((item) =>
-        item.isActived == true &&
-        parseContactRiskDate(item.timefinish).isBefore(DateTime.now()));
-    print(list);
-    if (indexSelect != -1) {
-      var temp = list[indexSelect];
-      print(temp.isFinishTime);
-      var c = await const HiveDataRisk().getContactRiskBD(temp.id);
-      c!.isFinishTime = true;
-      c.isprogrammed = false;
-      c!.isActived = false;
-      var ct = await const HiveDataRisk().updateContactRisk(c);
-      var listte = await const HiveDataRisk().getcontactRiskbd;
-      riskVC.getContactsRisk();
-    }
-    int indexActive = list.indexWhere((item) =>
-        item.isprogrammed == true &&
-        parseContactRiskDate(item.timeinit).isBefore(DateTime.now()));
-
-    if (indexActive != -1) {
-      var temp = list[indexActive];
-      print(temp.isFinishTime);
-      var c = await const HiveDataRisk().getContactRiskBD(temp.id);
-      c!.isFinishTime = false;
-      c!.isActived = true;
-      c.isprogrammed = false;
-      var ct = await const HiveDataRisk().updateContactRisk(c);
-      var listte = await const HiveDataRisk().getcontactRiskbd;
-      riskVC.getContactsRisk();
-    }
     // Importante: Reinicia la variable _shouldReloadData después de la recarga.
     _shouldReloadData = false;
   }
@@ -99,7 +63,7 @@ class _RiskPageState extends State<RiskPage> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    Future.sync(() => RedirectViewNotifier.setStoredContext(context));
+    RedirectViewNotifier.setStoredContext(context);
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: AppBar(
@@ -176,21 +140,24 @@ class _RiskPageState extends State<RiskPage> {
                             () => Navigator.pushReplacement(context, route));
                         return;
                       }
-                      Get.off(
-                        EditRiskPage(
-                          contactRisk: contactTemp,
-                          index: riskVC.contactList.obs.value.length,
-                        ),
-                      );
-                      // Future.sync(() => Navigator.push(
-                      //       context,
-                      //       MaterialPageRoute(
-                      //         builder: (context) => EditRiskPage(
-                      //           contactRisk: contactTemp,
-                      //           index: riskVC.contactList.obs.value.length,
-                      //         ),
-                      //       ),
-                      //     ));
+
+                      // Get.off(
+                      //   EditRiskPage(
+                      //     contactRisk: contactTemp,
+                      //     index: riskVC.contactList.obs.value.length,
+                      //   ),
+                      // );
+                      setState(() {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => EditRiskPage(
+                              contactRisk: contactTemp,
+                              index: riskVC.contactList.obs.value.length,
+                            ),
+                          ),
+                        );
+                      });
                     },
                     mensaje: Constant.newDate,
                     img: 'assets/images/plussWhite.png',

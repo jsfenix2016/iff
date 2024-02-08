@@ -1,7 +1,6 @@
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ifeelefine/Common/colorsPalette.dart';
-import 'package:ifeelefine/Model/activityDay.dart';
 
 import 'package:flutter/material.dart';
 
@@ -20,8 +19,7 @@ class CardContact extends StatefulWidget {
   final bool isSelect;
   final ValueChanged<bool> onChanged;
   @override
-  // ignore: library_private_types_in_public_api
-  State createState() => _CardContactState();
+  State<CardContact> createState() => _CardContactState();
 }
 
 class _CardContactState extends State<CardContact> {

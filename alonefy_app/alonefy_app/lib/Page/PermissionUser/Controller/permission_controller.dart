@@ -35,7 +35,7 @@ class PermissionController extends GetxController {
             break;
           case 3:
             _locationController.activateLocation(preferencePermission);
-            //_prefs.setAcceptedSendLocation = preferencePermission;
+            _prefs.setAcceptedSendLocation = preferencePermission;
             break;
           case 4:
             _prefs.setAcceptedScheduleExactAlarm = preferencePermission;
@@ -67,7 +67,7 @@ class PermissionController extends GetxController {
             if (_prefs.getAcceptedSendLocation == PreferencePermission.allow) {
               _locationController
                   .activateLocation(PreferencePermission.noAccepted);
-              //_prefs.setAcceptedSendLocation = PreferencePermission.noAccepted;
+              _prefs.setAcceptedSendLocation = PreferencePermission.noAccepted;
             }
             break;
           case 4:
@@ -101,7 +101,9 @@ class PermissionController extends GetxController {
           activateContacts:
               _prefs.getAcceptedContacts == PreferencePermission.allow,
           activateAlarm: _prefs.getAcceptedScheduleExactAlarm ==
-              PreferencePermission.allow);
+              PreferencePermission.allow,
+          activateLocation:
+              _prefs.getAcceptedSendLocation == PreferencePermission.allow);
       await PermissionService().activatePermissions(permissionApi);
     }
 
@@ -124,7 +126,9 @@ class PermissionController extends GetxController {
         activateContacts:
             _prefs.getAcceptedContacts == PreferencePermission.allow,
         activateAlarm:
-            _prefs.getAcceptedScheduleExactAlarm == PreferencePermission.allow);
+            _prefs.getAcceptedScheduleExactAlarm == PreferencePermission.allow,
+        activateLocation:
+            _prefs.getAcceptedSendLocation == PreferencePermission.allow);
     await PermissionService().activatePermissions(permissionApi);
   }
 }

@@ -123,7 +123,10 @@ class _CellZoneRiskState extends State<CellZoneRisk> {
                       ),
                     );
                   } else {
-                    return const Center(child: CircularProgressIndicator());
+                    return const Center(
+                        child: CircularProgressIndicator(
+                      color: ColorPalette.calendarNumber,
+                    ));
                   }
                 },
               )

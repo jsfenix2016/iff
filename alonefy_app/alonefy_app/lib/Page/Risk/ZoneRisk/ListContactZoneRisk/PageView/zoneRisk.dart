@@ -1,9 +1,11 @@
 import 'package:get/get.dart';
 import 'package:ifeelefine/Common/Constant.dart';
+import 'package:ifeelefine/Common/colorsPalette.dart';
 import 'package:ifeelefine/Common/manager_alerts.dart';
 
 import 'package:ifeelefine/Common/notificationService.dart';
 import 'package:ifeelefine/Common/text_style_font.dart';
+import 'package:ifeelefine/Common/utils.dart';
 
 import 'package:ifeelefine/Controllers/mainController.dart';
 
@@ -331,14 +333,18 @@ class _ZoneRiskPageState extends State<ZoneRiskPage> {
                     ),
                   );
                 }
-                return const CircularProgressIndicator();
+                return const CircularProgressIndicator(
+                  color: ColorPalette.calendarNumber,
+                );
               },
             ),
           );
         } else if (snapshot.hasError) {
           return Text(snapshot.error.toString());
         } else {
-          return const CircularProgressIndicator();
+          return const CircularProgressIndicator(
+            color: ColorPalette.calendarNumber,
+          );
         }
       },
     );
