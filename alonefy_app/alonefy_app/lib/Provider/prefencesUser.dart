@@ -34,7 +34,7 @@ class PreferenceUser {
   }
 
   get getlistTaskIdsCancel {
-    return _prefs.getStringList('listTaskIdsCancel') ?? [];
+    return _prefs.getStringList('listTaskIdsCancel') ?? [""];
   }
 
   set setlistTaskIdsCancel(List<String> value) {
@@ -71,6 +71,22 @@ class PreferenceUser {
 
   set setCancelDate(bool value) {
     _prefs.setBool('cancelDate', value);
+  }
+
+  get getNotificationId {
+    return _prefs.getInt('NotificationId') ?? -1;
+  }
+
+  set setNotificationId(int value) {
+    _prefs.setInt('NotificationId', value);
+  }
+
+  get getNotificationType {
+    return _prefs.getString('NotificationType') ?? '';
+  }
+
+  set setNotificationType(String value) {
+    _prefs.setString('NotificationType', value);
   }
 
   get getCancelIdDate {

@@ -29,11 +29,7 @@ class _AlertsPageState extends State<AlertsPage> {
 
   final scaffoldKey = GlobalKey<ScaffoldState>();
 
-  // RxMap<String, List<LogAlertsBD>> groupedProducts =
-  //     RxMap<String, List<LogAlertsBD>>();
   late List<LogAlertsBD> listLog;
-  // final _group = ValueNotifier<RxMap<String, List<LogAlertsBD>>>(
-  // RxMap<String, List<LogAlertsBD>>());
   bool _isLoading = true;
 
   RxMap<String, Map<String, List<LogAlertsBD>>> newGroup =
@@ -101,12 +97,19 @@ class _AlertsPageState extends State<AlertsPage> {
               decoration: decorationCustom2(),
               width: size.width,
               height: size.height,
-              child: AlertListWidget(
-                groupedAlerts: newGroup,
-                onChangedDelete: (List<LogAlertsBD> value) {
-                  deleteForDayMov(context, value);
-                },
-              ),
+              child: GetBuilder<AlertsController>(builder: (contextVC) {
+                return AlertListWidget(
+                  groupedAlerts: newGroup,
+                  onChangedDelete: (List<LogAlertsBD> value) {
+                    deleteForDayMov(context, value);
+                  },
+                  onRefresh: (bool value) {
+                    alertsVC.update();
+                    NotificationCenter().notify('refreshView');
+                    setState(() {});
+                  },
+                );
+              }),
             ),
           ),
         ),

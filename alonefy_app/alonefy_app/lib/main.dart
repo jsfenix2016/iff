@@ -14,6 +14,8 @@ import 'package:ifeelefine/Common/initialize_models_bd.dart';
 import 'package:ifeelefine/Data/hiveRisk_data.dart';
 import 'package:ifeelefine/Model/contact.dart';
 import 'package:ifeelefine/Model/contactRiskBD.dart';
+import 'package:ifeelefine/Model/recived_notification.dart';
+import 'package:ifeelefine/Page/Alerts/Controller/alertsController.dart';
 import 'package:ifeelefine/Page/HomePage/Pageview/home_page.dart';
 
 import 'package:ifeelefine/Page/Risk/DateRisk/Controller/editRiskController.dart';
@@ -22,6 +24,7 @@ import 'package:ifeelefine/Page/UseMobil/PageView/configurationUseMobile_page.da
 import 'package:ifeelefine/Page/UserConfig2/Page/configuration2_page.dart';
 
 import 'package:ifeelefine/Views/menuconfig_page.dart';
+import 'package:notification_center/notification_center.dart';
 
 import 'package:permission_handler/permission_handler.dart';
 
@@ -95,7 +98,7 @@ Timer desactivedtimerSendDropNotification =
     Timer(const Duration(seconds: 10), () {});
 Timer timerSendLocation = Timer(const Duration(seconds: 15), () {});
 
-Timer? timerTempDown;
+Timer? timerTempDown = Timer(const Duration(seconds: 1), () {});
 Timer timerDropTempDown = Timer(const Duration(seconds: 1), () {});
 int countdown = 60;
 int countdownDrop = 60;
@@ -164,20 +167,6 @@ final StreamController<ReceivedNotification> didReceiveLocalNotificationStream =
 
 final StreamController<String?> selectNotificationStream =
     StreamController<String?>.broadcast();
-
-class ReceivedNotification {
-  ReceivedNotification({
-    required this.id,
-    required this.title,
-    required this.body,
-    required this.payload,
-  });
-
-  final String? body;
-  final int id;
-  final String? payload;
-  final String? title;
-}
 
 /// Defines a iOS/MacOS notification category for text input actions.
 const String darwinNotificationCategoryText = 'textCategory';
@@ -441,6 +430,10 @@ void onDidReceiveBackgroundNotificationResponse(
   if (timerDropTempDown.isActive) {
     timerDropTempDown.cancel();
   }
+  prefs.setNotificationType = "";
+  final AlertsController alertsVC = Get.put(AlertsController());
+  alertsVC.update();
+  NotificationCenter().notify('refreshView');
   await flutterLocalNotificationsPlugin.cancel(notificationResponse.id!);
   switch (notificationResponse.notificationResponseType) {
     case NotificationResponseType.selectedNotification:
@@ -500,6 +493,7 @@ void onDidReceiveBackgroundNotificationResponse(
         String taskIds =
             notificationResponse.actionId!.replaceAll("Inactived_", "");
         var taskIdList = getTaskIdList(taskIds);
+        await flutterLocalNotificationsPlugin.cancel(notificationResponse.id!);
         if (timerTempDown!.isActive) {
           timerTempDown!.cancel();
         }
@@ -609,7 +603,7 @@ void onDidReceiveBackgroundNotificationResponse(
         var taskIdList = getTaskIdList(taskIds);
         ismove = false;
         timerActive = true;
-
+        await flutterLocalNotificationsPlugin.cancel(notificationResponse.id!);
         if (timerTempDown!.isActive) {
           timerTempDown!.cancel();
         }
@@ -946,15 +940,18 @@ void accelerometer() {
           double accelerationMagnitude =
               sqrt(event.x * event.x + event.y * event.y + event.z * event.z);
 
-          // print("2 -> $accelerationMagnitude");
           if (accelerationMagnitude > 45) {
             isMovRude = true;
+            print("2 -> $accelerationMagnitude");
 
-            if (_prefs.getUserFree) return;
+            if (_prefs.getEnableIFF == false ||
+                _prefs.getUseMobilConfig == false ||
+                _prefs.getDetectedFall == false ||
+                _prefs.getUserPremium == false ||
+                _prefs.getUserFree) return;
 
-            if (_prefs.getEnableIFF == false) return;
-            if (_prefs.getUseMobilConfig) return;
             if (_logRudeMovementTimer >= _logRudeMovementTimerRefresh) {
+              print('Movimiento brusco');
               mainController.saveDrop();
               _logRudeMovementTimer = 0;
             }

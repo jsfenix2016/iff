@@ -128,6 +128,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
         if (contactNotiVC != null) {
           contactNotiVC.update();
         }
+        NotificationCenter().notify('refreshView');
         Get.appUpdate();
         break;
       case AppLifecycleState.inactive:
@@ -156,7 +157,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   }
 
   Future getAlerts() async {
-    var temp = await homeVC.getAllMov();
+    await homeVC.getAllMov();
   }
 
   void refreshView() {

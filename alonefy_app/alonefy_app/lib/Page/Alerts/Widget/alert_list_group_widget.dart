@@ -5,14 +5,20 @@ import 'package:ifeelefine/Common/text_style_font.dart';
 import 'package:ifeelefine/Common/utils.dart';
 import 'package:ifeelefine/Model/logAlertsBD.dart';
 import 'package:ifeelefine/Page/Disamble/Pageview/disambleIfeelfine_page.dart';
+import 'package:ifeelefine/Provider/prefencesUser.dart';
+import 'package:ifeelefine/Services/mainService.dart';
 import 'package:ifeelefine/Utils/Widgets/elevatedButtonFilling.dart';
+import 'package:ifeelefine/main.dart';
 
 class AlertListWidget extends StatefulWidget {
   const AlertListWidget(
-      {super.key, required this.groupedAlerts, required this.onChangedDelete});
+      {super.key,
+      required this.groupedAlerts,
+      required this.onChangedDelete,
+      required this.onRefresh});
   final Map<String, Map<String, List<LogAlertsBD>>> groupedAlerts;
   final ValueChanged<List<LogAlertsBD>> onChangedDelete;
-
+  final ValueChanged<bool> onRefresh;
   @override
   State<AlertListWidget> createState() => _AlertListWidgetState();
 }
@@ -22,7 +28,39 @@ class _AlertListWidgetState extends State<AlertListWidget> {
   int selectedCellIndex = -1; // -1 indica que ninguna celda está seleccionada
   bool isExpanded = false;
   String dateRow = "";
-  // Map<int, bool> isCellExpandedMap = {};
+  final PreferenceUser _prefs = PreferenceUser();
+  String typeNotify = "";
+  String typeNotifyList = "";
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    print(_prefs.getNotificationType);
+
+    typeNotify = _prefs.getNotificationType;
+    print("object");
+  }
+
+  void cancelNotify() async {
+    List<String> a = _prefs.getlistTaskIdsCancel;
+    var taskIdList = getTaskIdList(a.first);
+    if (_prefs.getNotificationType.toString().contains('Inactividad')) {
+      mainController.saveUserLog("Inactividad - Actividad detectada ",
+          DateTime.now(), _prefs.getIdInactiveGroup);
+    }
+    if (_prefs.getNotificationType.toString().contains('Caida')) {
+      mainController.saveUserLog("Caida - Actividad detectada ", DateTime.now(),
+          _prefs.getIdDropGroup);
+    }
+    _prefs.setEnableTimer = false;
+    _prefs.setEnableTimerDrop = false;
+    MainService().cancelAllNotifications(taskIdList);
+    _prefs.setNotificationType = "";
+    typeNotify = "";
+    await flutterLocalNotificationsPlugin.cancel(_prefs.getNotificationId!);
+    _prefs.setNotificationId = -1;
+    widget.onRefresh(true);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -136,7 +174,9 @@ class _AlertListWidgetState extends State<AlertListWidget> {
                                       widget.groupedAlerts.keys
                                           .elementAt(indexGroup)
                               ? alertTypes[alertType]!.length * 121
-                              : 101,
+                              : _prefs.getNotificationType != ""
+                                  ? 141
+                                  : 120,
                           decoration: const BoxDecoration(
                             color: Color.fromARGB(153, 50, 50, 45),
                             borderRadius: BorderRadius.all(Radius.circular(20)),
@@ -191,6 +231,8 @@ class _AlertListWidgetState extends State<AlertListWidget> {
                                       //sorting in descending order
                                       return b.time.compareTo(a.time);
                                     });
+                                    typeNotifyList =
+                                        listAlerts[indexAlert].type;
                                     return GestureDetector(
                                       onTap: () {
                                         print(
@@ -226,10 +268,43 @@ class _AlertListWidgetState extends State<AlertListWidget> {
                                                     .toString()
                                                     .contains('-')
                                                 ? 80
-                                                : 60,
+                                                : _prefs.getNotificationType !=
+                                                        ""
+                                                    ? 100
+                                                    : 60,
                                             width: 300,
                                             child: Stack(
                                               children: [
+                                                Visibility(
+                                                  visible: typeNotifyList ==
+                                                          _prefs
+                                                              .getNotificationType
+                                                      ? true
+                                                      : false,
+                                                  child: Positioned(
+                                                    bottom: 0,
+                                                    child: Padding(
+                                                      padding:
+                                                          const EdgeInsets.only(
+                                                              left: 0.0),
+                                                      child: Container(
+                                                        height: 50,
+                                                        width: 300,
+                                                        color:
+                                                            Colors.transparent,
+                                                        child:
+                                                            ElevateButtonFilling(
+                                                          showIcon: false,
+                                                          onChanged: (value) {
+                                                            cancelNotify();
+                                                          },
+                                                          mensaje: "Desactivar",
+                                                          img: '',
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
                                                 Container(
                                                   width: 300,
                                                   color: Colors.transparent,
@@ -287,19 +362,21 @@ class _AlertListWidgetState extends State<AlertListWidget> {
                                                   ),
                                                 ),
                                                 indexAlert > 0 &&
-                                                        indexAlert <
-                                                            listAlerts.length
+                                                        listAlerts.length >
+                                                            indexAlert
                                                     ? Positioned(
-                                                        left: 25,
-                                                        top: 140 /
+                                                        left: 20,
+                                                        top: 130 /
                                                             2, // La posición horizontal de la línea
                                                         child: CustomPaint(
                                                           painter:
                                                               _LinePainter(),
                                                         ),
                                                       )
-                                                    : const SizedBox(
-                                                        height: 0,
+                                                    : Container(
+                                                        color:
+                                                            Colors.transparent,
+                                                        height: 1,
                                                       ),
                                               ],
                                             ),
@@ -309,28 +386,6 @@ class _AlertListWidgetState extends State<AlertListWidget> {
                                     );
                                   },
                                 ),
-                                // Positioned(
-                                //   bottom: 0,
-                                //   child: Padding(
-                                //     padding: const EdgeInsets.only(left: 0.0),
-                                //     child: ElevateButtonFilling(
-                                //       showIcon: false,
-                                //       onChanged: (value) {
-                                //         Navigator.push(
-                                //           context,
-                                //           MaterialPageRoute(
-                                //             builder: (context) =>
-                                //                 const DesactivePage(
-                                //               isMenu: false,
-                                //             ),
-                                //           ),
-                                //         );
-                                //       },
-                                //       mensaje: "Desactivar",
-                                //       img: '',
-                                //     ),
-                                //   ),
-                                // ),
                               ],
                             ),
                           ),

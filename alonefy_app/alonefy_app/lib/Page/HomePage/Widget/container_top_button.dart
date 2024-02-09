@@ -90,6 +90,22 @@ class _ContainerTopButtonState extends State<ContainerTopButton> {
               ),
             ),
           ),
+          Positioned(
+            right: 20,
+            top: 18,
+            child: Visibility(
+              visible: widget.pref.getNotificationType != "",
+              child: Container(
+                decoration: const BoxDecoration(
+                    borderRadius: BorderRadius.all(Radius.circular(
+                            20.0) //                 <--- border radius here
+                        ),
+                    color: Colors.red),
+                height: 8,
+                width: 8,
+              ),
+            ),
+          ),
         ],
       ),
     );
