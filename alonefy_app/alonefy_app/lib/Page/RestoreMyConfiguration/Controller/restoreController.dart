@@ -68,6 +68,11 @@ class RestoreController extends GetxController {
       _saveConfig();
       _prefs.setUserPremium = true;
       _prefs.setUserFree = false;
+      _prefs.setEnableIFF = userApi.currentlyDeactivated;
+      _prefs.setDisambleIFF =
+          convertDateTimeToDisamble(userApi.deactivatedUntil);
+      _prefs.setDisambleTimeIFF = userApi.deactivatedUntil.toString();
+
       Future.sync(
         () => {
           activateService(),
@@ -84,6 +89,37 @@ class RestoreController extends GetxController {
       );
 
       return false;
+    }
+  }
+
+  String convertDateTimeToDisamble(DateTime dateTime) {
+    DateTime now = DateTime.now();
+    Duration difference = now.difference(dateTime);
+
+    // Convertimos la diferencia de tiempo a horas
+    double differenceInHours = difference.inHours.toDouble();
+
+    if (differenceInHours <= 1) {
+      return "1 hora";
+    } else if (differenceInHours <= 2) {
+      return "2 horas";
+    } else if (differenceInHours <= 3) {
+      return "3 horas";
+    } else if (differenceInHours <= 8) {
+      return "8 horas";
+    } else if (differenceInHours <= 24) {
+      return "24 horas";
+    } else if (differenceInHours <= 24 * 7) {
+      // 1 semana
+      return "1 semana";
+    } else if (differenceInHours <= 24 * 30) {
+      // 1 mes
+      return "1 mes";
+    } else if (differenceInHours <= 24 * 365) {
+      // 1 año
+      return "1 año";
+    } else {
+      return "Siempre";
     }
   }
 
@@ -281,6 +317,7 @@ class RestoreController extends GetxController {
     _prefs.firstConfig = true;
     _prefs.config = true;
     _prefs.setUseMobilConfig = true;
+
     _prefs.saveLastScreenRoute("home");
   }
 

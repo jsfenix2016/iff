@@ -256,7 +256,7 @@ class _UserConfigPageState extends State<UserConfigPage> {
                                     style: (isValidEmail && isValidSms)
                                         ? styleColorPrincipal()
                                         : styleColorClear(),
-                                    onPressed: (true && true)
+                                    onPressed: (isValidEmail && isValidSms)
                                         ? _submit
                                         : () {
                                             showSaveAlert(

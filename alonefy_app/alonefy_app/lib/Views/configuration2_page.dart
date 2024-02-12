@@ -23,7 +23,6 @@ import 'package:country_state_city_picker/model/select_status_model.dart'
     as StatusModel;
 
 import 'package:ifeelefine/Common/decoration_custom.dart';
-import 'package:ifeelefine/main.dart';
 
 // ignore: use_key_in_widget_constructors
 class UserConfigPage2 extends StatefulWidget {

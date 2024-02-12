@@ -33,6 +33,7 @@ class UserApi {
   late bool activateAlarm;
   late int fallTime;
   late DateTime lastMovement;
+  late DateTime deactivatedUntil;
   late bool currentlyDeactivated;
   late String awsDownloadPresignedUrl;
   late List<ContactApi> contact;
@@ -66,6 +67,7 @@ class UserApi {
       required this.activateAlarm,
       required this.fallTime,
       required this.lastMovement,
+      required this.deactivatedUntil,
       required this.currentlyDeactivated,
       required this.awsDownloadPresignedUrl,
       required this.contact,
@@ -104,6 +106,8 @@ class UserApi {
         lastMovement: json['lastMovement'] != null
             ? jsonToDatetime(json['lastMovement'], getDefaultPattern())
             : DateTime.now(),
+        deactivatedUntil:
+            jsonToDatetime(json['deactivatedUntil'], getDefaultPattern()),
         currentlyDeactivated: json['currentlyDeactivated'] ?? false,
         awsDownloadPresignedUrl: json['awsDownloadPresignedUrl'],
         contact: jsonToGenericList<ContactApi>(json, "contact"),

@@ -414,14 +414,7 @@ Future<void> activateService() async {
   }
 }
 
-@pragma('vm:entry-point')
-void onDidReceiveBackgroundNotificationResponse(
-    NotificationResponse notificationResponse) async {
-  await inicializeHiveBD();
-  await prefs.initPrefs();
-  var aid = Uuid().v4().toString();
-  mainController.saveActivityLog(DateTime.now(), "Movimiento normal", aid);
-  _logRudeMovementTimer = 0;
+void cancelTimersNotify() {
   _prefs.setEnableTimer = false;
   _prefs.setEnableTimerDrop = false;
   if (timerTempDown!.isActive) {
@@ -430,21 +423,34 @@ void onDidReceiveBackgroundNotificationResponse(
   if (timerDropTempDown.isActive) {
     timerDropTempDown.cancel();
   }
-  prefs.setNotificationType = "";
-  final AlertsController alertsVC = Get.put(AlertsController());
-  alertsVC.update();
-  NotificationCenter().notify('refreshView');
+}
+
+@pragma('vm:entry-point')
+void onDidReceiveBackgroundNotificationResponse(
+    NotificationResponse notificationResponse) async {
+  await inicializeHiveBD();
+  await prefs.initPrefs();
+  var aid = Uuid().v4().toString();
+  mainController.saveActivityLog(DateTime.now(), "Movimiento normal", aid);
+  _logRudeMovementTimer = 0;
+
+  cancelTimersNotify();
+  mainController.refreshHome();
+
   await flutterLocalNotificationsPlugin.cancel(notificationResponse.id!);
   switch (notificationResponse.notificationResponseType) {
     case NotificationResponseType.selectedNotification:
       if (notificationResponse.payload!.contains('ContactResponse')) {
         RedirectViewNotifier.onRefreshContact(notificationResponse);
+        return;
       }
       if (notificationResponse.payload!.contains("free")) {
         RedirectViewNotifier.onTapFreeNotification(notificationResponse);
+        return;
       }
       if (notificationResponse.payload!.contains("premium")) {
         RedirectViewNotifier.onTapPremiumNotification(notificationResponse);
+        return;
       }
       if (notificationResponse.payload!.contains("Drop_")) {
         ismove = false;
@@ -452,40 +458,41 @@ void onDidReceiveBackgroundNotificationResponse(
         _prefs.setEnableTimerDrop = false;
         String taskIds = notificationResponse.payload!.replaceAll("Drop_", "");
         var taskIdList = getTaskIdList(taskIds);
-        // idTask = taskIds;
+
         rxIdTask.value = taskIds;
-        // rxlistTask.value = taskIdList;
-        // listTask = taskIdList;
+
         notActionPush = true;
 
         RedirectViewNotifier.onTapNotificationBody(
             notificationResponse, taskIdList);
-        // MainService().cancelAllNotifications(taskIdList);
+
         await flutterLocalNotificationsPlugin.cancel(notificationResponse.id!);
+        prefs.setNotificationType = "";
+        mainController.refreshHome();
+        return;
       }
       if (notificationResponse.payload!.contains("Inactived_")) {
         ismove = false;
         timerActive = true;
         _prefs.setEnableIFF = true;
-        _prefs.setEnableTimer = false;
+
         _prefs.setDisambleIFF = "0 hora";
         String taskIds =
             notificationResponse.payload!.replaceAll("Inactived_", "");
         var taskIdList = getTaskIdList(taskIds);
-        // idTask = taskIds;
-        // listTask = taskIdList;
+
         rxIdTask.value = taskIds;
-        // rxlistTask.value = taskIdList;
+
         _prefs.setlistTaskIdsCancel = taskIdList;
         notActionPush = true;
-        if (timerTempDown!.isActive) {
-          timerTempDown!.cancel();
-        }
+        cancelTimersNotify();
         RedirectViewNotifier.onTapNotificationBody(
             notificationResponse, taskIdList);
-        // RedirectViewNotifier.showAlertDialog(taskIds, taskIdList);
-        // MainService().cancelAllNotifications(taskIdList);
+
         await flutterLocalNotificationsPlugin.cancel(notificationResponse.id!);
+        prefs.setNotificationType = "";
+        mainController.refreshHome();
+        return;
       }
       if (notificationResponse.actionId == "Inactived") {
         ismove = false;
@@ -494,12 +501,7 @@ void onDidReceiveBackgroundNotificationResponse(
             notificationResponse.actionId!.replaceAll("Inactived_", "");
         var taskIdList = getTaskIdList(taskIds);
         await flutterLocalNotificationsPlugin.cancel(notificationResponse.id!);
-        if (timerTempDown!.isActive) {
-          timerTempDown!.cancel();
-        }
-        if (timerDropTempDown.isActive) {
-          timerDropTempDown.cancel();
-        }
+        cancelTimersNotify();
         if (notificationResponse.payload!.contains("Inactived_")) {
           mainController.saveUserLog("Inactividad - solicito ayuda",
               DateTime.now(), prefs.getIdInactiveGroup);
@@ -509,21 +511,20 @@ void onDidReceiveBackgroundNotificationResponse(
           mainController.saveUserLog(
               "Caida  - solicito ayuda", DateTime.now(), prefs.getIdDropGroup);
         }
-        _prefs.setEnableTimer = false;
-        _prefs.setEnableTimerDrop = false;
-        MainService().cancelAllNotifications(taskIdList);
 
-        return Future.value();
+        MainService().cancelAllNotifications(taskIdList);
+        prefs.setNotificationType = "";
+        mainController.refreshHome();
+        return;
       }
       if (notificationResponse.payload!.contains("DateRisk_")) {
         String taskIds =
             notificationResponse.payload!.replaceAll("DateRisk_", "");
 
         var taskIdList = getTaskIdList(taskIds);
-        // idTask = taskIds;
-        // listTask = taskIdList;
+
         rxIdTask.value = taskIds;
-        // rxlistTask.value = taskIdList;
+
         _prefs.setlistTaskIdsCancel = taskIdList;
         notActionPush = true;
         var contactRisk = await const HiveDataRisk().getcontactRiskbd;
@@ -559,6 +560,8 @@ void onDidReceiveBackgroundNotificationResponse(
           }
         }
         await flutterLocalNotificationsPlugin.cancel(notificationResponse.id!);
+        prefs.setNotificationType = "";
+        mainController.refreshHome();
       }
 
       break;
@@ -568,12 +571,6 @@ void onDidReceiveBackgroundNotificationResponse(
         String taskIds =
             notificationResponse.actionId!.replaceAll("helpID_", "");
         var taskIdList = getTaskIdList(taskIds);
-        if (timerTempDown!.isActive) {
-          timerTempDown!.cancel();
-        }
-        if (timerDropTempDown.isActive) {
-          timerDropTempDown.cancel();
-        }
 
         if (notificationResponse.payload!.contains("DateRisk_")) {
           mainController.saveUserLog(
@@ -588,12 +585,11 @@ void onDidReceiveBackgroundNotificationResponse(
           mainController.saveUserLog(
               "Caida  - solicito ayuda", DateTime.now(), prefs.getIdDropGroup);
         }
-
-        _prefs.setEnableTimer = false;
-        _prefs.setEnableTimerDrop = false;
+        cancelTimersNotify();
         MainService().sendAlertToContactImmediately(taskIdList);
-
-        return Future.value();
+        prefs.setNotificationType = "";
+        mainController.refreshHome();
+        return;
       }
 
       if (notificationResponse.actionId != null &&
@@ -604,9 +600,6 @@ void onDidReceiveBackgroundNotificationResponse(
         ismove = false;
         timerActive = true;
         await flutterLocalNotificationsPlugin.cancel(notificationResponse.id!);
-        if (timerTempDown!.isActive) {
-          timerTempDown!.cancel();
-        }
 
         if (notificationResponse.payload!.contains("DateRisk_")) {
           mainController.saveUserLog(
@@ -627,17 +620,13 @@ void onDidReceiveBackgroundNotificationResponse(
               "Caida cancelada", DateTime.now(), prefs.getIdDropGroup);
         }
 
-        if (timerDropTempDown.isActive) {
-          timerDropTempDown.cancel();
-        }
-
-        _prefs.setEnableTimer = false;
-        _prefs.setEnableTimerDrop = false;
+        cancelTimersNotify();
         MainService().cancelAllNotifications(taskIdList);
 
         await flutterLocalNotificationsPlugin.cancel(notificationResponse.id!);
-
-        return Future.value();
+        prefs.setNotificationType = "";
+        mainController.refreshHome();
+        return;
       }
       if (notificationResponse.actionId != null &&
           notificationResponse.actionId!.contains("dateHelp")) {
@@ -647,13 +636,6 @@ void onDidReceiveBackgroundNotificationResponse(
         String id = notificationResponse.actionId!.substring(
             notificationResponse.actionId!.indexOf('id='),
             notificationResponse.actionId!.length);
-
-        if (timerTempDown!.isActive) {
-          timerTempDown!.cancel();
-        }
-        if (timerDropTempDown.isActive) {
-          timerDropTempDown.cancel();
-        }
 
         if (notificationResponse.payload!.contains("Inactived_")) {
           mainController.saveUserLog("Inactividad - solicito ayuda",
@@ -671,9 +653,11 @@ void onDidReceiveBackgroundNotificationResponse(
               "Cita - solicito ayuda", DateTime.now(), id);
         }
 
-        _prefs.setEnableTimer = false;
-        _prefs.setEnableTimerDrop = false;
+        cancelTimersNotify();
         MainService().sendAlertToContactImmediately(taskIdList);
+        prefs.setNotificationType = "";
+        mainController.refreshHome();
+        return;
       }
       if (notificationResponse.actionId != null &&
           notificationResponse.actionId!.contains("DateRisk")) {
@@ -706,14 +690,17 @@ void onDidReceiveBackgroundNotificationResponse(
               "Cita - Cancelada", DateTime.now(), prefs.getIdDateGroup);
         }
         MainService().cancelAllNotifications(taskIdList);
-
-        return Future.value();
+        prefs.setNotificationType = "";
+        NotificationCenter().notify('refreshView');
+        return;
       }
       if (notificationResponse.actionId!.contains("premium")) {
         RedirectViewNotifier.onTapPremiumNotification(notificationResponse);
+        return;
       }
       if (notificationResponse.actionId!.contains("ok")) {
         RedirectViewNotifier.onTapFreeNotification(notificationResponse);
+        return;
       }
       if (notificationResponse.actionId != null &&
           notificationResponse.actionId!.contains("dateImgood")) {
@@ -755,7 +742,8 @@ void onDidReceiveBackgroundNotificationResponse(
         }
         RedirectViewNotifier.onTapNotification(
             notificationResponse, taskIdList, int.parse(id));
-
+        prefs.setNotificationType = "";
+        NotificationCenter().notify('refreshView');
         return Future.value();
       }
 
@@ -805,7 +793,7 @@ void onStart(ServiceInstance service) async {
   service.on('stopService').listen((event) {
     service.stopSelf();
   });
-
+  accelerometer();
   Timer.periodic(
     const Duration(days: 30),
     (timer) {
@@ -862,18 +850,19 @@ void onStart(ServiceInstance service) async {
         }
       }
     }
-
+    var timerRest = timeDurationActivation(_prefs.getDisambleTimeIFF).inSeconds;
     var timeGetDisamble = _prefs.getDisambleIFF;
     var timeDisamble = deactivateTimeToMinutes(timeGetDisamble) * 60;
 
-    if (!timeDisamble.isEqual(0)) {
-      if (increaceTimerDisamble >= timeDisamble) {
+    if (timerRest.isEqual(0) && _prefs.getEnableIFF) {
+      if (increaceTimerDisamble >= timerRest) {
         _prefs.setEnableIFF = true;
         increaceTimerDisamble = 0;
         _prefs.setDisambleIFF = "0 hora";
+        _prefs.setDisambleTimeIFF = "";
       }
     }
-    accelerometer();
+
     // Timer.periodic(const Duration(seconds: 1), (timer) async {
     //   if (Platform.isAndroid) {
     //     if (service is AndroidServiceInstance) {

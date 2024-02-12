@@ -388,6 +388,14 @@ class PreferenceUser {
     _prefs.setString('DisambleIFF', value);
   }
 
+  get getDisambleTimeIFF {
+    return _prefs.getString('DisambleTimeIFF') ?? "";
+  }
+
+  set setDisambleTimeIFF(String value) {
+    _prefs.setString('DisambleTimeIFF', value);
+  }
+
   get getEnableIFF {
     return _prefs.getBool('EnableIFF') ?? true;
   }

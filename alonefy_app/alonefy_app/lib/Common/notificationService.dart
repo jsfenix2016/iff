@@ -15,6 +15,7 @@ import 'package:ifeelefine/Data/hive_constant_adapterInit.dart';
 
 import 'package:ifeelefine/Model/contactRiskBD.dart';
 import 'package:ifeelefine/Page/Alerts/Controller/alertsController.dart';
+import 'package:ifeelefine/Page/HomePage/Controller/homeController.dart';
 
 import 'package:ifeelefine/Page/Premium/Controller/premium_controller.dart';
 import 'package:ifeelefine/Page/Premium/PageView/premium_moths_free.dart';
@@ -42,14 +43,8 @@ class RedirectViewNotifier with ChangeNotifier {
 
   static Future<void> onTapNotificationBody(
       NotificationResponse? response, List<String> taskIds) async {
-    // if (response?.payload == null) return;
     prefs.saveLastScreenRoute("help");
-    // Future.delayed(const Duration(seconds: 1), () {
-    //   Navigator.push(
-    //     _storedContext!,
-    //     MaterialPageRoute(builder: (context) => const HelpPage()),
-    //   );
-    // });
+
     if (_storedContext != null) {
       Navigator.push(
         _storedContext!,
@@ -215,9 +210,9 @@ class RedirectViewNotifier with ChangeNotifier {
     if (data.isEmpty) {
       showTestNotification(message);
     }
-    NotificationCenter().notify('refreshView');
-    final AlertsController alertsVC = Get.put(AlertsController());
-    alertsVC.update();
+
+    mainController.refreshAlerts();
+    mainController.refreshHome();
   }
 
   static Future<void> showHelpNotification(RemoteMessage message) async {

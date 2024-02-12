@@ -251,15 +251,15 @@ class _MenuConfigurationPageState extends State<MenuConfigurationPage> {
             ));
         break;
       case 10:
-        Future.sync(
-          () => Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => const RestoreMyConfigPage(),
-            ),
-          ),
-        );
-        return;
+        // Future.sync(
+        //   () => Navigator.push(
+        //     context,
+        //     MaterialPageRoute(
+        //       builder: (context) => const RestoreMyConfigPage(),
+        //     ),
+        //   ),
+        // );
+        // return;
         if (_prefs.getUserPremium) {
           Future.sync(
             () => Navigator.push(

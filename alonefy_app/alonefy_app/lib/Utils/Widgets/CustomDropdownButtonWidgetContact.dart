@@ -7,7 +7,7 @@ import 'package:ifeelefine/Common/Constant.dart';
 
 import 'package:ifeelefine/Common/utils.dart';
 import 'package:ifeelefine/Provider/prefencesUser.dart';
-import 'package:ifeelefine/Utils/Widgets/widgedContact.dart';
+
 import 'package:permission_handler/permission_handler.dart';
 import 'package:ifeelefine/Common/manager_alerts.dart';
 

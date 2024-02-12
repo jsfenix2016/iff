@@ -10,6 +10,7 @@ import 'package:ifeelefine/Page/Disamble/Controller/disambleController.dart';
 
 import 'package:flutter/material.dart';
 import 'package:ifeelefine/main.dart';
+import 'package:intl/intl.dart';
 
 import '../../../Common/colorsPalette.dart';
 import '../../../Provider/prefencesUser.dart';
@@ -101,15 +102,26 @@ class _DesactivePageState extends State<DesactivePage> {
                   top: 32,
                   width: size.width,
                   child: Center(
-                    child: Text('Desactivar AlertFriends',
-                        textAlign: TextAlign.center,
-                        style: GoogleFonts.barlow(
-                          fontSize: 22.0,
-                          wordSpacing: 1,
-                          letterSpacing: 1.2,
-                          fontWeight: FontWeight.w500,
-                          color: Colors.white,
-                        )),
+                    child: Column(
+                      children: [
+                        Text(
+                          'Desactivar AlertFriends',
+                          textAlign: TextAlign.center,
+                          style: GoogleFonts.barlow(
+                            fontSize: 22.0,
+                            wordSpacing: 1,
+                            letterSpacing: 1.2,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.white,
+                          ),
+                        ),
+                        Text(
+                          calculateTimeToActivation(_prefs.getDisambleTimeIFF),
+                          textAlign: TextAlign.center,
+                          style: textNormal14White(),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
                 Padding(
@@ -158,6 +170,7 @@ class _DesactivePageState extends State<DesactivePage> {
                                       // enableApp.value = true;
                                       _prefs.setDisambleIFF = "0 hora";
                                       desactiveIFeelFine = "0 hora";
+                                      _prefs.setDisambleTimeIFF = "";
                                     }
                                     var count = 0;
                                     for (bool disambleEnabled

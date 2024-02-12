@@ -988,6 +988,79 @@ int deactivateTimeToMinutes(String strTime) {
   }
 }
 
+String calculateTimeToActivation(String deactivatedTimeString) {
+  if (_prefs.getDisambleTimeIFF == "") {
+    return "";
+  }
+  // Parseamos el string desactivado a un DateTime
+  DateTime deactivatedTime = DateTime.parse(deactivatedTimeString).toLocal();
+
+  // Obtenemos el DateTime actual
+  DateTime now = DateTime.now();
+
+  // Calculamos la diferencia entre el tiempo desactivado y el actual
+  Duration difference = deactivatedTime.difference(now);
+
+  // Verificamos si el tiempo desactivado es mayor que el actual
+  if (difference.isNegative) {
+    return 'El tiempo de activación ha pasado';
+  }
+
+  // Formateamos el tiempo restante en horas, minutos y segundos
+  int hours = difference.inHours;
+  int minutes = difference.inMinutes.remainder(60);
+  int seconds = difference.inSeconds.remainder(60);
+
+  String formattedTime = 'Tiempo restante: ';
+
+  if (hours > 0) {
+    formattedTime += '$hours horas';
+  }
+
+  if (hours > 0 && minutes > 0) {
+    formattedTime += ', ';
+  }
+
+  if (minutes > 0) {
+    formattedTime += '$minutes minutos';
+  }
+
+  if ((hours > 0 || minutes > 0) && seconds > 0) {
+    formattedTime += '';
+  }
+
+  // if (seconds > 0) {
+  //   formattedTime += '$seconds segundos';
+  // }
+
+  return formattedTime;
+}
+
+Duration timeDurationActivation(String deactivatedTimeString) {
+  if (_prefs.getDisambleTimeIFF == "") {
+    return const Duration(seconds: 0);
+  }
+  // Parseamos el string desactivado a un DateTime
+  DateTime deactivatedTime = DateTime.parse(deactivatedTimeString).toLocal();
+
+  // Obtenemos el DateTime actual
+  DateTime now = DateTime.now();
+
+  // Calculamos la diferencia entre el tiempo desactivado y el actual
+  Duration difference = deactivatedTime.difference(now);
+
+  // Verificamos si el tiempo desactivado es mayor que el actual
+  if (difference.isNegative) {
+    return const Duration(seconds: 0);
+  }
+
+  // Formateamos el tiempo restante en horas, minutos y segundos
+  int hourst = difference.inHours;
+  int minutes = difference.inMinutes.remainder(60);
+  int seconds = difference.inSeconds.remainder(60);
+  return Duration(hours: hourst, minutes: minutes);
+}
+
 String minutesToString(int minutes) {
   var hours = minutes / 60;
 

@@ -53,10 +53,9 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   final UserConfigCOntroller userVC = Get.put(UserConfigCOntroller());
   final HomeController homeVC = Get.put(HomeController());
   ListContactZoneController riskVC = Get.put(ListContactZoneController());
-  late String nameComplete;
-
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
+  late String nameComplete;
   User? user;
   UserBD? userbd;
 
@@ -71,7 +70,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     WidgetsBinding.instance.addObserver(this);
     starTap();
     getUserData();
-    // getAlerts();
+
     homeVC.getpermission();
 
     _prefs.saveLastScreenRoute("home");
@@ -93,11 +92,11 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   void didChangeAppLifecycleState(AppLifecycleState state) async {
     setState(
       () {
+        _prefs.refreshData();
         _appLifecycleState = state;
         if (state.name.contains("paused")) {
           print(state.name);
           if (_prefs.getLastScreenRoute.toString() == "cancelDate") {
-            print(prefs.getlistTaskIdsCancel);
             Get.offAll(CancelDatePage(
               taskIds: prefs.getlistTaskIdsCancel,
             ));
@@ -116,22 +115,12 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
       case AppLifecycleState.resumed:
         RedirectViewNotifier.setStoredContext(context);
 
-        ContactNoticeController? contactNotiVC;
-        try {
-          contactNotiVC = Get.find<ContactNoticeController>();
-        } catch (e) {
-          // Si Get.find lanza un error, eso significa que el controlador no está en el árbol de widgets.
-          // En ese caso, usamos Get.put para agregar el controlador al árbol de widgets.
-          contactNotiVC = Get.put(ContactNoticeController());
-        }
-        // Ahora, puedes utilizar riskVC normalmente sabiendo que está disponible.
-        if (contactNotiVC != null) {
-          contactNotiVC.update();
-        }
-        NotificationCenter().notify('refreshView');
+        mainController.refreshContactNotify();
+        mainController.refreshHome();
         Get.appUpdate();
         break;
       case AppLifecycleState.inactive:
+        mainController.refreshHome();
         break;
       case AppLifecycleState.paused:
         break;
@@ -164,6 +153,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     userVC.update();
     riskVC.update();
     validateConfig();
+
     homeVC.update();
     NotificationCenter().notify('refreshMenu');
   }
@@ -229,6 +219,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                               builder: (contextTemp) {
                             notCofingAll = permissionStatusI
                                 .any((element) => element.config);
+
                             return ContainerTopButton(
                               goToAlert: (bool value) {
                                 Navigator.push(
@@ -244,6 +235,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                               },
                               pref: _prefs,
                               isconfig: notCofingAll,
+                              getNotificationType: _prefs.getNotificationType,
                             );
                           }),
                         ),

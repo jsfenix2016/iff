@@ -36,12 +36,17 @@ class DisambleController extends GetxController {
       if (deactivateTimeToMinutes(deactivateTime) != 0) {
         prefs.setEnableIFF = false;
         prefs.setDisambleIFF = deactivateTime;
+        var time = deactivateTimeToMinutes(deactivateTime);
+
+        prefs.setDisambleTimeIFF =
+            DateTime.now().add(Duration(minutes: time)).toString();
       } else {
         prefs.setEnableIFF = true;
         var aid = Uuid().v4().toString();
         mainController.saveActivityLog(
             DateTime.now(), "Movimiento normal", aid);
         prefs.setDisambleIFF = "0 hora";
+        prefs.setDisambleTimeIFF = "";
       }
 
       Future.sync(() => {

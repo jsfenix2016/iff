@@ -15,7 +15,6 @@ import 'package:camera/camera.dart';
 import 'package:ifeelefine/Common/decoration_custom.dart';
 import 'package:ifeelefine/Provider/prefencesUser.dart';
 import 'package:ifeelefine/Utils/Widgets/loading_page.dart';
-import 'package:ifeelefine/main.dart';
 
 class PushAlertPage extends StatefulWidget {
   /// Creates a new GeolocatorWidget.
@@ -86,30 +85,6 @@ class _PushAlertPageState extends State<PushAlertPage> {
     }
     setState(() => _isLoading = false);
   }
-
-  // Future<void> setupCameras() async {
-  //   setState(() => _isLoading = true);
-  //   final cameras = await availableCameras();
-  //   final front = cameras.firstWhere(
-  //       (camera) => camera.lensDirection == CameraLensDirection.front);
-  //   final back = cameras.firstWhere(
-  //       (camera) => camera.lensDirection == CameraLensDirection.back);
-
-  //   final deviceInfo = DeviceInfoPlugin();
-  //   final androidInfo = await deviceInfo.androidInfo;
-
-  //   if (androidInfo.model.contains("SM-G")) {
-  //     // Samsung Galaxy S models
-  //     _cameraControllerfront = CameraController(front, ResolutionPreset.max);
-  //     _cameraController = CameraController(back, ResolutionPreset.max);
-  //     useTwoCamera = true;
-  //   } else {
-  //     // Other devices
-  //     _cameraController = CameraController(back, ResolutionPreset.max);
-  //   }
-
-  //   await _cameraController.initialize();
-  // }
 
   void checkpremium() async {
     if (_prefs.getUserFree == false || _prefs.getUserPremium) {
@@ -374,3 +349,29 @@ class _PushAlertPageState extends State<PushAlertPage> {
     );
   }
 }
+
+
+
+  // Future<void> setupCameras() async {
+  //   setState(() => _isLoading = true);
+  //   final cameras = await availableCameras();
+  //   final front = cameras.firstWhere(
+  //       (camera) => camera.lensDirection == CameraLensDirection.front);
+  //   final back = cameras.firstWhere(
+  //       (camera) => camera.lensDirection == CameraLensDirection.back);
+
+  //   final deviceInfo = DeviceInfoPlugin();
+  //   final androidInfo = await deviceInfo.androidInfo;
+
+  //   if (androidInfo.model.contains("SM-G")) {
+  //     // Samsung Galaxy S models
+  //     _cameraControllerfront = CameraController(front, ResolutionPreset.max);
+  //     _cameraController = CameraController(back, ResolutionPreset.max);
+  //     useTwoCamera = true;
+  //   } else {
+  //     // Other devices
+  //     _cameraController = CameraController(back, ResolutionPreset.max);
+  //   }
+
+  //   await _cameraController.initialize();
+  // }

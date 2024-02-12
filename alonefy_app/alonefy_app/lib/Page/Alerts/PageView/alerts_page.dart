@@ -8,12 +8,8 @@ import 'package:ifeelefine/Common/utils.dart';
 import 'package:ifeelefine/Model/logAlertsBD.dart';
 import 'package:ifeelefine/Page/Alerts/Controller/alertsController.dart';
 import 'package:ifeelefine/Page/Alerts/Widget/alert_list_group_widget.dart';
-import 'package:ifeelefine/Page/Alerts/Widget/list_alert.dart';
-import 'package:ifeelefine/Page/Disamble/Pageview/disambleIfeelfine_page.dart';
 
-import 'package:ifeelefine/Utils/Widgets/elevatedButtonFilling.dart';
 import 'package:ifeelefine/Utils/Widgets/loading_page.dart';
-import 'package:ifeelefine/main.dart';
 
 import 'package:notification_center/notification_center.dart';
 
@@ -35,12 +31,9 @@ class _AlertsPageState extends State<AlertsPage> {
   RxMap<String, Map<String, List<LogAlertsBD>>> newGroup =
       RxMap<String, Map<String, List<LogAlertsBD>>>();
   Future<void> getLog() async {
-    // groupedProducts.value = {};
-
-    // groupedProducts.value = await alertsVC.getAllMov();
     newGroup = await alertsVC.getAllMov2();
     newGroup.values;
-    // _group.value = groupedProducts;
+
     _isLoading = false;
     setState(() {});
   }
