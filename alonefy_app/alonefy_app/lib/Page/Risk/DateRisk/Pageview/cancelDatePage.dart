@@ -162,19 +162,11 @@ class _CancelDatePageState extends State<CancelDatePage> {
         prefs.setCancelIdDate = contactRiskTemp.id;
         _prefs.setListDate = false;
         await flutterLocalNotificationsPlugin.cancelAll();
-        RiskController? riskVC;
-        try {
-          riskVC = Get.find<RiskController>();
-        } catch (e) {
-          // Si Get.find lanza un error, eso significa que el controlador no está en el árbol de widgets.
-          // En ese caso, usamos Get.put para agregar el controlador al árbol de widgets.
-          riskVC = Get.put(RiskController());
-        }
-
-// Ahora, puedes utilizar riskVC normalmente sabiendo que está disponible.
-        if (riskVC != null) {
-          riskVC.update();
-        }
+        _prefs.setNotificationId = -1;
+        _prefs.setNotificationType = "";
+        mainController.refreshRiskList();
+        mainController.refreshHome();
+        mainController.refreshAlerts();
         await Get.off(const HomePage());
       }
     }
@@ -218,7 +210,7 @@ class _CancelDatePageState extends State<CancelDatePage> {
     }
     await service.startService();
     await activateService();
-    await Get.offAll(const HomePage());
+    await Get.off(const HomePage());
   }
 
   void startTimer() {
@@ -230,17 +222,16 @@ class _CancelDatePageState extends State<CancelDatePage> {
         () {
           if (secondsRemaining < 1) {
             countTimer.value = 30;
+            secondsRemaining = 30;
             showSaveAlert(context, Constant.info,
                 "El servidor de AlertFriends envió una alerta con tu última ubicación");
             timer.cancel();
             _prefs.setCountFinish = true;
-            setState(() {});
-            // gotoHome();
           } else {
             secondsRemaining -= 1;
+
             _prefs.setTimerCancelZone = secondsRemaining;
             countTimer.value = secondsRemaining;
-            setState(() {});
           }
         },
       ),
@@ -248,8 +239,8 @@ class _CancelDatePageState extends State<CancelDatePage> {
   }
 
   String get timerText {
-    int minutes = (secondsRemaining ~/ 60);
-    int seconds = (secondsRemaining % 60);
+    int minutes = (countTimer ~/ 60);
+    int seconds = (countTimer.toInt() % 60);
     return '$minutes:${seconds.toString().padLeft(2, '0')}';
   }
 

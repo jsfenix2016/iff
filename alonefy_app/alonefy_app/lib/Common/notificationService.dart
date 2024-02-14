@@ -8,6 +8,7 @@ import 'package:get/get.dart';
 import 'package:ifeelefine/Common/Constant.dart';
 import 'package:ifeelefine/Common/colorsPalette.dart';
 import 'package:ifeelefine/Common/idleLogic.dart';
+import 'package:ifeelefine/Common/utils.dart';
 
 import 'package:ifeelefine/Controllers/mainController.dart';
 
@@ -173,14 +174,16 @@ class RedirectViewNotifier with ChangeNotifier {
         data.containsValue(Constant.finishRiskDate)) {
       final editRiskController = Get.put(EditRiskController());
       var id = int.parse(data['id']);
-      prefs.setNotificationType = "Date";
+
       if (data.containsValue(Constant.startRiskDate)) {
         if (id != prefs.getCancelIdDate) {
+          prefs.setNotificationType = "Cita";
           editRiskController.updateContactRiskWhenDateStarted(id);
           showDateNotifications(message);
         }
       } else {
         if (id != prefs.getCancelIdDate) {
+          prefs.setNotificationType = "Cita";
           final mainController = Get.put(MainController());
           mainController.saveUserLog(
               "Cita finalizada", DateTime.now(), prefs.getIdDateGroup);
@@ -286,7 +289,6 @@ class RedirectViewNotifier with ChangeNotifier {
             const DrawableResourceAndroidBitmap('@mipmap/logo_alertfriends_v2'),
         showsUserInterface: false,
         cancelNotification: false,
-        allowGeneratedReplies: true,
       ),
     ];
 
@@ -302,8 +304,10 @@ class RedirectViewNotifier with ChangeNotifier {
     var list = [taskIds];
     prefs.setlistTaskIdsCancel = list;
     bool isFirstTimeNotification = true;
+
     await flutterLocalNotificationsPlugin
         .cancel(message.data.containsValue(Constant.inactivitySelf) ? 0 : 19);
+
     timerTempDown = Timer.periodic(const Duration(seconds: 1), (Timer t) {
       // Verificar si el temporizador ha sido cancelado antes de mostrar la notificación
 
@@ -389,9 +393,11 @@ class RedirectViewNotifier with ChangeNotifier {
         await flutterLocalNotificationsPlugin.getActiveNotifications();
     var existNotification =
         lista.firstWhereOrNull((element) => element.id == 100);
+
+    print(" existe  la notificacion o no? -> $existNotification");
     if (isFirstTimeNotification || existNotification != null) {
       isFirstTimeNotification = false;
-
+      print(" existe  la notificacion -> $existNotification");
       await flutterLocalNotificationsPlugin.show(
         100,
         "Advertencia",

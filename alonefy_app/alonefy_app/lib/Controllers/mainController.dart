@@ -17,6 +17,7 @@ import 'package:ifeelefine/Page/Contact/Notice/Controller/contactNoticeControlle
 import 'package:ifeelefine/Page/Historial/Controller/historial_controller.dart';
 import 'package:ifeelefine/Page/HomePage/Controller/homeController.dart';
 import 'package:ifeelefine/Page/LogActivity/Controller/logActivity_controller.dart';
+import 'package:ifeelefine/Page/Risk/DateRisk/ListDateRisk/Controller/riskPageController.dart';
 import 'package:ifeelefine/Services/mainService.dart';
 import 'package:ifeelefine/main.dart';
 import 'package:notification_center/notification_center.dart';
@@ -174,6 +175,22 @@ class MainController extends GetxController {
     // Ahora, puedes utilizar riskVC normalmente sabiendo que está disponible.
     if (alertsVC != null) {
       alertsVC.update();
+    }
+  }
+
+  void refreshRiskList() {
+    RiskController? riskVC;
+    try {
+      riskVC = Get.find<RiskController>();
+    } catch (e) {
+      // Si Get.find lanza un error, eso significa que el controlador no está en el árbol de widgets.
+      // En ese caso, usamos Get.put para agregar el controlador al árbol de widgets.
+      riskVC = Get.put(RiskController());
+    }
+
+// Ahora, puedes utilizar riskVC normalmente sabiendo que está disponible.
+    if (riskVC != null) {
+      riskVC.update();
     }
   }
 }

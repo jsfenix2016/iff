@@ -52,7 +52,7 @@ class _AlertListWidgetState extends State<AlertListWidget> {
   void cancelNotify() async {
     List<String> a = _prefs.getlistTaskIdsCancel;
     var taskIdList = getTaskIdList(a.first);
-    if (_prefs.getNotificationType.toString().contains('Date')) {
+    if (_prefs.getNotificationType.toString().contains('Cita')) {
       var contactRisk = await const HiveDataRisk().getcontactRiskbd;
       if (taskIdList.isEmpty) {
         EditRiskController erisk = Get.put(EditRiskController());
@@ -84,6 +84,7 @@ class _AlertListWidgetState extends State<AlertListWidget> {
           RedirectViewNotifier.onTapNotification(taskIdList, (element.id));
         }
       }
+      widget.onRefresh(true);
       return;
     }
     if (_prefs.getNotificationType.toString().contains('Inactividad')) {

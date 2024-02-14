@@ -119,49 +119,45 @@ class _RiskPageState extends State<RiskPage> {
               ),
               Positioned(
                 bottom: 10,
-                child: Container(
-                  height: 50,
-                  width: size.width,
-                  color: Colors.transparent,
-                  child: ElevateButtonFilling(
-                    showIcon: true,
-                    onChanged: (value) async {
-                      initContact();
+                left: (size.width / 2) - 100,
+                child: ElevateButtonFilling(
+                  showIcon: true,
+                  onChanged: (value) async {
+                    initContact();
 
-                      MainController mainController = Get.put(MainController());
-                      var user = await mainController.getUserData();
+                    MainController mainController = Get.put(MainController());
+                    var user = await mainController.getUserData();
 
-                      if (user.idUser == "-1") {
-                        Route route = MaterialPageRoute(
-                          builder: (context) =>
-                              const UserConfigPage(isMenu: true),
-                        );
-                        Future.sync(
-                            () => Navigator.pushReplacement(context, route));
-                        return;
-                      }
+                    if (user.idUser == "-1") {
+                      Route route = MaterialPageRoute(
+                        builder: (context) =>
+                            const UserConfigPage(isMenu: true),
+                      );
+                      Future.sync(
+                          () => Navigator.pushReplacement(context, route));
+                      return;
+                    }
 
-                      // Get.off(
-                      //   EditRiskPage(
-                      //     contactRisk: contactTemp,
-                      //     index: riskVC.contactList.obs.value.length,
-                      //   ),
-                      // );
-                      setState(() {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => EditRiskPage(
-                              contactRisk: contactTemp,
-                              index: riskVC.contactList.obs.value.length,
-                            ),
+                    // Get.off(
+                    //   EditRiskPage(
+                    //     contactRisk: contactTemp,
+                    //     index: riskVC.contactList.obs.value.length,
+                    //   ),
+                    // );
+                    setState(() {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => EditRiskPage(
+                            contactRisk: contactTemp,
+                            index: riskVC.contactList.obs.value.length,
                           ),
-                        );
-                      });
-                    },
-                    mensaje: Constant.newDate,
-                    img: 'assets/images/plussWhite.png',
-                  ),
+                        ),
+                      );
+                    });
+                  },
+                  mensaje: Constant.newDate,
+                  img: 'assets/images/plussWhite.png',
                 ),
               ),
             ],

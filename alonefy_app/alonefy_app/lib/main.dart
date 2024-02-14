@@ -434,9 +434,8 @@ void onDidReceiveBackgroundNotificationResponse(
 
   cancelTimersNotify();
   mainController.refreshHome();
-  if (notificationResponse.id != 100) {
-    await flutterLocalNotificationsPlugin.cancel(notificationResponse.id!);
-  }
+
+  await flutterLocalNotificationsPlugin.cancel(notificationResponse.id!);
 
   switch (notificationResponse.notificationResponseType) {
     case NotificationResponseType.selectedNotification:
@@ -645,9 +644,8 @@ void onDidReceiveBackgroundNotificationResponse(
         }
 
         if (notificationResponse.payload!.contains("DateRisk_")) {
-          var id = prefs.getIdDateGroup;
           mainController.saveUserLog(
-              "Cita - solicito ayuda", DateTime.now(), id);
+              "Cita - solicito ayuda", DateTime.now(), prefs.getIdDateGroup);
         }
 
         cancelTimersNotify();
@@ -688,6 +686,7 @@ void onDidReceiveBackgroundNotificationResponse(
         }
         MainService().cancelAllNotifications(taskIdList);
         prefs.setNotificationType = "";
+        mainController.refreshHome();
         NotificationCenter().notify('refreshView');
         return;
       }
@@ -745,6 +744,7 @@ void onDidReceiveBackgroundNotificationResponse(
         }
 
         prefs.setNotificationType = "";
+        mainController.refreshHome();
         NotificationCenter().notify('refreshView');
         return Future.value();
       }
