@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:ifeelefine/Common/colorsPalette.dart';
+import 'package:ifeelefine/Common/text_style_font.dart';
 import 'package:ifeelefine/Model/logActivityBd.dart';
 
 class CellLogActivity extends StatefulWidget {
@@ -13,10 +13,6 @@ class CellLogActivity extends StatefulWidget {
 class _CellLogActivityState extends State<CellLogActivity> {
   @override
   Widget build(BuildContext context) {
-    var a = widget.logActive.movementType.contains('-');
-    if (a) {
-      var temp2 = widget.logActive.movementType.split('-');
-    }
     return Padding(
         padding: const EdgeInsets.fromLTRB(0, 8, 0, 0),
         child: Column(
@@ -27,26 +23,14 @@ class _CellLogActivityState extends State<CellLogActivity> {
                   child: Text(
                     widget.logActive.movementType,
                     textAlign: TextAlign.left,
-                    style: GoogleFonts.barlow(
-                      fontSize: 20.0,
-                      wordSpacing: 1,
-                      letterSpacing: 1,
-                      fontWeight: FontWeight.normal,
-                      color: Colors.white,
-                    ),
+                    style: textNormal20White(),
                   ),
                 ),
                 Expanded(
                   child: Text(
                     widget.logActive.time.toString(),
                     textAlign: TextAlign.right,
-                    style: GoogleFonts.barlow(
-                      fontSize: 16.0,
-                      wordSpacing: 1,
-                      letterSpacing: 1,
-                      fontWeight: FontWeight.normal,
-                      color: Colors.white,
-                    ),
+                    style: textNormal16White(),
                   ),
                 )
               ],

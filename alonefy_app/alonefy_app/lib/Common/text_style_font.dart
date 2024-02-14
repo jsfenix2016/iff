@@ -68,7 +68,7 @@ TextStyle textNomral18White() {
   return GoogleFonts.barlow(
     fontSize: 18.0,
     wordSpacing: 1,
-    letterSpacing: 1.2,
+    letterSpacing: 0.001,
     fontWeight: FontWeight.w400,
     color: Colors.white,
   );

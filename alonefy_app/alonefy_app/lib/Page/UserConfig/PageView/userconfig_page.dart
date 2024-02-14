@@ -1,5 +1,4 @@
 import 'package:google_fonts/google_fonts.dart';
-import 'package:http/http.dart';
 import 'package:ifeelefine/Common/Constant.dart';
 import 'package:ifeelefine/Common/button_style_custom.dart';
 import 'package:ifeelefine/Common/colorsPalette.dart';

@@ -8,8 +8,7 @@ import 'package:ifeelefine/Data/hive_constant_adapterInit.dart';
 import 'package:ifeelefine/Data/hive_data.dart';
 import 'package:ifeelefine/Model/ApiRest/ContactApi.dart';
 import 'package:ifeelefine/Model/contact.dart';
-import 'package:ifeelefine/Page/Contact/ListContact/Controller/list_contact_controller.dart';
-import 'package:ifeelefine/Page/Contact/Notice/Controller/contactNoticeController.dart';
+
 import 'package:ifeelefine/Page/Contact/Service/contactService.dart';
 import 'package:ifeelefine/main.dart';
 import 'package:notification_center/notification_center.dart';

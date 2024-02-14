@@ -415,5 +415,9 @@ class Constant {
       "No detectamos una acción en la notificación, necesitas ayuda?";
 
   static const String pageTitleVideoPreview = 'Video zona de riesgo';
+
+  static const String selectContact = "Selecciona un contacto";
+
+  static const String dissambleIFF = 'Desactivar AlertFriends';
   // static const String
 }

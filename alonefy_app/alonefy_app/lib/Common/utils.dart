@@ -988,6 +988,37 @@ int deactivateTimeToMinutes(String strTime) {
   }
 }
 
+String convertDateTimeToDisamble(DateTime dateTime) {
+  DateTime now = DateTime.now();
+  Duration difference = now.difference(dateTime);
+
+  // Convertimos la diferencia de tiempo a horas
+  double differenceInHours = difference.inHours.toDouble();
+
+  if (differenceInHours >= 0 && differenceInHours <= 1) {
+    return "1 hora";
+  } else if (differenceInHours >= 0 && differenceInHours <= 2) {
+    return "2 horas";
+  } else if (differenceInHours >= 0 && differenceInHours <= 3) {
+    return "3 horas";
+  } else if (differenceInHours >= 0 && differenceInHours <= 8) {
+    return "8 horas";
+  } else if (differenceInHours >= 0 && differenceInHours <= 24) {
+    return "24 horas";
+  } else if (differenceInHours >= 0 && differenceInHours <= 24 * 7) {
+    // 1 semana
+    return "1 semana";
+  } else if (differenceInHours >= 0 && differenceInHours <= 24 * 30) {
+    // 1 mes
+    return "1 mes";
+  } else if (differenceInHours >= 0 && differenceInHours <= 24 * 365) {
+    // 1 año
+    return "1 año";
+  } else {
+    return "Siempre";
+  }
+}
+
 String calculateTimeToActivation(String deactivatedTimeString) {
   if (_prefs.getDisambleTimeIFF == "") {
     return "";

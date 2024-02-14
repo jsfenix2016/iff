@@ -1,13 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+
 import 'package:ifeelefine/Common/colorsPalette.dart';
+import 'package:ifeelefine/Common/initialize_models_bd.dart';
+import 'package:ifeelefine/Common/notificationService.dart';
 import 'package:ifeelefine/Common/text_style_font.dart';
 import 'package:ifeelefine/Common/utils.dart';
+import 'package:ifeelefine/Data/hiveRisk_data.dart';
+import 'package:ifeelefine/Model/contactRiskBD.dart';
 import 'package:ifeelefine/Model/logAlertsBD.dart';
-import 'package:ifeelefine/Page/Disamble/Pageview/disambleIfeelfine_page.dart';
+import 'package:ifeelefine/Page/Risk/DateRisk/Controller/editRiskController.dart';
+import 'package:ifeelefine/Page/Risk/DateRisk/ListDateRisk/Controller/riskPageController.dart';
+
 import 'package:ifeelefine/Provider/prefencesUser.dart';
 import 'package:ifeelefine/Services/mainService.dart';
 import 'package:ifeelefine/Utils/Widgets/elevatedButtonFilling.dart';
+import 'package:ifeelefine/Utils/Widgets/line_paint.dart';
 import 'package:ifeelefine/main.dart';
 
 class AlertListWidget extends StatefulWidget {
@@ -44,6 +52,40 @@ class _AlertListWidgetState extends State<AlertListWidget> {
   void cancelNotify() async {
     List<String> a = _prefs.getlistTaskIdsCancel;
     var taskIdList = getTaskIdList(a.first);
+    if (_prefs.getNotificationType.toString().contains('Date')) {
+      var contactRisk = await const HiveDataRisk().getcontactRiskbd;
+      if (taskIdList.isEmpty) {
+        EditRiskController erisk = Get.put(EditRiskController());
+        RiskController risk = Get.put(RiskController());
+        var resp = await risk.getContactsRisk();
+        ContactRiskBD tempcontact = initContactRisk();
+        for (var temp in resp) {
+          DateTime starTime = parseContactRiskDate(temp.timeinit);
+          bool isafter = DateTime.now().isAfter(starTime);
+          if (!temp.isActived &&
+              temp.isprogrammed &&
+              isafter &&
+              temp.isFinishTime == false) {
+            tempcontact = temp;
+          }
+        }
+
+        var contactRiskTemp = tempcontact;
+
+        if (contactRiskTemp.id != -1) {
+          await erisk.updateContactRisk(contactRiskTemp);
+        }
+
+        return;
+      }
+      _prefs.saveLastScreenRoute("cancelDate");
+      for (var element in contactRisk) {
+        if (element.isActived || element.isFinishTime) {
+          RedirectViewNotifier.onTapNotification(taskIdList, (element.id));
+        }
+      }
+      return;
+    }
     if (_prefs.getNotificationType.toString().contains('Inactividad')) {
       mainController.saveUserLog("Inactividad - Actividad detectada ",
           DateTime.now(), _prefs.getIdInactiveGroup);
@@ -60,6 +102,22 @@ class _AlertListWidgetState extends State<AlertListWidget> {
     await flutterLocalNotificationsPlugin.cancel(_prefs.getNotificationId!);
     _prefs.setNotificationId = -1;
     widget.onRefresh(true);
+  }
+
+  void expandedCell(int indexGroup, String alertType) {
+    final date = widget.groupedAlerts.entries.elementAt(indexGroup);
+    final alertTypes = widget.groupedAlerts[date.key]!;
+    final indexTemp = alertTypes.keys.toList().indexOf(alertType);
+
+    if (isExpanded && selectedCellIndex == indexTemp) {
+      isExpanded = false;
+    } else {
+      isExpanded = true;
+      selectedCellIndex = indexTemp;
+      dateRow = date.key;
+    }
+
+    setState(() {});
   }
 
   @override
@@ -123,7 +181,7 @@ class _AlertListWidgetState extends State<AlertListWidget> {
                                       final alertTypes =
                                           widget.groupedAlerts[date]!;
                                       print(alertTypes.values.first);
-                                      // deleteForDayMov(context, a.value);
+
                                       widget.onChangedDelete(
                                           alertTypes.values.first);
                                     },
@@ -145,23 +203,7 @@ class _AlertListWidgetState extends State<AlertListWidget> {
                       padding: const EdgeInsets.only(top: 10.0),
                       child: GestureDetector(
                         onTap: () {
-                          print(
-                              "tap: ${widget.groupedAlerts.keys.elementAt(indexGroup)}");
-                          final date = widget.groupedAlerts.entries
-                              .elementAt(indexGroup);
-                          final alertTypes = widget.groupedAlerts[date.key]!;
-                          final indexTemp =
-                              alertTypes.keys.toList().indexOf(alertType);
-
-                          if (isExpanded && selectedCellIndex == indexTemp) {
-                            isExpanded = false;
-                          } else {
-                            isExpanded = true;
-                            selectedCellIndex = indexTemp;
-                            dateRow = date.key;
-                          }
-
-                          setState(() {});
+                          expandedCell(indexGroup, alertType);
                         },
                         child: AnimatedContainer(
                           duration: const Duration(milliseconds: 300),
@@ -220,7 +262,7 @@ class _AlertListWidgetState extends State<AlertListWidget> {
                                 ListView.builder(
                                   physics: const NeverScrollableScrollPhysics(),
                                   shrinkWrap: true,
-                                  reverse: true,
+                                  reverse: false,
                                   scrollDirection: Axis.vertical,
                                   itemExtent: 120.0,
                                   itemCount: alertTypes[alertType]!.length,
@@ -235,29 +277,7 @@ class _AlertListWidgetState extends State<AlertListWidget> {
                                         listAlerts[indexAlert].type;
                                     return GestureDetector(
                                       onTap: () {
-                                        print(
-                                            "tap: ${widget.groupedAlerts.keys.elementAt(indexGroup)}");
-                                        var a = widget.groupedAlerts.keys
-                                            .elementAt(indexGroup);
-                                        final date = widget
-                                            .groupedAlerts.entries
-                                            .elementAt(indexGroup);
-                                        final alertTypes =
-                                            widget.groupedAlerts[date.key]!;
-                                        final indexTemp = alertTypes.keys
-                                            .toList()
-                                            .indexOf(alertType);
-
-                                        if (isExpanded &&
-                                            selectedCellIndex == indexTemp) {
-                                          isExpanded = false;
-                                        } else {
-                                          isExpanded = true;
-                                          selectedCellIndex = indexTemp;
-                                          dateRow = date.key;
-                                        }
-
-                                        setState(() {});
+                                        expandedCell(indexGroup, alertType);
                                       },
                                       child: ListTile(
                                         title: Center(
@@ -361,23 +381,32 @@ class _AlertListWidgetState extends State<AlertListWidget> {
                                                     ],
                                                   ),
                                                 ),
-                                                indexAlert > 0 &&
-                                                        listAlerts.length >
-                                                            indexAlert
-                                                    ? Positioned(
-                                                        left: 20,
-                                                        top: 130 /
-                                                            2, // La posición horizontal de la línea
-                                                        child: CustomPaint(
-                                                          painter:
-                                                              _LinePainter(),
-                                                        ),
-                                                      )
-                                                    : Container(
-                                                        color:
-                                                            Colors.transparent,
-                                                        height: 1,
-                                                      ),
+                                                if (isExpanded == true &&
+                                                    indexAlert >= 0 &&
+                                                    alertTypes.keys
+                                                            .toList()[
+                                                                selectedCellIndex]
+                                                            .length >
+                                                        indexAlert &&
+                                                    (selectedCellIndex ==
+                                                        alertTypes.keys
+                                                            .toList()
+                                                            .indexOf(
+                                                                alertType)) &&
+                                                    dateRow ==
+                                                        widget
+                                                            .groupedAlerts.keys
+                                                            .elementAt(
+                                                                indexGroup)) ...[
+                                                  Positioned(
+                                                    left: 20,
+                                                    top: 130 /
+                                                        2, // La posición horizontal de la línea
+                                                    child: CustomPaint(
+                                                      painter: LinePainter(),
+                                                    ),
+                                                  )
+                                                ]
                                               ],
                                             ),
                                           ),
@@ -402,94 +431,3 @@ class _AlertListWidgetState extends State<AlertListWidget> {
     );
   }
 }
-
-class _LinePainter extends CustomPainter {
-  @override
-  void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = ColorPalette.principal
-      ..strokeWidth = 1.5;
-
-    canvas.drawLine(
-        const Offset(0.0, 70 / 2), Offset(size.width, size.height / 2), paint);
-  }
-
-  @override
-  bool shouldRepaint(_LinePainter oldDelegate) => false;
-}
-// ListView.builder(
-//                                   itemCount: listLog.length,
-//                                   itemBuilder:
-//                                       (BuildContext context, int index) {
-//                                     return ListTile(
-//                                       title: Container(
-//                                         color: Colors.transparent,
-//                                         height: 130,
-//                                         width: 290,
-//                                         child: Stack(
-//                                           children: [
-//                                             Container(
-//                                               width: 290,
-//                                               color: Colors.transparent,
-//                                               child: Row(
-//                                                 mainAxisSize: MainAxisSize.min,
-//                                                 children: [
-//                                                   IconButton(
-//                                                     iconSize: 35,
-//                                                     color:
-//                                                         ColorPalette.principal,
-//                                                     onPressed: () {},
-//                                                     icon: searchImageForIcon(
-//                                                         listLog[index].type),
-//                                                   ),
-//                                                   Expanded(
-//                                                     flex: 1,
-//                                                     child: Container(
-//                                                       color: Colors.transparent,
-//                                                       height: 70,
-//                                                       child: Stack(children: [
-//                                                         Positioned(
-//                                                           top: 10,
-//                                                           child: Text(
-//                                                             listLog[index].type,
-//                                                             textAlign:
-//                                                                 TextAlign.left,
-//                                                             style:
-//                                                                 textNormal16White(),
-//                                                           ),
-//                                                         ),
-//                                                         Positioned(
-//                                                           top: 40,
-//                                                           child: Text(
-//                                                             '${listLog[index].time.day}-${listLog[index].time.month}-${listLog[index].time.year} | ${listLog[index].time.hour}:${listLog[index].time.minute}',
-//                                                             textAlign:
-//                                                                 TextAlign.left,
-//                                                             style:
-//                                                                 textNormal16White(),
-//                                                           ),
-//                                                         ),
-//                                                       ]),
-//                                                     ),
-//                                                   ),
-//                                                 ],
-//                                               ),
-//                                             ),
-//                                             index >= 0 &&
-//                                                     index < listLog.length - 1
-//                                                 ? Positioned(
-//                                                     left: 25,
-//                                                     top: 140 /
-//                                                         2, // La posición horizontal de la línea
-//                                                     child: CustomPaint(
-//                                                       painter: _LinePainter(),
-//                                                     ),
-//                                                   )
-//                                                 : const SizedBox(
-//                                                     height: 0,
-//                                                   ),
-//                                           ],
-//                                         ),
-//                                       ),
-//                                     );
-//                                   });
-//                             }

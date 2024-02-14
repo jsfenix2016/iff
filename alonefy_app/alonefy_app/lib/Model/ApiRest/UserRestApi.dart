@@ -1,5 +1,3 @@
-import 'package:ifeelefine/Common/utils.dart';
-
 class UserRestApi {
   late String phoneNumber;
   late String dayOfWeek;

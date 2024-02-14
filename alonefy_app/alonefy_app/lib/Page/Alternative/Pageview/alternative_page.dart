@@ -12,7 +12,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:ifeelefine/Utils/Widgets/elevateButtonCustomBorder.dart';
 import 'package:ifeelefine/Common/decoration_custom.dart';
 import 'package:ifeelefine/Utils/Widgets/widgetLogo.dart';
-import 'package:ifeelefine/main.dart';
 
 class AlternativePage extends StatefulWidget {
   const AlternativePage({super.key});

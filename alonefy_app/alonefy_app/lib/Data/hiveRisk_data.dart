@@ -1,4 +1,3 @@
-import 'package:flutter/src/foundation/change_notifier.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:ifeelefine/Common/initialize_models_bd.dart';
 import 'package:ifeelefine/Model/contactRiskBD.dart';
@@ -64,8 +63,6 @@ class HiveDataRisk {
         index++;
       }
       print("delete");
-      // final listDate = box.values.toList();
-      // contactNotifiers.value = listDate;
     } catch (error) {
       print(error);
     }

@@ -3,7 +3,6 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ifeelefine/Common/colorsPalette.dart';
 import 'package:ifeelefine/Common/utils.dart';
-import 'package:ifeelefine/main.dart';
 
 import 'package:jiffy/jiffy.dart';
 import 'package:ifeelefine/Common/decoration_custom.dart';

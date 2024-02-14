@@ -1,7 +1,8 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+
 import 'package:ifeelefine/Common/colorsPalette.dart';
+import 'package:ifeelefine/Common/text_style_font.dart';
 import 'package:ifeelefine/Common/utils.dart';
 import 'package:ifeelefine/Model/logAlertsBD.dart';
 import 'package:ifeelefine/Page/Historial/PageView/preview_video_screen.dart';
@@ -33,7 +34,7 @@ class _CellZoneRiskState extends State<CellZoneRisk> {
         key: 'video_key',
       );
       fileTemp = videoFile;
-      var pa = videoFile.basename;
+
       _videoPlayerController = VideoPlayerController.file(videoFile);
       _initializeVideoPlayerFuture = _videoPlayerController.initialize();
     }
@@ -85,13 +86,7 @@ class _CellZoneRiskState extends State<CellZoneRisk> {
                 child: Text(
                   "Zona - ${DateFormat('dd-MM-yyyy').format(widget.logAlert.time).toString()} | ${widget.logAlert.time.hour.toString().padLeft(2, '0')}: ${widget.logAlert.time.minute.toString().padLeft(2, '0')}",
                   textAlign: TextAlign.left,
-                  style: GoogleFonts.barlow(
-                    fontSize: 16.0,
-                    wordSpacing: 1,
-                    letterSpacing: 0.001,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
+                  style: textBold16White(),
                 ),
               ),
             ],

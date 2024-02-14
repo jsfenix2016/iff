@@ -397,9 +397,7 @@ Future<void> activateService() async {
   await flutterLocalNotificationsPlugin.initialize(
     initializationSettings,
     onDidReceiveNotificationResponse:
-        (NotificationResponse notificationResponse) {
-      onDidReceiveBackgroundNotificationResponse(notificationResponse);
-    },
+        onDidReceiveBackgroundNotificationResponse,
     onDidReceiveBackgroundNotificationResponse:
         onDidReceiveBackgroundNotificationResponse,
   );
@@ -436,8 +434,10 @@ void onDidReceiveBackgroundNotificationResponse(
 
   cancelTimersNotify();
   mainController.refreshHome();
+  if (notificationResponse.id != 100) {
+    await flutterLocalNotificationsPlugin.cancel(notificationResponse.id!);
+  }
 
-  await flutterLocalNotificationsPlugin.cancel(notificationResponse.id!);
   switch (notificationResponse.notificationResponseType) {
     case NotificationResponseType.selectedNotification:
       if (notificationResponse.payload!.contains('ContactResponse')) {
@@ -500,7 +500,7 @@ void onDidReceiveBackgroundNotificationResponse(
         String taskIds =
             notificationResponse.actionId!.replaceAll("Inactived_", "");
         var taskIdList = getTaskIdList(taskIds);
-        await flutterLocalNotificationsPlugin.cancel(notificationResponse.id!);
+
         cancelTimersNotify();
         if (notificationResponse.payload!.contains("Inactived_")) {
           mainController.saveUserLog("Inactividad - solicito ayuda",
@@ -513,6 +513,7 @@ void onDidReceiveBackgroundNotificationResponse(
         }
 
         MainService().cancelAllNotifications(taskIdList);
+        await flutterLocalNotificationsPlugin.cancel(notificationResponse.id!);
         prefs.setNotificationType = "";
         mainController.refreshHome();
         return;
@@ -524,41 +525,43 @@ void onDidReceiveBackgroundNotificationResponse(
         var taskIdList = getTaskIdList(taskIds);
 
         rxIdTask.value = taskIds;
-
         _prefs.setlistTaskIdsCancel = taskIdList;
         notActionPush = true;
+
         var contactRisk = await const HiveDataRisk().getcontactRiskbd;
+
         if (taskIds.isEmpty) {
           EditRiskController erisk = Get.put(EditRiskController());
           RiskController risk = Get.put(RiskController());
           var resp = await risk.getContactsRisk();
           ContactRiskBD tempcontact = initContactRisk();
+
           for (var temp in resp) {
             DateTime starTime = parseContactRiskDate(temp.timeinit);
             bool isafter = DateTime.now().isAfter(starTime);
             if (!temp.isActived &&
                 temp.isprogrammed &&
                 isafter &&
-                temp.isFinishTime == false) {
+                !temp.isFinishTime) {
               tempcontact = temp;
             }
           }
 
-          var contactRiskTemp = tempcontact;
-
-          if (contactRiskTemp.id != -1) {
-            await erisk.updateContactRisk(contactRiskTemp);
+          if (tempcontact.id != -1) {
+            await erisk.updateContactRisk(tempcontact);
           }
 
           return;
         }
+
         _prefs.saveLastScreenRoute("cancelDate");
+
         for (var element in contactRisk) {
           if (element.isActived || element.isFinishTime) {
-            RedirectViewNotifier.onTapNotification(
-                notificationResponse, taskIdList, (element.id));
+            RedirectViewNotifier.onTapNotification(taskIdList, element.id);
           }
         }
+
         await flutterLocalNotificationsPlugin.cancel(notificationResponse.id!);
         prefs.setNotificationType = "";
         mainController.refreshHome();
@@ -594,16 +597,14 @@ void onDidReceiveBackgroundNotificationResponse(
 
       if (notificationResponse.actionId != null &&
           notificationResponse.actionId!.contains("imgoodId")) {
+        cancelTimersNotify();
         String taskIds =
             notificationResponse.actionId!.replaceAll("imgoodId_", "");
         var taskIdList = getTaskIdList(taskIds);
         ismove = false;
         timerActive = true;
-        await flutterLocalNotificationsPlugin.cancel(notificationResponse.id!);
 
         if (notificationResponse.payload!.contains("DateRisk_")) {
-          mainController.saveUserLog(
-              "Cita - Cancelada ", DateTime.now(), prefs.getIdDateGroup);
           RiskController riskVC = Get.find<RiskController>();
           riskVC.update();
         }
@@ -611,8 +612,6 @@ void onDidReceiveBackgroundNotificationResponse(
         if (notificationResponse.payload!.contains("Inactived_")) {
           mainController.saveUserLog("Inactividad - Actividad detectada ",
               DateTime.now(), prefs.getIdInactiveGroup);
-          await flutterLocalNotificationsPlugin.cancel(100);
-          await flutterLocalNotificationsPlugin.cancel(0);
         }
 
         if (notificationResponse.payload!.contains("Drop_")) {
@@ -620,10 +619,8 @@ void onDidReceiveBackgroundNotificationResponse(
               "Caida cancelada", DateTime.now(), prefs.getIdDropGroup);
         }
 
-        cancelTimersNotify();
         MainService().cancelAllNotifications(taskIdList);
-
-        await flutterLocalNotificationsPlugin.cancel(notificationResponse.id!);
+        // await flutterLocalNotificationsPlugin.cancel(100);
         prefs.setNotificationType = "";
         mainController.refreshHome();
         return;
@@ -732,16 +729,21 @@ void onDidReceiveBackgroundNotificationResponse(
           contactRiskTemp.isFinishTime = true;
           await erisk.updateContactRisk(contactRiskTemp);
           riskVC.update();
-          mainController.saveUserLog(
-              "Cita - Cancelada ", DateTime.now(), prefs.getIdDateGroup);
+          RedirectViewNotifier.onTapNotification(taskIdList, int.parse(id));
         }
 
         if (notificationResponse.payload!.contains("Drop_")) {
           mainController.saveUserLog(
               "Caida - estoy bien", DateTime.now(), prefs.getIdDropGroup);
+          MainService().cancelAllNotifications(taskIdList);
         }
-        RedirectViewNotifier.onTapNotification(
-            notificationResponse, taskIdList, int.parse(id));
+
+        if (notificationResponse.payload!.contains("Inactived_")) {
+          mainController.saveUserLog("Inactividad -  estoy bien",
+              DateTime.now(), prefs.getIdDropGroup);
+          MainService().cancelAllNotifications(taskIdList);
+        }
+
         prefs.setNotificationType = "";
         NotificationCenter().notify('refreshView');
         return Future.value();

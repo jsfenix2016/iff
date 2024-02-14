@@ -7,7 +7,8 @@ import 'package:ifeelefine/Common/utils.dart';
 import 'package:ifeelefine/Model/logAlertsBD.dart';
 import 'package:ifeelefine/Page/Disamble/Pageview/disambleIfeelfine_page.dart';
 import 'package:ifeelefine/Utils/Widgets/elevatedButtonFilling.dart';
-import 'package:ifeelefine/main.dart';
+import 'package:ifeelefine/Utils/Widgets/line_paint.dart';
+
 import '../Controller/alertsController.dart';
 
 class ListAlert extends StatefulWidget {
@@ -137,14 +138,13 @@ class _ListAlertState extends State<ListAlert> {
                                           ],
                                         ),
                                       ),
-                                      index >= 0 &&
-                                              index < listAlerts.length - 1
+                                      index >= 0 && index < listAlerts.length
                                           ? Positioned(
                                               left: 25,
                                               top: 140 /
                                                   2, // La posición horizontal de la línea
                                               child: CustomPaint(
-                                                painter: _LinePainter(),
+                                                painter: LinePainter(),
                                               ),
                                             )
                                           : const SizedBox(
@@ -189,19 +189,4 @@ class _ListAlertState extends State<ListAlert> {
       },
     );
   }
-}
-
-class _LinePainter extends CustomPainter {
-  @override
-  void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = ColorPalette.principal
-      ..strokeWidth = 1.5;
-
-    canvas.drawLine(
-        const Offset(0.0, 70 / 2), Offset(size.width, size.height / 2), paint);
-  }
-
-  @override
-  bool shouldRepaint(_LinePainter oldDelegate) => false;
 }

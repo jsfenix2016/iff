@@ -16,7 +16,7 @@ import '../../../Controllers/mainController.dart';
 PreferenceUser prefs = PreferenceUser();
 
 class DisambleController extends GetxController {
-  Future<void> saveDisamble(BuildContext context, String deactivateTime) async {
+  Future<bool> saveDisamble(BuildContext context, String deactivateTime) async {
     await Jiffy.locale('es');
     var datetime = Jiffy(DateTime.now()).format(getDefaultPattern());
 
@@ -59,5 +59,6 @@ class DisambleController extends GetxController {
                 context, Constant.info, Constant.disambleProtectedError)
           });
     }
+    return true;
   }
 }

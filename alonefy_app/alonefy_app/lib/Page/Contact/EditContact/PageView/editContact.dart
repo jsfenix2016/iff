@@ -13,7 +13,7 @@ import 'package:ifeelefine/Page/Contact/Notice/Controller/contactNoticeControlle
 import 'package:ifeelefine/Utils/Widgets/elevateButtonCustomBorder.dart';
 import 'package:ifeelefine/Utils/Widgets/selectTimerCallSendSMS.dart';
 import 'package:ifeelefine/Utils/Widgets/widgedContact.dart';
-import 'package:ifeelefine/main.dart';
+
 import 'package:notification_center/notification_center.dart';
 import 'package:ifeelefine/Common/decoration_custom.dart';
 

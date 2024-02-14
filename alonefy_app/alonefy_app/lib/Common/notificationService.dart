@@ -57,9 +57,7 @@ class RedirectViewNotifier with ChangeNotifier {
     Get.appUpdate();
   }
 
-  static Future<void> onTapNotification(
-      NotificationResponse? response, List<String> taskIds, int id) async {
-    if (response?.payload == null) return;
+  static Future<void> onTapNotification(List<String> taskIds, int id) async {
     prefs.saveLastScreenRoute("cancelDate");
     prefs.setSelectContactRisk = id;
 
@@ -278,7 +276,7 @@ class RedirectViewNotifier with ChangeNotifier {
         icon:
             const DrawableResourceAndroidBitmap('@mipmap/logo_alertfriends_v2'),
         showsUserInterface: false,
-        cancelNotification: true,
+        cancelNotification: false,
       ),
       AndroidNotificationAction(
         "imgoodId_$task",
@@ -287,7 +285,8 @@ class RedirectViewNotifier with ChangeNotifier {
         icon:
             const DrawableResourceAndroidBitmap('@mipmap/logo_alertfriends_v2'),
         showsUserInterface: false,
-        cancelNotification: true,
+        cancelNotification: false,
+        allowGeneratedReplies: true,
       ),
     ];
 
@@ -302,97 +301,111 @@ class RedirectViewNotifier with ChangeNotifier {
     taskIds ??= "";
     var list = [taskIds];
     prefs.setlistTaskIdsCancel = list;
-    // var duration = const Duration(minutes: 1);
+    bool isFirstTimeNotification = true;
+    await flutterLocalNotificationsPlugin
+        .cancel(message.data.containsValue(Constant.inactivitySelf) ? 0 : 19);
+    timerTempDown = Timer.periodic(const Duration(seconds: 1), (Timer t) {
+      // Verificar si el temporizador ha sido cancelado antes de mostrar la notificación
 
-    // timerSendDropNotification = Timer(duration, () async {
-    //   print(time);
-    // });
-
-    timerTempDown = Timer.periodic(const Duration(seconds: 1), (Timer t) async {
-      // Actualizar el contenido de la notificación en tiempo real
-      prefs.refreshData();
-
-      String updatedContent =
-          '${(timeRevert ~/ 60).toString().padLeft(2, '0')}:${(timeRevert % 60).toString().padLeft(2, '0')}';
-      notificationContentController.add(updatedContent);
-      var temp =
-          'No detectamos una acción en la notificación, necesitas ayuda?!'
-              .replaceAll(
-                  ",", ", En $updatedContent se notificara a tus contactos, ");
-      var bigTextStyleInformation =
-          BigTextStyleInformation(temp, htmlFormatBigText: true);
-      var androidPlatformChannelSpecifics = AndroidNotificationDetails(
-        "my_foreground",
-        "my_foreground",
-        playSound: false,
-        importance: Importance.high,
-        priority: Priority.max,
-        icon: '@mipmap/logo_alertfriends_v2',
-        color: ColorPalette.principal,
-        styleInformation: bigTextStyleInformation,
-        groupKey: message.data.containsValue(Constant.inactivitySelf)
-            ? "Inactive"
-            : 'Drop',
-        enableLights: true,
-        onlyAlertOnce: true,
-        enableVibration: false,
-        largeIcon: const DrawableResourceAndroidBitmap(
-            '@drawable/logo_alertfriends_v2_background'),
-        visibility: NotificationVisibility.public,
-        actions: actionButtonNotify(taskIds!),
-      );
-
-      var platformChannelSpecifics =
-          NotificationDetails(android: androidPlatformChannelSpecifics);
-      if (prefs.getEnableTimer == false || timeRevert <= 0) {
-        t.cancel();
-        timeRevert = 300;
-        await flutterLocalNotificationsPlugin.cancel(100);
-        await flutterLocalNotificationsPlugin.cancel(
-            message.data.containsValue(Constant.inactivitySelf) ? 0 : 19);
-
-        timerTempDown!.cancel();
-      } else {
-        if (prefs.getEnableTimer == false) {
+      if (timerTempDown!.isActive || t.isActive) {
+        if (prefs.getEnableTimer == false || timeRevert <= 0) {
           t.cancel();
-          timerTempDown!.cancel();
-          await flutterLocalNotificationsPlugin.cancel(100);
-          await flutterLocalNotificationsPlugin.cancel(
-              message.data.containsValue(Constant.inactivitySelf) ? 0 : 19);
+          timeRevert = 300;
 
+          timerTempDown!.cancel();
+          cancelNotification(100);
           return;
         }
-        await flutterLocalNotificationsPlugin.show(
-          100,
-          "Advertencia",
-          temp,
-          platformChannelSpecifics,
-          payload: message.data.containsValue(Constant.inactivitySelf)
-              ? 'Inactived_$message'
-              : 'Drop_$message',
-        );
-        prefs.setNotificationId = 100;
       }
 
-      timeRevert--;
+      if (t.isActive) {
+        // Actualizar el contenido de la notificación en tiempo real
+        prefs.refreshData();
 
-      if (timeRevert <= 0) {
-        t.cancel();
-        timeRevert = 300;
-        mainController.saveUserLog(
-            message.data.containsValue(Constant.inactivitySelf)
-                ? "Inactividad - no hubo respuesta"
-                : "Caida - no hubo respuesta",
-            DateTime.now(),
-            message.data.containsValue(Constant.inactivitySelf)
-                ? prefs.getIdInactiveGroup
-                : prefs.getIdDropGroup);
+        String updatedContent =
+            '${(timeRevert ~/ 60).toString().padLeft(2, '0')}:${(timeRevert % 60).toString().padLeft(2, '0')}';
 
-        await flutterLocalNotificationsPlugin.cancel(100);
-        await flutterLocalNotificationsPlugin.cancel(
-            message.data.containsValue(Constant.inactivitySelf) ? 0 : 19);
+        var temp =
+            'No detectamos una acción en la notificación, necesitas ayuda?!'
+                .replaceAll(",",
+                    ", En $updatedContent se notificara a tus contactos, ");
+        var bigTextStyleInformation =
+            BigTextStyleInformation(temp, htmlFormatBigText: true);
+        var androidPlatformChannelSpecifics = AndroidNotificationDetails(
+          "my_foreground",
+          "my_foreground",
+          playSound: false,
+          importance: Importance.high,
+          priority: Priority.max,
+          icon: '@mipmap/logo_alertfriends_v2',
+          color: ColorPalette.principal,
+          styleInformation: bigTextStyleInformation,
+          groupKey: message.data.containsValue(Constant.inactivitySelf)
+              ? "Inactive"
+              : 'Drop',
+          ongoing: true,
+          enableLights: true,
+          onlyAlertOnce: true,
+          enableVibration: false,
+          autoCancel: false,
+          largeIcon: const DrawableResourceAndroidBitmap(
+              '@drawable/logo_alertfriends_v2_background'),
+          visibility: NotificationVisibility.public,
+          actions: actionButtonNotify(taskIds!),
+        );
+
+        var platformChannelSpecifics =
+            NotificationDetails(android: androidPlatformChannelSpecifics);
+
+        showNotification(
+            temp, platformChannelSpecifics, message, isFirstTimeNotification);
+        prefs.setNotificationId = 100;
+
+        timeRevert--;
+
+        if (timeRevert <= 0) {
+          t.cancel();
+          timeRevert = 300;
+          mainController.saveUserLog(
+              message.data.containsValue(Constant.inactivitySelf)
+                  ? "Inactividad - no hubo respuesta"
+                  : "Caida - no hubo respuesta",
+              DateTime.now(),
+              message.data.containsValue(Constant.inactivitySelf)
+                  ? prefs.getIdInactiveGroup
+                  : prefs.getIdDropGroup);
+          cancelNotification(100);
+        }
       }
     });
+  }
+
+  static void showNotification(
+      String body,
+      NotificationDetails platformChannelSpecifics,
+      RemoteMessage message,
+      bool isFirstTimeNotification) async {
+    List<ActiveNotification> lista =
+        await flutterLocalNotificationsPlugin.getActiveNotifications();
+    var existNotification =
+        lista.firstWhereOrNull((element) => element.id == 100);
+    if (isFirstTimeNotification || existNotification != null) {
+      isFirstTimeNotification = false;
+
+      await flutterLocalNotificationsPlugin.show(
+        100,
+        "Advertencia",
+        body,
+        platformChannelSpecifics,
+        payload: message.data.containsValue(Constant.inactivitySelf)
+            ? 'Inactived_$message'
+            : 'Drop_$message',
+      );
+    }
+  }
+
+  static void cancelNotification(int id) async {
+    await flutterLocalNotificationsPlugin.cancel(id);
   }
 
   static Future<void> showDropNotification(RemoteMessage message) async {

@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:ifeelefine/Common/utils.dart';
 import 'package:ifeelefine/Model/ApiRest/ContactRiskApi.dart';
 import 'package:ifeelefine/Model/ApiRest/UseMobilApi.dart';

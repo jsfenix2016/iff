@@ -4,7 +4,7 @@ import 'package:ifeelefine/Data/hive_constant_adapterInit.dart';
 
 part 'ApiRest/contactRiskBD.g.dart';
 
-@HiveType(typeId: 5)
+@HiveType(typeId: HiveConstantAdapterInit.idContactRiskBDAdapter)
 class ContactRiskBD {
   ContactRiskBD(
       {required this.id,

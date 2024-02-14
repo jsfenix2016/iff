@@ -52,7 +52,6 @@ class _HistorialPageState extends State<HistorialPage> {
 
     var req = await alertsVC.deleteAlerts(context, time);
     if (req == 0) {
-      // NotificationCenter().notify('getAlerts');
       getLog();
     }
   }
@@ -78,7 +77,7 @@ class _HistorialPageState extends State<HistorialPage> {
 
   Widget alertZone(LogAlertsBD logAlert) {
     return LimitedBox(
-      maxHeight: 190,
+      maxHeight: 170,
       child: GestureDetector(
         onTap: () {},
         child: ListTile(
@@ -239,18 +238,3 @@ class _HistorialPageState extends State<HistorialPage> {
     );
   }
 }
-
-// class LinePainter extends CustomPainter {
-//   @override
-//   void paint(Canvas canvas, Size size) {
-//     final paint = Paint()
-//       ..color = ColorPalette.principal
-//       ..strokeWidth = 1.5;
-
-//     canvas.drawLine(
-//         const Offset(0.0, 70 / 2), Offset(size.width, size.height / 2), paint);
-//   }
-
-//   @override
-//   bool shouldRepaint(LinePainter oldDelegate) => false;
-// }

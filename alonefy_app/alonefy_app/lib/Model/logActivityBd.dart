@@ -3,7 +3,7 @@ import 'package:ifeelefine/Data/hive_constant_adapterInit.dart';
 
 part 'Adapters/logActivityBd.g.dart';
 
-@HiveType(typeId: 7)
+@HiveType(typeId: HiveConstantAdapterInit.idLogActivityBDAdapter)
 class LogActivityBD extends HiveObject {
   LogActivityBD(
       {required this.time, required this.movementType, required this.groupBy});

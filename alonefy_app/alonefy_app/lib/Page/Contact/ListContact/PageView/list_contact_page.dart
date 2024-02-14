@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:get/get.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:ifeelefine/Common/Constant.dart';
 import 'package:ifeelefine/Common/colorsPalette.dart';
 import 'package:ifeelefine/Common/manager_alerts.dart';
 import 'package:ifeelefine/Common/notificationService.dart';
+import 'package:ifeelefine/Common/text_style_font.dart';
 import 'package:ifeelefine/Common/utils.dart';
 import 'package:ifeelefine/Model/contact.dart';
 import 'package:ifeelefine/Page/Contact/ListContact/Controller/list_contact_controller.dart';
 import 'package:ifeelefine/Provider/prefencesUser.dart';
-import 'package:ifeelefine/main.dart';
+
 import 'package:notification_center/notification_center.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -185,26 +185,12 @@ class _ListContactState extends State<ListContact> {
                                                       .displayName
                                                       .trimRight(),
                                                   textAlign: TextAlign.center,
-                                                  style: GoogleFonts.barlow(
-                                                    fontSize: 18.0,
-                                                    wordSpacing: 1,
-                                                    letterSpacing: 1,
-                                                    fontWeight:
-                                                        FontWeight.normal,
-                                                    color: Colors.white,
-                                                  ),
+                                                  style: textNomral18White(),
                                                 )
                                               : Text(
-                                                  "Selecciona un contacto",
+                                                  Constant.selectContact,
                                                   textAlign: TextAlign.center,
-                                                  style: GoogleFonts.barlow(
-                                                    fontSize: 18.0,
-                                                    wordSpacing: 1,
-                                                    letterSpacing: 1,
-                                                    fontWeight:
-                                                        FontWeight.normal,
-                                                    color: Colors.white,
-                                                  ),
+                                                  style: textNomral18White(),
                                                 ),
                                         ),
                                       ),
@@ -220,18 +206,20 @@ class _ListContactState extends State<ListContact> {
                   );
                 }
                 return const Center(
-                    child: CircularProgressIndicator(
-                  color: ColorPalette.calendarNumber,
-                ));
+                  child: CircularProgressIndicator(
+                    color: ColorPalette.calendarNumber,
+                  ),
+                );
               },
             );
           } else if (snapshot.hasError) {
             return const Text("");
           } else {
             return const Center(
-                child: CircularProgressIndicator(
-              color: ColorPalette.calendarNumber,
-            ));
+              child: CircularProgressIndicator(
+                color: ColorPalette.calendarNumber,
+              ),
+            );
           }
         },
       );

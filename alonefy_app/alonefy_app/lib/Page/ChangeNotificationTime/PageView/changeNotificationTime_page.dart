@@ -10,7 +10,6 @@ import 'package:ifeelefine/Common/utils.dart';
 
 import 'package:ifeelefine/Page/Contact/Controller/contactUserController.dart';
 import 'package:ifeelefine/Page/Premium/Controller/premium_controller.dart';
-import 'package:ifeelefine/main.dart';
 
 import '../../../Common/Constant.dart';
 

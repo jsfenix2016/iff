@@ -100,7 +100,7 @@ class MainController extends GetxController {
 
   Future<void> saveDrop() async {
     var duration = Duration(minutes: stringTimeToInt(prefs.getFallTime));
-
+    print("getFallTime - ${stringTimeToInt(prefs.getFallTime)}");
     timerSendDropNotification = Timer(duration, () async {
       await inicializeHiveBD();
 

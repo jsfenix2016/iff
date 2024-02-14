@@ -9,14 +9,10 @@ import 'package:ifeelefine/Common/utils.dart';
 import 'package:ifeelefine/Page/Disamble/Controller/disambleController.dart';
 
 import 'package:flutter/material.dart';
-import 'package:ifeelefine/main.dart';
-import 'package:intl/intl.dart';
 
 import '../../../Common/colorsPalette.dart';
 import '../../../Provider/prefencesUser.dart';
 import 'package:ifeelefine/Common/decoration_custom.dart';
-
-final _prefs = PreferenceUser();
 
 class DesactivePage extends StatefulWidget {
   const DesactivePage({super.key, required this.isMenu});
@@ -26,6 +22,7 @@ class DesactivePage extends StatefulWidget {
 }
 
 class _DesactivePageState extends State<DesactivePage> {
+  final _prefs = PreferenceUser();
   final List<String> listDisamble = <String>[
     "1 hora",
     "2 horas",
@@ -61,15 +58,11 @@ class _DesactivePageState extends State<DesactivePage> {
   }
 
   void getDisamble() {
-    var count = 0;
-    for (var disamble in listDisamble) {
-      if (disamble == _prefs.getDisambleIFF) {
-        setState(() {
-          listDisambleEnabled[count] = true;
-        });
-        break;
-      }
-      count++;
+    var index = listDisamble.indexOf(_prefs.getDisambleIFF);
+    if (index != -1) {
+      setState(() {
+        listDisambleEnabled[index] = true;
+      });
     }
   }
 
@@ -93,168 +86,160 @@ class _DesactivePageState extends State<DesactivePage> {
       body: MediaQuery(
         data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
         child: Container(
-            decoration: decorationCustom(),
-            width: size.width,
-            height: size.height,
-            child: Stack(
-              children: <Widget>[
-                Positioned(
-                  top: 32,
-                  width: size.width,
-                  child: Center(
-                    child: Column(
-                      children: [
-                        Text(
-                          'Desactivar AlertFriends',
-                          textAlign: TextAlign.center,
-                          style: GoogleFonts.barlow(
-                            fontSize: 22.0,
-                            wordSpacing: 1,
-                            letterSpacing: 1.2,
-                            fontWeight: FontWeight.w500,
-                            color: Colors.white,
-                          ),
+          decoration: decorationCustom(),
+          width: size.width,
+          height: size.height,
+          child: Stack(
+            children: <Widget>[
+              Positioned(
+                top: 32,
+                width: size.width,
+                child: Center(
+                  child: Column(
+                    children: [
+                      Text(
+                        Constant.dissambleIFF,
+                        textAlign: TextAlign.center,
+                        style: GoogleFonts.barlow(
+                          fontSize: 22.0,
+                          wordSpacing: 1,
+                          letterSpacing: 1.2,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.white,
                         ),
-                        Text(
-                          calculateTimeToActivation(_prefs.getDisambleTimeIFF),
-                          textAlign: TextAlign.center,
-                          style: textNormal14White(),
-                        ),
-                      ],
-                    ),
+                      ),
+                      Text(
+                        calculateTimeToActivation(_prefs.getDisambleTimeIFF),
+                        textAlign: TextAlign.center,
+                        style: textNormal14White(),
+                      ),
+                    ],
                   ),
                 ),
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(0, 100, 0, 100),
-                  child: ListView.builder(
-                    itemCount: listDisamble.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      return Row(
-                        children: [
-                          Expanded(
-                              child: Align(
-                            alignment: Alignment.centerRight,
-                            child: TextButton(
-                                onPressed: () {
-                                  desactiveIFeelFine = listDisamble[index];
-                                  if (indexDisamble == index) {
-                                    indexDisamble = -1;
-                                  } else {
-                                    indexDisamble = index;
-                                  }
-                                },
-                                child: Text(listDisamble[index],
-                                    style: GoogleFonts.barlow(
-                                      fontSize: 20.0,
-                                      fontWeight: FontWeight.w500,
-                                      color: CupertinoColors.white,
-                                    ))),
-                          )),
-                          Expanded(
+              ),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(0, 100, 0, 100),
+                child: ListView.builder(
+                  itemCount: listDisamble.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    return Row(
+                      children: [
+                        Expanded(
                             child: Align(
-                              alignment: Alignment.centerLeft,
-                              child: Padding(
-                                padding: const EdgeInsets.only(left: 16),
-                                child: CupertinoSwitch(
-                                  value: listDisambleEnabled[index],
-                                  activeColor: ColorPalette.activeSwitch,
-                                  trackColor: CupertinoColors.inactiveGray,
-                                  onChanged: (bool? value) {
-                                    desactiveIFeelFine = listDisamble[index];
-                                    if (value!) {
-                                      // _prefs.setEnableIFF = false;
+                          alignment: Alignment.centerRight,
+                          child: TextButton(
+                              onPressed: () {
+                                desactiveIFeelFine = listDisamble[index];
+                                if (indexDisamble == index) {
+                                  indexDisamble = -1;
+                                } else {
+                                  indexDisamble = index;
+                                }
+                              },
+                              child: Text(listDisamble[index],
+                                  style: GoogleFonts.barlow(
+                                    fontSize: 20.0,
+                                    fontWeight: FontWeight.w500,
+                                    color: CupertinoColors.white,
+                                  ))),
+                        )),
+                        Expanded(
+                          child: Align(
+                            alignment: Alignment.centerLeft,
+                            child: Padding(
+                              padding: const EdgeInsets.only(left: 16),
+                              child: CupertinoSwitch(
+                                value: listDisambleEnabled[index],
+                                activeColor: ColorPalette.activeSwitch,
+                                trackColor: CupertinoColors.inactiveGray,
+                                onChanged: (bool? value) {
+                                  desactiveIFeelFine = listDisamble[index];
+                                  if (value!) {
+                                    // _prefs.setEnableIFF = false;
+                                    // enableApp.value = false;
+                                  } else {
+                                    // _prefs.setEnableIFF = true;
+                                    // enableApp.value = true;
+                                    _prefs.setDisambleIFF = "0 hora";
+                                    desactiveIFeelFine = "0 hora";
+                                    _prefs.setDisambleTimeIFF = "";
+                                  }
 
-                                      // enableApp.value = false;
-                                    } else {
-                                      // _prefs.setEnableIFF = true;
-                                      // enableApp.value = true;
-                                      _prefs.setDisambleIFF = "0 hora";
-                                      desactiveIFeelFine = "0 hora";
-                                      _prefs.setDisambleTimeIFF = "";
-                                    }
-                                    var count = 0;
-                                    for (bool disambleEnabled
-                                        in listDisambleEnabled) {
-                                      listDisambleEnabled[count] = false;
+                                  // Desactivar todas las demás opciones
+                                  listDisambleEnabled.fillRange(
+                                      0, listDisambleEnabled.length, false);
 
-                                      count++;
-                                    }
-                                    listDisambleEnabled[index] = value;
-                                    setState(() {});
-                                  },
-                                ),
+                                  // Activar la opción seleccionada
+                                  listDisambleEnabled[index] = value;
+                                  setState(() {});
+                                },
                               ),
                             ),
                           ),
-                        ],
-                      );
-                    },
-                  ),
+                        ),
+                      ],
+                    );
+                  },
                 ),
-                Positioned(
-                  bottom: 20,
-                  right: 32,
-                  child: Container(
-                    decoration: const BoxDecoration(
-                      color: Color.fromRGBO(219, 177, 42, 1),
-                      borderRadius: BorderRadius.all(Radius.circular(8)),
-                    ),
-                    width: 138,
-                    height: 42,
-                    child: Center(
-                      child: TextButton(
-                        child: Text('Guardar',
-                            textAlign: TextAlign.center,
-                            style: GoogleFonts.barlow(
-                              fontSize: 16.0,
-                              wordSpacing: 1,
-                              letterSpacing: 1.2,
-                              fontWeight: FontWeight.w700,
-                              color: Colors.black,
-                            )),
-                        onPressed: () async {
-                          saveDisamble();
-                        },
-                      ),
+              ),
+              Positioned(
+                bottom: 20,
+                right: 32,
+                child: Container(
+                  decoration: const BoxDecoration(
+                    color: Color.fromRGBO(219, 177, 42, 1),
+                    borderRadius: BorderRadius.all(Radius.circular(8)),
+                  ),
+                  width: 138,
+                  height: 42,
+                  child: Center(
+                    child: TextButton(
+                      child: Text(Constant.saveBtn,
+                          textAlign: TextAlign.center,
+                          style: textNormal16Black()),
+                      onPressed: () async {
+                        saveDisamble();
+                      },
                     ),
                   ),
                 ),
-                Positioned(
-                  bottom: 20,
-                  left: 32,
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: Colors.transparent,
-                      border: Border.all(
-                          color: const Color.fromRGBO(219, 177, 42, 1)),
-                      borderRadius: const BorderRadius.all(Radius.circular(8)),
-                    ),
-                    width: 138,
-                    height: 42,
-                    child: Center(
-                      child: TextButton(
-                        child: Text('Cancelar',
-                            textAlign: TextAlign.center,
-                            style: GoogleFonts.barlow(
-                              fontSize: 16.0,
-                              wordSpacing: 1,
-                              letterSpacing: 1.2,
-                              fontWeight: FontWeight.w700,
-                              color: Colors.white,
-                            )),
-                        onPressed: () => Navigator.of(context).pop(),
+              ),
+              Positioned(
+                bottom: 20,
+                left: 32,
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.transparent,
+                    border: Border.all(
+                        color: const Color.fromRGBO(219, 177, 42, 1)),
+                    borderRadius: const BorderRadius.all(Radius.circular(8)),
+                  ),
+                  width: 138,
+                  height: 42,
+                  child: Center(
+                    child: TextButton(
+                      child: Text(
+                        Constant.cancelBtn,
+                        textAlign: TextAlign.center,
+                        style: textBold16White(),
                       ),
+                      onPressed: () => Navigator.of(context).pop(),
                     ),
                   ),
-                )
-              ],
-            )),
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
 
-  void saveDisamble() {
-    DisambleController().saveDisamble(context, desactiveIFeelFine);
-    setState(() {});
+  void saveDisamble() async {
+    var resp =
+        await DisambleController().saveDisamble(context, desactiveIFeelFine);
+    if (resp) {
+      setState(() {});
+    }
   }
 }
