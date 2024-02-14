@@ -37,7 +37,7 @@ class _AlertListWidgetState extends State<AlertListWidget> {
   bool isExpanded = false;
   String dateRow = "";
   final PreferenceUser _prefs = PreferenceUser();
-  String typeNotify = "";
+  String typeNotify = ""; // Se utiliza para identificar el tipo de notificación
   String typeNotifyList = "";
   @override
   void initState() {
@@ -50,8 +50,11 @@ class _AlertListWidgetState extends State<AlertListWidget> {
   }
 
   void cancelNotify() async {
-    List<String> a = _prefs.getlistTaskIdsCancel;
-    var taskIdList = getTaskIdList(a.first);
+    List<String> listTaskIds = _prefs.getlistTaskIdsCancel;
+    if (listTaskIds.isEmpty) {
+      return;
+    }
+    var taskIdList = getTaskIdList(listTaskIds.first);
     if (_prefs.getNotificationType.toString().contains('Cita')) {
       var contactRisk = await const HiveDataRisk().getcontactRiskbd;
       if (taskIdList.isEmpty) {
@@ -276,6 +279,12 @@ class _AlertListWidgetState extends State<AlertListWidget> {
                                     });
                                     typeNotifyList =
                                         listAlerts[indexAlert].type;
+                                    var listtypeTemp =
+                                        typeNotifyList.toString().split(" - ");
+                                    var typeTemp = listtypeTemp.first;
+
+                                    _prefs.getNotificationType;
+
                                     return GestureDetector(
                                       onTap: () {
                                         expandedCell(indexGroup, alertType);
@@ -284,10 +293,7 @@ class _AlertListWidgetState extends State<AlertListWidget> {
                                         title: Center(
                                           child: Container(
                                             color: Colors.transparent,
-                                            height: listAlerts[indexAlert]
-                                                    .type
-                                                    .toString()
-                                                    .contains('-')
+                                            height: typeNotifyList.contains('-')
                                                 ? 80
                                                 : _prefs.getNotificationType !=
                                                         ""
@@ -297,9 +303,13 @@ class _AlertListWidgetState extends State<AlertListWidget> {
                                             child: Stack(
                                               children: [
                                                 Visibility(
-                                                  visible: typeNotifyList ==
-                                                          _prefs
-                                                              .getNotificationType
+                                                  visible: typeTemp ==
+                                                              _prefs
+                                                                  .getNotificationType &&
+                                                          indexAlert ==
+                                                              listAlerts
+                                                                      .length -
+                                                                  1
                                                       ? true
                                                       : false,
                                                   child: Positioned(
@@ -354,60 +364,61 @@ class _AlertListWidgetState extends State<AlertListWidget> {
                                                             : 50,
                                                         color:
                                                             Colors.transparent,
-                                                        child: Stack(children: [
-                                                          Text(
-                                                            listAlerts[
-                                                                    indexAlert]
-                                                                .type
-                                                                .toString(),
-                                                            textAlign:
-                                                                TextAlign.left,
-                                                            maxLines: 2,
-                                                            style:
-                                                                textNormal16White(),
-                                                          ),
-                                                          Positioned(
-                                                            bottom: 0,
-                                                            child: Text(
-                                                              '${listAlerts[indexAlert].time.day}-${listAlerts[indexAlert].time.month}-${listAlerts[indexAlert].time.year} | ${listAlerts[indexAlert].time.hour.toString().padLeft(2, '0')}:${listAlerts[indexAlert].time.minute.toString().padLeft(2, '0')}',
+                                                        child: Stack(
+                                                          children: [
+                                                            Text(
+                                                              listAlerts[
+                                                                      indexAlert]
+                                                                  .type
+                                                                  .toString(),
                                                               textAlign:
                                                                   TextAlign
                                                                       .left,
+                                                              maxLines: 2,
                                                               style:
                                                                   textNormal16White(),
                                                             ),
-                                                          ),
-                                                        ]),
+                                                            Positioned(
+                                                              bottom: 0,
+                                                              child: Text(
+                                                                '${listAlerts[indexAlert].time.day}-${listAlerts[indexAlert].time.month}-${listAlerts[indexAlert].time.year} | ${listAlerts[indexAlert].time.hour.toString().padLeft(2, '0')}:${listAlerts[indexAlert].time.minute.toString().padLeft(2, '0')}',
+                                                                textAlign:
+                                                                    TextAlign
+                                                                        .left,
+                                                                style:
+                                                                    textNormal16White(),
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        ),
                                                       ),
                                                     ],
                                                   ),
                                                 ),
-                                                if (isExpanded == true &&
+                                                if (isExpanded &&
                                                     indexAlert >= 0 &&
-                                                    alertTypes.keys
-                                                            .toList()[
-                                                                selectedCellIndex]
-                                                            .length >
-                                                        indexAlert &&
-                                                    (selectedCellIndex ==
+                                                    indexAlert <
+                                                        listAlerts.length - 1 &&
+                                                    selectedCellIndex ==
                                                         alertTypes.keys
                                                             .toList()
                                                             .indexOf(
-                                                                alertType)) &&
+                                                                alertType) &&
                                                     dateRow ==
                                                         widget
                                                             .groupedAlerts.keys
                                                             .elementAt(
                                                                 indexGroup)) ...[
-                                                  Positioned(
-                                                    left: 20,
-                                                    top: 130 /
-                                                        2, // La posición horizontal de la línea
+                                                  Padding(
+                                                    padding:
+                                                        const EdgeInsets.only(
+                                                            top: 78.0,
+                                                            left: 20),
                                                     child: CustomPaint(
                                                       painter: LinePainter(),
                                                     ),
-                                                  )
-                                                ]
+                                                  ),
+                                                ],
                                               ],
                                             ),
                                           ),
