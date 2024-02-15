@@ -308,7 +308,7 @@ class RedirectViewNotifier with ChangeNotifier {
     await flutterLocalNotificationsPlugin
         .cancel(message.data.containsValue(Constant.inactivitySelf) ? 0 : 19);
 
-    timerTempDown = Timer.periodic(const Duration(seconds: 1), (Timer t) {
+    timerTempDown = Timer.periodic(const Duration(seconds: 1), (Timer t) async {
       // Verificar si el temporizador ha sido cancelado antes de mostrar la notificación
 
       if (timerTempDown!.isActive || t.isActive) {
@@ -361,8 +361,16 @@ class RedirectViewNotifier with ChangeNotifier {
         var platformChannelSpecifics =
             NotificationDetails(android: androidPlatformChannelSpecifics);
 
-        showNotification(
-            temp, platformChannelSpecifics, message, isFirstTimeNotification);
+        List<ActiveNotification> lista =
+            await flutterLocalNotificationsPlugin.getActiveNotifications();
+        var existNotification =
+            lista.firstWhereOrNull((element) => element.id == 100);
+
+        if (isFirstTimeNotification || existNotification != null) {
+          isFirstTimeNotification = false;
+          showNotification(
+              temp, platformChannelSpecifics, message);
+        }
         prefs.setNotificationId = 100;
 
         timeRevert--;
@@ -387,18 +395,9 @@ class RedirectViewNotifier with ChangeNotifier {
   static void showNotification(
       String body,
       NotificationDetails platformChannelSpecifics,
-      RemoteMessage message,
-      bool isFirstTimeNotification) async {
-    List<ActiveNotification> lista =
-        await flutterLocalNotificationsPlugin.getActiveNotifications();
-    var existNotification =
-        lista.firstWhereOrNull((element) => element.id == 100);
-
-    print(" existe  la notificacion o no? -> $existNotification");
-    if (isFirstTimeNotification || existNotification != null) {
-      isFirstTimeNotification = false;
-      print(" existe  la notificacion -> $existNotification");
-      await flutterLocalNotificationsPlugin.show(
+      RemoteMessage message) async {
+    
+    await flutterLocalNotificationsPlugin.show(
         100,
         "Advertencia",
         body,
@@ -407,7 +406,6 @@ class RedirectViewNotifier with ChangeNotifier {
             ? 'Inactived_$message'
             : 'Drop_$message',
       );
-    }
   }
 
   static void cancelNotification(int id) async {
