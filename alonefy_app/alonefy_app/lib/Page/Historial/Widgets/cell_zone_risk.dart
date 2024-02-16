@@ -25,23 +25,23 @@ class _CellZoneRiskState extends State<CellZoneRisk> {
   late VideoPlayerController _videoPlayerController;
   late Future<void> _initializeVideoPlayerFuture;
   late File fileTemp = File("");
-  bool notVideo = true;
+  bool haveVideo = false;
+
   @override
   void initState() {
-    _videoPlayerController = VideoPlayerController.file(File(""));
-    _initializeVideoPlayerFuture = _videoPlayerController.initialize();
+    super.initState();
+    fileTemp = File("");
     if (widget.logAlert.video != null ||
         (widget.logAlert.listVideosPresigned!.isNotEmpty &&
             widget.logAlert.listVideosPresigned != null)) {
       _initializeVideoPlayer();
     }
-
-    super.initState();
   }
 
   @override
   void dispose() {
     _videoPlayerController.dispose();
+
     super.dispose();
   }
 
@@ -75,24 +75,9 @@ class _CellZoneRiskState extends State<CellZoneRisk> {
           Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Visibility(
-                visible: notVideo,
-                child: Container(
-                  width: 200,
-                  height: 100,
-                  color: Colors.black,
-                  child: Center(
-                    child: Text(
-                      "Video no disponible",
-                      textAlign: TextAlign.center,
-                      style: textBold16White(),
-                    ),
-                  ),
-                ),
-              ),
-              if (!notVideo) ...[
+              if (haveVideo) ...[
                 Visibility(
-                  visible: !notVideo,
+                  visible: haveVideo,
                   child: FutureBuilder(
                     future: _initializeVideoPlayerFuture,
                     builder: (context, snapshot) {
@@ -131,6 +116,22 @@ class _CellZoneRiskState extends State<CellZoneRisk> {
                     },
                   ),
                 )
+              ] else ...[
+                Visibility(
+                  visible: !haveVideo,
+                  child: Container(
+                    width: 200,
+                    height: 100,
+                    color: Colors.black,
+                    child: Center(
+                      child: Text(
+                        "Video no disponible",
+                        textAlign: TextAlign.center,
+                        style: textBold16White(),
+                      ),
+                    ),
+                  ),
+                ),
               ]
             ],
           ),
@@ -143,15 +144,16 @@ class _CellZoneRiskState extends State<CellZoneRisk> {
     DefaultCacheManager cacheManager = DefaultCacheManager();
     print(widget.logAlert.video);
     File videoFile = File("");
+    print(widget.logAlert.id);
+    print(widget.logAlert.time);
     if (widget.logAlert.listVideosPresigned!.isNotEmpty &&
         widget.logAlert.listVideosPresigned != null) {
       videoFile = await cacheManager.putFile(
         'temp_video_${widget.logAlert.time}.mp4',
-        widget.logAlert.listVideosPresigned!.first.videoDown!,
+        widget.logAlert.listVideosPresigned![0].videoDown!,
         key: 'video_key${widget.logAlert.video.hashCode}',
       );
-    }
-    if (widget.logAlert.video != null) {
+    } else if (widget.logAlert.video != null) {
       videoFile = await cacheManager.putFile(
         'temp_video_${widget.logAlert.time}.mp4',
         widget.logAlert.video!,
@@ -162,13 +164,16 @@ class _CellZoneRiskState extends State<CellZoneRisk> {
     if (widget.logAlert.video != null ||
         (widget.logAlert.listVideosPresigned!.isNotEmpty &&
             widget.logAlert.listVideosPresigned != null)) {
-      notVideo = false;
-      fileTemp = videoFile;
-
-      _videoPlayerController = VideoPlayerController.file(videoFile);
-      _initializeVideoPlayerFuture = _videoPlayerController.initialize();
+      setState(() {
+        haveVideo = true;
+        fileTemp = videoFile;
+        _videoPlayerController = VideoPlayerController.file(videoFile);
+        _initializeVideoPlayerFuture = _videoPlayerController.initialize();
+      });
     } else {
-      notVideo = true;
+      setState(() {
+        haveVideo = false;
+      });
     }
   }
 }

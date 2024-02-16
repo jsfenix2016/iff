@@ -96,7 +96,7 @@ class HistorialController extends GetxController {
           id: (contact.id),
           time: dateTime,
           type: "Zona",
-          video: contact.video,
+          video: contact.listVideosPresigned!.first.videoDown,
           groupBy: "3",
           listVideosPresigned: contact.listVideosPresigned);
       addTempDynamic(tempAct);

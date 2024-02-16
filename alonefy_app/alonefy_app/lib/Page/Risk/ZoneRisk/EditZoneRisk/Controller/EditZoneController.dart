@@ -94,10 +94,14 @@ class EditZoneController extends GetxController {
     }
   }
 
-  late List<VideoPresignedBD> listvideobd = [];
+  RootIsolateToken rootIsolateToken = RootIsolateToken.instance!;
+
   Future<void> saveFromApi(List<ZoneRiskApi> contactsZoneRiskApi) async {
+    await inicializeHiveBD();
     for (var contactZoneRiskApi in contactsZoneRiskApi) {
       var bytes;
+
+      List<VideoPresignedBD> listvideobd = [];
       if (contactZoneRiskApi.awsDownloadCustomContactPresignedUrl != null &&
           contactZoneRiskApi.awsDownloadCustomContactPresignedUrl.isNotEmpty) {
         bytes = await ZoneRiskService().getZoneRiskImage(
@@ -105,23 +109,6 @@ class EditZoneController extends GetxController {
         print(bytes);
       }
       Uint8List? videoBytes;
-
-      VideoPresignedBD tempPre = VideoPresignedBD(modified: '', url: '');
-      if (contactZoneRiskApi.awsDownloadVideoPresignedUrls != null &&
-          contactZoneRiskApi.awsDownloadVideoPresignedUrls.isNotEmpty) {
-        videoBytes = await ZoneRiskService().getZoneRiskImage(
-            contactZoneRiskApi.awsDownloadVideoPresignedUrls.first.url);
-
-        for (var element in contactZoneRiskApi.awsDownloadVideoPresignedUrls) {
-          Uint8List? videoDown =
-              await ZoneRiskService().getZoneRiskImage(element.url);
-          tempPre = VideoPresignedBD(
-              modified: element.modified,
-              url: element.url,
-              videoDown: videoDown);
-          listvideobd.add(tempPre);
-        }
-      }
       ContactZoneRiskBD contact = ContactZoneRiskBD(
           id: contactZoneRiskApi.id,
           photo: bytes,
@@ -134,12 +121,61 @@ class EditZoneController extends GetxController {
           sendWhatsappContact:
               contactZoneRiskApi.customContactWhatsappNotification,
           callme: contactZoneRiskApi.customContactVoiceNotification,
-          save: false,
-          createDate: DateTime.now(),
+          save: true,
+          createDate: contactZoneRiskApi.createDate,
           video: videoBytes,
           listVideosPresigned: listvideobd);
       await inicializeHiveBD();
       await const HiveDataRisk().saveContactZoneRisk(contact);
+
+      VideoPresignedBD tempPre = VideoPresignedBD(modified: '', url: '');
+      if (contactZoneRiskApi.awsDownloadVideoPresignedUrls != null &&
+          contactZoneRiskApi.awsDownloadVideoPresignedUrls.isNotEmpty) {
+        final receivePort = ReceivePort();
+        try {
+          await Isolate.spawn(
+            _backgroundTask,
+            {
+              'port': receivePort.sendPort,
+              'ZoneRiskApi': contactZoneRiskApi,
+            },
+          );
+        } on Object {
+          receivePort.close();
+          rethrow;
+        }
+
+        final jsonData = (await receivePort.first) as List<VideoPresignedBD>;
+
+        if (jsonData.isNotEmpty) {
+          print(jsonData);
+          inicializeHiveBD();
+          contact.listVideosPresigned = jsonData;
+          const HiveDataRisk().updateContactZoneRisk(contact);
+        }
+      }
+    }
+  }
+
+  void _backgroundTask(dynamic message) async {
+    final SendPort sendPort = message['port'];
+    final ZoneRiskApi videoPresigned = message['ZoneRiskApi'];
+    List<VideoPresignedBD> list = [];
+    VideoPresignedBD tempPre = VideoPresignedBD(modified: '', url: '');
+    BackgroundIsolateBinaryMessenger.ensureInitialized(rootIsolateToken);
+
+    try {
+      for (var element in videoPresigned.awsDownloadVideoPresignedUrls) {
+        tempPre = VideoPresignedBD(
+            modified: element.modified,
+            url: element.url,
+            videoDown: await ZoneRiskService().getZoneRiskImage(element.url));
+        list.add(tempPre);
+      }
+
+      Isolate.exit(sendPort, list);
+    } catch (e) {
+      sendPort.send('Error al guardar el video: $e');
     }
   }
 }
