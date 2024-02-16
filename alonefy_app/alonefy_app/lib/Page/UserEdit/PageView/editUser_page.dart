@@ -91,7 +91,7 @@ class _UserEditPageState extends State<UserEditPage> {
     selectCountry = user!.country;
     selectState = user!.city;
 
-    getTraslateState(countryres.isEmpty ? [] : countryres[indexCountry - 1]);
+    if (indexCountry > 0) getTraslateState(countryres.isEmpty ? [] : countryres[indexCountry - 1]);
   }
 
   Future getCounty() async {

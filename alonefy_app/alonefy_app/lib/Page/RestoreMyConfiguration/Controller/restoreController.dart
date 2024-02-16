@@ -49,7 +49,6 @@ class RestoreController extends GetxController {
       if (isRunning) {
         service.invoke("stopService");
       }
-      _saveNotifications(userApi);
       _saveUserFromAPI(userApi);
       _saveTimeUseMobile(userApi.inactivityTimes);
       _saveRestDays(userApi.sleepHours);
@@ -58,12 +57,11 @@ class RestoreController extends GetxController {
       _saveContactRisk(userApi.contactRisk);
       _saveContactZoneRisk(userApi.zoneRisk);
       _saveLogAlerts(userApi.logAlert);
-      _saveLocation(userApi);
       _saveTermsAndConditions(userApi);
       _saveFall(userApi);
 
-      _saveScheduleExactAlarm(userApi);
-      _saveCameraPermission(userApi);
+      Map<String, Permission> permissions = _getActivePermissions(userApi);
+      _requestPermission(permissions, userApi);
 
       _saveConfig();
       _prefs.setUserPremium = true;
@@ -92,11 +90,15 @@ class RestoreController extends GetxController {
     }
   }
 
-  void getContactList(BuildContext context) async {
-    if (user != null && user!.idUser != '-1') {
+  void getContactList(BuildContext context, UserApi? userApi) async {
+    if (user != null && user!.idUser != '-1' && userApi != null) {
+      if (userApi.activateContacts ||
+          userApi.contact.isNotEmpty ||
+          userApi.contactRisk.isNotEmpty) {
       Future.delayed(const Duration(seconds: 4), () async {
-        contactlist = await getContacts(context);
+        contactlist = await getContactsListWithoutPermission();
       });
+      }
     }
   }
 
@@ -117,11 +119,11 @@ class RestoreController extends GetxController {
 
       var userBD = GetUserController().userApiToUserBD(userApi, pathImage);
       user = userBD;
-      if (userApi.activateContacts ||
-          userApi.contact.isNotEmpty ||
-          userApi.contactRisk.isNotEmpty) {
-        getContactList(RedirectViewNotifier.storedContext!);
-      }
+      // if (userApi.activateContacts ||
+      //     userApi.contact.isNotEmpty ||
+      //     userApi.contactRisk.isNotEmpty) {
+      //   getContactList(RedirectViewNotifier.storedContext!);
+      // }
 
       var existsUser = await const HiveData().getuserbd;
       if (existsUser.idUser == "-1") {
@@ -175,30 +177,9 @@ class RestoreController extends GetxController {
         await ContactUserController().saveFromApi(contactsApi);
         if (contactsApi.isNotEmpty) {
           refreshMenu("addContact");
-          // Future.sync(() async {
-          //   var contacts =
-          //       await PermissionService.requestPermission(Permission.contacts);
-          //   if (contacts) {
-          //     _prefs.setAcceptedContacts = PreferencePermission.allow;
-          //   }
-          // });
         }
       },
     );
-  }
-
-  void _saveLocation(UserApi? userApi) async {
-    if (userApi != null && userApi.activateLocation) {
-      Future.delayed(const Duration(seconds: 6), () async {
-        var sendLocation = await requestPermission(Permission.location);
-        if (sendLocation) {
-          _prefs.setAcceptedSendLocation = PreferencePermission.allow;
-          refreshMenu("configGeo");
-        }
-      });
-
-      // _prefs.setAcceptedSendLocation = PreferencePermission.allow;
-    }
   }
 
   Future<void> _saveTermsAndConditions(UserApi? userApi) async {
@@ -207,54 +188,15 @@ class RestoreController extends GetxController {
       _prefs.setAceptedSendSMS = userApi.smsCallAccepted;
     }
   }
-
-  void _saveCameraPermission(UserApi? userApi) {
-    if (userApi != null && userApi.activateCamera) {
-      Future.delayed(const Duration(seconds: 8), () async {
-        var cameraenabled =
-            await PermissionService.requestPermission(Permission.camera);
-        if (cameraenabled) {
-          _prefs.setAcceptedCamera = PreferencePermission.allow;
-        }
-      });
-    }
-  }
-
-  void _saveNotifications(UserApi? userApi) {
-    if (userApi != null && userApi.activateNotifications) {
-      Future.delayed(const Duration(seconds: 10), () async {
-        var notification =
-            await PermissionService.requestPermission(Permission.notification);
-        if (notification) {
-          _prefs.setAcceptedNotification = PreferencePermission.allow;
-        }
-      });
-
-      updateFirebaseToken();
-      _prefs.setAcceptedNotification = userApi.activateNotifications
-          ? PreferencePermission.allow
-          : PreferencePermission.noAccepted;
-      if (_prefs.getAcceptedNotification == PreferencePermission.allow ||
-          _prefs.getDetectedFall ||
-          _prefs.getAcceptedSendLocation == PreferencePermission.allow) {
-        _prefs.setProtected =
-            "AlertFriends está activada y estamos comprobando que te encuentres bien";
-      }
-    }
-  }
-
-  Future<void> _saveScheduleExactAlarm(UserApi? userApi) async {
-    if (userApi != null && userApi.activateAlarm) {
-      Future.delayed(const Duration(seconds: 13), () async {
-        var notification = await PermissionService.requestPermission(
-            Permission.scheduleExactAlarm);
-        if (notification) {
-          _prefs.setAcceptedScheduleExactAlarm = PreferencePermission.allow;
-        } else {
-          _prefs.setAcceptedScheduleExactAlarm =
-              PreferencePermission.noAccepted;
-        }
-      });
+  
+  void _saveNotifications(PreferencePermission permission) {
+    updateFirebaseToken();
+    _prefs.setAcceptedNotification = permission;
+    if (_prefs.getAcceptedNotification == PreferencePermission.allow ||
+        _prefs.getDetectedFall ||
+        _prefs.getAcceptedSendLocation == PreferencePermission.allow) {
+      _prefs.setProtected =
+          "AlertFriends está activada y estamos comprobando que te encuentres bien";
     }
   }
 
@@ -272,9 +214,9 @@ class RestoreController extends GetxController {
       return;
     }
     prefs.setAcceptedCamera = PreferencePermission.allow;
-    await cameraPermissions(
-      prefs.getAcceptedCamera,
-    );
+    // await cameraPermissions(
+    //   prefs.getAcceptedCamera,
+    // );
     EditZoneController().saveFromApi(contactsZoneRiskApi);
   }
 
@@ -405,4 +347,61 @@ class RestoreController extends GetxController {
   void _deleteNotificationAudio() async {
     _prefs.setNotificationAudio = '';
   }
+
+  Future<void> _requestPermission(Map<String, Permission> permissions, UserApi? userApi) async {
+    try {
+      for (var item in permissions.entries) {
+        Permission permission = item.value;
+        if ((await permission.status.isDenied ||
+            await permission.status.isPermanentlyDenied)) {
+          await permission.request().then((status) {
+            PreferencePermission preferencePermission = !status.isPermanentlyDenied && !status.isDenied ? 
+            PreferencePermission.allow : (
+              item.key == 'scheduleExactAlarm' ? 
+                PreferencePermission.noAccepted : 
+                PreferencePermission.denied
+            );
+            switch (item.key) {
+              case 'camera':
+                _prefs.setAcceptedCamera = preferencePermission;  
+                break;
+              case 'notification':
+                _saveNotifications(preferencePermission);
+                break;
+              case 'contacts':
+                if (preferencePermission == PreferencePermission.allow) {
+                  getContactList(RedirectViewNotifier.storedContext!, userApi);
+                }
+                _prefs.setAcceptedContacts = preferencePermission;  
+                break;
+              case 'location':
+                if (preferencePermission == PreferencePermission.allow) refreshMenu("configGeo"); 
+                _prefs.setAcceptedSendLocation = preferencePermission;
+                break;
+              case 'scheduleExactAlarm':
+                _prefs.setAcceptedScheduleExactAlarm = preferencePermission;  
+                break;
+            }
+          });
+        }
+      }
+    } catch (e) {
+      debugPrint('$e');
+    } 
+  }
+
+  Map<String, Permission> _getActivePermissions(UserApi? userApi) {
+    Map<String, Permission> permissions = {};
+
+    if (userApi != null) {
+      if (userApi.activateCamera) permissions['camera'] = Permission.camera; 
+      if (userApi.activateNotifications) permissions['notification'] = Permission.notification; 
+      if (userApi.contact.isNotEmpty) permissions['contacts'] = Permission.contacts;  
+      if (userApi.activateLocation) permissions['location'] = Permission.location;
+      if (userApi.activateAlarm) permissions['scheduleExactAlarm'] = Permission.scheduleExactAlarm;
+    }
+
+    return permissions;
+  }
+
 }

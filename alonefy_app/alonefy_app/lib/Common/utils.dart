@@ -848,6 +848,13 @@ Future<List<Contact>> getContacts(BuildContext context) async {
   }
 }
 
+Future<List<Contact>> getContactsListWithoutPermission() async {
+  var contacts = await FlutterContacts.getContacts(
+        withProperties: true, withPhoto: true);
+
+  return contacts;
+}
+
 String getDefaultPattern() {
   return 'EEEE, d MMMM yyyy';
 }
