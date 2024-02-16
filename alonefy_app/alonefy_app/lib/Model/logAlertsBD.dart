@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:ifeelefine/Model/videopresignedbd.dart';
 
 part 'Adapters/logAlertsBD.g.dart';
 
@@ -12,7 +13,8 @@ class LogAlertsBD extends HiveObject {
       required this.time,
       this.photoDate,
       this.video,
-      required this.groupBy});
+      required this.groupBy,
+      this.listVideosPresigned});
 
   @HiveField(0)
   late int id;
@@ -31,4 +33,7 @@ class LogAlertsBD extends HiveObject {
 
   @HiveField(5)
   late String groupBy;
+
+  @HiveField(6)
+  List<VideoPresignedBD>? listVideosPresigned;
 }

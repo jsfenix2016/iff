@@ -5,6 +5,8 @@ import 'package:get/get.dart';
 import 'package:ifeelefine/Common/utils.dart';
 import 'package:ifeelefine/Data/hiveRisk_data.dart';
 import 'package:ifeelefine/Data/hive_data.dart';
+import 'package:ifeelefine/Model/contactRiskBD.dart';
+import 'package:ifeelefine/Model/contactZoneRiskBD.dart';
 import 'package:ifeelefine/Model/logActivity.dart';
 
 import 'package:ifeelefine/Model/logAlertsBD.dart';
@@ -71,12 +73,13 @@ class HistorialController extends GetxController {
 
   Future<Map<String, List<dynamic>>> getAllAlerts() async {
     final Map<String, List<dynamic>> groupedAlerts = {};
-    final List<LogAlertsBD> temp = [];
+
     final List<dynamic> tempDynamic = [];
     final List<LogAlertsBD> box = await const HiveData().getAlerts();
 
-    final dateRisk = await const HiveDataRisk().getcontactRiskbd;
-    final zoneRisk = await const HiveDataRisk().getcontactZoneRiskbd;
+    List<ContactRiskBD> dateRisk = await const HiveDataRisk().getcontactRiskbd;
+    List<ContactZoneRiskBD> zoneRisk =
+        await const HiveDataRisk().getcontactZoneRiskbd;
 
     void addTempDynamic(LogAlertsBD alert) {
       tempDynamic.add(alert);
@@ -88,19 +91,24 @@ class HistorialController extends GetxController {
       addTempDynamic(tempAct);
     }
 
-    void addZoneRisk(DateTime dateTime, int id, Uint8List? video) {
+    void addZoneRisk(DateTime dateTime, ContactZoneRiskBD contact) {
       final tempAct = LogAlertsBD(
-          id: (id), time: dateTime, type: "Zona", video: video, groupBy: "3");
+          id: (contact.id),
+          time: dateTime,
+          type: "Zona",
+          video: contact.video,
+          groupBy: "3",
+          listVideosPresigned: contact.listVideosPresigned);
       addTempDynamic(tempAct);
     }
 
-    void convertAndAddZoneRisk(String createDate, int id, Uint8List? video) {
+    void convertAndAddZoneRisk(ContactZoneRiskBD contact) {
       final inputFormat = DateFormat('yyyy-MM-dd HH:mm');
-      final inputDate = inputFormat.parse(createDate);
+      final inputDate = inputFormat.parse(contact.createDate.toString());
       final outputFormat = DateFormat('dd-MM-yyyy HH:mm');
       final ar = outputFormat.format(inputDate);
       final dateTime1 = DateFormat('dd-MM-yyyy HH:mm').parse(ar);
-      addZoneRisk(dateTime1, id, video);
+      addZoneRisk(dateTime1, contact);
     }
 
     void convertAndAddDateRisk(String createDate, int id) {
@@ -119,8 +127,9 @@ class HistorialController extends GetxController {
     }
 
     if (zoneRisk.isNotEmpty) {
+      print("elementos en zoneRisk -> ${zoneRisk.length}");
       zoneRisk.forEach((date) {
-        convertAndAddZoneRisk(date.createDate.toString(), date.id, date.video);
+        convertAndAddZoneRisk(date);
       });
     }
 

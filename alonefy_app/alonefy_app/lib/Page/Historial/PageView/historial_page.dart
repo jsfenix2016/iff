@@ -32,6 +32,7 @@ class _HistorialPageState extends State<HistorialPage> {
   late LogAlertsBD listLog;
   late LogActivityBD listLogActive;
   bool isLoading = true;
+
   Future<void> getLog() async {
     listLog = LogAlertsBD(
         id: 0, type: "no hay alertas", time: DateTime.now(), groupBy: "-1");

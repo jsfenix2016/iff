@@ -1,21 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import 'package:ifeelefine/Common/colorsPalette.dart';
 import 'package:ifeelefine/Common/initialize_models_bd.dart';
 import 'package:ifeelefine/Common/notificationService.dart';
-import 'package:ifeelefine/Common/text_style_font.dart';
+
 import 'package:ifeelefine/Common/utils.dart';
 import 'package:ifeelefine/Data/hiveRisk_data.dart';
 import 'package:ifeelefine/Model/contactRiskBD.dart';
 import 'package:ifeelefine/Model/logAlertsBD.dart';
+import 'package:ifeelefine/Page/Alerts/Widget/cell_expanded.dart';
+import 'package:ifeelefine/Page/Alerts/Widget/header_group.dart';
 import 'package:ifeelefine/Page/Risk/DateRisk/Controller/editRiskController.dart';
 import 'package:ifeelefine/Page/Risk/DateRisk/ListDateRisk/Controller/riskPageController.dart';
 
 import 'package:ifeelefine/Provider/prefencesUser.dart';
 import 'package:ifeelefine/Services/mainService.dart';
-import 'package:ifeelefine/Utils/Widgets/elevatedButtonFilling.dart';
-import 'package:ifeelefine/Utils/Widgets/line_paint.dart';
+
 import 'package:ifeelefine/main.dart';
 
 class AlertListWidget extends StatefulWidget {
@@ -33,7 +33,7 @@ class AlertListWidget extends StatefulWidget {
 
 class _AlertListWidgetState extends State<AlertListWidget> {
   // late List<LogAlertsBD> listLog;
-  int selectedCellIndex = -1; // -1 indica que ninguna celda está seleccionada
+  int selectedCellIndex = -1;
   bool isExpanded = false;
   String dateRow = "";
   final PreferenceUser _prefs = PreferenceUser();
@@ -51,13 +51,16 @@ class _AlertListWidgetState extends State<AlertListWidget> {
 
   void cancelNotify() async {
     List<String> listTaskIds = _prefs.getlistTaskIdsCancel;
+    print(prefs.getCancelIdDate.toString());
     if (listTaskIds.isEmpty) {
-      return;
+      listTaskIds = getTaskIdList(prefs.getCancelIdDate.toString());
+    } else {
+      listTaskIds = getTaskIdList(listTaskIds.first);
     }
-    var taskIdList = getTaskIdList(listTaskIds.first);
+
     if (_prefs.getNotificationType.toString().contains('Cita')) {
       var contactRisk = await const HiveDataRisk().getcontactRiskbd;
-      if (taskIdList.isEmpty) {
+      if (listTaskIds.isEmpty) {
         EditRiskController erisk = Get.put(EditRiskController());
         RiskController risk = Get.put(RiskController());
         var resp = await risk.getContactsRisk();
@@ -84,7 +87,7 @@ class _AlertListWidgetState extends State<AlertListWidget> {
       _prefs.saveLastScreenRoute("cancelDate");
       for (var element in contactRisk) {
         if (element.isActived || element.isFinishTime) {
-          RedirectViewNotifier.onTapNotification(taskIdList, (element.id));
+          RedirectViewNotifier.onTapNotification(listTaskIds, (element.id));
         }
       }
       widget.onRefresh(true);
@@ -100,7 +103,7 @@ class _AlertListWidgetState extends State<AlertListWidget> {
     }
     _prefs.setEnableTimer = false;
     _prefs.setEnableTimerDrop = false;
-    MainService().cancelAllNotifications(taskIdList);
+    MainService().cancelAllNotifications(listTaskIds);
     _prefs.setNotificationType = "";
     typeNotify = "";
     await flutterLocalNotificationsPlugin.cancel(_prefs.getNotificationId!);
@@ -108,20 +111,15 @@ class _AlertListWidgetState extends State<AlertListWidget> {
     widget.onRefresh(true);
   }
 
-  void expandedCell(int indexGroup, String alertType) {
+  void toggleExpansion(int indexGroup, String alertType) {
     final date = widget.groupedAlerts.entries.elementAt(indexGroup);
-    final alertTypes = widget.groupedAlerts[date.key]!;
-    final indexTemp = alertTypes.keys.toList().indexOf(alertType);
+    final indexTemp = date.value.keys.toList().indexOf(alertType);
 
-    if (isExpanded && selectedCellIndex == indexTemp) {
-      isExpanded = false;
-    } else {
-      isExpanded = true;
-      selectedCellIndex = indexTemp;
-      dateRow = date.key;
-    }
-
-    setState(() {});
+    setState(() {
+      isExpanded = !isExpanded;
+      selectedCellIndex = isExpanded ? indexTemp : -1;
+      dateRow = isExpanded ? date.key : "";
+    });
   }
 
   @override
@@ -150,290 +148,37 @@ class _AlertListWidgetState extends State<AlertListWidget> {
               width: size.width,
               child: Column(
                 children: [
-                  ListTile(
-                    title: Container(
-                      color: Colors.transparent,
-                      height: 50,
-                      child: Stack(
-                        children: [
-                          Container(
-                            width: 320,
-                            color: Colors.transparent,
-                            child: Stack(
-                              children: [
-                                Container(
-                                  color: Colors.transparent,
-                                  height: 60,
-                                  child: Stack(children: [
-                                    Positioned(
-                                      top: 20,
-                                      child: Text(
-                                        date.split(" ").first,
-                                        textAlign: TextAlign.left,
-                                        style: textNormal16White(),
-                                      ),
-                                    ),
-                                  ]),
-                                ),
-                                Positioned(
-                                  right: 0,
-                                  child: IconButton(
-                                    iconSize: 35,
-                                    onPressed: () {
-                                      final date = widget.groupedAlerts.keys
-                                          .elementAt(indexGroup);
-                                      final alertTypes =
-                                          widget.groupedAlerts[date]!;
-                                      print(alertTypes.values.first);
+                  HeaderGroup(
+                    date: date.split(" ").first,
+                    onDelete: (bool) {
+                      final date =
+                          widget.groupedAlerts.keys.elementAt(indexGroup);
+                      final alertTypes = widget.groupedAlerts[date]!;
 
-                                      widget.onChangedDelete(
-                                          alertTypes.values.first);
-                                    },
-                                    icon: const Icon(
-                                      Icons.close,
-                                      color: Colors.white,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
+                      widget.onChangedDelete(alertTypes.values.first);
+                    },
                   ),
                   for (var alertType in alertTypes.keys.toList()) ...[
-                    Padding(
-                      padding: const EdgeInsets.only(top: 10.0),
-                      child: GestureDetector(
-                        onTap: () {
-                          expandedCell(indexGroup, alertType);
-                        },
-                        child: AnimatedContainer(
-                          duration: const Duration(milliseconds: 300),
-                          height: isExpanded &&
-                                  selectedCellIndex ==
-                                      alertTypes.keys
-                                          .toList()
-                                          .indexOf(alertType) &&
-                                  dateRow ==
-                                      widget.groupedAlerts.keys
-                                          .elementAt(indexGroup)
-                              ? alertTypes[alertType]!.length * 121
-                              : _prefs.getNotificationType != ""
-                                  ? 141
-                                  : 120,
-                          decoration: const BoxDecoration(
-                            color: Color.fromARGB(153, 50, 50, 45),
-                            borderRadius: BorderRadius.all(Radius.circular(20)),
-                          ),
-                          child: Container(
-                            width: 320,
-                            decoration: const BoxDecoration(
-                              color: Color.fromARGB(153, 50, 50, 45),
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(20)),
-                            ),
-                            child: Stack(
-                              alignment: Alignment.center,
-                              children: [
-                                Positioned(
-                                  top: 0,
-                                  right: 0,
-                                  child: IconButton(
-                                    iconSize: 35,
-                                    onPressed: () {
-                                      print("TAP");
-                                    },
-                                    icon: isExpanded &&
-                                            selectedCellIndex ==
-                                                alertTypes.keys
-                                                    .toList()
-                                                    .indexOf(alertType) &&
-                                            dateRow ==
-                                                widget.groupedAlerts.keys
-                                                    .elementAt(indexGroup)
-                                        ? const Icon(
-                                            Icons.arrow_drop_up,
-                                            color: Colors.white,
-                                          )
-                                        : const Icon(
-                                            Icons.arrow_drop_down,
-                                            color: Colors.white,
-                                          ),
-                                  ),
-                                ),
-                                ListView.builder(
-                                  physics: const NeverScrollableScrollPhysics(),
-                                  shrinkWrap: true,
-                                  reverse: false,
-                                  scrollDirection: Axis.vertical,
-                                  itemExtent: 120.0,
-                                  itemCount: alertTypes[alertType]!.length,
-                                  itemBuilder:
-                                      (BuildContext context, int indexAlert) {
-                                    var listAlerts = alertTypes[alertType]!;
-                                    listAlerts.sort((a, b) {
-                                      //sorting in descending order
-                                      return b.time.compareTo(a.time);
-                                    });
-                                    typeNotifyList =
-                                        listAlerts[indexAlert].type;
-                                    var listtypeTemp =
-                                        typeNotifyList.toString().split(" - ");
-                                    var typeTemp = listtypeTemp.first;
-
-                                    _prefs.getNotificationType;
-
-                                    return GestureDetector(
-                                      onTap: () {
-                                        expandedCell(indexGroup, alertType);
-                                      },
-                                      child: ListTile(
-                                        title: Center(
-                                          child: Container(
-                                            color: Colors.transparent,
-                                            height: typeNotifyList.contains('-')
-                                                ? 80
-                                                : _prefs.getNotificationType !=
-                                                        ""
-                                                    ? 100
-                                                    : 60,
-                                            width: 300,
-                                            child: Stack(
-                                              children: [
-                                                Visibility(
-                                                  visible: typeTemp ==
-                                                              _prefs
-                                                                  .getNotificationType &&
-                                                          indexAlert ==
-                                                              listAlerts
-                                                                      .length -
-                                                                  1
-                                                      ? true
-                                                      : false,
-                                                  child: Positioned(
-                                                    bottom: 0,
-                                                    child: Padding(
-                                                      padding:
-                                                          const EdgeInsets.only(
-                                                              left: 0.0),
-                                                      child: Container(
-                                                        height: 50,
-                                                        width: 300,
-                                                        color:
-                                                            Colors.transparent,
-                                                        child:
-                                                            ElevateButtonFilling(
-                                                          showIcon: false,
-                                                          onChanged: (value) {
-                                                            cancelNotify();
-                                                          },
-                                                          mensaje: "Desactivar",
-                                                          img: '',
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ),
-                                                Container(
-                                                  width: 300,
-                                                  color: Colors.transparent,
-                                                  child: Row(
-                                                    mainAxisSize:
-                                                        MainAxisSize.min,
-                                                    children: [
-                                                      IconButton(
-                                                        iconSize: 35,
-                                                        color: ColorPalette
-                                                            .principal,
-                                                        onPressed: () {},
-                                                        icon: searchImageForIcon(
-                                                            listAlerts[
-                                                                    indexAlert]
-                                                                .type),
-                                                      ),
-                                                      Container(
-                                                        width: 220,
-                                                        height: listAlerts[
-                                                                    indexAlert]
-                                                                .type
-                                                                .toString()
-                                                                .contains('-')
-                                                            ? 70
-                                                            : 50,
-                                                        color:
-                                                            Colors.transparent,
-                                                        child: Stack(
-                                                          children: [
-                                                            Text(
-                                                              listAlerts[
-                                                                      indexAlert]
-                                                                  .type
-                                                                  .toString(),
-                                                              textAlign:
-                                                                  TextAlign
-                                                                      .left,
-                                                              maxLines: 2,
-                                                              style:
-                                                                  textNormal16White(),
-                                                            ),
-                                                            Positioned(
-                                                              bottom: 0,
-                                                              child: Text(
-                                                                '${listAlerts[indexAlert].time.day}-${listAlerts[indexAlert].time.month}-${listAlerts[indexAlert].time.year} | ${listAlerts[indexAlert].time.hour.toString().padLeft(2, '0')}:${listAlerts[indexAlert].time.minute.toString().padLeft(2, '0')}',
-                                                                textAlign:
-                                                                    TextAlign
-                                                                        .left,
-                                                                style:
-                                                                    textNormal16White(),
-                                                              ),
-                                                            ),
-                                                          ],
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ),
-                                                if (isExpanded &&
-                                                    indexAlert >= 0 &&
-                                                    indexAlert <
-                                                        listAlerts.length - 1 &&
-                                                    selectedCellIndex ==
-                                                        alertTypes.keys
-                                                            .toList()
-                                                            .indexOf(
-                                                                alertType) &&
-                                                    dateRow ==
-                                                        widget
-                                                            .groupedAlerts.keys
-                                                            .elementAt(
-                                                                indexGroup)) ...[
-                                                  Padding(
-                                                    padding:
-                                                        const EdgeInsets.only(
-                                                            top: 78.0,
-                                                            left: 20),
-                                                    child: CustomPaint(
-                                                      painter: LinePainter(),
-                                                    ),
-                                                  ),
-                                                ],
-                                              ],
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    );
-                                  },
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
+                    CellExpand(
+                      listalertTypes: alertTypes[alertType]!,
+                      onCancel: (bool) {
+                        cancelNotify();
+                      },
+                      onExpand: (bool) =>
+                          toggleExpansion(indexGroup, alertType),
+                      isExpand: isExpanded &&
+                          selectedCellIndex ==
+                              alertTypes.keys.toList().indexOf(alertType) &&
+                          dateRow == date,
+                      showLine: isExpanded &&
+                          selectedCellIndex ==
+                              alertTypes.keys.toList().indexOf(alertType) &&
+                          dateRow == date,
                     ),
-                  ]
+                  ],
+                  const SizedBox(
+                    height: 10,
+                  )
                 ],
               ),
             ),

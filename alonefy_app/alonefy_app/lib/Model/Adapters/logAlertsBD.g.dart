@@ -23,13 +23,14 @@ class LogAlertsBDAdapter extends TypeAdapter<LogAlertsBD> {
       photoDate: (fields[3] as List?)?.cast<Uint8List>(),
       video: fields[4] as Uint8List?,
       groupBy: fields[5] as String,
+      listVideosPresigned: (fields[6] as List?)?.cast<VideoPresignedBD>(),
     );
   }
 
   @override
   void write(BinaryWriter writer, LogAlertsBD obj) {
     writer
-      ..writeByte(6)
+      ..writeByte(7)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
@@ -41,7 +42,9 @@ class LogAlertsBDAdapter extends TypeAdapter<LogAlertsBD> {
       ..writeByte(4)
       ..write(obj.video)
       ..writeByte(5)
-      ..write(obj.groupBy);
+      ..write(obj.groupBy)
+      ..writeByte(6)
+      ..write(obj.listVideosPresigned);
   }
 
   @override

@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:hive/hive.dart';
 import 'package:ifeelefine/Data/hive_constant_adapterInit.dart';
+import 'package:ifeelefine/Model/videopresignedbd.dart';
 
 part 'Adapters/contactZoneRiskBD.g.dart';
 
@@ -19,7 +20,8 @@ class ContactZoneRiskBD {
       required this.callme,
       required this.save,
       required this.createDate,
-      this.video});
+      this.video,
+      this.listVideosPresigned});
 
   @HiveField(0)
   int id;
@@ -59,4 +61,7 @@ class ContactZoneRiskBD {
 
   @HiveField(12)
   Uint8List? video;
+
+  @HiveField(13)
+  List<VideoPresignedBD>? listVideosPresigned;
 }

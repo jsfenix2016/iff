@@ -81,7 +81,7 @@ class _EditZoneRiskPageState extends State<EditZoneRiskPage> {
     preferencePermission = _prefs.getAcceptedSendLocation;
     // _isActivePermission();
     if (widget.contactRisk.id != -1) {
-      saveConfig = widget.contactRisk.save;
+      saveConfig = true;
       getContact();
     }
 
@@ -246,7 +246,7 @@ class _EditZoneRiskPageState extends State<EditZoneRiskPage> {
     }
 
     setState(() {
-      isLoading = true;
+      isLoading = false;
     });
   }
 
@@ -735,7 +735,7 @@ class _EditZoneRiskPageState extends State<EditZoneRiskPage> {
                               child: Transform.scale(
                                 scale: 0.8,
                                 child: CupertinoSwitch(
-                                  value: widget.contactRisk.save,
+                                  value: saveConfig,
                                   activeColor: ColorPalette.activeSwitch,
                                   trackColor: CupertinoColors.inactiveGray,
                                   onChanged: (value) async {

@@ -1,5 +1,6 @@
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:ifeelefine/Common/initialize_models_bd.dart';
+import 'package:ifeelefine/Data/hive_constant_adapterInit.dart';
 import 'package:ifeelefine/Model/contactRiskBD.dart';
 import 'package:ifeelefine/Model/contactZoneRiskBD.dart';
 
@@ -138,6 +139,7 @@ class HiveDataRisk {
 
   Future<bool> saveContactZoneRisk(ContactZoneRiskBD contact) async {
     try {
+      await inicializeHiveBD();
       final Box<ContactZoneRiskBD> box =
           await Hive.openBox<ContactZoneRiskBD>('ContactZoneRiskBD');
 
@@ -159,7 +161,8 @@ class HiveDataRisk {
 
       var index = 0;
       for (var contactZoneRiskBD in listDate) {
-        if (contactZoneRiskBD.id == contact.id) {
+        if (contactZoneRiskBD.id == contact.id &&
+            contactZoneRiskBD.createDate == contact.createDate) {
           await box.putAt(index, contact);
           break;
         }

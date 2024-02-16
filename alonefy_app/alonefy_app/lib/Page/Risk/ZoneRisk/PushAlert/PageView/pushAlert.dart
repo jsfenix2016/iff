@@ -15,6 +15,7 @@ import 'package:camera/camera.dart';
 import 'package:ifeelefine/Common/decoration_custom.dart';
 import 'package:ifeelefine/Provider/prefencesUser.dart';
 import 'package:ifeelefine/Utils/Widgets/loading_page.dart';
+import 'package:ifeelefine/Utils/Widgets/recoder_count.dart';
 
 class PushAlertPage extends StatefulWidget {
   /// Creates a new GeolocatorWidget.
@@ -34,6 +35,7 @@ class _PushAlertPageState extends State<PushAlertPage> {
   late CameraController _cameraControllerfront;
   late bool isActive = false;
   bool _isLoading = true;
+  bool isReadyToRecord = false;
   bool isMenu = false;
   bool useTwoCamera = false;
   final DeviceInfoPlugin deviceInfoPlugin = DeviceInfoPlugin();
@@ -70,20 +72,28 @@ class _PushAlertPageState extends State<PushAlertPage> {
     setState(() => _isLoading = true);
 
     final cameras = await availableCameras();
-    final front = cameras.firstWhere(
-        (camera) => camera.lensDirection == CameraLensDirection.back);
-    _cameraController = CameraController(front, ResolutionPreset.max);
-
-    await _cameraController.initialize();
-    await _cameraController.prepareForVideoRecording();
-    if (info.brand == 'samsung' && info.model.contains("SM-G")) {
+    if (cameras.isNotEmpty) {
       final front = cameras.firstWhere(
-          (camera) => camera.lensDirection == CameraLensDirection.front);
-      _cameraControllerfront = CameraController(front, ResolutionPreset.max);
-      await _cameraControllerfront.initialize();
-      await _cameraControllerfront.prepareForVideoRecording();
+          (camera) => camera.lensDirection == CameraLensDirection.back);
+      _cameraController = CameraController(front, ResolutionPreset.max);
+
+      await _cameraController.initialize();
+      await _cameraController.prepareForVideoRecording();
+
+      if (info.brand == 'samsung' && info.model.contains("SM-G")) {
+        final front = cameras.firstWhere(
+            (camera) => camera.lensDirection == CameraLensDirection.front);
+        _cameraControllerfront = CameraController(front, ResolutionPreset.max);
+        await _cameraControllerfront.initialize();
+        await _cameraControllerfront.prepareForVideoRecording();
+      }
     }
-    setState(() => _isLoading = false);
+    // Una vez que los controladores de la cámara están inicializados,
+    // establece _isReadyToRecord en true para indicar al usuario que puede tocar para grabar.
+    setState(() {
+      _isLoading = false;
+      isReadyToRecord = true;
+    });
   }
 
   void checkpremium() async {
@@ -96,7 +106,12 @@ class _PushAlertPageState extends State<PushAlertPage> {
   }
 
   _starRecoding() async {
-    await Future.wait([_cameraController.startVideoRecording()]);
+    setState(() => _isRecording = true);
+
+    await Future.wait([
+      _cameraController.prepareForVideoRecording(),
+      _cameraController.startVideoRecording()
+    ]);
     print('Grabando');
 
     if (info.brand == 'samsung' && info.model.contains("SM-G")) {
@@ -178,11 +193,10 @@ class _PushAlertPageState extends State<PushAlertPage> {
             showSaveAlert(context, Constant.info, Constant.changeGeneric);
           }
         } else {
-          showSaveAlert(
-            context,
-            Constant.info,
-            "Se produjo un error al detener la grabación",
-          );
+          Future.sync(() => {
+                showSaveAlert(context, Constant.info,
+                    'Nose ha iniciado la grabación toque de nuevo la pantalla')
+              });
         }
       } catch (e) {
         print(e);
@@ -208,7 +222,7 @@ class _PushAlertPageState extends State<PushAlertPage> {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     return LoadingIndicator(
-      isLoading: _isLoading,
+      isLoading: _isLoading && isReadyToRecord,
       child: WillPopScope(
         onWillPop: () async {
           return true;
@@ -228,7 +242,7 @@ class _PushAlertPageState extends State<PushAlertPage> {
             data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
             child: GestureDetector(
               onTapDown: (details) {
-                if (_prefs.getUserFree == false) {
+                if (_prefs.getUserFree == false && isReadyToRecord) {
                   _starRecoding();
                 }
               },
@@ -252,6 +266,14 @@ class _PushAlertPageState extends State<PushAlertPage> {
                 height: size.height,
                 child: Stack(
                   children: [
+                    // Positioned(
+                    //   top: 50,
+                    //   right: 10,
+                    //   child: RecoderCount(
+                    //     onChanged: (Duration value) {},
+                    //     activate: _isRecording,
+                    //   ),
+                    // ),
                     Positioned(
                       top: 50,
                       child: ClipRRect(
@@ -260,7 +282,7 @@ class _PushAlertPageState extends State<PushAlertPage> {
                         child: SizedBox(
                             height: 100,
                             width: 100,
-                            child: _isLoading
+                            child: _isLoading && !isReadyToRecord
                                 ? const SizedBox.shrink()
                                 : _prefs.getUserPremium
                                     ? CameraPreview(_cameraController)
@@ -276,7 +298,7 @@ class _PushAlertPageState extends State<PushAlertPage> {
                               child: SizedBox(
                                   height: 100,
                                   width: 100,
-                                  child: _isLoading
+                                  child: _isLoading && !isReadyToRecord
                                       ? const SizedBox.shrink()
                                       : _prefs.getUserPremium
                                           ? CameraPreview(

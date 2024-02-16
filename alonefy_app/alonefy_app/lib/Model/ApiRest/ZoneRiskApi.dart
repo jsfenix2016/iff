@@ -1,3 +1,4 @@
+import 'package:ifeelefine/Model/VideoPresignedUrls.dart';
 import 'package:ifeelefine/Model/contactZoneRiskBD.dart';
 
 import '../../Common/utils.dart';
@@ -15,7 +16,7 @@ class ZoneRiskApi {
   late String awsUploadCustomContactPresignedUrl;
   late DateTime createDate;
   late String awsDownloadCustomContactPresignedUrl;
-  late List<String> awsDownloadVideoPresignedUrls;
+  late List<VideoPresigned> awsDownloadVideoPresignedUrls;
 
   ZoneRiskApi(
       {required this.phoneNumber,
@@ -70,9 +71,22 @@ class ZoneRiskApi {
 
   factory ZoneRiskApi.fromJson(Map<String, dynamic> json) {
     print(json);
-    var asw = [""];
+    List<VideoPresigned>? asw = [];
+    List<String> aswTemp = [];
     if (json.length == 11) {
-      asw = List<String>.from(json['awsDownloadVideoPresignedUrls']);
+      if (json.containsKey('awsDownloadVideoPresignedUrls')) {
+        var awsUrls = json['awsDownloadVideoPresignedUrls'];
+        if (awsUrls is List) {
+          List<VideoPresigned> parseVideoPresignedList(List<dynamic> list) {
+            return list.map((item) {
+              return VideoPresigned.fromJson(item);
+            }).toList();
+          }
+
+// Luego, puedes usar esta función para convertir la lista de objetos JSON a una lista de VideoPresigned:
+          asw = parseVideoPresignedList(awsUrls);
+        }
+      }
     }
 
     var id = json['id'];

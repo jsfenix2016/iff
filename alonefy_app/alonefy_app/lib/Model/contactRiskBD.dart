@@ -2,7 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:hive/hive.dart';
 import 'package:ifeelefine/Data/hive_constant_adapterInit.dart';
 
-part 'ApiRest/contactRiskBD.g.dart';
+part 'Adapters/contactRiskBD.g.dart';
 
 @HiveType(typeId: HiveConstantAdapterInit.idContactRiskBDAdapter)
 class ContactRiskBD {

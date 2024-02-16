@@ -30,13 +30,14 @@ class ContactZoneRiskBDAdapter extends TypeAdapter<ContactZoneRiskBD> {
       save: fields[10] as bool,
       createDate: fields[11] as DateTime,
       video: fields[12] as Uint8List?,
+      listVideosPresigned: (fields[13] as List?)?.cast<VideoPresignedBD>(),
     );
   }
 
   @override
   void write(BinaryWriter writer, ContactZoneRiskBD obj) {
     writer
-      ..writeByte(13)
+      ..writeByte(14)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
@@ -62,7 +63,9 @@ class ContactZoneRiskBDAdapter extends TypeAdapter<ContactZoneRiskBD> {
       ..writeByte(11)
       ..write(obj.createDate)
       ..writeByte(12)
-      ..write(obj.video);
+      ..write(obj.video)
+      ..writeByte(13)
+      ..write(obj.listVideosPresigned);
   }
 
   @override

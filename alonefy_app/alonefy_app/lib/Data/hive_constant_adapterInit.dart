@@ -10,6 +10,7 @@ import 'package:ifeelefine/Model/restdaybd.dart';
 import 'package:ifeelefine/Model/useMobilbd.dart';
 import 'package:ifeelefine/Model/userbd.dart';
 import 'package:ifeelefine/Model/logAlertsBD.dart';
+import 'package:ifeelefine/Model/videopresignedbd.dart';
 import 'package:path_provider/path_provider.dart';
 
 class HiveConstantAdapterInit {
@@ -22,6 +23,7 @@ class HiveConstantAdapterInit {
   static const int idContactZoneRiskBDAdapter = 6;
   static const int idLogActivityBDAdapter = 7;
   static const int idUseMobilBDAdapter = 8;
+  static const int idVideoPresignedBDAdapter = 9;
 }
 
 Future inicializeHiveBD() async {
@@ -56,5 +58,8 @@ Future inicializeHiveBD() async {
   }
   if (!Hive.isAdapterRegistered(UseMobilBDAdapter().typeId)) {
     Hive.registerAdapter(UseMobilBDAdapter());
+  }
+  if (!Hive.isAdapterRegistered(VideoPresignedBDAdapter().typeId)) {
+    Hive.registerAdapter(VideoPresignedBDAdapter());
   }
 }

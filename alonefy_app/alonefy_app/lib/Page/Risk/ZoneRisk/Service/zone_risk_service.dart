@@ -1,6 +1,8 @@
 import 'dart:convert';
+import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:path_provider/path_provider.dart';
 import 'package:http/http.dart' as http;
 import 'package:ifeelefine/Common/utils.dart';
 
@@ -104,7 +106,7 @@ class ZoneRiskService {
     }
   }
 
-  Future<void> updateVideo(String url, Uint8List? bytes) async {
+  Future<void> updateVideoApi(String url, Uint8List? bytes) async {
     try {
       var postUri = Uri.parse(url);
 
@@ -153,7 +155,9 @@ class ZoneRiskService {
     final resp = await http.get(Uri.parse(url));
 
     if (resp.statusCode == 200) {
-      return resp.bodyBytes;
+      final bytes = resp.bodyBytes;
+
+      return bytes;
     } else {
       return null;
     }

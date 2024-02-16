@@ -186,7 +186,7 @@ class RedirectViewNotifier with ChangeNotifier {
           prefs.setNotificationType = "Cita";
           final mainController = Get.put(MainController());
           mainController.saveUserLog(
-              "Cita finalizada", DateTime.now(), prefs.getIdDateGroup);
+              "Cita - finalizada", DateTime.now(), prefs.getIdDateGroup);
           prefs.setFinishIdDate = true;
           prefs.setListDate = true;
           editRiskController.updateContactRiskWhenDateFinished(id, data);
