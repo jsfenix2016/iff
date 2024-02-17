@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -15,7 +17,6 @@ import 'package:camera/camera.dart';
 import 'package:ifeelefine/Common/decoration_custom.dart';
 import 'package:ifeelefine/Provider/prefencesUser.dart';
 import 'package:ifeelefine/Utils/Widgets/loading_page.dart';
-import 'package:ifeelefine/Utils/Widgets/recoder_count.dart';
 
 class PushAlertPage extends StatefulWidget {
   /// Creates a new GeolocatorWidget.
@@ -40,6 +41,7 @@ class _PushAlertPageState extends State<PushAlertPage> {
   bool useTwoCamera = false;
   final DeviceInfoPlugin deviceInfoPlugin = DeviceInfoPlugin();
   late final AndroidDeviceInfo info;
+  Timer? _timer;
 
   late XFile? filefront = null;
   late XFile? fileback = null;
@@ -60,11 +62,13 @@ class _PushAlertPageState extends State<PushAlertPage> {
   @override
   void dispose() async {
     super.dispose();
+    _timer?.cancel();
     if (_prefs.getUserFree == false) {
       await _cameraController.dispose();
-      if (info.brand == 'samsung' && info.model.contains("SM-G")) {
-        await _cameraControllerfront.dispose();
-      }
+      // await _cameraController.stopImageStream();
+      // if (info.brand == 'samsung' && info.model.contains("SM-G")) {
+      //   await _cameraControllerfront.dispose();
+      // }
     }
   }
 
@@ -73,20 +77,21 @@ class _PushAlertPageState extends State<PushAlertPage> {
 
     final cameras = await availableCameras();
     if (cameras.isNotEmpty) {
-      final front = cameras.firstWhere(
+      final back = cameras.firstWhere(
           (camera) => camera.lensDirection == CameraLensDirection.back);
-      _cameraController = CameraController(front, ResolutionPreset.max);
+      _cameraController = CameraController(back, ResolutionPreset.max);
 
       await _cameraController.initialize();
       await _cameraController.prepareForVideoRecording();
 
-      if (info.brand == 'samsung' && info.model.contains("SM-G")) {
-        final front = cameras.firstWhere(
-            (camera) => camera.lensDirection == CameraLensDirection.front);
-        _cameraControllerfront = CameraController(front, ResolutionPreset.max);
-        await _cameraControllerfront.initialize();
-        await _cameraControllerfront.prepareForVideoRecording();
-      }
+      // if (info.brand == 'samsung' && info.model.contains("SM-G")) {
+      //   final cameraFront = cameras.firstWhere(
+      //       (camera) => camera.lensDirection == CameraLensDirection.front);
+      //   _cameraControllerfront = CameraController(cameraFront, ResolutionPreset.max);
+      //   await _cameraControllerfront.initialize();
+      //   await _cameraControllerfront.prepareForVideoRecording();
+      //   useTwoCamera = true;
+      // }
     }
     // Una vez que los controladores de la cámara están inicializados,
     // establece _isReadyToRecord en true para indicar al usuario que puede tocar para grabar.
@@ -106,40 +111,24 @@ class _PushAlertPageState extends State<PushAlertPage> {
   }
 
   _starRecoding() async {
-    setState(() => _isRecording = true);
-
-    await Future.wait([
-      _cameraController.prepareForVideoRecording(),
-      _cameraController.startVideoRecording()
-    ]);
-    print('Grabando');
-
-    if (info.brand == 'samsung' && info.model.contains("SM-G")) {
-      if (!_cameraControllerfront.value.isInitialized) {
-        await Future.wait([
-          _cameraControllerfront.prepareForVideoRecording(),
-          _cameraControllerfront.startVideoRecording()
-        ]);
-      }
-    }
-    if (!_cameraController.value.isRecordingVideo) {
-      Future.sync(() => {
-            showSaveAlert(context, Constant.info,
-                'Nose ha iniciado la grabación toque de nuevo la pantalla')
-          });
-    }
-  }
-
-  _recordVideo() async {
-    if (_isRecording) {
-      stopRecording();
-    } else {
-      // await _cameraController.startVideoRecording();
-      // if (info.brand == 'samsung' && info.model.contains("SM-G")) {
-      //   await _cameraControllerfront.startVideoRecording();
-      // }
+    _timer = Timer(const Duration(milliseconds: 200), () async {
       setState(() => _isRecording = true);
-    }
+      if (!_cameraController.value.isRecordingVideo) {
+        await Future.wait([
+            _cameraController.prepareForVideoRecording(),
+            _cameraController.startVideoRecording()
+          ]);
+
+          // if (info.brand == 'samsung' && info.model.contains("SM-G")) {
+          //   if (!_cameraControllerfront.value.isInitialized) {
+          //     await Future.wait([
+          //       _cameraControllerfront.prepareForVideoRecording(),
+          //       _cameraControllerfront.startVideoRecording()
+          //     ]);
+          //   }
+          // }
+      }
+    });
   }
 
   Future<void> saveFree() async {
@@ -162,6 +151,8 @@ class _PushAlertPageState extends State<PushAlertPage> {
   }
 
   void stopRecording() async {
+    _timer?.cancel();
+    if (_isRecording) {
     setState(() {
       _isLoading = true;
       _isRecording = false;
@@ -173,19 +164,20 @@ class _PushAlertPageState extends State<PushAlertPage> {
           fileback = await _cameraController.stopVideoRecording();
         }
 
-        if (info.brand == 'samsung' && info.model.contains("SM-G")) {
-          if (_cameraControllerfront.value.isRecordingVideo) {
-            filefront = await _cameraControllerfront.stopVideoRecording();
-          }
-        }
+        // if (info.brand == 'samsung' && info.model.contains("SM-G")) {
+        //   if (_cameraControllerfront.value.isRecordingVideo) {
+        //     filefront = await _cameraControllerfront.stopVideoRecording();
+        //   }
+        // }
 
         if (fileback != null && fileback!.path.isNotEmpty) {
           // Detener la grabación de video y detener el timer
-          var taskIds = await pushVC.updateVideo(
+          var taskIds =  await pushVC.updateVideo(
             widget.contactZone,
             fileback!.path,
             filefront == null ? '' : filefront!.path,
           );
+          
 
           if (taskIds.isNotEmpty) {
             _prefs.setSelectContactRisk = widget.contactZone.id;
@@ -215,6 +207,8 @@ class _PushAlertPageState extends State<PushAlertPage> {
       }
 
       setState(() => _isLoading = false);
+    }
+
     }
   }
 
