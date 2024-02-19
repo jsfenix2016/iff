@@ -233,7 +233,7 @@ Future<void> main() async {
   _prefs.setHabitsEnable = false;
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
 
-  await requestPermission(Permission.notification);
+  // await requestPermission(Permission.notification);
   final deviceInfo = DeviceInfoPlugin();
   final androidInfo = await deviceInfo.androidInfo;
 
