@@ -849,8 +849,8 @@ Future<List<Contact>> getContacts(BuildContext context) async {
 }
 
 Future<List<Contact>> getContactsListWithoutPermission() async {
-  var contacts = await FlutterContacts.getContacts(
-        withProperties: true, withPhoto: true);
+  var contacts =
+      await FlutterContacts.getContacts(withProperties: true, withPhoto: true);
 
   return contacts;
 }
@@ -899,6 +899,14 @@ int daysBetween(DateTime from, DateTime to) {
   from = DateTime(from.year, from.month, from.day);
   to = DateTime(to.year, to.month, to.day);
   return (to.difference(from).inHours / 24).round();
+}
+
+bool esNumeroEspana(String numero) {
+  // Expresión regular para validar números de teléfono españoles
+  RegExp regex = RegExp(r'^(\+34|0034|34)?[6|7|9][0-9]{8}$');
+
+  // Verificar si el número coincide con la expresión regular
+  return regex.hasMatch(numero);
 }
 
 Future<String> rangeDateTimeToString(DateTime? from, DateTime? to) async {

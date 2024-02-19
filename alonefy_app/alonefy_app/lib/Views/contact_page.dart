@@ -168,11 +168,11 @@ class _ContactListState extends State<ContactList> {
               "20 min",
               "20 min",
               "20 min",
-              contact.phones.first.normalizedNumber.contains("+34")
-                  ? contact.phones.first.normalizedNumber
+              contact.phones.first.number.contains("+34")
+                  ? contact.phones.first.number
                       .replaceAll("+34", "")
                       .replaceAll(" ", "")
-                  : contact.phones.first.normalizedNumber,
+                  : contact.phones.first.number,
               "PENDING");
 
           await const HiveData().saveUserContact(contactBDt);
@@ -186,7 +186,7 @@ class _ContactListState extends State<ContactList> {
     if (cont == null) {
       return;
     }
-    if (cont!.name.first.isNotEmpty) {
+    if (cont!.displayName.isNotEmpty) {
       getContactBD();
     }
   }

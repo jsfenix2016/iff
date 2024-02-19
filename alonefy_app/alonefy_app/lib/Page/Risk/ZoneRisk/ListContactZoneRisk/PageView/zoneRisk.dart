@@ -33,9 +33,9 @@ class ZoneRiskPage extends StatefulWidget {
 }
 
 class _ZoneRiskPageState extends State<ZoneRiskPage> {
-  ListContactZoneController riskVC = ListContactZoneController();
+  ListContactZoneController riskVC = Get.put(ListContactZoneController());
 
-  final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   List<ContactZoneRiskBD> listContact = [];
   late ContactZoneRiskBD contactTemp;
@@ -365,6 +365,7 @@ class _ZoneRiskPageState extends State<ZoneRiskPage> {
     final size = MediaQuery.of(context).size;
     RedirectViewNotifier.setStoredContext(context);
     return Scaffold(
+      key: _scaffoldKey,
       backgroundColor: Colors.black,
       appBar: AppBar(
         iconTheme: const IconThemeData(

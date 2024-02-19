@@ -42,7 +42,7 @@ class _AvatarContentState extends State<AvatarUserContent> {
     }
 
     if (foto != null) {
-      var a = await Navigator.push(
+      var req = await Navigator.push(
         RedirectViewNotifier.storedContext!,
         MaterialPageRoute(
           builder: (context) => EditImagePage(
@@ -53,9 +53,9 @@ class _AvatarContentState extends State<AvatarUserContent> {
           ),
         ),
       );
-      if (a != null) {
-        foto = a;
-        widget.selectPhoto(a);
+      if (req != null) {
+        foto = req;
+        widget.selectPhoto(req);
       } else {
         foto = null;
         setState(() {});

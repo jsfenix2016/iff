@@ -86,7 +86,10 @@ class _CellDateRiskState extends State<CellDateRisk> {
     return Container(
       width: 300,
       color: Colors.transparent,
-      height: widget.logAlert.photoDate!.isEmpty ? 70 : 140,
+      height: widget.logAlert.photoDate == null ||
+              widget.logAlert.photoDate!.isEmpty
+          ? 70
+          : 140,
       child: Column(
         mainAxisSize: MainAxisSize.max,
         mainAxisAlignment: MainAxisAlignment.center,
@@ -143,99 +146,111 @@ class _CellDateRiskState extends State<CellDateRisk> {
               ],
             ),
           ),
-          Visibility(
-            visible: widget.logAlert.photoDate!.isEmpty ? false : true,
-            child: Container(
-              height: 60,
-              width: 300,
-              color: Colors.transparent,
-              child: Row(
-                mainAxisSize: MainAxisSize.max,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Visibility(
-                    visible: widget.logAlert.photoDate!.isEmpty ? false : true,
-                    child: ImageFanWidget(
-                      onChanged: (List<File> value) {
-                        imagePaths = value;
-                        setState(() {});
-                      },
-                      listImg: widget.logAlert.photoDate!,
-                      isEdit: false,
-                      onChangedEdit: (Uint8List value) {},
-                    ),
-                  ),
-                  Visibility(
-                    visible: widget.logAlert.photoDate!.isEmpty ? false : true,
-                    child: IconButton(
-                      onPressed: () {
-                        //action coe when button is pressed
-                        showDialog(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return Dialog(
-                              child: SizedBox(
-                                child: Column(
-                                  children: [
-                                    Expanded(
-                                      child: getImageData(widget
-                                          .logAlert.photoDate![_currentIndex]),
-                                    ),
-                                    ButtonBar(
-                                      alignment: MainAxisAlignment.center,
-                                      children: [
-                                        IconButton(
-                                          icon: const Icon(Icons.arrow_back),
-                                          onPressed: () {
-                                            _currentIndex =
-                                                (_currentIndex - 1) %
-                                                    widget.logAlert.photoDate!
-                                                        .length;
-                                            if (_currentIndex < 0) {
-                                              _currentIndex = widget.logAlert
-                                                      .photoDate!.length -
-                                                  1;
-                                            }
-                                            (context as Element)
-                                                .markNeedsBuild();
-                                          },
-                                        ),
-                                        IconButton(
-                                          icon: const Icon(Icons.arrow_forward),
-                                          onPressed: () {
-                                            _currentIndex =
-                                                (_currentIndex + 1) %
-                                                    widget.logAlert.photoDate!
-                                                        .length;
-                                            (context as Element)
-                                                .markNeedsBuild();
-                                          },
-                                        ),
-                                        IconButton(
-                                          icon: const Icon(Icons.close),
-                                          onPressed: () {
-                                            Navigator.of(context).pop();
-                                          },
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            );
-                          },
-                        );
-                      },
-                      icon: const Icon(
-                        Icons.preview,
-                        color: Colors.white,
+          if (widget.logAlert.photoDate != null) ...[
+            Visibility(
+              visible: widget.logAlert.photoDate == null ||
+                      widget.logAlert.photoDate!.isEmpty
+                  ? false
+                  : true,
+              child: Container(
+                height: 60,
+                width: 300,
+                color: Colors.transparent,
+                child: Row(
+                  mainAxisSize: MainAxisSize.max,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Visibility(
+                      visible: widget.logAlert.photoDate == null ||
+                              widget.logAlert.photoDate!.isEmpty
+                          ? false
+                          : true,
+                      child: ImageFanWidget(
+                        onChanged: (List<File> value) {
+                          imagePaths = value;
+                          setState(() {});
+                        },
+                        listImg: widget.logAlert.photoDate!,
+                        isEdit: false,
+                        onChangedEdit: (Uint8List value) {},
                       ),
                     ),
-                  ),
-                ],
+                    Visibility(
+                      visible: widget.logAlert.photoDate == null ||
+                              widget.logAlert.photoDate!.isEmpty
+                          ? false
+                          : true,
+                      child: IconButton(
+                        onPressed: () {
+                          //action coe when button is pressed
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return Dialog(
+                                child: SizedBox(
+                                  child: Column(
+                                    children: [
+                                      Expanded(
+                                        child: getImageData(widget.logAlert
+                                            .photoDate![_currentIndex]),
+                                      ),
+                                      ButtonBar(
+                                        alignment: MainAxisAlignment.center,
+                                        children: [
+                                          IconButton(
+                                            icon: const Icon(Icons.arrow_back),
+                                            onPressed: () {
+                                              _currentIndex =
+                                                  (_currentIndex - 1) %
+                                                      widget.logAlert.photoDate!
+                                                          .length;
+                                              if (_currentIndex < 0) {
+                                                _currentIndex = widget.logAlert
+                                                        .photoDate!.length -
+                                                    1;
+                                              }
+                                              (context as Element)
+                                                  .markNeedsBuild();
+                                            },
+                                          ),
+                                          IconButton(
+                                            icon:
+                                                const Icon(Icons.arrow_forward),
+                                            onPressed: () {
+                                              _currentIndex =
+                                                  (_currentIndex + 1) %
+                                                      widget.logAlert.photoDate!
+                                                          .length;
+                                              (context as Element)
+                                                  .markNeedsBuild();
+                                            },
+                                          ),
+                                          IconButton(
+                                            icon: const Icon(Icons.close),
+                                            onPressed: () {
+                                              Navigator.of(context).pop();
+                                            },
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              );
+                            },
+                          );
+                        },
+                        icon: const Icon(
+                          Icons.preview,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
-          ),
+          ]
         ],
       ),
     );

@@ -137,6 +137,27 @@ class HiveDataRisk {
     }
   }
 
+  Future<ContactZoneRiskBD> getcontactZoneRiskbdID(
+      ContactZoneRiskBD zone) async {
+    try {
+      final Box<ContactZoneRiskBD> box =
+          await Hive.openBox<ContactZoneRiskBD>('ContactZoneRiskBD');
+      var listZone = box.values.toList();
+
+      var index = 0;
+      for (var contactZoneRiskBD in listZone) {
+        if (contactZoneRiskBD.id == zone.id) {
+          return (contactZoneRiskBD);
+        }
+        index++;
+      }
+      return zone;
+    } catch (error) {
+      print(error);
+      return zone;
+    }
+  }
+
   Future<bool> saveContactZoneRisk(ContactZoneRiskBD contact) async {
     try {
       await inicializeHiveBD();
@@ -161,8 +182,7 @@ class HiveDataRisk {
 
       var index = 0;
       for (var contactZoneRiskBD in listDate) {
-        if (contactZoneRiskBD.id == contact.id &&
-            contactZoneRiskBD.createDate == contact.createDate) {
+        if (contactZoneRiskBD.id == contact.id) {
           await box.putAt(index, contact);
           break;
         }

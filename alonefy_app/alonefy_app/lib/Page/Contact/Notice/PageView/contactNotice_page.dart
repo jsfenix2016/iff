@@ -3,6 +3,7 @@ import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ifeelefine/Common/Constant.dart';
+import 'package:ifeelefine/Common/manager_alerts.dart';
 import 'package:ifeelefine/Common/notificationService.dart';
 import 'package:ifeelefine/Common/text_style_font.dart';
 import 'package:ifeelefine/Common/utils.dart';
@@ -60,7 +61,7 @@ class _ContactNoticePageState extends State<ContactNoticePage> {
 
   void _showCountryListScreen(BuildContext context) async {
     ContactBD contactBD = ContactBD("", null, "", "", "", "", "", "PENDING");
-    await Navigator.push(
+    var req = await Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => FilterContactListScreen(
@@ -74,7 +75,7 @@ class _ContactNoticePageState extends State<ContactNoticePage> {
                     "20 min",
                     "20 min",
                     "20 min",
-                    contact.phones.first.normalizedNumber
+                    contact.phones.first.number
                         .replaceAll("+34", "")
                         .replaceAll(" ", ""),
                     "PENDING");

@@ -34,6 +34,7 @@ class _TestCameraPageState extends State<TestCameraPage> {
   late CameraController secondCameraController;
   late XFile _videoFile;
   late XFile _video2File;
+  late XFile _videoFile3;
   @override
   void initState() {
     _initCamera();
@@ -73,7 +74,6 @@ class _TestCameraPageState extends State<TestCameraPage> {
     await secondCameraController.initialize();
   }
 
-  late XFile _videoFile3;
   Future initCameras() async {
     // Iniciar la grabación de video en ambas cámaras
     // await firstCameraController.prepareForVideoRecording();

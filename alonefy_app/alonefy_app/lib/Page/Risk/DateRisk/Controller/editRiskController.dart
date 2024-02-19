@@ -293,10 +293,10 @@ class EditRiskController extends GetxController {
       BuildContext context, ContactRiskBD contact) async {
     try {
       // Map info
-      await const HiveDataRisk().deleteDate(contact);
+
       Future.sync(() => ContactRiskService().deleteContactsRisk(contact.id));
-      saveContactRisk(context, contact);
-      // updateContactRisk(contact);
+      await const HiveDataRisk().deleteDate(contact);
+      await saveContactRisk(context, contact);
 
       return true;
     } catch (error) {

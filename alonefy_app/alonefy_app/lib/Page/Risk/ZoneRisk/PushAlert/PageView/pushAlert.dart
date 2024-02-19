@@ -29,6 +29,8 @@ class PushAlertPage extends StatefulWidget {
 
 class _PushAlertPageState extends State<PushAlertPage> {
   final PushAlertController pushVC = Get.put(PushAlertController());
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
   final _prefs = PreferenceUser();
   bool _isRecording = false;
   late CameraController _cameraController;
@@ -68,34 +70,6 @@ class _PushAlertPageState extends State<PushAlertPage> {
     }
   }
 
-  _initCamera() async {
-    setState(() => _isLoading = true);
-
-    final cameras = await availableCameras();
-    if (cameras.isNotEmpty) {
-      final front = cameras.firstWhere(
-          (camera) => camera.lensDirection == CameraLensDirection.back);
-      _cameraController = CameraController(front, ResolutionPreset.max);
-
-      await _cameraController.initialize();
-      await _cameraController.prepareForVideoRecording();
-
-      if (info.brand == 'samsung' && info.model.contains("SM-G")) {
-        final front = cameras.firstWhere(
-            (camera) => camera.lensDirection == CameraLensDirection.front);
-        _cameraControllerfront = CameraController(front, ResolutionPreset.max);
-        await _cameraControllerfront.initialize();
-        await _cameraControllerfront.prepareForVideoRecording();
-      }
-    }
-    // Una vez que los controladores de la cámara están inicializados,
-    // establece _isReadyToRecord en true para indicar al usuario que puede tocar para grabar.
-    setState(() {
-      _isLoading = false;
-      isReadyToRecord = true;
-    });
-  }
-
   void checkpremium() async {
     if (_prefs.getUserFree == false || _prefs.getUserPremium) {
       info = await deviceInfoPlugin.androidInfo;
@@ -105,28 +79,60 @@ class _PushAlertPageState extends State<PushAlertPage> {
     }
   }
 
-  _starRecoding() async {
-    setState(() => _isRecording = true);
+  _initCamera() async {
+    setState(() => _isLoading = true);
 
-    await Future.wait([
-      _cameraController.prepareForVideoRecording(),
-      _cameraController.startVideoRecording()
-    ]);
-    print('Grabando');
+    final cameras = await availableCameras();
+    if (cameras.isNotEmpty) {
+      final front = cameras.firstWhere(
+          (camera) => camera.lensDirection == CameraLensDirection.back);
+      _cameraController = CameraController(front, ResolutionPreset.medium);
+      await _cameraController.initialize();
 
-    if (info.brand == 'samsung' && info.model.contains("SM-G")) {
-      if (!_cameraControllerfront.value.isInitialized) {
-        await Future.wait([
-          _cameraControllerfront.prepareForVideoRecording(),
-          _cameraControllerfront.startVideoRecording()
-        ]);
+      if (info.brand == 'samsung' && info.model.contains("SM-G")) {
+        final front = cameras.firstWhere(
+            (camera) => camera.lensDirection == CameraLensDirection.front);
+        _cameraControllerfront =
+            CameraController(front, ResolutionPreset.medium);
+        await _cameraControllerfront.initialize();
       }
     }
-    if (!_cameraController.value.isRecordingVideo) {
-      Future.sync(() => {
-            showSaveAlert(context, Constant.info,
-                'Nose ha iniciado la grabación toque de nuevo la pantalla')
-          });
+
+    setState(() {
+      _isLoading = false;
+      isReadyToRecord = true;
+    });
+  }
+
+  _starRecoding() async {
+    if (!_cameraController.value.isInitialized) {
+      // La cámara no se inicializó correctamente
+      showSaveAlert(context, Constant.info,
+          'Disculpa, toca la pantalla de nuevo. La cámara no se inicializó correctamente.');
+      return;
+    }
+
+    _isRecording = true;
+
+    try {
+      await Future.wait([
+        _cameraController.prepareForVideoRecording(),
+        _cameraController.startVideoRecording()
+      ]);
+      print('Grabando');
+
+      if (info.brand == 'samsung' && info.model.contains("SM-G")) {
+        if (!_cameraControllerfront.value.isInitialized) {
+          await Future.wait([
+            _cameraControllerfront.prepareForVideoRecording(),
+            _cameraControllerfront.startVideoRecording()
+          ]);
+        }
+      }
+    } catch (e) {
+      // Error al iniciar la grabación de video
+      print('Error al iniciar la grabación de video: $e');
+      // Puedes mostrar un mensaje de error al usuario si lo deseas
     }
   }
 
@@ -228,6 +234,7 @@ class _PushAlertPageState extends State<PushAlertPage> {
           return true;
         },
         child: Scaffold(
+          key: _scaffoldKey,
           backgroundColor: Colors.black,
           appBar: isMenu
               ? AppBar(

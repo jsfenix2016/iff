@@ -39,10 +39,12 @@ class EditZoneRiskPage extends StatefulWidget {
 }
 
 class _EditZoneRiskPageState extends State<EditZoneRiskPage> {
-  EditZoneController editZoneVC = EditZoneController();
+  EditZoneController editZoneVC = Get.put(EditZoneController());
   final PreferenceUser _prefs = PreferenceUser();
   PreferencePermission preferencePermission = PreferencePermission.init;
   final _locationController = Get.put(ConfigGeolocatorController());
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
   var sendWhatsappSMS = false;
   var sendLocation = false;
   var saveConfig = false;
@@ -260,7 +262,8 @@ class _EditZoneRiskPageState extends State<EditZoneRiskPage> {
           "Por favor, establece tu clave de cancelación");
       return;
     }
-    var contactRisk = ContactZoneRiskBD(
+
+    ContactZoneRiskBD contactRisk = ContactZoneRiskBD(
         id: widget.contactRisk.id,
         photo: contactSelect.photo,
         name: widget.contactRisk.name,
@@ -302,6 +305,7 @@ class _EditZoneRiskPageState extends State<EditZoneRiskPage> {
         _prefs.getAcceptedContacts == PreferencePermission.allow) {
       contactlist = await getContacts(context);
     }
+
     await Navigator.push(
       context,
       MaterialPageRoute(
@@ -313,8 +317,7 @@ class _EditZoneRiskPageState extends State<EditZoneRiskPage> {
         }),
       ),
     );
-
-    if (cont!.name.first.isNotEmpty) {
+    if (cont!.displayName.isNotEmpty) {
       setState(() {
         contactSelect = cont!;
         widget.contactRisk.name = contactSelect.displayName;
@@ -343,6 +346,7 @@ class _EditZoneRiskPageState extends State<EditZoneRiskPage> {
     return LoadingIndicator(
       isLoading: isLoading,
       child: Scaffold(
+        key: _scaffoldKey,
         backgroundColor: Colors.black,
         appBar: AppBar(
           iconTheme: const IconThemeData(
@@ -586,7 +590,7 @@ class _EditZoneRiskPageState extends State<EditZoneRiskPage> {
                       children: [
                         Container(
                           color: Colors.transparent,
-                          height: 60.0,
+                          height: 65.0,
                           child: Padding(
                             padding: const EdgeInsets.all(12.0),
                             child: Row(

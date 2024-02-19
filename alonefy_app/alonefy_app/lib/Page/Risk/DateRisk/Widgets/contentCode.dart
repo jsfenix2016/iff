@@ -20,8 +20,7 @@ class ContentCode extends StatefulWidget {
   final CodeModel code;
   final ValueChanged<CodeModel> onChanged;
   @override
-  // ignore: library_private_types_in_public_api
-  State createState() => _ContentCodeState();
+  State<ContentCode> createState() => _ContentCodeState();
 }
 
 class _ContentCodeState extends State<ContentCode> {

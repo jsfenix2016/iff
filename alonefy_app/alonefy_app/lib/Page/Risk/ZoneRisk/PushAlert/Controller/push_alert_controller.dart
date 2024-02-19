@@ -10,6 +10,7 @@ import 'package:ifeelefine/Data/hiveRisk_data.dart';
 import 'package:ifeelefine/Model/ApiRest/ZoneRiskApi.dart';
 import 'package:ifeelefine/Model/contactZoneRiskBD.dart';
 import 'package:ifeelefine/Model/userbd.dart';
+import 'package:ifeelefine/Model/videopresignedbd.dart';
 import 'package:ifeelefine/Page/Risk/ZoneRisk/CancelAlert/PageView/cancelAlert.dart';
 import 'package:ifeelefine/Page/Risk/ZoneRisk/Service/zone_risk_service.dart';
 import 'package:ifeelefine/Provider/prefencesUser.dart';
@@ -132,10 +133,24 @@ class PushAlertController extends GetxController {
     PreferenceUser prefs = PreferenceUser();
     await prefs.initPrefs();
     final receivePort = ReceivePort();
-
+    var zonaTemp = await const HiveDataRisk().getcontactZoneRiskbdID(contact);
     if (path.isNotEmpty) {
       // _saveVideoInBackground(path);
-      contact.video = await convertImageData(path);
+      print(contact.createDate);
+      zonaTemp.video = await convertImageData(path);
+      VideoPresignedBD tempPre = VideoPresignedBD(
+          modified: zonaTemp.createDate.toString(),
+          url: path,
+          videoDown: await convertImageData(path));
+
+      List<VideoPresignedBD> listvideobd = [];
+      listvideobd.insert(0, tempPre);
+
+      if (zonaTemp.listVideosPresigned == null) {
+        zonaTemp.listVideosPresigned = listvideobd;
+      } else {
+        zonaTemp.listVideosPresigned!.add(tempPre);
+      }
 
       await Isolate.spawn(
         _backgroundTask,
@@ -160,7 +175,7 @@ class PushAlertController extends GetxController {
     if (contact.save) {
       // _saveBDInBackground(contact, user);
       await inicializeHiveBD();
-      await const HiveDataRisk().updateContactZoneRisk(contact);
+      await const HiveDataRisk().updateContactZoneRisk(zonaTemp);
 
       var url = await ZoneRiskService().getVideoUrl(
         user.telephone.contains('+34')
@@ -174,8 +189,8 @@ class PushAlertController extends GetxController {
       }
     }
 
-    var taskIds = await ZoneRiskService()
-        .createZoneRiskAlert(ZoneRiskApi.fromZoneRisk(contact, user.telephone));
+    var taskIds = await ZoneRiskService().createZoneRiskAlert(
+        ZoneRiskApi.fromZoneRisk(zonaTemp, user.telephone));
     if (taskIds.isNotEmpty) {
       Get.offAll(
         CancelAlertPage(taskIds: taskIds),

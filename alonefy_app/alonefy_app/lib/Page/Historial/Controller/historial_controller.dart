@@ -1,5 +1,3 @@
-import 'dart:typed_data';
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ifeelefine/Common/utils.dart';
@@ -96,7 +94,7 @@ class HistorialController extends GetxController {
           id: (contact.id),
           time: dateTime,
           type: "Zona",
-          video: contact.listVideosPresigned!.first.videoDown,
+          video: null,
           groupBy: "3",
           listVideosPresigned: contact.listVideosPresigned);
       addTempDynamic(tempAct);

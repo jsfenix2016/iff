@@ -7,7 +7,7 @@ import 'package:ifeelefine/Common/notificationService.dart';
 import 'package:ifeelefine/Common/text_style_font.dart';
 import 'package:ifeelefine/Page/Calendar/calendarPopup.dart';
 import 'package:ifeelefine/Page/Contact/Widget/filter_contact.dart';
-import 'package:ifeelefine/Page/Geolocator/Controller/configGeolocatorController.dart';
+
 import 'package:ifeelefine/Page/HomePage/Pageview/home_page.dart';
 import 'package:ifeelefine/Page/Premium/Controller/premium_controller.dart';
 import 'package:ifeelefine/Page/Premium/PageView/premium_page.dart';
@@ -30,14 +30,13 @@ import 'package:ifeelefine/Page/Risk/DateRisk/Widgets/contentCode.dart';
 import 'package:flutter/material.dart';
 
 import 'package:google_fonts/google_fonts.dart';
-import 'package:ifeelefine/Page/Risk/DateRisk/Widgets/imagesPreview.dart';
-import 'package:ifeelefine/Page/Risk/DateRisk/Widgets/popUpContact.dart';
+
 import 'package:ifeelefine/Provider/prefencesUser.dart';
 import 'package:ifeelefine/Utils/Widgets/elevateButtonCustomBorder.dart';
 import 'package:ifeelefine/Utils/Widgets/elevatedButtonFilling.dart';
 import 'package:ifeelefine/Utils/Widgets/imageAccordingWidget.dart';
 import 'package:ifeelefine/main.dart';
-import 'package:image_picker/image_picker.dart';
+
 import 'package:jiffy/jiffy.dart';
 import 'package:ifeelefine/Common/decoration_custom.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -54,6 +53,8 @@ class EditRiskPage extends StatefulWidget {
 
 class _EditRiskPageState extends State<EditRiskPage> {
   EditRiskController editVC = Get.put(EditRiskController());
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
   RiskController riskVC = Get.find<RiskController>();
   TextEditingController controllerText = TextEditingController();
   final _prefs = PreferenceUser();
@@ -309,7 +310,7 @@ class _EditRiskPageState extends State<EditRiskPage> {
         name: contactSelect!.displayName,
         timeinit: initTimeTemp,
         timefinish: finishTimeTemp,
-        phones: contactSelect!.phones.first.normalizedNumber
+        phones: contactSelect!.phones.first.number
             .replaceAll("+34", "")
             .replaceAll(" ", ""),
         titleMessage: widget.contactRisk.titleMessage,
@@ -505,7 +506,7 @@ class _EditRiskPageState extends State<EditRiskPage> {
         _prefs.getAcceptedContacts == PreferencePermission.allow) {
       contactlist = await getContacts(context);
     }
-    await Navigator.push(
+    var req = await Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) =>
@@ -521,13 +522,14 @@ class _EditRiskPageState extends State<EditRiskPage> {
       return;
     }
 
-    if (cont!.name.first.isNotEmpty) {
+    if (cont!.displayName.isNotEmpty) {
       setState(() {
         contactSelect = cont!;
-        widget.contactRisk.name = contactSelect!.displayName;
+        widget.contactRisk.name = cont!.displayName;
+        widget.contactRisk.photo = cont!.photo;
         isSelectContact = true;
-        indexSelect =
-            contactlist.indexWhere((item) => item.id == contactSelect!.id);
+        indexSelect = contactlist.indexWhere((item) => item.id == cont!.id);
+        print(indexSelect);
       });
     }
   }
@@ -549,6 +551,7 @@ class _EditRiskPageState extends State<EditRiskPage> {
     return LoadingIndicator(
       isLoading: isLoading,
       child: Scaffold(
+        key: _scaffoldKey,
         backgroundColor: Colors.black,
         appBar: AppBar(
           iconTheme: const IconThemeData(

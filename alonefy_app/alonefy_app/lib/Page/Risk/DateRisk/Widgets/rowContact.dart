@@ -25,7 +25,7 @@ class RowContact extends StatefulWidget {
   final ValueChanged<bool> onCancel;
   final ContactRiskBD contactRisk;
   @override
-  State createState() => _RowContactState();
+  State<RowContact> createState() => _RowContactState();
 }
 
 class _RowContactState extends State<RowContact> {

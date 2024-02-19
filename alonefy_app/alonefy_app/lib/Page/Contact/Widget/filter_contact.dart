@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_contacts/flutter_contacts.dart';
+import 'package:ifeelefine/Common/Constant.dart';
 
 import 'package:ifeelefine/Common/decoration_custom.dart';
+import 'package:ifeelefine/Common/manager_alerts.dart';
 
 import 'package:ifeelefine/Common/text_style_font.dart';
 import 'package:ifeelefine/Common/utils.dart';
@@ -21,6 +23,8 @@ class FilterContactListScreen extends StatefulWidget {
 }
 
 class _FilterContactListScreenState extends State<FilterContactListScreen> {
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
   String searchQuery = "";
   List<Contact> contactlistTemp = [];
 
@@ -34,6 +38,26 @@ class _FilterContactListScreenState extends State<FilterContactListScreen> {
     // Get the list of contacts from the device
     // _checkPermissionIsEnabled();
     contactlistTemp = contactlist;
+  }
+
+  bool validateCOntactNumberLocal(Contact tempContact) {
+    List<Phone> numerosEspana = tempContact.phones
+        .where((phone) => esNumeroEspana(phone.number))
+        .toList();
+    if (numerosEspana.isEmpty) {
+      showSaveAlert(context, Constant.info,
+          'Por favor, seleccione un número de teléfono móvil español');
+
+      return false;
+    }
+
+    if (numerosEspana.isEmpty) {
+      showSaveAlert(context, Constant.info,
+          'Por favor, seleccione un número de teléfono móvil español');
+
+      return false;
+    }
+    return true;
   }
 
   @override
@@ -55,6 +79,7 @@ class _FilterContactListScreenState extends State<FilterContactListScreen> {
           return false;
         },
         child: Scaffold(
+          key: _scaffoldKey,
           backgroundColor: Colors.black,
           appBar: AppBar(
             iconTheme: const IconThemeData(
@@ -99,11 +124,60 @@ class _FilterContactListScreenState extends State<FilterContactListScreen> {
                         isExpanded: false,
                         onExpanded: (bool value) {},
                       ),
-                      onTap: () {
-                        widget.oncontactSelected(contact);
+                      onTap: () async {
+                        if (contact.phones.length > 1) {
+                          // Si el contacto tiene más de un número de teléfono, mostrar un diálogo con opciones
+                          var selectedPhone = await showDialog<String>(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                title: Text('Selecciona un número de teléfono'),
+                                content: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: contact.phones.map((phone) {
+                                    return ListTile(
+                                      title: Text(phone.number),
+                                      onTap: () {
+                                        Navigator.pop(
+                                            context,
+                                            phone
+                                                .number); // Devolver el número de teléfono seleccionado
+                                      },
+                                    );
+                                  }).toList(),
+                                ),
+                              );
+                            },
+                          );
+                          Contact? tempContact;
+                          // Si el usuario selecciona un número de teléfono, llamar a la función de callback
+                          if (selectedPhone != null) {
+                            // Crear un nuevo objeto Contact con el número de teléfono actualizado
+                            tempContact = Contact(
+                                displayName: contact.displayName,
+                                photo: contact.photo,
+                                phones: [
+                                  Phone(
+                                      selectedPhone) // Usar el número de teléfono seleccionado
+                                ]);
+                          }
 
-                        Navigator.pop(
-                            context, contact); // Volver a la pantalla anterior
+                          if (!validateCOntactNumberLocal(tempContact!)) {
+                            return;
+                          }
+
+                          // Llamar a la función de callback con el nuevo objeto Contact
+                          widget.oncontactSelected(tempContact);
+                          Navigator.pop(context, tempContact);
+                        } else {
+                          // Si el contacto tiene un solo número de teléfono, seleccionarlo directamente
+                          if (!validateCOntactNumberLocal(contact)) {
+                            return;
+                          }
+                          widget.oncontactSelected(contact);
+                          Navigator.pop(context,
+                              contact); // Volver a la pantalla anterior
+                        }
                       },
                     );
                   },

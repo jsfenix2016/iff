@@ -91,7 +91,8 @@ class _UserEditPageState extends State<UserEditPage> {
     selectCountry = user!.country;
     selectState = user!.city;
 
-    if (indexCountry > 0) getTraslateState(countryres.isEmpty ? [] : countryres[indexCountry - 1]);
+    if (indexCountry > 0)
+      getTraslateState(countryres.isEmpty ? [] : countryres[indexCountry - 1]);
   }
 
   Future getCounty() async {
@@ -221,7 +222,7 @@ class _UserEditPageState extends State<UserEditPage> {
                   children: <Widget>[
                     const SizedBox(height: 20),
                     Text(
-                      "V. 1.0.21",
+                      "V. 1.0.22",
                       style: textForTitleApp(),
                     ),
                     const SizedBox(height: 20),

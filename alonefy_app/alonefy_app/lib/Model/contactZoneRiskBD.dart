@@ -5,7 +5,7 @@ import 'package:ifeelefine/Model/videopresignedbd.dart';
 
 part 'Adapters/contactZoneRiskBD.g.dart';
 
-@HiveType(typeId: HiveConstantAdapterInit.idContactZoneRiskBDAdapter)
+@HiveType(typeId: 6)
 class ContactZoneRiskBD {
   ContactZoneRiskBD(
       {required this.id,
@@ -63,5 +63,5 @@ class ContactZoneRiskBD {
   Uint8List? video;
 
   @HiveField(13)
-  List<VideoPresignedBD>? listVideosPresigned;
+  late List<VideoPresignedBD>? listVideosPresigned;
 }

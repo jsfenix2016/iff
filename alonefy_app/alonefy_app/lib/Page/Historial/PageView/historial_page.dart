@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:ifeelefine/Common/colorsPalette.dart';
 import 'package:ifeelefine/Common/notificationService.dart';
 import 'package:ifeelefine/Common/text_style_font.dart';
 import 'package:ifeelefine/Common/utils.dart';
@@ -24,8 +25,8 @@ class HistorialPage extends StatefulWidget {
 
 class _HistorialPageState extends State<HistorialPage> {
   final HistorialController alertsVC = Get.put(HistorialController());
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
-  final scaffoldKey = GlobalKey<ScaffoldState>();
   List<dynamic> listAlerts = [];
   Map<String, List<LogAlertsBD>> groupedProducts = {};
   Map<String, List<dynamic>> groupedAlert = {};
@@ -59,7 +60,7 @@ class _HistorialPageState extends State<HistorialPage> {
 
   @override
   void initState() {
-    getLog();
+    // getLog();
     starTap();
     super.initState();
   }
@@ -126,17 +127,24 @@ class _HistorialPageState extends State<HistorialPage> {
     return temp;
   }
 
+  Future<List<MapEntry<String, List<dynamic>>>> getList() async {
+    groupedProducts = {};
+    groupedAlert = {};
+    groupedAlert = await alertsVC.getAllAlerts();
+    return groupedAlert.entries.toList();
+  }
+
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    List<MapEntry<String, List<dynamic>>> listData =
-        groupedAlert.entries.toList();
+    // List<MapEntry<String, List<dynamic>>> listData =
+    //     groupedAlert.entries.toList();
     RedirectViewNotifier.setStoredContext(context);
     return LoadingIndicator(
-      isLoading: isLoading,
+      isLoading: false,
       child: Scaffold(
         backgroundColor: Colors.black,
-        key: scaffoldKey,
+        key: _scaffoldKey,
         appBar: AppBar(
           iconTheme: const IconThemeData(
             color: Colors.white, //change your color here
@@ -154,84 +162,106 @@ class _HistorialPageState extends State<HistorialPage> {
             width: size.width,
             height: size.height,
             child: GetBuilder<HistorialController>(builder: (contextVC) {
-              return ListView.separated(
-                physics: const ClampingScrollPhysics(), // Agrega esta línea
-                separatorBuilder: (context, index) {
-                  return const SizedBox(
-                    height: 10,
-                  );
-                },
-                itemCount: listData.length,
-                itemBuilder: (context, i) {
-                  return Padding(
-                    padding: const EdgeInsets.only(left: 36.0, right: 36.0),
-                    child: Container(
-                      decoration: const BoxDecoration(
-                        color: Color.fromRGBO(11, 11, 10, 0.6),
-                        borderRadius: BorderRadius.all(Radius.circular(20)),
-                      ),
-                      width: size.width,
-                      child: Padding(
-                        padding: const EdgeInsets.only(bottom: 18.0),
-                        child: Stack(
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.only(top: 15.0),
-                              child: Container(
-                                width: 300,
-                                color: Colors.transparent,
-                                child: ListView.separated(
-                                  separatorBuilder: (context, index) {
-                                    return const SizedBox(
-                                      height: 5,
-                                      child: Divider(
-                                        height: 1,
-                                        color: Colors.white,
+              return FutureBuilder<List<MapEntry<String, List<dynamic>>>>(
+                  future: getList(),
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData) {
+                      final listData = snapshot.data!;
+                      return ListView.separated(
+                        physics:
+                            const ClampingScrollPhysics(), // Agrega esta línea
+                        separatorBuilder: (context, index) {
+                          return const SizedBox(
+                            height: 10,
+                          );
+                        },
+                        itemCount: listData.length,
+                        itemBuilder: (context, i) {
+                          return Padding(
+                            padding:
+                                const EdgeInsets.only(left: 20.0, right: 20.0),
+                            child: Container(
+                              decoration: const BoxDecoration(
+                                color: Color.fromRGBO(11, 11, 10, 0.6),
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(20)),
+                              ),
+                              width: size.width,
+                              child: Padding(
+                                padding: const EdgeInsets.only(bottom: 18.0),
+                                child: Stack(
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.only(top: 15.0),
+                                      child: Container(
+                                        width: size.width,
+                                        color: Colors.transparent,
+                                        child: ListView.separated(
+                                          separatorBuilder: (context, index) {
+                                            return const SizedBox(
+                                              height: 5,
+                                              child: Divider(
+                                                height: 1,
+                                                color: Colors.white,
+                                              ),
+                                            );
+                                          },
+                                          shrinkWrap: true,
+                                          physics:
+                                              const NeverScrollableScrollPhysics(),
+                                          scrollDirection: Axis.vertical,
+                                          itemCount:
+                                              listData[i].value.toList().length,
+                                          itemBuilder: (BuildContext context,
+                                              int index) {
+                                            listAlerts =
+                                                listData[i].value.toList();
+
+                                            return generic(listAlerts[index]);
+                                          },
+                                        ),
                                       ),
-                                    );
-                                  },
-                                  shrinkWrap: true,
-                                  physics: const NeverScrollableScrollPhysics(),
-                                  scrollDirection: Axis.vertical,
-                                  itemCount: listData[i].value.toList().length,
-                                  itemBuilder:
-                                      (BuildContext context, int index) {
-                                    listAlerts = listData[i].value.toList();
+                                    ),
+                                    Visibility(
+                                      visible: false,
+                                      child: Positioned(
+                                        right: 10,
+                                        child: IconButton(
+                                          iconSize: 35,
+                                          onPressed: () {
+                                            List key = listData[i].value;
 
-                                    return generic(listAlerts[index]);
-                                  },
+                                            groupedAlert
+                                                .remove(listData[i].key);
+                                            var temp = key;
+                                            print(temp);
+                                            // deleteForDayMov(context, temp);
+                                            print("object");
+                                          },
+                                          icon: const Icon(
+                                            Icons.close,
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
                             ),
-                            Visibility(
-                              visible: false,
-                              child: Positioned(
-                                right: 10,
-                                child: IconButton(
-                                  iconSize: 35,
-                                  onPressed: () {
-                                    List key = listData[i].value;
-
-                                    groupedAlert.remove(listData[i].key);
-                                    var temp = key;
-                                    print(temp);
-                                    // deleteForDayMov(context, temp);
-                                    print("object");
-                                  },
-                                  icon: const Icon(
-                                    Icons.close,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
+                          );
+                        },
+                      );
+                    } else if (snapshot.hasError) {
+                      return const Text("");
+                    } else {
+                      return const Center(
+                        child: CircularProgressIndicator(
+                          color: ColorPalette.calendarNumber,
                         ),
-                      ),
-                    ),
-                  );
-                },
-              );
+                      );
+                    }
+                  });
             }),
           ),
         ),

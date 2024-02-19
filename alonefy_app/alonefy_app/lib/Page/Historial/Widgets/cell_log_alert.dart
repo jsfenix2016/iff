@@ -17,13 +17,13 @@ class _CellLogAlertsState extends State<CellLogAlerts> {
     return Container(
       color: Colors.transparent,
       height: 80,
-      width: 300,
+      width: 310,
       child: Stack(
         children: [
           Container(
             color: Colors.transparent,
             height: widget.logAlert.type.contains('- ') ? 80 : 70,
-            width: 300,
+            width: 310,
             child: Row(
               mainAxisSize: MainAxisSize.max,
               children: [
@@ -36,12 +36,12 @@ class _CellLogAlertsState extends State<CellLogAlerts> {
                 Container(
                   color: Colors.transparent,
                   height: widget.logAlert.type.contains('- ') ? 80 : 70,
-                  width: 200,
+                  width: 230,
                   child: Stack(children: [
                     Positioned(
                       top: widget.logAlert.type.contains('- ') ? 0 : 10,
                       child: SizedBox(
-                        width: 200,
+                        width: 250,
                         child: Padding(
                           padding: const EdgeInsets.only(right: 0.0),
                           child: Text(

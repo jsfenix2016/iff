@@ -7,7 +7,6 @@ import 'package:ifeelefine/Common/utils.dart';
 import 'package:ifeelefine/Model/logAlertsBD.dart';
 import 'package:ifeelefine/Page/Historial/PageView/preview_video_screen.dart';
 import 'package:intl/intl.dart';
-import 'package:permission_handler/permission_handler.dart';
 
 import 'package:video_player/video_player.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
@@ -26,22 +25,26 @@ class _CellZoneRiskState extends State<CellZoneRisk> {
   late Future<void> _initializeVideoPlayerFuture;
   late File fileTemp = File("");
   bool haveVideo = false;
-
+  LogAlertsBD? logAlert;
   @override
   void initState() {
     super.initState();
     fileTemp = File("");
-    if (widget.logAlert.video != null ||
-        (widget.logAlert.listVideosPresigned!.isNotEmpty &&
-            widget.logAlert.listVideosPresigned != null)) {
+    logAlert = widget.logAlert;
+    if (logAlert!.video != null ||
+        (logAlert!.listVideosPresigned!.isNotEmpty &&
+            logAlert!.listVideosPresigned != null)) {
       _initializeVideoPlayer();
     }
   }
 
   @override
   void dispose() {
-    _videoPlayerController.dispose();
-
+    if (logAlert!.video != null ||
+        (logAlert!.listVideosPresigned!.isNotEmpty &&
+            logAlert!.listVideosPresigned != null)) {
+      _videoPlayerController.dispose();
+    }
     super.dispose();
   }
 
@@ -124,10 +127,27 @@ class _CellZoneRiskState extends State<CellZoneRisk> {
                     height: 100,
                     color: Colors.black,
                     child: Center(
-                      child: Text(
-                        "Video no disponible",
-                        textAlign: TextAlign.center,
-                        style: textBold16White(),
+                      child: Column(
+                        children: [
+                          Text(
+                            "El video se está descargando",
+                            textAlign: TextAlign.center,
+                            style: textBold16White(),
+                          ),
+                          const SizedBox(
+                            height: 10,
+                          ),
+                          const Center(
+                            child: SizedBox(
+                              height: 20,
+                              width: 20,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                color: ColorPalette.calendarNumber,
+                              ),
+                            ),
+                          )
+                        ],
                       ),
                     ),
                   ),
@@ -141,35 +161,42 @@ class _CellZoneRiskState extends State<CellZoneRisk> {
   }
 
   void _initializeVideoPlayer() async {
-    DefaultCacheManager cacheManager = DefaultCacheManager();
+    var cacheManager = DefaultCacheManager();
     print(widget.logAlert.video);
     File videoFile = File("");
-    print(widget.logAlert.id);
-    print(widget.logAlert.time);
-    if (widget.logAlert.listVideosPresigned!.isNotEmpty &&
-        widget.logAlert.listVideosPresigned != null) {
+    if (logAlert!.video != null) {
+      print(logAlert);
       videoFile = await cacheManager.putFile(
-        'temp_video_${widget.logAlert.time}.mp4',
-        widget.logAlert.listVideosPresigned![0].videoDown!,
-        key: 'video_key${widget.logAlert.video.hashCode}',
+        'temp_video_${logAlert!.time}.mp4',
+        logAlert!.video!,
+        key: 'video_key${DateTime.now()}',
       );
-    } else if (widget.logAlert.video != null) {
-      videoFile = await cacheManager.putFile(
-        'temp_video_${widget.logAlert.time}.mp4',
-        widget.logAlert.video!,
-        key: 'video_key${widget.logAlert.time}',
-      );
-    }
-
-    if (widget.logAlert.video != null ||
-        (widget.logAlert.listVideosPresigned!.isNotEmpty &&
-            widget.logAlert.listVideosPresigned != null)) {
       setState(() {
         haveVideo = true;
         fileTemp = videoFile;
         _videoPlayerController = VideoPlayerController.file(videoFile);
         _initializeVideoPlayerFuture = _videoPlayerController.initialize();
       });
+    }
+    if (logAlert!.listVideosPresigned!.isNotEmpty &&
+        logAlert!.listVideosPresigned != null) {
+      print(logAlert);
+      videoFile = await cacheManager.putFile(
+        'temp_video_${logAlert!.time}.mp4',
+        logAlert!.listVideosPresigned![0].videoDown!,
+        key: 'video_key${DateTime.now()}',
+      );
+      setState(() {
+        haveVideo = true;
+        fileTemp = videoFile;
+        _videoPlayerController = VideoPlayerController.file(videoFile);
+        _initializeVideoPlayerFuture = _videoPlayerController.initialize();
+      });
+    }
+
+    if (logAlert!.video != null ||
+        (logAlert!.listVideosPresigned!.isNotEmpty &&
+            logAlert!.listVideosPresigned != null)) {
     } else {
       setState(() {
         haveVideo = false;

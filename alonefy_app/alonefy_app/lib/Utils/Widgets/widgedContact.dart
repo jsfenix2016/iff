@@ -22,6 +22,7 @@ class WidgetContact extends StatelessWidget {
   final bool isExpanded;
   final void Function(bool) onDelete;
   final void Function(bool) onExpanded;
+
   Widget _mostrarFoto() {
     return GestureDetector(
       onTap: expandContact,
@@ -67,8 +68,6 @@ class WidgetContact extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print(isFilter);
-    print(isExpanded);
     return Container(
       decoration: const BoxDecoration(
         color: Color.fromRGBO(169, 146, 125, 0.5),
@@ -198,7 +197,7 @@ class WidgetContact extends StatelessWidget {
                               iconSize: 20,
                               color: Colors.white.withAlpha(170),
                               onPressed: expandContact,
-                              icon: Icon(Icons.keyboard_arrow_down),
+                              icon: const Icon(Icons.keyboard_arrow_down),
                             ),
                           ),
                         ),

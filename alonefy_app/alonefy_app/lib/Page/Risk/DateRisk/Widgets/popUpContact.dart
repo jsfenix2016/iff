@@ -14,7 +14,7 @@ class PopUpContact extends StatefulWidget {
   final ValueChanged<int> onChanged;
 
   @override
-  State createState() => _PopUpContactState();
+  State<PopUpContact> createState() => _PopUpContactState();
 }
 
 class _PopUpContactState extends State<PopUpContact> {

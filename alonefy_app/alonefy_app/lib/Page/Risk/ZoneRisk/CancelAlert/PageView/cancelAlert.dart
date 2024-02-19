@@ -34,7 +34,8 @@ class CancelAlertPage extends StatefulWidget {
 }
 
 class _CancelAlertState extends State<CancelAlertPage> {
-  ListContactZoneController riskVC = ListContactZoneController();
+  ListContactZoneController riskVC = Get.put(ListContactZoneController());
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   String codeTemp = '';
   var code = CodeModel();
@@ -175,6 +176,7 @@ class _CancelAlertState extends State<CancelAlertPage> {
       color: Colors.black,
       debugShowCheckedModeBanner: false,
       home: Scaffold(
+        key: _scaffoldKey,
         backgroundColor: Colors.black,
         body: MediaQuery(
           data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
