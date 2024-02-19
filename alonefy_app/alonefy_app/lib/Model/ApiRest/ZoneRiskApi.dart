@@ -71,18 +71,12 @@ class ZoneRiskApi {
 
   factory ZoneRiskApi.fromJson(Map<String, dynamic> json) {
     print(json);
-    List<VideoPresigned>? asw = [];
-    List<String> aswTemp = [];
+    List<VideoPresigned> asw = [];
+
     if (json.length == 11) {
       if (json.containsKey('awsDownloadVideoPresignedUrls')) {
         var awsUrls = json['awsDownloadVideoPresignedUrls'];
         if (awsUrls is List) {
-          List<VideoPresigned> parseVideoPresignedList(List<dynamic> list) {
-            return list.map((item) {
-              return VideoPresigned.fromJson(item);
-            }).toList();
-          }
-
 // Luego, puedes usar esta función para convertir la lista de objetos JSON a una lista de VideoPresigned:
           asw = parseVideoPresignedList(awsUrls);
         }

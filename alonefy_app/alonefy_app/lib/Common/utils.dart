@@ -16,6 +16,7 @@ import 'package:ifeelefine/Common/notificationService.dart';
 import 'package:ifeelefine/Common/text_style_font.dart';
 import 'package:ifeelefine/Model/ApiRest/ContactApi.dart';
 import 'package:ifeelefine/Model/ApiRest/ZoneRiskApi.dart';
+import 'package:ifeelefine/Model/VideoPresignedUrls.dart';
 import 'package:ifeelefine/Page/Geolocator/Controller/configGeolocatorController.dart';
 import 'package:ifeelefine/Provider/prefencesUser.dart';
 import 'package:ifeelefine/Views/menuconfig_page.dart';
@@ -1238,6 +1239,12 @@ extension StringExtension on String {
   String capitalize() {
     return "${this[0].toUpperCase()}${substring(1).toLowerCase()}";
   }
+}
+
+List<VideoPresigned> parseVideoPresignedList(List<dynamic> list) {
+  return list.map((item) {
+    return VideoPresigned.fromJson(item);
+  }).toList();
 }
 
 bool validatePhoneNumber(String phoneNumber) {

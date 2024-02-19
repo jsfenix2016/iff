@@ -263,15 +263,7 @@ class _RestoreMyConfigPageState extends State<RestoreMyConfigPage> {
                                     _isRestoreInProgress = false;
                                   });
                                   if (result) {
-                                    Future.sync(
-                                      () => Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) =>
-                                              const HomePage(),
-                                        ),
-                                      ),
-                                    );
+                                    Get.offAll(const HomePage());
                                   }
                                 },
                               ),
