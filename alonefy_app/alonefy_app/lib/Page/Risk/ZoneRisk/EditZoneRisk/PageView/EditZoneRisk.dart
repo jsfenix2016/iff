@@ -267,9 +267,9 @@ class _EditZoneRiskPageState extends State<EditZoneRiskPage> {
         id: widget.contactRisk.id,
         photo: contactSelect.photo,
         name: widget.contactRisk.name,
-        phones: contactSelect.phones.first.normalizedNumber.contains("+34")
-            ? contactSelect.phones.first.normalizedNumber.replaceAll("+34", "")
-            : contactSelect.phones.first.normalizedNumber,
+        phones: contactSelect.phones.first.number.contains("+34")
+            ? contactSelect.phones.first.number.replaceAll("+34", "")
+            : contactSelect.phones.first.number,
         sendLocation: widget.contactRisk.sendLocation,
         sendWhatsapp: widget.contactRisk.sendWhatsapp,
         code: widget.contactRisk.code,
@@ -306,7 +306,7 @@ class _EditZoneRiskPageState extends State<EditZoneRiskPage> {
       contactlist = await getContacts(context);
     }
 
-    await Navigator.push(
+    var req = await Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) =>
