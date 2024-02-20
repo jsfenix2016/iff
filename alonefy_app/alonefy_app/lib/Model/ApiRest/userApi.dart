@@ -104,8 +104,9 @@ class UserApi {
         lastMovement: json['lastMovement'] != null
             ? jsonToDatetime(json['lastMovement'], getDefaultPattern())
             : DateTime.now(),
-        deactivatedUntil:
-            jsonToDatetime(json['deactivatedUntil'], getDefaultPattern()),
+        deactivatedUntil: json['deactivatedUntil'] != null
+            ? jsonToDatetime(json['deactivatedUntil'], getDefaultPattern())
+            : DateTime.now(),
         currentlyDeactivated: json['currentlyDeactivated'] ?? false,
         awsDownloadPresignedUrl: json['awsDownloadPresignedUrl'],
         contact: jsonToGenericList<ContactApi>(json, "contact"),

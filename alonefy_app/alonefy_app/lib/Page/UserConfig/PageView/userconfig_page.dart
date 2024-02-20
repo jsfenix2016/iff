@@ -253,11 +253,11 @@ class _UserConfigPageState extends State<UserConfigPage> {
                                 width: double.infinity,
                                 child: Center(
                                   child: ElevatedButton(
-                                    style: (isValidEmail &&
-                                            isValidSms) //TODO: COLOCAR EN TRUE LAS DOS VARIABLE PARA NO SOLICITAR TOKEN DE MESSAGEBIRD
+                                    style: (isValidEmail && isValidSms)
                                         ? styleColorPrincipal()
                                         : styleColorClear(),
-                                    onPressed: (isValidEmail && isValidSms)
+                                    onPressed: (isValidEmail &&
+                                            isValidSms) //TODO: COLOCAR EN TRUE LAS DOS VARIABLE PARA NO SOLICITAR TOKEN DE MESSAGEBIRD
                                         ? _submit
                                         : () {
                                             showSaveAlert(

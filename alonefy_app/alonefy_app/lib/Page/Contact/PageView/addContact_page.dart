@@ -76,7 +76,7 @@ class _AddContactPageState extends State<AddContactPage> {
                 "20 min",
                 "20 min",
                 "20 min",
-                contact.phones.first.normalizedNumber
+                contact.phones.first.number
                     .replaceAll("+34", "")
                     .replaceAll(" ", ""),
                 "PENDING");
@@ -88,7 +88,7 @@ class _AddContactPageState extends State<AddContactPage> {
     if (cont == null) {
       return;
     }
-    if (cont!.name.first.isNotEmpty) {
+    if (cont!.displayName.isNotEmpty) {
       await const HiveData().saveUserContact(contactBD);
       // Get.off(const ContactList(
       //   isMenu: false,
