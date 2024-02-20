@@ -287,7 +287,7 @@ class CalendarPopupState extends State<CalendarPopup> {
                           color: ColorPalette.calendarNumber),
                     )),
                 Padding(
-                    padding: const EdgeInsets.fromLTRB(36, 0, 36, 8),
+                    padding: const EdgeInsets.fromLTRB(30, 0, 30, 8),
                     child: FutureBuilder<String>(
                         future: _calculation,
                         builder: (BuildContext context,
@@ -309,7 +309,7 @@ class CalendarPopupState extends State<CalendarPopup> {
                                           style: GoogleFonts.barlow(
                                             fontSize: 16.0,
                                             wordSpacing: 1,
-                                            letterSpacing: 1.2,
+                                            letterSpacing: 0.001,
                                             fontWeight: FontWeight.bold,
                                             color: _paintedDays[index]
                                                 ? ColorPalette.calendarNumber

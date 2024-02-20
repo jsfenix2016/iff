@@ -8,15 +8,12 @@ import 'package:get/get.dart';
 import 'package:ifeelefine/Common/Constant.dart';
 import 'package:ifeelefine/Common/colorsPalette.dart';
 import 'package:ifeelefine/Common/idleLogic.dart';
-import 'package:ifeelefine/Common/utils.dart';
 
 import 'package:ifeelefine/Controllers/mainController.dart';
 
 import 'package:ifeelefine/Data/hive_constant_adapterInit.dart';
 
 import 'package:ifeelefine/Model/contactRiskBD.dart';
-import 'package:ifeelefine/Page/Alerts/Controller/alertsController.dart';
-import 'package:ifeelefine/Page/HomePage/Controller/homeController.dart';
 
 import 'package:ifeelefine/Page/Premium/Controller/premium_controller.dart';
 import 'package:ifeelefine/Page/Premium/PageView/premium_moths_free.dart';
@@ -368,8 +365,7 @@ class RedirectViewNotifier with ChangeNotifier {
 
         if (isFirstTimeNotification || existNotification != null) {
           isFirstTimeNotification = false;
-          showNotification(
-              temp, platformChannelSpecifics, message);
+          showNotification(temp, platformChannelSpecifics, message);
         }
         prefs.setNotificationId = 100;
 
@@ -396,16 +392,15 @@ class RedirectViewNotifier with ChangeNotifier {
       String body,
       NotificationDetails platformChannelSpecifics,
       RemoteMessage message) async {
-    
     await flutterLocalNotificationsPlugin.show(
-        100,
-        "Advertencia",
-        body,
-        platformChannelSpecifics,
-        payload: message.data.containsValue(Constant.inactivitySelf)
-            ? 'Inactived_$message'
-            : 'Drop_$message',
-      );
+      100,
+      "Advertencia",
+      body,
+      platformChannelSpecifics,
+      payload: message.data.containsValue(Constant.inactivitySelf)
+          ? 'Inactived_$message'
+          : 'Drop_$message',
+    );
   }
 
   static void cancelNotification(int id) async {

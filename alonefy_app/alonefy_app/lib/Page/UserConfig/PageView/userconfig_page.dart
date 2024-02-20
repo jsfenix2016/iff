@@ -69,6 +69,7 @@ class _UserConfigPageState extends State<UserConfigPage> {
         return true;
       },
       child: Scaffold(
+        key: scaffoldKey,
         backgroundColor: Colors.black,
         body: MediaQuery(
           data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),

@@ -171,12 +171,6 @@ class _CellZoneRiskState extends State<CellZoneRisk> {
         logAlert!.video!,
         key: 'video_key${DateTime.now()}',
       );
-      setState(() {
-        haveVideo = true;
-        fileTemp = videoFile;
-        _videoPlayerController = VideoPlayerController.file(videoFile);
-        _initializeVideoPlayerFuture = _videoPlayerController.initialize();
-      });
     }
     if (logAlert!.listVideosPresigned!.isNotEmpty &&
         logAlert!.listVideosPresigned != null) {
@@ -186,17 +180,17 @@ class _CellZoneRiskState extends State<CellZoneRisk> {
         logAlert!.listVideosPresigned![0].videoDown!,
         key: 'video_key${DateTime.now()}',
       );
+    }
+
+    if (logAlert!.video != null ||
+        (logAlert!.listVideosPresigned!.isNotEmpty &&
+            logAlert!.listVideosPresigned != null)) {
       setState(() {
         haveVideo = true;
         fileTemp = videoFile;
         _videoPlayerController = VideoPlayerController.file(videoFile);
         _initializeVideoPlayerFuture = _videoPlayerController.initialize();
       });
-    }
-
-    if (logAlert!.video != null ||
-        (logAlert!.listVideosPresigned!.isNotEmpty &&
-            logAlert!.listVideosPresigned != null)) {
     } else {
       setState(() {
         haveVideo = false;

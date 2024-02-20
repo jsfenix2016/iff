@@ -187,6 +187,7 @@ class _UserConfigPageState2 extends State<UserConfigPage2> {
   Widget build(BuildContext context) {
     RedirectViewNotifier.setStoredContext(context);
     return Scaffold(
+      key: scaffoldKey,
       backgroundColor: Colors.black,
       body: MediaQuery(
         data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),

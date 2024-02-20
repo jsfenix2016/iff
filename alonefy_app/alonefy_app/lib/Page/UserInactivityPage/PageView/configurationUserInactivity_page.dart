@@ -48,6 +48,7 @@ class _UserInactivityPageState extends State<UserInactivityPage> {
   late ActivityDay temp;
   final List<String> tempListDay = <String>[];
   PreferenceUser prefs = PreferenceUser();
+  final scaffoldKey = GlobalKey<ScaffoldState>();
   @override
   void initState() {
     prefs.saveLastScreenRoute("inactivityDay");
@@ -217,6 +218,7 @@ class _UserInactivityPageState extends State<UserInactivityPage> {
     final size = MediaQuery.of(context).size;
 
     return Scaffold(
+      key: scaffoldKey,
       backgroundColor: Colors.black,
       extendBodyBehindAppBar: true,
       appBar: AppBar(
@@ -260,7 +262,7 @@ class _UserInactivityPageState extends State<UserInactivityPage> {
                       padding: const EdgeInsets.only(left: 12.0, right: 12.0),
                       child: CustomDropdownButtonWidgetWithDictionary(
                         instance: Constant.weekend,
-                        mensaje: "Seleccionar dia de la actividad",
+                        mensaje: "Seleccionar día de la actividad",
                         isVisible: true,
                         onChanged: (value) {
                           daySelect = value.day;

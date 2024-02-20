@@ -137,8 +137,7 @@ class _HistorialPageState extends State<HistorialPage> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    // List<MapEntry<String, List<dynamic>>> listData =
-    //     groupedAlert.entries.toList();
+
     RedirectViewNotifier.setStoredContext(context);
     return LoadingIndicator(
       isLoading: false,

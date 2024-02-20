@@ -204,3 +204,13 @@ TextStyle textBold48White() {
     color: Colors.white,
   );
 }
+
+TextStyle textSemiBold30White() {
+  return GoogleFonts.barlow(
+    fontSize: 30.0,
+    wordSpacing: 1,
+    letterSpacing: 0.001,
+    fontWeight: FontWeight.w600,
+    color: Colors.white,
+  );
+}
