@@ -51,12 +51,6 @@ class _FilterContactListScreenState extends State<FilterContactListScreen> {
       return false;
     }
 
-    if (numerosEspana.isEmpty) {
-      showSaveAlert(context, Constant.info,
-          'Por favor, seleccione un número de teléfono móvil español');
-
-      return false;
-    }
     return true;
   }
 
@@ -162,7 +156,7 @@ class _FilterContactListScreenState extends State<FilterContactListScreen> {
                                 ]);
                           }
 
-                          if (!validateCOntactNumberLocal(tempContact!)) {
+                          if (tempContact == null || !validateCOntactNumberLocal(tempContact)) {
                             return;
                           }
 

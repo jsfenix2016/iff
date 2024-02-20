@@ -142,7 +142,9 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
       user = user;
     }
     requestAlarmPermission();
-    setState(() {});
+    if (mounted) {
+      setState(() {});
+    }
   }
 
   Future getAlerts() async {

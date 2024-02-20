@@ -159,7 +159,7 @@ Future<List<MenuConfigModel>> validateConfig() async {
         22.76, menuConfig[5]),
     MenuConfigModel("Cambiar envío ubicación", 'assets/images/Group 1082.png',
         24, 24, menuConfig[6]),
-    MenuConfigModel("Cambiar tiempo notificaciónes",
+    MenuConfigModel("Cambiar tiempo notificaciones",
         'assets/images/Group 1099.png', 22, 17.15, false),
     MenuConfigModel("Cambiar sonido notificaciones",
         'assets/images/Group 1102.png', 22, 22.08, false),

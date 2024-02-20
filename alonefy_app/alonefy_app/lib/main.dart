@@ -150,7 +150,7 @@ List<MenuConfigModel> permissionStatusI = [
       "Configurar caída", 'assets/images/Group 506.png', 26, 22.76, true),
   MenuConfigModel(
       "Cambiar envió ubicación", 'assets/images/Group 1082.png', 24, 24, true),
-  MenuConfigModel("Cambiar tiempo notificaciónes",
+  MenuConfigModel("Cambiar tiempo notificaciones",
       'assets/images/Group 1099.png', 22, 17.15, false),
   MenuConfigModel("Cambiar sonido notificaciones",
       'assets/images/Group 1102.png', 22, 22.08, false),
