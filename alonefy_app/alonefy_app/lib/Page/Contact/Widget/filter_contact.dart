@@ -42,7 +42,7 @@ class _FilterContactListScreenState extends State<FilterContactListScreen> {
 
   bool validateCOntactNumberLocal(Contact tempContact) {
     List<Phone> numerosEspana = tempContact.phones
-        .where((phone) => esNumeroEspana(phone.number))
+        .where((phone) => esNumeroEspana(phone.number.replaceAll(' ', '')))
         .toList();
     if (numerosEspana.isEmpty) {
       showSaveAlert(context, Constant.info,
