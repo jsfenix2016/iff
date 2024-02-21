@@ -497,13 +497,7 @@ class _MenuConfigurationPageState extends State<MenuConfigurationPage> {
                 child: Text(
                   Constant.btnhabits,
                   textAlign: TextAlign.center,
-                  style: GoogleFonts.barlow(
-                    fontSize: 16.0,
-                    wordSpacing: 1,
-                    letterSpacing: 1,
-                    fontWeight: FontWeight.w700,
-                    color: Colors.white,
-                  ),
+                  style: textBold16White(),
                 ),
               ),
             ),
