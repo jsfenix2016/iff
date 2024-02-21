@@ -42,7 +42,7 @@ class _FilterContactListScreenState extends State<FilterContactListScreen> {
 
   bool validateCOntactNumberLocal(Contact tempContact) {
     List<Phone> numerosEspana = tempContact.phones
-        .where((phone) => esNumeroEspana(phone.number.isEmpty
+        .where((phone) => esNumeroEspana(phone.number.isNotEmpty
             ? phone.number.replaceAll(' ', '')
             : phone.normalizedNumber.replaceAll(' ', '')))
         .toList();
@@ -123,7 +123,7 @@ class _FilterContactListScreenState extends State<FilterContactListScreen> {
                       onTap: () async {
                         if (contact.phones.length > 1) {
                           // Si el contacto tiene más de un número de teléfono, mostrar un diálogo con opciones
-                          var selectedPhone = await showDialog<String>(
+                          var selectedPhone = await showDialog<Phone>(
                             context: context,
                             builder: (BuildContext context) {
                               return AlertDialog(
@@ -136,8 +136,7 @@ class _FilterContactListScreenState extends State<FilterContactListScreen> {
                                       onTap: () {
                                         Navigator.pop(
                                             context,
-                                            phone
-                                                .number); // Devolver el número de teléfono seleccionado
+                                            phone); // Devolver el número de teléfono seleccionado
                                       },
                                     );
                                   }).toList(),
@@ -152,10 +151,7 @@ class _FilterContactListScreenState extends State<FilterContactListScreen> {
                             tempContact = Contact(
                                 displayName: contact.displayName,
                                 photo: contact.photo,
-                                phones: [
-                                  Phone(
-                                      selectedPhone) // Usar el número de teléfono seleccionado
-                                ]);
+                                phones: [selectedPhone]);
                           }
 
                           if (tempContact == null ||
