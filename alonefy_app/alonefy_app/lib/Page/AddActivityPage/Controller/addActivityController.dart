@@ -49,7 +49,12 @@ class AddActivityController extends GetxController {
   Future<int> saveActivity(BuildContext context, ActivityDay activity) async {
     ActivityDayBD activitybd = await convertActivityDayToBD(activity);
     int id = await const HiveData().saveActivity(activitybd);
-    NotificationCenter().notify('refreshPreviewActivities');
+
+    try {
+      NotificationCenter().notify('refreshPreviewActivities');
+    } catch (e) {
+      print(e);
+    }
     return id;
   }
 

@@ -99,6 +99,10 @@ void refreshMenu(String menu) async {
   _prefs.setlistConfigPage = temp;
   try {
     NotificationCenter().notify('refreshMenu');
+  } catch (e) {
+    print(e);
+  }
+  try {
     NotificationCenter().notify('refreshView');
   } catch (e) {
     print(e);

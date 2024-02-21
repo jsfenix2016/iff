@@ -229,7 +229,11 @@ class _EditContactState extends State<EditContact> {
                           ContactNoticeController controller =
                               Get.put(ContactNoticeController());
                           controller.update();
-                          NotificationCenter().notify('getContact');
+                          try {
+                            NotificationCenter().notify('getContact');
+                          } catch (e) {
+                            print(e);
+                          }
                           showSaveAlert(
                               context, Constant.info, 'Guardado correctamente');
                         } else {

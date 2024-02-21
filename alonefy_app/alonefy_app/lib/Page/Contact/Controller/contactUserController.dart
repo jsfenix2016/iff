@@ -139,7 +139,11 @@ class ContactUserController extends GetxController {
       contact.requestStatus = status;
       await const HiveData().updateContact(contact);
 
-      NotificationCenter().notify('getContact');
+      try {
+        NotificationCenter().notify('getContact');
+      } catch (e) {
+        print(e);
+      }
     }
   }
 

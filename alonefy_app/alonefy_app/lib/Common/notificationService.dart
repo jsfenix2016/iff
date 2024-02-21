@@ -578,7 +578,7 @@ class RedirectViewNotifier with ChangeNotifier {
     prefs.setListDate = false;
     String sound = prefs.getNotificationAudio;
     prefs.saveLastScreenRoute("cancelDate");
-    NotificationCenter().notify('getContactRisk');
+
     var styleInformation =
         BigTextStyleInformation(body!, htmlFormatBigText: true);
     var platformChannelSpecifics = NotificationDetails(

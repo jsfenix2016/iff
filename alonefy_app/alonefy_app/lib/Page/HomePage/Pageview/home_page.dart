@@ -79,7 +79,11 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     RedirectViewNotifier.setStoredContext(context);
     NotificationCenter().subscribe('refreshView', refreshView);
 
-    NotificationCenter().notify('refreshMenu');
+    try {
+      NotificationCenter().notify('refreshMenu');
+    } catch (e) {
+      print(e);
+    }
   }
 
   @override
@@ -157,7 +161,12 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     validateConfig();
 
     homeVC.update();
-    NotificationCenter().notify('refreshMenu');
+
+    try {
+      NotificationCenter().notify('refreshMenu');
+    } catch (e) {
+      print(e);
+    }
   }
 
   Future<void> requestAlarmPermission() async {

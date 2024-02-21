@@ -687,7 +687,12 @@ void onDidReceiveBackgroundNotificationResponse(
         MainService().cancelAllNotifications(taskIdList);
         prefs.setNotificationType = "";
         mainController.refreshHome();
-        NotificationCenter().notify('refreshView');
+        try {
+          NotificationCenter().notify('refreshView');
+        } catch (e) {
+          print(e);
+        }
+
         return;
       }
       if (notificationResponse.actionId!.contains("premium")) {
@@ -745,7 +750,12 @@ void onDidReceiveBackgroundNotificationResponse(
 
         prefs.setNotificationType = "";
         mainController.refreshHome();
-        NotificationCenter().notify('refreshView');
+
+        try {
+          NotificationCenter().notify('refreshView');
+        } catch (e) {
+          print(e);
+        }
         return Future.value();
       }
 

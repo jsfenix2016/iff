@@ -125,7 +125,11 @@ class MainController extends GetxController {
     if (hVC != null) {
       hVC.update();
     } else {
-      NotificationCenter().notify('refreshView');
+      try {
+        NotificationCenter().notify('refreshView');
+      } catch (e) {
+        print(e);
+      }
     }
     refreshAlerts();
     refreshHistorial();

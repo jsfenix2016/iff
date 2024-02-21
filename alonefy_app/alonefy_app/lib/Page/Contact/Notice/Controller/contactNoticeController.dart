@@ -51,6 +51,10 @@ class ContactNoticeController extends GetxController {
             ? contact.phones.replaceAll("+34", "")
             : contact.phones);
 
-    NotificationCenter().notify('getContact');
+    try {
+      NotificationCenter().notify('getContact');
+    } catch (e) {
+      print(e);
+    }
   }
 }

@@ -255,7 +255,11 @@ class _ContactNoticePageState extends State<ContactNoticePage> {
                               late ListContactController controller =
                                   Get.put(ListContactController());
                               controller.update();
-                              NotificationCenter().notify('getContact');
+                              try {
+                                NotificationCenter().notify('getContact');
+                              } catch (e) {
+                                print(e);
+                              }
                               await Navigator.push(
                                 context,
                                 MaterialPageRoute(

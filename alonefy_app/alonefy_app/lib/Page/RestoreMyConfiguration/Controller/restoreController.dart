@@ -136,7 +136,12 @@ class RestoreController extends GetxController {
 
       refreshMenu("config2");
       await onActionSelected("get_apns_token");
-      NotificationCenter().notify('getUserData');
+
+      try {
+        NotificationCenter().notify('getUserData');
+      } catch (e) {
+        print(e);
+      }
     }
   }
 

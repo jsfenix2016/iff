@@ -173,8 +173,11 @@ class EditConfigController extends GetxController {
 
       EditUserService().updateUser(userbd);
 
-      NotificationCenter().notify('getUserData');
-
+      try {
+        NotificationCenter().notify('getUserData');
+      } catch (e) {
+        print(e);
+      }
       return true;
     } catch (error) {
       return false;

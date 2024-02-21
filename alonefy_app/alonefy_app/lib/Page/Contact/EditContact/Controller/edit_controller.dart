@@ -60,7 +60,12 @@ class EditContactController extends GetxController {
         late ListContactController controller =
             Get.put(ListContactController());
         controller.update();
-        NotificationCenter().notify('getContact');
+
+        try {
+          NotificationCenter().notify('getContact');
+        } catch (e) {
+          print(e);
+        }
         return true;
       } else {
         showAlertController(Constant.conexionFail);

@@ -97,7 +97,12 @@ class _AlertsPageState extends State<AlertsPage> {
                   },
                   onRefresh: (bool value) {
                     alertsVC.update();
-                    NotificationCenter().notify('refreshView');
+
+                    try {
+                      NotificationCenter().notify('refreshView');
+                    } catch (e) {
+                      print(e);
+                    }
                     setState(() {});
                   },
                 );
