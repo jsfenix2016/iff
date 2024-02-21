@@ -1006,7 +1006,7 @@ int deactivateTimeToMinutes(String strTime) {
 
 String convertDateTimeToDisamble(DateTime dateTime) {
   DateTime now = DateTime.now();
-  Duration difference = now.difference(dateTime);
+  Duration difference = dateTime.difference(now);
 
   // Convertimos la diferencia de tiempo a horas
   double differenceInHours = difference.inHours.toDouble();

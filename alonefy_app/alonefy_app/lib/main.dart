@@ -856,7 +856,7 @@ void onStart(ServiceInstance service) async {
     var timeGetDisamble = _prefs.getDisambleIFF;
     var timeDisamble = deactivateTimeToMinutes(timeGetDisamble) * 60;
 
-    if (timerRest.isEqual(0) && _prefs.getEnableIFF) {
+    if (timerRest.isEqual(0) && !_prefs.getEnableIFF) {
       if (increaceTimerDisamble >= timerRest) {
         _prefs.setEnableIFF = true;
         increaceTimerDisamble = 0;

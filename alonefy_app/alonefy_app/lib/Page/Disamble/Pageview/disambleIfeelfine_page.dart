@@ -58,6 +58,7 @@ class _DesactivePageState extends State<DesactivePage> {
   }
 
   void getDisamble() {
+    _prefs.refreshData();
     var index = listDisamble.indexOf(_prefs.getDisambleIFF);
     if (index != -1) {
       setState(() {
