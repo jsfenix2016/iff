@@ -1287,40 +1287,6 @@ Future<bool> getEnableIFF() async {
   return _prefs.getEnableIFF;
 }
 
-void stopTimer() {
-  if (timerCancelZone != null) {
-    timerCancelZone!.cancel();
-  }
-  timerCancelZone = null;
-}
-
-void startTimer() {
-  const oneSec = Duration(seconds: 1);
-
-  timerCancelZone = Timer.periodic(
-    oneSec,
-    (Timer timer) => {
-      if (secondsRemaining < 1)
-        {
-          timer.cancel(),
-          countTimer.value = 30,
-          prefs.setTimerCancelZone = 30,
-          stopTimer(),
-          if (prefs.getCancelDate == false)
-            {
-              RedirectViewNotifier.showFinishTimerCancelNotification(),
-            }
-        }
-      else
-        {
-          secondsRemaining -= 1,
-          prefs.setTimerCancelZone = secondsRemaining,
-          countTimer.value = secondsRemaining,
-        }
-    },
-  );
-}
-
 Future<bool> requestPermission(Permission permission) async {
   bool permissionGranted = false;
   const maxRetryAttempts = 10;

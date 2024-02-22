@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:isolate';
 
 import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:get/get.dart';
@@ -66,11 +67,16 @@ class _CancelDatePageState extends State<CancelDatePage> {
     contactRiskTemp = initContactRisk();
     getcontactRisk();
     _prefs.saveLastScreenRoute("cancelDate");
-
     super.initState();
     starTap();
     var secondsRemaining1 = (_prefs.getTimerCancelZone);
     secondsRemaining = secondsRemaining1;
+    TimerIsolate.start(); // Comenzar el temporizador al inicializar el widget
+    TimerIsolate.timerStream.listen((seconds) {
+      setState(() {
+        countTimer.value = seconds;
+      });
+    });
   }
 
   void getcontactRisk() async {
@@ -79,7 +85,7 @@ class _CancelDatePageState extends State<CancelDatePage> {
 
     // Verificar si se necesita iniciar el temporizador
     if (!_prefs.getListDate && !_prefs.getCountFinish) {
-      startTimer();
+      start();
     }
 
     // Obtener los contactos de riesgo
@@ -152,7 +158,8 @@ class _CancelDatePageState extends State<CancelDatePage> {
         isLoading = false;
 
         // riskVC.update();
-        stopTimer();
+        // stopTimer();
+        stop();
         mainController.saveUserLog(
             "Cita - cancelada", DateTime.now(), prefs.getIdDateGroup);
         _prefs.setTimerCancelZone = 30;
@@ -167,71 +174,49 @@ class _CancelDatePageState extends State<CancelDatePage> {
         mainController.refreshRiskList();
         mainController.refreshHome();
         mainController.refreshAlerts();
-        await Get.off(const HomePage());
+        await Get.offAll(() => const HomePage());
       }
     }
     isLoading = false;
   }
 
-  void stopTimer() {
-    if (timerCancelZone != null) {
-      timerCancelZone!.cancel();
-    }
-    timerCancelZone = null;
+  static late Isolate _isolate;
+  static late SendPort _sendPort;
+
+  static void start() async {
+    ReceivePort receivePort = ReceivePort();
+    _isolate = await Isolate.spawn(_startTimer, receivePort.sendPort);
+    receivePort.listen((message) {
+      // Manejar mensajes recibidos del isolate si es necesario
+      print(message);
+    });
   }
 
-  void gotoHome() async {
-    code.textCode1 = '';
-    code.textCode2 = '';
-    code.textCode3 = '';
-    code.textCode4 = '';
-    // NotificationCenter().notify('getContactZoneRisk');
-    stopTimer();
+  static void _startTimer(SendPort sendPort) {
+    _sendPort = sendPort;
 
-    _prefs.setlistTaskIdsCancel = [];
-    _prefs.setSelectContactRisk = -1;
-    _prefs.setTimerCancelZone = 30;
-    _prefs.setListDate = false;
-
-    countTimer.value = 30;
-    if (contactRiskTemp.saveContact == false) {
-      riskVC.deleteContactRisk(context, contactRiskTemp);
-    }
-    _prefs.saveLastScreenRoute("home");
-
-    final service = FlutterBackgroundService();
-    var isRunning = await service.isRunning();
-    if (isRunning) {
-      service.invoke("stopService");
-    }
-    await service.startService();
-    await activateService();
-    await Get.off(const HomePage());
-  }
-
-  void startTimer() {
     const oneSec = Duration(seconds: 1);
+    int secondsRemaining = 30; // Inicializar el contador de tiempo
 
-    timerCancelZone = Timer.periodic(
-      oneSec,
-      (Timer timer) => setState(
-        () {
-          if (secondsRemaining < 1) {
-            countTimer.value = 30;
-            secondsRemaining = 30;
-            showSaveAlert(context, Constant.info,
-                "El servidor de AlertFriends envió una alerta con tu última ubicación");
-            timer.cancel();
-            _prefs.setCountFinish = true;
-          } else {
-            secondsRemaining -= 1;
+    Timer.periodic(oneSec, (Timer timer) {
+      if (secondsRemaining < 1) {
+        // Enviar mensaje al hilo principal
+        _sendPort.send({'event': 'timerFinished'});
+        timer.cancel(); // Cancelar el timer
+      } else {
+        // Decrementar el tiempo restante y enviar al hilo principal
+        secondsRemaining -= 1;
+        _sendPort.send(
+            {'event': 'updateTimer', 'secondsRemaining': secondsRemaining});
+      }
+    });
+  }
 
-            _prefs.setTimerCancelZone = secondsRemaining;
-            countTimer.value = secondsRemaining;
-          }
-        },
-      ),
-    );
+  static void stop() {
+    if (_isolate != null) {
+      _isolate.kill(priority: Isolate.immediate);
+    }
+    TimerIsolate.stop();
   }
 
   String get timerText {
@@ -394,5 +379,51 @@ class _CancelDatePageState extends State<CancelDatePage> {
         ),
       ),
     );
+  }
+}
+
+class TimerIsolate {
+  static late Isolate _isolate;
+  static late SendPort _sendPort;
+  static late StreamController<int> _timerStreamController;
+  static late Stream<int> timerStream;
+
+  static void start() async {
+    _timerStreamController = StreamController<int>();
+    timerStream = _timerStreamController.stream;
+
+    ReceivePort receivePort = ReceivePort();
+    _isolate = await Isolate.spawn(_startTimer, receivePort.sendPort);
+    receivePort.listen((message) {
+      if (message is int) {
+        _timerStreamController.add(message);
+      }
+    });
+  }
+
+  static void _startTimer(SendPort sendPort) {
+    _sendPort = sendPort;
+
+    const oneSec = Duration(seconds: 1);
+    int secondsRemaining = 30; // Inicializar el contador de tiempo
+
+    Timer.periodic(oneSec, (Timer timer) {
+      if (secondsRemaining < 1) {
+        _sendPort.send(
+            0); // Enviar 0 al hilo principal cuando el temporizador llega a cero
+        timer.cancel(); // Cancelar el temporizador
+      } else {
+        _sendPort.send(
+            secondsRemaining); // Enviar el tiempo restante al hilo principal
+        secondsRemaining -= 1; // Decrementar el tiempo restante
+      }
+    });
+  }
+
+  static void stop() {
+    if (_isolate != null) {
+      _isolate.kill(priority: Isolate.immediate);
+    }
+    _timerStreamController.close();
   }
 }

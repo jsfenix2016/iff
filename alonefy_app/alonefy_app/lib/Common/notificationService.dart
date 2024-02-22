@@ -191,7 +191,6 @@ class RedirectViewNotifier with ChangeNotifier {
           prefs.setFinishIdDate = true;
           prefs.setListDate = true;
           editRiskController.updateContactRiskWhenDateFinished(id, data);
-          startTimer();
           showDateFinishNotifications(message, id);
         }
       }

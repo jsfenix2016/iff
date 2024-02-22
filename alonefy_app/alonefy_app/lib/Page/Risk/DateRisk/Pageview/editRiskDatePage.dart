@@ -354,7 +354,7 @@ class _EditRiskPageState extends State<EditRiskPage> {
 
     riskVC.update();
     isLoading = false;
-    Get.offAll(const HomePage());
+    await Get.offAll(() => const HomePage());
   }
 
   Future<List<Uint8List>> convertImageData() async {

@@ -680,10 +680,7 @@ void onDidReceiveBackgroundNotificationResponse(
         contactRiskTemp.isFinishTime = true;
         await erisk.updateContactRisk(contactRiskTemp);
         var taskIdList = getTaskIdList(taskIds);
-        if (notificationResponse.payload!.contains("DateRisk_")) {
-          mainController.saveUserLog(
-              "Cita - Cancelada", DateTime.now(), prefs.getIdDateGroup);
-        }
+
         MainService().cancelAllNotifications(taskIdList);
         prefs.setNotificationType = "";
         mainController.refreshHome();
