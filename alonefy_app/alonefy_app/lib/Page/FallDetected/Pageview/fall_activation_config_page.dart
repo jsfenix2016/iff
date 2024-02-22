@@ -334,8 +334,8 @@ class _FallActivationConfigPageState extends State<FallActivationConfigPage> {
     //_prefs.setDetectedFall = isActive;
     _fallController.setFallTime(fallTime);
     //_prefs.setFallTime = fallTime;
-    if (isActive) {
-      refreshMenu("previewActivity");
+    if (isActive && _prefs.getUserPremium) {
+      refreshMenu("fallActivation");
     }
 
     showSaveAlert(context, "Tiempo de caída",

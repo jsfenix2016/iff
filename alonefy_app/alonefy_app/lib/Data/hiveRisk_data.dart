@@ -3,6 +3,7 @@ import 'package:ifeelefine/Common/initialize_models_bd.dart';
 import 'package:ifeelefine/Data/hive_constant_adapterInit.dart';
 import 'package:ifeelefine/Model/contactRiskBD.dart';
 import 'package:ifeelefine/Model/contactZoneRiskBD.dart';
+import 'package:ifeelefine/Model/videopresignedbd.dart';
 
 class HiveDataRisk {
   const HiveDataRisk();
@@ -165,6 +166,21 @@ class HiveDataRisk {
           await Hive.openBox<ContactZoneRiskBD>('ContactZoneRiskBD');
 
       var temp = await box.add(contact);
+
+      return true;
+    } catch (error) {
+      print(error);
+      return false;
+    }
+  }
+
+  Future<bool> saveContactZoneRiskVideos(VideoPresignedBD videoZone) async {
+    try {
+      await inicializeHiveBD();
+      final Box<VideoPresignedBD> box =
+          await Hive.openBox<VideoPresignedBD>('VideoZoneRiskBD');
+
+      var temp = await box.add(videoZone);
 
       return true;
     } catch (error) {

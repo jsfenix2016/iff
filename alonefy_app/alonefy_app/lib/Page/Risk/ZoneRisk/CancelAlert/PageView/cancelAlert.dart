@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
 import 'package:ifeelefine/Common/Constant.dart';
 import 'package:ifeelefine/Common/colorsPalette.dart';
@@ -51,7 +52,7 @@ class _CancelAlertState extends State<CancelAlertPage> {
   void initState() {
     _prefs.saveLastScreenRoute("cancelZone");
     getcontactRisk();
-    startTimer();
+    // startTimer();
     starTap();
     secondsRemaining = prefs.getTimerCancelZone;
     super.initState();
@@ -163,8 +164,8 @@ class _CancelAlertState extends State<CancelAlertPage> {
   }
 
   String get timerText {
-    int minutes = (secondsRemaining ~/ 60);
-    int seconds = (secondsRemaining % 60);
+    int minutes = (countTimer.value ~/ 60);
+    int seconds = (countTimer.value % 60);
     return '$minutes:${seconds.toString().padLeft(2, '0')}';
   }
 
@@ -219,15 +220,17 @@ class _CancelAlertState extends State<CancelAlertPage> {
                         Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: Center(
-                            child: Text(
-                              timerText,
-                              textAlign: TextAlign.center,
-                              style: GoogleFonts.barlow(
-                                fontSize: 74.0,
-                                wordSpacing: 1,
-                                letterSpacing: 1,
-                                fontWeight: FontWeight.normal,
-                                color: ColorPalette.principal,
+                            child: Obx(
+                              () => Text(
+                                timerText,
+                                textAlign: TextAlign.center,
+                                style: GoogleFonts.barlow(
+                                  fontSize: 74.0,
+                                  wordSpacing: 1,
+                                  letterSpacing: 1,
+                                  fontWeight: FontWeight.normal,
+                                  color: ColorPalette.principal,
+                                ),
                               ),
                             ),
                           ),

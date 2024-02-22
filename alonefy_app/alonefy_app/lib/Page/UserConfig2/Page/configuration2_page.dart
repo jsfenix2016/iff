@@ -427,9 +427,8 @@ class _UserConfigPageState2 extends State<UserConfigPage2> {
     if (await updateUser()) {
       updateFirebaseToken();
       _prefs.setUserPremium = true;
-      List<String> addList = ["config2"];
-      _prefs.setlistConfigPage = addList;
 
+      refreshMenu("config2");
       Future.sync(
         () async => await Navigator.push(
           context,

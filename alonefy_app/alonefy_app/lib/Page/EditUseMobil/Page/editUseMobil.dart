@@ -211,6 +211,8 @@ class _EditUseMobilPageState extends State<EditUseMobilPage> {
             var premiumController = Get.put(PremiumController());
             premiumController.updatePremiumAPI(true);
 
+            refreshMenu("useMobil");
+
             saveChange();
           }
         });
@@ -224,6 +226,9 @@ class _EditUseMobilPageState extends State<EditUseMobilPage> {
     var save = await editUseMobilVC
         .saveTimeUseMobil(sortWeekdays(selecListUseMobilDays));
     if (save) {
+      if (_prefs.getUserPremium) {
+        refreshMenu("useMobil");
+      }
       Future.sync(() =>
           {showSaveAlert(context, Constant.info, Constant.saveCorrectly)});
     }
@@ -373,6 +378,9 @@ class _EditUseMobilPageState extends State<EditUseMobilPage> {
                                                             PremiumController());
                                                     premiumController
                                                         .updatePremiumAPI(true);
+
+                                                    refreshMenu("useMobil");
+
                                                     setState(() {});
                                                   }
                                                 },

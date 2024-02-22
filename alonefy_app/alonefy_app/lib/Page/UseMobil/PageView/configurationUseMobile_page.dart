@@ -48,7 +48,7 @@ class _UseMobilePageState extends State<UseMobilePage> {
     } else {
       userbd = widget.userbd;
     }
-    // _prefs.saveLastScreenRoute("useMobil");
+
     getpermission();
     super.initState();
   }
@@ -198,11 +198,8 @@ class _UseMobilePageState extends State<UseMobilePage> {
                               var premiumController =
                                   Get.put(PremiumController());
                               premiumController.updatePremiumAPI(true);
-                              List<String> addList = [
-                                "config2",
-                                "useMobil",
-                              ];
-                              _prefs.setlistConfigPage = addList;
+
+                              refreshMenu("useMobil");
                               setState(() {});
                             }
                           },
@@ -300,12 +297,7 @@ class _UseMobilePageState extends State<UseMobilePage> {
                                         Get.put(PremiumController());
                                     premiumController.updatePremiumAPI(true);
 
-                                    List<String>? temp = [];
-                                    Future.sync(() async => {
-                                          temp = await _prefs.getlistConfigPage,
-                                          temp!.add("useMobil"),
-                                          _prefs.setlistConfigPage = temp!
-                                        });
+                                    refreshMenu("useMobil");
                                     setState(() {});
                                   }
                                 },
@@ -340,7 +332,9 @@ class _UseMobilePageState extends State<UseMobilePage> {
                               userbd!);
 
                           if (result) {
-                            // Get.off(() => const UserRestPage());
+                            if (_prefs.getUserPremium) {
+                              refreshMenu("useMobil");
+                            }
 
                             var listrest = await userRestVC.getUserRest();
                             if (listrest.isNotEmpty) {

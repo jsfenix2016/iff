@@ -8,7 +8,9 @@ import 'package:ifeelefine/Common/Constant.dart';
 import 'package:ifeelefine/Data/hiveRisk_data.dart';
 import 'package:ifeelefine/Data/hive_constant_adapterInit.dart';
 import 'package:ifeelefine/Data/hive_data.dart';
+import 'package:ifeelefine/Model/ApiRest/AlertApi.dart';
 import 'package:ifeelefine/Model/contactRiskBD.dart';
+import 'package:ifeelefine/Page/Alerts/Service/alerts_service.dart';
 import 'package:ifeelefine/Page/Disamble/Controller/disambleController.dart';
 import 'package:ifeelefine/Page/Geolocator/Controller/configGeolocatorController.dart';
 import 'package:ifeelefine/Page/Risk/DateRisk/ListDateRisk/Controller/riskPageController.dart';
@@ -28,6 +30,8 @@ import 'package:ifeelefine/Common/manager_alerts.dart';
 class EditRiskController extends GetxController {
   Future<void> saveActivityLog(ContactRiskBD contact) async {
     var uuid = Uuid().v4();
+    final MainController mainController = Get.put(MainController());
+    var user = await mainController.getUserData();
 
     LogAlertsBD mov = LogAlertsBD(
         id: contact.id,
@@ -36,6 +40,13 @@ class EditRiskController extends GetxController {
         photoDate: contact.photoDate,
         groupBy: uuid);
     prefs.setIdDateGroup = uuid;
+
+    var alertApi = await AlertsService()
+        .saveAlert(AlertApi.fromAlert(mov, user.telephone));
+
+    if (alertApi != null) {
+      mov.id = alertApi.id;
+    }
     await const HiveData().saveUserPositionBD(mov);
   }
 

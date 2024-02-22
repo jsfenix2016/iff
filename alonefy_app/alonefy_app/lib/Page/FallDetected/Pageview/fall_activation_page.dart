@@ -8,6 +8,7 @@ import 'package:ifeelefine/Common/colorsPalette.dart';
 import 'package:ifeelefine/Common/text_style_font.dart';
 import 'package:ifeelefine/Common/utils.dart';
 import 'package:ifeelefine/Page/Contact/PageView/addContact_page.dart';
+import 'package:ifeelefine/Page/Disamble/Controller/disambleController.dart';
 
 import 'package:ifeelefine/Page/FallDetected/Controller/fall_detectedController.dart';
 import 'package:ifeelefine/Page/Premium/Controller/premium_controller.dart';
@@ -216,6 +217,9 @@ class _FallActivationPageState extends State<FallActivationPage> {
                       showIcon: false,
                       onChanged: (value) {
                         // Get.off(const AddContactPage());
+                        if (prefs.getUserPremium) {
+                          refreshMenu("fallActivation");
+                        }
                         Navigator.push(
                           context,
                           MaterialPageRoute(

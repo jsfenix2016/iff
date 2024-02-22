@@ -222,7 +222,7 @@ class _UserEditPageState extends State<UserEditPage> {
                   children: <Widget>[
                     const SizedBox(height: 20),
                     Text(
-                      "V. 1.0.28.3",
+                      "V. 1.0.28.4",
                       style: textForTitleApp(),
                     ),
                     const SizedBox(height: 20),
@@ -525,64 +525,62 @@ class _UserEditPageState extends State<UserEditPage> {
                         const SizedBox(
                           height: 10,
                         ),
-                        RichText(
-                          textAlign: TextAlign.justify,
-                          text: TextSpan(
-                            text: '',
-                            children: <TextSpan>[
-                              TextSpan(
-                                onEnter: (event) {},
-                                text: 'Darse de baja de la aplicación',
-                                style: GoogleFonts.barlow(
-                                  fontSize: 16.0,
-                                  wordSpacing: 1,
-                                  letterSpacing: 0.001,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.white,
-                                  decoration: TextDecoration.underline,
-                                ),
-                                recognizer: TapGestureRecognizer()
-                                  ..onTap = () async {
-                                    await showDialog(
-                                      context: context,
-                                      builder: (BuildContext context) =>
-                                          AlertDialog(
-                                        title: const Text(Constant.info),
-                                        content:
-                                            const Text('¿Desea darse de baja?'),
-                                        actions: <Widget>[
-                                          TextButton(
-                                            child: Text("Cancelar",
-                                                style: textBold16Black()),
-                                            onPressed: () => {
-                                              Navigator.of(context).pop(true),
-                                            },
-                                          ),
-                                          TextButton(
-                                              child: Text("Confirmar",
-                                                  style: textBold16Black()),
-                                              onPressed: () async {
-                                                Navigator.of(context).pop(true);
-                                                setState(() {
-                                                  isloading = true;
-                                                });
-                                                bool delete = await editVC
-                                                    .deleteUser(user!);
-                                                if (delete) {
-                                                  isloading = false;
+                        InkWell(
+                          onTap: () async {
+                            await showDialog(
+                              context: context,
+                              builder: (BuildContext context) => AlertDialog(
+                                title: const Text(Constant.info),
+                                content: const Text('¿Desea darse de baja?'),
+                                actions: <Widget>[
+                                  TextButton(
+                                    child: Text("Cancelar",
+                                        style: textBold16Black()),
+                                    onPressed: () => {
+                                      Navigator.of(context).pop(true),
+                                    },
+                                  ),
+                                  TextButton(
+                                      child: Text("Confirmar",
+                                          style: textBold16Black()),
+                                      onPressed: () async {
+                                        Navigator.of(context).pop(true);
+                                        setState(() {
+                                          isloading = true;
+                                        });
+                                        bool delete =
+                                            await editVC.deleteUser(user!);
+                                        if (delete) {
+                                          isloading = false;
 
-                                                  setState(() {
-                                                    Get.offAll(
-                                                        OnboardingPage());
-                                                  });
-                                                }
-                                              }),
-                                        ],
-                                      ),
-                                    );
-                                  },
+                                          setState(() {
+                                            Get.offAll(OnboardingPage());
+                                          });
+                                        }
+                                      }),
+                                ],
                               ),
-                            ],
+                            );
+                          },
+                          child: RichText(
+                            textAlign: TextAlign.justify,
+                            text: TextSpan(
+                              text: '',
+                              children: <TextSpan>[
+                                TextSpan(
+                                  onEnter: (event) {},
+                                  text: 'Darse de baja de la aplicación',
+                                  style: GoogleFonts.barlow(
+                                    fontSize: 16.0,
+                                    wordSpacing: 1,
+                                    letterSpacing: 0.001,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white,
+                                    decoration: TextDecoration.underline,
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                         const SizedBox(

@@ -8,6 +8,7 @@ import 'package:get/get.dart';
 import 'package:ifeelefine/Common/Constant.dart';
 import 'package:ifeelefine/Common/colorsPalette.dart';
 import 'package:ifeelefine/Common/idleLogic.dart';
+import 'package:ifeelefine/Common/utils.dart';
 
 import 'package:ifeelefine/Controllers/mainController.dart';
 
@@ -175,6 +176,9 @@ class RedirectViewNotifier with ChangeNotifier {
       if (data.containsValue(Constant.startRiskDate)) {
         if (id != prefs.getCancelIdDate) {
           prefs.setNotificationType = "Cita";
+          final mainController = Get.put(MainController());
+          mainController.saveUserLog(
+              "Cita - iniciada", DateTime.now(), prefs.getIdDateGroup);
           editRiskController.updateContactRiskWhenDateStarted(id);
           showDateNotifications(message);
         }
@@ -187,6 +191,7 @@ class RedirectViewNotifier with ChangeNotifier {
           prefs.setFinishIdDate = true;
           prefs.setListDate = true;
           editRiskController.updateContactRiskWhenDateFinished(id, data);
+          startTimer();
           showDateFinishNotifications(message, id);
         }
       }
@@ -764,6 +769,40 @@ class RedirectViewNotifier with ChangeNotifier {
         'organization',
         'Organization management',
 
+        importance: Importance.max,
+        priority: Priority.high,
+        showWhen: false,
+        playSound: true,
+        // ledColor: Colors.redAccent,
+        color: Colors.amber,
+        category: AndroidNotificationCategory.alarm,
+        // icon: '@mipmap/ic_launcher',
+        visibility: NotificationVisibility.public,
+      ),
+    );
+
+    await flutterLocalNotificationsPlugin.show(
+      888,
+      title,
+      body,
+      platformChannelSpecifics,
+      payload: 'test',
+    );
+  }
+
+  static Future<void> showFinishTimerCancelNotification() async {
+    // RemoteNotification? notification = message.notification;
+    String? title = 'Información';
+    String? body =
+        "El servidor de AlertFriends envió una alerta con tu última ubicación";
+
+    var styleInformation =
+        BigTextStyleInformation(body, htmlFormatBigText: true);
+    var platformChannelSpecifics = NotificationDetails(
+      android: AndroidNotificationDetails(
+        'organization',
+        'Organization management',
+        styleInformation: styleInformation,
         importance: Importance.max,
         priority: Priority.high,
         showWhen: false,

@@ -49,7 +49,7 @@ class _CancelDatePageState extends State<CancelDatePage> {
   late ContactRiskBD contactRiskTemp;
 
   int secondsRemaining = 30; //5 minutes = 300 seconds
-  Timer? _timer;
+
   bool isLoading = false;
   final PreferenceUser _prefs = PreferenceUser();
   bool _shouldReloadData = false;
@@ -174,14 +174,10 @@ class _CancelDatePageState extends State<CancelDatePage> {
   }
 
   void stopTimer() {
-    if (_timer != null) {
-      _timer!.cancel();
-    }
     if (timerCancelZone != null) {
       timerCancelZone!.cancel();
     }
     timerCancelZone = null;
-    _timer = null;
   }
 
   void gotoHome() async {

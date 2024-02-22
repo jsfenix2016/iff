@@ -10,6 +10,7 @@ import 'package:ifeelefine/Page/PreviewActivitiesFilteredByDate/PageView/preview
 import 'package:ifeelefine/Page/UserRest/Controller/userRestController.dart';
 import 'package:flutter/material.dart';
 import 'package:ifeelefine/Page/UserRest/Widgets/rowSelectTimer.dart';
+import 'package:ifeelefine/Provider/prefencesUser.dart';
 import 'package:ifeelefine/Utils/Widgets/elevatedButtonFilling.dart';
 import 'package:ifeelefine/Utils/Widgets/listDayweekCustom.dart';
 import 'package:ifeelefine/Utils/Widgets/widgetLogo.dart';
@@ -26,7 +27,7 @@ class UserRestPage extends StatefulWidget {
 
 class _UserRestPageState extends State<UserRestPage> {
   final UserRestController userRestVC = Get.put(UserRestController());
-
+  final PreferenceUser _prefs = PreferenceUser();
   late String timeLblAM = "00:00:00"; //AM
   late String timeLblPM = "00:00:00"; //PM
 
@@ -38,7 +39,12 @@ class _UserRestPageState extends State<UserRestPage> {
   final List<String> _selectedDays = [];
 
   List<RestDayBD> tempRestDays = [];
+  List<RestDayBD> selecDicActivity = <RestDayBD>[];
+  List<RestDayBD> selecDicActivityTemp = <RestDayBD>[];
+  Map<String, List<RestDayBD>> groupedProducts = {};
+  List<RestDayBD> tempSave = <RestDayBD>[];
 
+  List<RestDayBD> lista = [];
   List<RestDayBD> sortWeekdays(List<RestDayBD> weekdays) {
     return weekdays
       ..sort((a, b) => LinkedHashMap.from({
@@ -79,13 +85,6 @@ class _UserRestPageState extends State<UserRestPage> {
       }
     }
   }
-
-  List<RestDayBD> selecDicActivity = <RestDayBD>[];
-  List<RestDayBD> selecDicActivityTemp = <RestDayBD>[];
-  Map<String, List<RestDayBD>> groupedProducts = {};
-  List<RestDayBD> tempSave = <RestDayBD>[];
-
-  List<RestDayBD> lista = [];
 
   Future<void> getInactivity() async {
     groupedProducts = {};

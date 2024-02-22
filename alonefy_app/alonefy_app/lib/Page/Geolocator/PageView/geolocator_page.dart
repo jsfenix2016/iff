@@ -236,8 +236,8 @@ class _InitGeolocatorState extends State<InitGeolocator> {
           } else {
             isActive = true;
           }
-          setState(() async {
-            await _checkPermission();
+          await _checkPermission();
+          setState(() {
             getCurrentPosition();
           });
         } else {}
