@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:async';
 import 'dart:isolate';
 
@@ -59,6 +61,7 @@ class _CancelDatePageState extends State<CancelDatePage> {
   void dispose() {
     super.dispose();
     secondsRemaining = _prefs.getTimerCancelZone;
+    stop();
   }
 
   @override
@@ -71,12 +74,13 @@ class _CancelDatePageState extends State<CancelDatePage> {
     starTap();
     var secondsRemaining1 = (_prefs.getTimerCancelZone);
     secondsRemaining = secondsRemaining1;
-    TimerIsolate.start(); // Comenzar el temporizador al inicializar el widget
-    TimerIsolate.timerStream.listen((seconds) {
-      setState(() {
-        countTimer.value = seconds;
-      });
-    });
+    // TimerIsolate.start(); // Comenzar el temporizador al inicializar el widget
+    // TimerIsolate.timerStream.listen((seconds) {
+    //   setState(() {
+    //     countTimer.value = seconds;
+    //   });
+    // });
+    startIsolate();
   }
 
   void getcontactRisk() async {
@@ -84,9 +88,9 @@ class _CancelDatePageState extends State<CancelDatePage> {
     _prefs.refreshData();
 
     // Verificar si se necesita iniciar el temporizador
-    if (!_prefs.getListDate && !_prefs.getCountFinish) {
-      start();
-    }
+    // if (!_prefs.getListDate && !_prefs.getCountFinish) {
+    //   start();
+    // }
 
     // Obtener los contactos de riesgo
     var resp = await riskVC.getContactsRisk();
@@ -176,24 +180,43 @@ class _CancelDatePageState extends State<CancelDatePage> {
         mainController.refreshAlerts();
         await Get.offAll(() => const HomePage());
       }
+    } else {
+      showSaveAlert(context, Constant.info, Constant.codeError);
     }
     isLoading = false;
   }
 
-  static late Isolate _isolate;
-  static late SendPort _sendPort;
+  static Isolate? _isolate;
+  // static late SendPort _sendPort;
 
-  static void start() async {
+  void startIsolate() async {
+     setState(() { countTimer.value = 30; });
+     await start();
+  }
+
+  start() async {
     ReceivePort receivePort = ReceivePort();
     _isolate = await Isolate.spawn(_startTimer, receivePort.sendPort);
     receivePort.listen((message) {
       // Manejar mensajes recibidos del isolate si es necesario
       print(message);
+      if (message['event'].toString() == "updateTimer") {
+      setState(() {
+            countTimer.value = message['secondsRemaining'];
+        });
+      }
+      
+      if (message['event'].toString() == "timerFinished") {
+        setState(() {
+          contactRiskTemp.isFinishTime = true;
+        });
+        stop();
+      }
     });
   }
 
   static void _startTimer(SendPort sendPort) {
-    _sendPort = sendPort;
+    // SendPort _sendPort = sendPort;
 
     const oneSec = Duration(seconds: 1);
     int secondsRemaining = 30; // Inicializar el contador de tiempo
@@ -201,22 +224,23 @@ class _CancelDatePageState extends State<CancelDatePage> {
     Timer.periodic(oneSec, (Timer timer) {
       if (secondsRemaining < 1) {
         // Enviar mensaje al hilo principal
-        _sendPort.send({'event': 'timerFinished'});
+        sendPort.send({'event': 'timerFinished'});
         timer.cancel(); // Cancelar el timer
       } else {
         // Decrementar el tiempo restante y enviar al hilo principal
+        print("secondsRemaining >>>> $secondsRemaining");
         secondsRemaining -= 1;
-        _sendPort.send(
+        sendPort.send(
             {'event': 'updateTimer', 'secondsRemaining': secondsRemaining});
       }
     });
   }
 
-  static void stop() {
+  void stop() {
     if (_isolate != null) {
-      _isolate.kill(priority: Isolate.immediate);
+      _isolate?.kill(priority: Isolate.immediate);
     }
-    TimerIsolate.stop();
+    // TimerIsolate.stop();
   }
 
   String get timerText {
@@ -330,7 +354,7 @@ class _CancelDatePageState extends State<CancelDatePage> {
                               img: '',
                             ),
                           ),
-                          if (contactRiskTemp.isFinishTime) ...[
+                          if (!contactRiskTemp.isFinishTime) ...[
                             Visibility(
                               visible: true,
                               child: Padding(
@@ -350,7 +374,8 @@ class _CancelDatePageState extends State<CancelDatePage> {
                                 ),
                               ),
                             )
-                          ] else ...[
+                          ] 
+                          else ...[
                             const SizedBox.shrink()
                           ],
                           contactRiskTemp.isFinishTime
@@ -383,7 +408,7 @@ class _CancelDatePageState extends State<CancelDatePage> {
 }
 
 class TimerIsolate {
-  static late Isolate _isolate;
+  static Isolate? _isolate;
   static late SendPort _sendPort;
   static late StreamController<int> _timerStreamController;
   static late Stream<int> timerStream;
@@ -422,7 +447,7 @@ class TimerIsolate {
 
   static void stop() {
     if (_isolate != null) {
-      _isolate.kill(priority: Isolate.immediate);
+      _isolate?.kill(priority: Isolate.immediate);
     }
     _timerStreamController.close();
   }
