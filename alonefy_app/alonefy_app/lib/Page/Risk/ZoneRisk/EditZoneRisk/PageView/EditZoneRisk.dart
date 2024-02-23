@@ -226,26 +226,7 @@ class _EditZoneRiskPageState extends State<EditZoneRiskPage> {
     }
 
     if (update) {
-      Future.sync(() => showDialog(
-            context: context,
-            builder: (context) {
-              return AlertDialog(
-                title: const Text(Constant.info),
-                content: const Text(Constant.saveCorrectly),
-                actions: <Widget>[
-                  TextButton(
-                    onPressed: () {
-                      setState(() {
-                        Navigator.of(context).pop();
-                      });
-                      goToPush(contactRisk);
-                    },
-                    child: Text("OK", style: textBold16Black()),
-                  )
-                ],
-              );
-            },
-          ));
+      goToPush(contactRisk);
     }
 
     setState(() {
@@ -270,24 +251,27 @@ class _EditZoneRiskPageState extends State<EditZoneRiskPage> {
 
       if (cameraStatus.isGranted && microphoneStatus.isGranted) {
         ContactZoneRiskBD contactRisk = ContactZoneRiskBD(
-          id: widget.contactRisk.id,
-          photo: contactSelect.photo,
-          name: widget.contactRisk.name,
-          phones: contactSelect.phones.first.number.contains("+34")
-              ? contactSelect.phones.first.number.replaceAll("+34", "").replaceAll(" ", "")
-              : contactSelect.phones.first.number.replaceAll(" ", ""),
-          sendLocation: widget.contactRisk.sendLocation,
-          sendWhatsapp: widget.contactRisk.sendWhatsapp,
-          code: widget.contactRisk.code,
-          isActived: true,
-          sendWhatsappContact: widget.contactRisk.sendWhatsappContact,
-          callme: widget.contactRisk.callme,
-          save: widget.contactRisk.save,
-          createDate: DateTime.now());
+            id: widget.contactRisk.id,
+            photo: contactSelect.photo,
+            name: widget.contactRisk.name,
+            phones: contactSelect.phones.first.number.contains("+34")
+                ? contactSelect.phones.first.number
+                    .replaceAll("+34", "")
+                    .replaceAll(" ", "")
+                : contactSelect.phones.first.number.replaceAll(" ", ""),
+            sendLocation: widget.contactRisk.sendLocation,
+            sendWhatsapp: widget.contactRisk.sendWhatsapp,
+            code: widget.contactRisk.code,
+            isActived: true,
+            sendWhatsappContact: widget.contactRisk.sendWhatsappContact,
+            callme: widget.contactRisk.callme,
+            save: widget.contactRisk.save,
+            createDate: DateTime.now());
 
         createZone(contactRisk);
       } else {
-        showPermissionDialog(context, "Para continuar es necesario tener permisos para acceder a la cámara y micrófono");
+        showPermissionDialog(context,
+            "Para continuar es necesario tener permisos para acceder a la cámara y micrófono");
       }
     });
   }
