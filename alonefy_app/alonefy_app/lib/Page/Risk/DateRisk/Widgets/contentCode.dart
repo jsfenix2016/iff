@@ -50,6 +50,7 @@ class _ContentCodeState extends State<ContentCode> {
       width: 50,
       color: Colors.transparent,
       child: TextFormField(
+        textAlign: TextAlign.center,
         cursorColor: Colors.white,
         initialValue: code,
         inputFormatters: <TextInputFormatter>[
