@@ -93,7 +93,6 @@ class _PushAlertPageState extends State<PushAlertPage> {
       }).catchError((_) {
         print("Error al inicializar la cámara");
       });
-      
 
       // if (info.brand == 'samsung' && info.model.contains("SM-G")) {
       //   final cameraFront = cameras.firstWhere(
@@ -106,7 +105,6 @@ class _PushAlertPageState extends State<PushAlertPage> {
     }
     // Una vez que los controladores de la cámara están inicializados,
     // establece _isReadyToRecord en true para indicar al usuario que puede tocar para grabar.
-    
   }
 
   void checkpremium() async {

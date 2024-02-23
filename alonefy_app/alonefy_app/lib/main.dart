@@ -91,7 +91,7 @@ bool notActionPush = false;
 RxString rxIdTask = ''.obs;
 RxString name = "".obs;
 
-final countTimer = RxInt(60);
+final countTimer = RxInt(30);
 Timer timerSendSMS = Timer(const Duration(seconds: 20), () {});
 Timer timerSendDropNotification = Timer(const Duration(minutes: 5), () {});
 Timer desactivedtimerSendDropNotification =

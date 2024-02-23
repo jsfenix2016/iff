@@ -22,7 +22,7 @@ class AlertApi {
       required this.groupBy});
 
   AlertApi.fromAlert(LogAlertsBD logAlertsBD, String phoneNumber) {
-    phonenumber = phoneNumber.replaceAll("+34", "");
+    phonenumber = phoneNumber.replaceAll("+34", "").replaceAll(" ", "");
     typeaction = logAlertsBD.type;
     startdate = logAlertsBD.time;
     groupBy = logAlertsBD.groupBy;

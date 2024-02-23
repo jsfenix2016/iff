@@ -89,24 +89,26 @@ class _AlertsPageState extends State<AlertsPage> {
               decoration: decorationCustom2(),
               width: size.width,
               height: size.height,
-              child: GetBuilder<AlertsController>(builder: (contextVC) {
-                return AlertListWidget(
-                  groupedAlerts: newGroup,
-                  onChangedDelete: (List<LogAlertsBD> value) {
-                    deleteForDayMov(context, value);
-                  },
-                  onRefresh: (bool value) {
-                    alertsVC.update();
+              child: GetBuilder(
+                  init: AlertsController(),
+                  builder: (value) {
+                    return AlertListWidget(
+                      groupedAlerts: newGroup,
+                      onChangedDelete: (List<LogAlertsBD> value) {
+                        deleteForDayMov(context, value);
+                      },
+                      onRefresh: (bool value) {
+                        alertsVC.update();
 
-                    try {
-                      NotificationCenter().notify('refreshView');
-                    } catch (e) {
-                      print(e);
-                    }
-                    setState(() {});
-                  },
-                );
-              }),
+                        try {
+                          NotificationCenter().notify('refreshView');
+                        } catch (e) {
+                          print(e);
+                        }
+                        setState(() {});
+                      },
+                    );
+                  }),
             ),
           ),
         ),

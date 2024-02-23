@@ -32,8 +32,8 @@ class ZoneRiskApi {
   ZoneRiskApi.fromZoneRisk(
       ContactZoneRiskBD contactZoneRiskBD, String phoneNumber) {
     this.phoneNumber = phoneNumber.contains("+34")
-        ? phoneNumber.replaceAll("+34", "")
-        : phoneNumber;
+        ? phoneNumber.replaceAll("+34", "").replaceAll(" ", "")
+        : phoneNumber.replaceAll(" ", "");
     // photo = contactZoneRiskBD.photo.toString();
     name = contactZoneRiskBD.name;
     customContactPhoneNumber = contactZoneRiskBD.phones;

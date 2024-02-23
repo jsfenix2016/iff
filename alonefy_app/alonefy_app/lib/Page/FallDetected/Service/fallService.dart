@@ -7,7 +7,7 @@ import '../../../Common/Constant.dart';
 class FallService {
   Future<bool> activateFall(String phoneNumber, bool activate) async {
     final json = {
-      "phoneNumber": phoneNumber.replaceAll("+34", ""),
+      "phoneNumber": phoneNumber.replaceAll("+34", "").replaceAll(" ", ""),
       "activateFalls": activate
     };
 
@@ -24,7 +24,7 @@ class FallService {
 
   Future<void> updateFallTime(String phoneNumber, int fallTime) async {
     final json = {
-      "phoneNumber": phoneNumber.replaceAll("+34", ""),
+      "phoneNumber": phoneNumber.replaceAll("+34", "").replaceAll(" ", ""),
       "fallTime": fallTime
     };
 

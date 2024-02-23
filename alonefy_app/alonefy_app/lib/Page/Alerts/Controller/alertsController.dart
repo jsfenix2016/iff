@@ -22,67 +22,21 @@ class AlertsController extends GetxController {
     return await const HiveData().deleteListAlerts(listAlerts);
   }
 
-  Future<Map<String, List<LogAlertsBD>>> getAllMov() async {
-    Map<String, List<LogAlertsBD>> groupedProducts = {};
-    late final List<LogAlertsBD> allMovTime = [];
-    late final List<LogAlertsBD> allMov = [];
-    List<LogAlertsBD> temp = [];
-    List<LogAlertsBD> box = await const HiveData().getAlerts();
-    for (var element in box) {
-      if (!element.type.contains("Cita")) {
-        allMovTime.add(element);
-      }
-    }
-
-    allMovTime.sort((a, b) {
-      //sorting in descending order
-      return b.time.compareTo(a.time);
-    });
-
-    for (var element in allMovTime) {
-      allMov.add(element);
-    }
-
-    temp = removeDuplicates(allMov);
-    var format = DateFormat('dd-MM-yyyy');
-    temp.sort((a, b) {
-      //sorting in descending order
-      return a.time.compareTo(b.time);
-    });
-    groupedProducts = groupBy(
-        temp, (product) => format.parse(product.time.toString()).toString());
-    contactList.value = groupedProducts;
-
-    return groupedProducts;
-  }
-
   Future<RxMap<String, Map<String, List<LogAlertsBD>>>> getAllMov2() async {
     Map<String, Map<String, List<LogAlertsBD>>> groupedProducts = {};
 
     RxMap<String, Map<String, List<LogAlertsBD>>> groupedAlerts =
         RxMap<String, Map<String, List<LogAlertsBD>>>();
-    late final List<LogAlertsBD> allMovTime = [];
-    late final List<LogAlertsBD> allMov = [];
+
     List<LogAlertsBD> temp = [];
     List<LogAlertsBD> box = await const HiveData().getAlerts();
 
-    for (var element in box) {
-      // if (element.type.contains("Inactividad")) {
-      allMovTime.add(element);
-      // }
-    }
-
-    allMovTime.sort((a, b) {
+    box.sort((a, b) {
       //sorting in descending order
       return b.time.compareTo(a.time);
     });
 
-    for (var element in allMovTime) {
-      allMov.add(element);
-    }
-
-    temp = removeDuplicates(allMov);
-    // var format = DateFormat('dd-MM-yyyy');
+    temp = removeDuplicates(box);
 
     // Inicializa la estructura del mapa anidado
     for (var alert in temp) {
@@ -95,6 +49,7 @@ class AlertsController extends GetxController {
       final dateKey = dateTime1.toString();
       final typeKey = alert.groupBy;
       print(typeKey);
+      print(dateKey);
       print('idGroup: ${alert.id}');
       print('type: ${alert.type}');
 
