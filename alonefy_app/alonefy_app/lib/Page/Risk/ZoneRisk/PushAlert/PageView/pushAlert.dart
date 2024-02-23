@@ -81,8 +81,19 @@ class _PushAlertPageState extends State<PushAlertPage> {
           (camera) => camera.lensDirection == CameraLensDirection.back);
       _cameraController = CameraController(back, ResolutionPreset.max);
 
-      await _cameraController.initialize();
-      await _cameraController.prepareForVideoRecording();
+      await _cameraController.initialize().then((_) async {
+        if (!mounted) {
+          return;
+        }
+        await _cameraController.prepareForVideoRecording();
+        setState(() {
+          _isLoading = false;
+          isReadyToRecord = true;
+        });
+      }).catchError((_) {
+        print("Error al inicializar la cámara");
+      });
+      
 
       // if (info.brand == 'samsung' && info.model.contains("SM-G")) {
       //   final cameraFront = cameras.firstWhere(
@@ -95,10 +106,7 @@ class _PushAlertPageState extends State<PushAlertPage> {
     }
     // Una vez que los controladores de la cámara están inicializados,
     // establece _isReadyToRecord en true para indicar al usuario que puede tocar para grabar.
-    setState(() {
-      _isLoading = false;
-      isReadyToRecord = true;
-    });
+    
   }
 
   void checkpremium() async {

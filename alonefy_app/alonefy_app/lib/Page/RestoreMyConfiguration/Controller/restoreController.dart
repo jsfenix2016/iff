@@ -359,7 +359,7 @@ class RestoreController extends GetxController {
       Map<String, Permission> permissions, UserApi? userApi) async {
     try {
       List<Permission> permissionsToRequest = permissions.values.toList();
-     await permissionsToRequest.request().then((statuses) {
+      await permissionsToRequest.request().then((statuses) {
         for(var item in permissions.entries.toList()) {
           var permissionStatus = statuses[item.value]!;
           PreferencePermission preferencePermission =

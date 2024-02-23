@@ -1,10 +1,15 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:flutter_contacts/contact.dart';
+import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:get/get.dart';
 
 import 'package:google_fonts/google_fonts.dart';
+import 'package:ifeelefine/Common/manager_alerts.dart';
 import 'package:ifeelefine/Common/text_style_font.dart';
 import 'package:ifeelefine/Common/utils.dart';
+import 'package:ifeelefine/Controllers/mainController.dart';
 import 'package:ifeelefine/Data/hive_data.dart';
 import 'package:ifeelefine/Model/contact.dart';
 
@@ -14,6 +19,7 @@ import 'package:ifeelefine/Utils/Widgets/widgetLogo.dart';
 import 'package:ifeelefine/Views/contact_page.dart';
 import 'package:ifeelefine/main.dart';
 import 'package:notification_center/notification_center.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 import '../Controller/contactUserController.dart';
 import '../../../Utils/Widgets/elevatedButtonFilling.dart';
@@ -60,41 +66,53 @@ class _AddContactPageState extends State<AddContactPage> {
   }
 
   void _showContactListScreen(BuildContext context) async {
-    ContactBD contactBD = ContactBD("", null, "", "", "", "", "", "PENDING");
-    Contact? cont;
-    await Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) =>
-            FilterContactListScreen(oncontactSelected: (contact) {
-          setState(() {
-            cont = contact;
-            contactBD = ContactBD(
-                contact.displayName,
-                contact.photo == null ? null : contact.photo,
-                contact.displayName,
-                "20 min",
-                "20 min",
-                "20 min",
-                contact.phones.first.number
-                    .replaceAll("+34", "")
-                    .replaceAll(" ", ""),
-                "PENDING");
-            listContactDB.add(contactBD);
-          });
-        }),
-      ),
-    );
-    if (cont == null) {
-      return;
-    }
-    if (cont!.displayName.isNotEmpty) {
-      await const HiveData().saveUserContact(contactBD);
-      // Get.off(const ContactList(
-      //   isMenu: false,
-      // ));
-      gotoContactlist();
-      setState(() {});
+    PermissionStatus permission = await Permission.contacts.request();
+    if (permission.isPermanentlyDenied || permission.isDenied) {
+      showPermissionDialog(context, "Permitir acceder a los contactos");
+    } else {
+      final mainController = Get.put(MainController());
+      
+      var contacts = await FlutterContacts.getContacts(
+          withProperties: true, withPhoto: true);
+
+      mainController.refreshContactList(contacts);
+      
+      ContactBD contactBD = ContactBD("", null, "", "", "", "", "", "PENDING");
+      Contact? cont;
+      await Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) =>
+              FilterContactListScreen(oncontactSelected: (contact) {
+            setState(() {
+              cont = contact;
+              contactBD = ContactBD(
+                  contact.displayName,
+                  contact.photo == null ? null : contact.photo,
+                  contact.displayName,
+                  "20 min",
+                  "20 min",
+                  "20 min",
+                  contact.phones.first.number
+                      .replaceAll("+34", "")
+                      .replaceAll(" ", ""),
+                  "PENDING");
+              listContactDB.add(contactBD);
+            });
+          }),
+        ),
+      );
+      if (cont == null) {
+        return;
+      }
+      if (cont!.displayName.isNotEmpty) {
+        await const HiveData().saveUserContact(contactBD);
+        // Get.off(const ContactList(
+        //   isMenu: false,
+        // ));
+        gotoContactlist();
+        setState(() {});
+      }
     }
   }
 

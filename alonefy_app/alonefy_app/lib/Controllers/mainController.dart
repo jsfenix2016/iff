@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter_contacts/contact.dart';
 import 'package:get/get.dart';
 import 'package:ifeelefine/Common/initialize_models_bd.dart';
 import 'package:ifeelefine/Common/notificationService.dart';
@@ -196,5 +197,9 @@ class MainController extends GetxController {
     if (riskVC != null) {
       riskVC.update();
     }
+  }
+
+  void refreshContactList(List<Contact> contacts) {
+    contactlist = contacts;
   }
 }
