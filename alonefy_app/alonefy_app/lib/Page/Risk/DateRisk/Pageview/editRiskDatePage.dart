@@ -1218,7 +1218,7 @@ class _EditRiskPageState extends State<EditRiskPage> {
                                       child: Transform.scale(
                                         scale: 0.8,
                                         child: CupertinoSwitch(
-                                          value: saveConfig,
+                                          value: widget.contactRisk.saveContact,
                                           activeColor:
                                               ColorPalette.activeSwitch,
                                           trackColor:
