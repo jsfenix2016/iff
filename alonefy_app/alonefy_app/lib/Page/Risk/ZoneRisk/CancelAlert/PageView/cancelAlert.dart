@@ -128,7 +128,8 @@ class _CancelAlertState extends State<CancelAlertPage> {
           await const HiveDataRisk().updateContactZoneRisk(contactSelect!);
         }
       }
-
+      mainController.saveUserLog(
+          "Zona - Cancelada", DateTime.now(), _prefs.getIdZoneGroup);
       gotoHome();
     } else {
       showSaveAlert(context, Constant.info, Constant.codeError);

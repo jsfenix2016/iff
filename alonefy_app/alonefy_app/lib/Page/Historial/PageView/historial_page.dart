@@ -111,6 +111,11 @@ class _HistorialPageState extends State<HistorialPage> {
       return alertDate((alert));
     }
 
+    if (alertLog.type == ("Zona - Cancelada") ||
+        alertLog.type == ("Zona - Iniciada")) {
+      return alertLogWidget((alert));
+    }
+
     if (alertLog.type.contains("Zona")) {
       return alertZone((alert));
     }

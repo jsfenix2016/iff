@@ -18,18 +18,6 @@ import '../../../../../Model/ApiRest/ZoneRiskApi.dart';
 
 class EditZoneController extends GetxController {
   RootIsolateToken rootIsolateToken = RootIsolateToken.instance!;
-  Future<void> saveActivityLog(ContactZoneRiskBD contact) async {
-    var uuid = Uuid().v4();
-    LogAlertsBD mov = LogAlertsBD(
-        id: 0,
-        type: "Zona de riesgo",
-        time: DateTime.now(),
-        video: contact.video,
-        groupBy: uuid);
-    MainController().saveUserRiskLog(mov);
-    prefs.setIdZoneGroup = uuid;
-    await const HiveData().saveUserPositionBD(mov);
-  }
 
   Future<bool> saveContactZoneRisk(
       BuildContext context, ContactZoneRiskBD contact) async {

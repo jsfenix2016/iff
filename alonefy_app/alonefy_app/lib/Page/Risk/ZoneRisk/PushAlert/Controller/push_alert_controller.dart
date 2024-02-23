@@ -9,17 +9,32 @@ import 'package:get/get.dart';
 import 'package:ifeelefine/Data/hiveRisk_data.dart';
 import 'package:ifeelefine/Model/ApiRest/ZoneRiskApi.dart';
 import 'package:ifeelefine/Model/contactZoneRiskBD.dart';
+import 'package:ifeelefine/Model/logAlertsBD.dart';
 import 'package:ifeelefine/Model/userbd.dart';
 import 'package:ifeelefine/Model/videopresignedbd.dart';
 import 'package:ifeelefine/Page/Risk/ZoneRisk/CancelAlert/PageView/cancelAlert.dart';
 import 'package:ifeelefine/Page/Risk/ZoneRisk/Service/zone_risk_service.dart';
 import 'package:ifeelefine/Provider/prefencesUser.dart';
+import 'package:uuid/uuid.dart';
 
 import '../../../../../Controllers/mainController.dart';
 import '../../../../../Data/hive_constant_adapterInit.dart';
 
 class PushAlertController extends GetxController {
   RootIsolateToken rootIsolateToken = RootIsolateToken.instance!;
+  Future<void> saveActivityLog(ContactZoneRiskBD contact) async {
+    PreferenceUser prefs = PreferenceUser();
+    var uuid = Uuid().v4();
+    LogAlertsBD mov = LogAlertsBD(
+        id: 0,
+        type: "Zona - Iniciada",
+        time: DateTime.now(),
+        video: contact.video,
+        listVideosPresigned: contact.listVideosPresigned,
+        groupBy: uuid);
+    MainController().saveUserRiskLog(mov);
+    prefs.setIdZoneGroup = uuid;
+  }
 
   void _backgroundTask(dynamic message) async {
     final String path = message['path'];
@@ -151,6 +166,8 @@ class PushAlertController extends GetxController {
       } else {
         zonaTemp.listVideosPresigned!.add(tempPre);
       }
+
+      await saveActivityLog(contact);
 
       await Isolate.spawn(
         _backgroundTask,

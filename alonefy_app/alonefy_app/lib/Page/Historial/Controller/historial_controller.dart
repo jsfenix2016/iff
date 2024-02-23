@@ -142,8 +142,7 @@ class HistorialController extends GetxController {
           groupBy: activityItem.groupBy,
         );
 
-        if (activityItem.movementType != "Zona" &&
-            activityItem.movementType != "Cita") {
+        if (activityItem.movementType != "Cita") {
           // No hacemos nada
         } else {
           addTempDynamic(tempAct);
