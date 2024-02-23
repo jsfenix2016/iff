@@ -1,18 +1,20 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:async';
 import 'dart:isolate';
 
-import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:get/get.dart';
 import 'package:ifeelefine/Common/Constant.dart';
 
 import 'package:ifeelefine/Common/colorsPalette.dart';
 import 'package:ifeelefine/Common/initialize_models_bd.dart';
 import 'package:ifeelefine/Common/manager_alerts.dart';
+import 'package:ifeelefine/Common/notificationService.dart';
 import 'package:ifeelefine/Common/text_style_font.dart';
 import 'package:ifeelefine/Common/utils.dart';
 
 import 'package:ifeelefine/Model/contactRiskBD.dart';
-import 'package:ifeelefine/Page/Disamble/Controller/disambleController.dart';
+
 import 'package:ifeelefine/Page/HomePage/Pageview/home_page.dart';
 import 'package:ifeelefine/Page/Risk/DateRisk/Controller/editRiskController.dart';
 import 'package:ifeelefine/Page/Risk/DateRisk/ListDateRisk/Controller/riskPageController.dart';
@@ -28,7 +30,6 @@ import 'package:ifeelefine/Utils/Widgets/elevatedButtonFilling.dart';
 import 'package:ifeelefine/Utils/Widgets/loading_page.dart';
 import 'package:ifeelefine/main.dart';
 import 'package:ifeelefine/Common/decoration_custom.dart';
-import 'package:notification_center/notification_center.dart';
 
 class CancelDatePage extends StatefulWidget {
   const CancelDatePage({super.key, required this.taskIds});
@@ -53,12 +54,12 @@ class _CancelDatePageState extends State<CancelDatePage> {
 
   bool isLoading = false;
   final PreferenceUser _prefs = PreferenceUser();
-  bool _shouldReloadData = false;
 
   @override
   void dispose() {
     super.dispose();
     secondsRemaining = _prefs.getTimerCancelZone;
+    stop();
   }
 
   @override
@@ -71,12 +72,13 @@ class _CancelDatePageState extends State<CancelDatePage> {
     starTap();
     var secondsRemaining1 = (_prefs.getTimerCancelZone);
     secondsRemaining = secondsRemaining1;
-    TimerIsolate.start(); // Comenzar el temporizador al inicializar el widget
-    TimerIsolate.timerStream.listen((seconds) {
-      setState(() {
-        countTimer.value = seconds;
-      });
-    });
+    // TimerIsolate.start(); // Comenzar el temporizador al inicializar el widget
+    // TimerIsolate.timerStream.listen((seconds) {
+    //   setState(() {
+    //     countTimer.value = seconds;
+    //   });
+    // });
+    startIsolate();
   }
 
   void getcontactRisk() async {
@@ -84,9 +86,9 @@ class _CancelDatePageState extends State<CancelDatePage> {
     _prefs.refreshData();
 
     // Verificar si se necesita iniciar el temporizador
-    if (!_prefs.getListDate && !_prefs.getCountFinish) {
-      start();
-    }
+    // if (!_prefs.getListDate && !_prefs.getCountFinish) {
+    //   start();
+    // }
 
     // Obtener los contactos de riesgo
     var resp = await riskVC.getContactsRisk();
@@ -161,12 +163,12 @@ class _CancelDatePageState extends State<CancelDatePage> {
         // stopTimer();
         stop();
         mainController.saveUserLog(
-            "Cita - cancelada", DateTime.now(), prefs.getIdDateGroup);
+            "Cita - cancelada", DateTime.now(), _prefs.getIdDateGroup);
         _prefs.setTimerCancelZone = 30;
         secondsRemaining = 30;
 
-        prefs.setCancelDate = true;
-        prefs.setCancelIdDate = contactRiskTemp.id;
+        _prefs.setCancelDate = true;
+        _prefs.setCancelIdDate = contactRiskTemp.id;
         _prefs.setListDate = false;
         await flutterLocalNotificationsPlugin.cancelAll();
         _prefs.setNotificationId = -1;
@@ -176,24 +178,46 @@ class _CancelDatePageState extends State<CancelDatePage> {
         mainController.refreshAlerts();
         await Get.offAll(() => const HomePage());
       }
+    } else {
+      showSaveAlert(context, Constant.info, Constant.codeError);
     }
     isLoading = false;
   }
 
-  static late Isolate _isolate;
-  static late SendPort _sendPort;
+  static Isolate? _isolate;
+  // static late SendPort _sendPort;
 
-  static void start() async {
+  void startIsolate() async {
+    setState(() {
+      countTimer.value = 30;
+    });
+    await start();
+  }
+
+  start() async {
     ReceivePort receivePort = ReceivePort();
     _isolate = await Isolate.spawn(_startTimer, receivePort.sendPort);
     receivePort.listen((message) {
       // Manejar mensajes recibidos del isolate si es necesario
       print(message);
+      if (message['event'].toString() == "updateTimer") {
+        setState(() {
+          countTimer.value = message['secondsRemaining'];
+        });
+      }
+
+      if (message['event'].toString() == "timerFinished") {
+        RedirectViewNotifier.showFinishTimerCancelNotification();
+        setState(() {
+          contactRiskTemp.isFinishTime = true;
+        });
+        stop();
+      }
     });
   }
 
   static void _startTimer(SendPort sendPort) {
-    _sendPort = sendPort;
+    // SendPort _sendPort = sendPort;
 
     const oneSec = Duration(seconds: 1);
     int secondsRemaining = 30; // Inicializar el contador de tiempo
@@ -201,22 +225,23 @@ class _CancelDatePageState extends State<CancelDatePage> {
     Timer.periodic(oneSec, (Timer timer) {
       if (secondsRemaining < 1) {
         // Enviar mensaje al hilo principal
-        _sendPort.send({'event': 'timerFinished'});
+        sendPort.send({'event': 'timerFinished'});
         timer.cancel(); // Cancelar el timer
       } else {
         // Decrementar el tiempo restante y enviar al hilo principal
+        print("secondsRemaining >>>> $secondsRemaining");
         secondsRemaining -= 1;
-        _sendPort.send(
+        sendPort.send(
             {'event': 'updateTimer', 'secondsRemaining': secondsRemaining});
       }
     });
   }
 
-  static void stop() {
+  void stop() {
     if (_isolate != null) {
-      _isolate.kill(priority: Isolate.immediate);
+      _isolate?.kill(priority: Isolate.immediate);
     }
-    TimerIsolate.stop();
+    // TimerIsolate.stop();
   }
 
   String get timerText {
@@ -349,25 +374,23 @@ class _CancelDatePageState extends State<CancelDatePage> {
                                   ),
                                 ),
                               ),
+                            ),
+                            Visibility(
+                              visible: true,
+                              child: Padding(
+                                padding: const EdgeInsets.all(20.0),
+                                child: Center(
+                                  child: Text(
+                                    "Aunque se apague el smartphone, el servidor de AlertFriends ha registrado tu última ubicación y emitirá una alerta a tu contacto",
+                                    textAlign: TextAlign.center,
+                                    style: textNormal14White(),
+                                  ),
+                                ),
+                              ),
                             )
                           ] else ...[
                             const SizedBox.shrink()
                           ],
-                          contactRiskTemp.isFinishTime
-                              ? Visibility(
-                                  visible: true,
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(20.0),
-                                    child: Center(
-                                      child: Text(
-                                        "Aunque se apague el smartphone, el servidor de AlertFriends ha registrado tu última ubicación y emitirá una alerta a tu contacto",
-                                        textAlign: TextAlign.center,
-                                        style: textNormal14White(),
-                                      ),
-                                    ),
-                                  ),
-                                )
-                              : const SizedBox.shrink(),
                         ],
                       ),
                     ),
@@ -383,7 +406,7 @@ class _CancelDatePageState extends State<CancelDatePage> {
 }
 
 class TimerIsolate {
-  static late Isolate _isolate;
+  static Isolate? _isolate;
   static late SendPort _sendPort;
   static late StreamController<int> _timerStreamController;
   static late Stream<int> timerStream;
@@ -422,7 +445,7 @@ class TimerIsolate {
 
   static void stop() {
     if (_isolate != null) {
-      _isolate.kill(priority: Isolate.immediate);
+      _isolate?.kill(priority: Isolate.immediate);
     }
     _timerStreamController.close();
   }

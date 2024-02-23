@@ -815,11 +815,11 @@ class RedirectViewNotifier with ChangeNotifier {
     );
 
     await flutterLocalNotificationsPlugin.show(
-      888,
+      8888,
       title,
       body,
       platformChannelSpecifics,
-      payload: 'test',
+      payload: 'timerCancel',
     );
   }
 }
