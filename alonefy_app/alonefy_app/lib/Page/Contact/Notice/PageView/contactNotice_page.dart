@@ -1,3 +1,5 @@
+// ignore_for_file: unused_local_variable, use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:get/get.dart';
@@ -7,6 +9,7 @@ import 'package:ifeelefine/Common/manager_alerts.dart';
 import 'package:ifeelefine/Common/notificationService.dart';
 import 'package:ifeelefine/Common/text_style_font.dart';
 import 'package:ifeelefine/Common/utils.dart';
+import 'package:ifeelefine/Controllers/mainController.dart';
 
 import 'package:ifeelefine/Model/contact.dart';
 import 'package:ifeelefine/Page/Contact/EditContact/PageView/editContact.dart';
@@ -21,6 +24,7 @@ import 'package:ifeelefine/Provider/prefencesUser.dart';
 import 'package:ifeelefine/Utils/Widgets/elevatedButtonFilling.dart';
 import 'package:notification_center/notification_center.dart';
 import 'package:ifeelefine/Common/decoration_custom.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class ContactNoticePage extends StatefulWidget {
   const ContactNoticePage({super.key});
@@ -59,48 +63,68 @@ class _ContactNoticePageState extends State<ContactNoticePage> {
     // setState(() {});
   }
 
-  void _showCountryListScreen(BuildContext context) async {
-    ContactBD contactBD = ContactBD("", null, "", "", "", "", "", "PENDING");
-    var req = await Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => FilterContactListScreen(
-          oncontactSelected: (contact) {
-            setState(
-              () {
-                contactBD = ContactBD(
-                    contact.displayName,
-                    contact.photo == null ? null : contact.photo,
-                    contact.displayName,
-                    "20 min",
-                    "20 min",
-                    "20 min",
-                    contact.phones.first.number
-                        .replaceAll("+34", "")
-                        .replaceAll(" ", ""),
-                    "PENDING");
-              },
+  void _showContactListScreen(BuildContext context) async {
+    PermissionStatus permission = await Permission.contacts.request();
+
+    if (permission.isPermanentlyDenied || permission.isDenied) {
+      showPermissionDialog(context, "Permitir acceder a los contactos");
+    } else {
+      // Retrieve the list of contacts from the device
+      // var contacts = await FlutterContacts.getContacts();
+      // Set the list of contacts in the state
+      final mainController = Get.put(MainController());
+      
+      var contacts = await FlutterContacts.getContacts(
+          withProperties: true, withPhoto: true);
+
+
+      mainController.refreshContactList(contacts);
+
+      ContactBD contactBD = ContactBD("", null, "", "", "", "", "", "PENDING");
+      var req = await Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => FilterContactListScreen(
+            oncontactSelected: (contact) {
+              setState(
+                () {
+                  contactBD = ContactBD(
+                      contact.displayName,
+                      contact.photo,
+                      contact.displayName,
+                      "20 min",
+                      "20 min",
+                      "20 min",
+                      contact.phones.first.number
+                          .replaceAll("+34", "")
+                          .replaceAll(" ", ""),
+                      "PENDING");
+                },
+              );
+            },
+          ),
+        ),
+      );
+
+      if (contactBD.phones.isNotEmpty) {
+        setState(
+          () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => EditContact(
+                  contact: contactBD,
+                  isEdit: false,
+                ),
+              ),
             );
           },
-        ),
-      ),
-    );
-
-    if (contactBD.phones.isNotEmpty) {
-      setState(
-        () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => EditContact(
-                contact: contactBD,
-                isEdit: false,
-              ),
-            ),
-          );
-        },
-      );
+        );
+      }
     }
+    // return contacts;
+
+    
   }
 
   @override
@@ -292,7 +316,7 @@ class _ContactNoticePageState extends State<ContactNoticePage> {
                             //       'Debes ser premium para agregar mas contactos'));
                             //   return;
                             // }
-                            _showCountryListScreen(context);
+                            _showContactListScreen(context);
                           }),
                           mensaje: 'Añadir contacto',
                           img: 'assets/images/User.png',

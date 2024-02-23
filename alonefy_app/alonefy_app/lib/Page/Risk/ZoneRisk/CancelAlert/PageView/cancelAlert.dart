@@ -52,7 +52,7 @@ class _CancelAlertState extends State<CancelAlertPage> {
   void initState() {
     _prefs.saveLastScreenRoute("cancelZone");
     getcontactRisk();
-    // startTimer();
+    startTimer();
     starTap();
     secondsRemaining = prefs.getTimerCancelZone;
     super.initState();
@@ -122,7 +122,7 @@ class _CancelAlertState extends State<CancelAlertPage> {
     }
     if (contactSelect!.code == codeTemp || contactSelect!.code == ',,,') {
       if (taskdIds.isNotEmpty) {
-        MainService().cancelAllNotifications(taskdIds);
+        await MainService().cancelAllNotifications(taskdIds);
         contactSelect!.isActived = false;
         if (contactSelect!.save == true) {
           await const HiveDataRisk().updateContactZoneRisk(contactSelect!);

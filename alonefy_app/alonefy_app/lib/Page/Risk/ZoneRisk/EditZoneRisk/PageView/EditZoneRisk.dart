@@ -26,6 +26,7 @@ import 'package:ifeelefine/Utils/Widgets/elevateButtonCustomBorder.dart';
 import 'package:ifeelefine/Common/decoration_custom.dart';
 import 'package:ifeelefine/Utils/Widgets/loading_page.dart';
 import 'package:ifeelefine/main.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class EditZoneRiskPage extends StatefulWidget {
   const EditZoneRiskPage(
@@ -263,23 +264,32 @@ class _EditZoneRiskPageState extends State<EditZoneRiskPage> {
       return;
     }
 
-    ContactZoneRiskBD contactRisk = ContactZoneRiskBD(
-        id: widget.contactRisk.id,
-        photo: contactSelect.photo,
-        name: widget.contactRisk.name,
-        phones: contactSelect.phones.first.number.contains("+34")
-            ? contactSelect.phones.first.number.replaceAll("+34", "")
-            : contactSelect.phones.first.number,
-        sendLocation: widget.contactRisk.sendLocation,
-        sendWhatsapp: widget.contactRisk.sendWhatsapp,
-        code: widget.contactRisk.code,
-        isActived: true,
-        sendWhatsappContact: widget.contactRisk.sendWhatsappContact,
-        callme: widget.contactRisk.callme,
-        save: widget.contactRisk.save,
-        createDate: DateTime.now());
+    [Permission.camera, Permission.microphone].request().then((statuses) {
+      var cameraStatus = statuses[Permission.camera]!;
+      var microphoneStatus = statuses[Permission.microphone]!;
 
-    createZone(contactRisk);
+      if (cameraStatus.isGranted && microphoneStatus.isGranted) {
+        ContactZoneRiskBD contactRisk = ContactZoneRiskBD(
+          id: widget.contactRisk.id,
+          photo: contactSelect.photo,
+          name: widget.contactRisk.name,
+          phones: contactSelect.phones.first.number.contains("+34")
+              ? contactSelect.phones.first.number.replaceAll("+34", "").replaceAll(" ", "")
+              : contactSelect.phones.first.number.replaceAll(" ", ""),
+          sendLocation: widget.contactRisk.sendLocation,
+          sendWhatsapp: widget.contactRisk.sendWhatsapp,
+          code: widget.contactRisk.code,
+          isActived: true,
+          sendWhatsappContact: widget.contactRisk.sendWhatsappContact,
+          callme: widget.contactRisk.callme,
+          save: widget.contactRisk.save,
+          createDate: DateTime.now());
+
+        createZone(contactRisk);
+      } else {
+        showPermissionDialog(context, "Para continuar es necesario tener permisos para acceder a la cámara y micrófono");
+      }
+    });
   }
 
   void goToPush(ContactZoneRiskBD contactRisk) async {

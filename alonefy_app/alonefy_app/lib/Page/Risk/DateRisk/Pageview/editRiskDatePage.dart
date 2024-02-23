@@ -208,6 +208,7 @@ class _EditRiskPageState extends State<EditRiskPage> {
   }
 
   String convertInitNow(String temp) {
+    DateTime now = DateTime.now();
     String sDuration =
         "${now.hour.toString().padLeft(2, '0')}:${now.minute.remainder(60).toString().padLeft(2, '0')}";
 
