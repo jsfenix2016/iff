@@ -5,6 +5,7 @@ import 'package:ifeelefine/Model/activitydaybd.dart';
 import 'package:ifeelefine/Model/contact.dart';
 import 'package:ifeelefine/Model/contactRiskBD.dart';
 import 'package:ifeelefine/Model/contactZoneRiskBD.dart';
+import 'package:ifeelefine/Model/historialbd.dart';
 import 'package:ifeelefine/Model/logActivityBd.dart';
 import 'package:ifeelefine/Model/restdaybd.dart';
 import 'package:ifeelefine/Model/useMobilbd.dart';
@@ -61,5 +62,8 @@ Future inicializeHiveBD() async {
   }
   if (!Hive.isAdapterRegistered(VideoPresignedBDAdapter().typeId)) {
     Hive.registerAdapter(VideoPresignedBDAdapter());
+  }
+  if (!Hive.isAdapterRegistered(HistorialBDAdapter().typeId)) {
+    Hive.registerAdapter(HistorialBDAdapter());
   }
 }

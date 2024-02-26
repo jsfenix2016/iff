@@ -687,6 +687,7 @@ class _EditZoneRiskPageState extends State<EditZoneRiskPage> {
                                               setState(() {});
                                               await _checkPermission();
                                               getCurrentPosition();
+                                              mainController.refreshHome();
                                             }
                                           });
                                           ;
@@ -758,6 +759,8 @@ class _EditZoneRiskPageState extends State<EditZoneRiskPage> {
                                               Get.put(PremiumController());
                                           premiumController
                                               .updatePremiumAPI(true);
+                                          mainController.refreshHome();
+                                          prefs.refreshData();
                                           setState(() {});
                                         }
                                       });

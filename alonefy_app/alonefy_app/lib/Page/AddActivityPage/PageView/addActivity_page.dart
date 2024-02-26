@@ -14,6 +14,7 @@ import 'package:ifeelefine/Page/Calendar/calendarPopup.dart';
 import 'package:ifeelefine/Page/Premium/Controller/premium_controller.dart';
 import 'package:ifeelefine/Page/Premium/PageView/premium_page.dart';
 import 'package:ifeelefine/Provider/prefencesUser.dart';
+import 'package:ifeelefine/main.dart';
 
 import 'package:jiffy/jiffy.dart';
 import 'package:notification_center/notification_center.dart';
@@ -410,6 +411,7 @@ class _AddActivityPageState extends State<AddActivityPage>
                           _prefs.setUserPremium = true;
                           var premiumController = Get.put(PremiumController());
                           premiumController.updatePremiumAPI(true);
+                          mainController.refreshHome();
                           setState(() {});
                         }
                       });

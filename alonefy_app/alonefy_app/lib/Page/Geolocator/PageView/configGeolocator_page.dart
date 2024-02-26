@@ -275,6 +275,7 @@ class _ConfigGeolocatorState extends State<ConfigGeolocator> {
                               setState(() {});
 
                               refreshMenu('configGeo');
+                              mainController.refreshHome();
                             }
                           },
                         );
@@ -387,7 +388,7 @@ class _ConfigGeolocatorState extends State<ConfigGeolocator> {
           var premiumController = Get.put(PremiumController());
           premiumController.updatePremiumAPI(true);
           refreshMenu('configGeo');
-
+          mainController.refreshHome();
           savePermission();
         }
       });

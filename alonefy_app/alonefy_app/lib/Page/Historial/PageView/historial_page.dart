@@ -4,6 +4,7 @@ import 'package:ifeelefine/Common/colorsPalette.dart';
 import 'package:ifeelefine/Common/notificationService.dart';
 import 'package:ifeelefine/Common/text_style_font.dart';
 import 'package:ifeelefine/Common/utils.dart';
+import 'package:ifeelefine/Model/historialbd.dart';
 
 import 'package:ifeelefine/Model/logActivityBd.dart';
 import 'package:ifeelefine/Model/logAlertsBD.dart';
@@ -30,15 +31,15 @@ class _HistorialPageState extends State<HistorialPage> {
   List<dynamic> listAlerts = [];
   Map<String, List<LogAlertsBD>> groupedProducts = {};
   Map<String, List<dynamic>> groupedAlert = {};
-  late LogAlertsBD listLog;
-  late LogActivityBD listLogActive;
+  // late LogAlertsBD listLog;
+  // late LogActivityBD listLogActive;
   bool isLoading = true;
 
   Future<void> getLog() async {
-    listLog = LogAlertsBD(
-        id: 0, type: "no hay alertas", time: DateTime.now(), groupBy: "-1");
-    listLogActive = LogActivityBD(
-        movementType: "no hay actividad", time: DateTime.now(), groupBy: "-1");
+    // listLog = LogAlertsBD(
+    //     id: 0, type: "no hay alertas", time: DateTime.now(), groupBy: "-1");
+    // listLogActive = LogActivityBD(
+    //     movementType: "no hay actividad", time: DateTime.now(), groupBy: "-1");
     groupedProducts = {};
     groupedAlert = {};
     groupedAlert = await alertsVC.getAllAlerts();
@@ -49,13 +50,13 @@ class _HistorialPageState extends State<HistorialPage> {
   }
 
   Future<void> deleteForDayMov(
-      BuildContext context, List<LogAlertsBD> time) async {
+      BuildContext context, List<HistorialBD> time) async {
     groupedProducts = {};
 
-    var req = await alertsVC.deleteAlerts(context, time);
-    if (req == 0) {
-      getLog();
-    }
+    // var req = await alertsVC.deleteAlerts(context, time);
+    // if (req == 0) {
+    //   getLog();
+    // }
   }
 
   @override
@@ -65,7 +66,7 @@ class _HistorialPageState extends State<HistorialPage> {
     super.initState();
   }
 
-  Widget alertDate(LogAlertsBD logAlert) {
+  Widget alertDate(HistorialBD logAlert) {
     return LimitedBox(
       maxHeight: 160,
       child: GestureDetector(
@@ -77,7 +78,7 @@ class _HistorialPageState extends State<HistorialPage> {
     );
   }
 
-  Widget alertZone(LogAlertsBD logAlert) {
+  Widget alertZone(HistorialBD logAlert) {
     return LimitedBox(
       maxHeight: 170,
       child: GestureDetector(
@@ -91,7 +92,7 @@ class _HistorialPageState extends State<HistorialPage> {
     );
   }
 
-  Widget alertLogWidget(LogAlertsBD logAlert) {
+  Widget alertLogWidget(HistorialBD logAlert) {
     return LimitedBox(
       maxHeight: 100,
       child: GestureDetector(
@@ -106,7 +107,7 @@ class _HistorialPageState extends State<HistorialPage> {
   }
 
   Widget generic(dynamic alert) {
-    var alertLog = (alert as LogAlertsBD);
+    var alertLog = (alert as HistorialBD);
     if (alertLog.type.contains("Cita")) {
       return alertDate((alert));
     }
@@ -117,6 +118,9 @@ class _HistorialPageState extends State<HistorialPage> {
     }
 
     if (alertLog.type.contains("Zona")) {
+      if ((alertLog.video == null && alertLog.listVideosPresigned == null)) {
+        return alertLogWidget((alert));
+      }
       return alertZone((alert));
     }
 

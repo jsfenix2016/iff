@@ -22,6 +22,7 @@ import 'package:ifeelefine/Page/Premium/Controller/premium_controller.dart';
 import 'package:ifeelefine/Page/Premium/PageView/premium_page.dart';
 import 'package:ifeelefine/Provider/prefencesUser.dart';
 import 'package:ifeelefine/Utils/Widgets/elevatedButtonFilling.dart';
+import 'package:ifeelefine/main.dart';
 import 'package:notification_center/notification_center.dart';
 import 'package:ifeelefine/Common/decoration_custom.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -73,10 +74,9 @@ class _ContactNoticePageState extends State<ContactNoticePage> {
       // var contacts = await FlutterContacts.getContacts();
       // Set the list of contacts in the state
       final mainController = Get.put(MainController());
-      
+
       var contacts = await FlutterContacts.getContacts(
           withProperties: true, withPhoto: true);
-
 
       mainController.refreshContactList(contacts);
 
@@ -123,8 +123,6 @@ class _ContactNoticePageState extends State<ContactNoticePage> {
       }
     }
     // return contacts;
-
-    
   }
 
   @override
@@ -303,6 +301,7 @@ class _ContactNoticePageState extends State<ContactNoticePage> {
                                     var premiumController =
                                         Get.put(PremiumController());
                                     premiumController.updatePremiumAPI(true);
+                                    mainController.refreshHome();
                                     setState(() {});
                                   }
                                 },

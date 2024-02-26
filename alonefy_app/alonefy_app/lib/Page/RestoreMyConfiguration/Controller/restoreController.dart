@@ -76,7 +76,6 @@ class RestoreController extends GetxController {
       Future.sync(
         () => {
           activateService(),
-          showSaveAlert(context, Constant.info, Constant.restoredCorrectly.tr)
         },
       );
       return true;
@@ -357,18 +356,21 @@ class RestoreController extends GetxController {
 
   Future<void> _requestPermissions(
       Map<String, Permission> permissions, UserApi? userApi) async {
+    String premisionError = "";
     try {
       List<Permission> permissionsToRequest = permissions.values.toList();
       await permissionsToRequest.request().then((statuses) {
-        for(var item in permissions.entries.toList()) {
+        for (var item in permissions.entries.toList()) {
           var permissionStatus = statuses[item.value]!;
+          premisionError = item.key;
           PreferencePermission preferencePermission =
-            !permissionStatus.isPermanentlyDenied && !permissionStatus.isDenied
-              ? PreferencePermission.allow
-              : (item.key == 'scheduleExactAlarm'
-                ? PreferencePermission.noAccepted
-                : PreferencePermission.denied);
-          
+              !permissionStatus.isPermanentlyDenied &&
+                      !permissionStatus.isDenied
+                  ? PreferencePermission.allow
+                  : (item.key == 'scheduleExactAlarm'
+                      ? PreferencePermission.noAccepted
+                      : PreferencePermission.denied);
+
           switch (item.key) {
             case 'camera':
               _prefs.setAcceptedCamera = preferencePermission;
@@ -395,6 +397,7 @@ class RestoreController extends GetxController {
         }
       });
     } catch (e) {
+      print('error de permisos: $premisionError');
       debugPrint('$e');
     }
   }
@@ -404,10 +407,14 @@ class RestoreController extends GetxController {
 
     if (userApi != null) {
       if (userApi.activateCamera) permissions['camera'] = Permission.camera;
-      if (userApi.activateNotifications) permissions['notification'] = Permission.notification;
-      if (userApi.contact.isNotEmpty) permissions['contacts'] = Permission.contacts;
-      if (userApi.activateLocation) permissions['location'] = Permission.location;
-      if (userApi.activateAlarm)  permissions['scheduleExactAlarm'] = Permission.scheduleExactAlarm;
+      if (userApi.activateNotifications)
+        permissions['notification'] = Permission.notification;
+      if (userApi.contact.isNotEmpty)
+        permissions['contacts'] = Permission.contacts;
+      if (userApi.activateLocation)
+        permissions['location'] = Permission.location;
+      if (userApi.activateAlarm)
+        permissions['scheduleExactAlarm'] = Permission.scheduleExactAlarm;
     }
 
     return permissions;

@@ -212,7 +212,7 @@ class _EditUseMobilPageState extends State<EditUseMobilPage> {
             premiumController.updatePremiumAPI(true);
 
             refreshMenu("useMobil");
-
+            mainController.refreshHome();
             saveChange();
           }
         });
@@ -493,6 +493,7 @@ class _EditUseMobilPageState extends State<EditUseMobilPage> {
                                             Get.put(PremiumController());
                                         premiumController
                                             .updatePremiumAPI(true);
+                                        mainController.refreshHome();
                                         setState(() {});
                                       }
                                     },

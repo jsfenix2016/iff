@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:ifeelefine/Common/colorsPalette.dart';
 import 'package:ifeelefine/Common/text_style_font.dart';
 import 'package:ifeelefine/Common/utils.dart';
+import 'package:ifeelefine/Model/historialbd.dart';
 import 'package:ifeelefine/Model/logAlertsBD.dart';
 import 'package:ifeelefine/Page/Historial/PageView/preview_video_screen.dart';
 import 'package:intl/intl.dart';
@@ -14,7 +15,7 @@ import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 class CellZoneRisk extends StatefulWidget {
   const CellZoneRisk({Key? key, required this.logAlert}) : super(key: key);
 
-  final LogAlertsBD logAlert;
+  final HistorialBD logAlert;
 
   @override
   State<CellZoneRisk> createState() => _CellZoneRiskState();
@@ -25,7 +26,7 @@ class _CellZoneRiskState extends State<CellZoneRisk> {
   late Future<void> _initializeVideoPlayerFuture;
   late File fileTemp = File("");
   bool haveVideo = false;
-  LogAlertsBD? logAlert;
+  HistorialBD? logAlert;
   @override
   void initState() {
     super.initState();

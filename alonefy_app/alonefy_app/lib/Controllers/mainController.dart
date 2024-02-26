@@ -8,6 +8,7 @@ import 'package:ifeelefine/Common/utils.dart';
 import 'package:ifeelefine/Data/hive_constant_adapterInit.dart';
 import 'package:ifeelefine/Data/hive_data.dart';
 import 'package:ifeelefine/Model/ApiRest/AlertApi.dart';
+import 'package:ifeelefine/Model/historialbd.dart';
 
 import 'package:ifeelefine/Model/logActivityBd.dart';
 import 'package:ifeelefine/Model/logAlertsBD.dart';
@@ -72,6 +73,10 @@ class MainController extends GetxController {
       mov.id = alertApi.id;
     }
     const HiveData().saveUserPositionBD(mov);
+    HistorialBD hist = HistorialBD(
+        id: mov.id, type: mov.type, time: mov.time, groupBy: mov.groupBy);
+
+    const HiveData().saveLogsHistorialBD(hist);
   }
 
   Future<void> saveUserRiskLog(LogAlertsBD alert) async {
@@ -86,6 +91,13 @@ class MainController extends GetxController {
       alert.id = alertApi.id;
     }
     const HiveData().saveUserPositionBD(alert);
+    HistorialBD hist = HistorialBD(
+        id: alert.id,
+        type: alert.type,
+        time: alert.time,
+        groupBy: alert.groupBy);
+
+    const HiveData().saveLogsHistorialBD(hist);
   }
 
   Future<void> saveActivityLog(

@@ -7,8 +7,10 @@ import 'package:flutter/services.dart';
 import 'package:gallery_saver/gallery_saver.dart';
 import 'package:get/get.dart';
 import 'package:ifeelefine/Data/hiveRisk_data.dart';
+import 'package:ifeelefine/Data/hive_data.dart';
 import 'package:ifeelefine/Model/ApiRest/ZoneRiskApi.dart';
 import 'package:ifeelefine/Model/contactZoneRiskBD.dart';
+import 'package:ifeelefine/Model/historialbd.dart';
 import 'package:ifeelefine/Model/logAlertsBD.dart';
 import 'package:ifeelefine/Model/userbd.dart';
 import 'package:ifeelefine/Model/videopresignedbd.dart';
@@ -25,14 +27,15 @@ class PushAlertController extends GetxController {
   Future<void> saveActivityLog(ContactZoneRiskBD contact) async {
     PreferenceUser prefs = PreferenceUser();
     var uuid = Uuid().v4();
-    LogAlertsBD mov = LogAlertsBD(
+    HistorialBD mov = HistorialBD(
         id: 0,
         type: "Zona - Iniciada",
         time: DateTime.now(),
         video: contact.video,
         listVideosPresigned: contact.listVideosPresigned,
         groupBy: uuid);
-    MainController().saveUserRiskLog(mov);
+    // MainController().saveActivityLog(mov);
+    const HiveData().saveLogsHistorialBD(mov);
     prefs.setIdZoneGroup = uuid;
   }
 
@@ -167,7 +170,7 @@ class PushAlertController extends GetxController {
         zonaTemp.listVideosPresigned!.add(tempPre);
       }
 
-      await saveActivityLog(contact);
+      // await saveActivityLog(contact);
 
       await Isolate.spawn(
         _backgroundTask,
@@ -205,7 +208,7 @@ class PushAlertController extends GetxController {
         ZoneRiskService().updateVideoApi(url, contact.video);
       }
     }
-
+    await saveActivityLog(contact);
     var taskIds = await ZoneRiskService().createZoneRiskAlert(
         ZoneRiskApi.fromZoneRisk(zonaTemp, user.telephone));
     if (taskIds.isNotEmpty) {

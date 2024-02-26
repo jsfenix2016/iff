@@ -73,6 +73,14 @@ class PreferenceUser {
     _prefs.setBool('cancelDate', value);
   }
 
+  get getAlertPointRed {
+    return _prefs.getBool('AlertPoinRed') ?? false;
+  }
+
+  set setAlertPointRed(bool value) {
+    _prefs.setBool('AlertPoinRed', value);
+  }
+
   get getNotificationId {
     return _prefs.getInt('NotificationId') ?? -1;
   }

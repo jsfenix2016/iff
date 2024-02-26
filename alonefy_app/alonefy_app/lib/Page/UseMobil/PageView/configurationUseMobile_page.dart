@@ -19,6 +19,7 @@ import 'package:ifeelefine/Page/UserRest/PageView/previewRestTime.dart';
 import 'package:ifeelefine/Provider/prefencesUser.dart';
 import 'package:ifeelefine/Utils/Widgets/elevatedButtonFilling.dart';
 import 'package:ifeelefine/Utils/Widgets/widgetLogo.dart';
+import 'package:ifeelefine/main.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:slidable_button/slidable_button.dart';
@@ -200,6 +201,7 @@ class _UseMobilePageState extends State<UseMobilePage> {
                               premiumController.updatePremiumAPI(true);
 
                               refreshMenu("useMobil");
+                              mainController.refreshHome();
                               setState(() {});
                             }
                           },
@@ -298,6 +300,7 @@ class _UseMobilePageState extends State<UseMobilePage> {
                                     premiumController.updatePremiumAPI(true);
 
                                     refreshMenu("useMobil");
+                                    mainController.refreshHome();
                                     setState(() {});
                                   }
                                 },

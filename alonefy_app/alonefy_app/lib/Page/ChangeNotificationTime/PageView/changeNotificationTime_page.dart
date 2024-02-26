@@ -10,6 +10,7 @@ import 'package:ifeelefine/Common/utils.dart';
 
 import 'package:ifeelefine/Page/Contact/Controller/contactUserController.dart';
 import 'package:ifeelefine/Page/Premium/Controller/premium_controller.dart';
+import 'package:ifeelefine/main.dart';
 
 import '../../../Common/Constant.dart';
 
@@ -276,6 +277,7 @@ class _ChangeNotificationTimePageState
                           _prefs.setUserFree = false;
                           var premiumController = Get.put(PremiumController());
                           premiumController.updatePremiumAPI(true);
+                          mainController.refreshHome();
                           setState(() {});
                         }
                       },

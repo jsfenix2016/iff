@@ -7,7 +7,9 @@ import 'package:ifeelefine/Common/colorsPalette.dart';
 import 'package:ifeelefine/Common/manager_alerts.dart';
 import 'package:ifeelefine/Common/utils.dart';
 import 'package:ifeelefine/Data/hiveRisk_data.dart';
+import 'package:ifeelefine/Data/hive_data.dart';
 import 'package:ifeelefine/Model/contactZoneRiskBD.dart';
+import 'package:ifeelefine/Model/historialbd.dart';
 import 'package:ifeelefine/Page/Disamble/Controller/disambleController.dart';
 import 'package:ifeelefine/Page/HomePage/Pageview/home_page.dart';
 import 'package:ifeelefine/Page/Risk/DateRisk/Widgets/contentCode.dart';
@@ -128,8 +130,15 @@ class _CancelAlertState extends State<CancelAlertPage> {
           await const HiveDataRisk().updateContactZoneRisk(contactSelect!);
         }
       }
-      mainController.saveUserLog(
-          "Zona - Cancelada", DateTime.now(), _prefs.getIdZoneGroup);
+
+      HistorialBD mov = HistorialBD(
+          id: -1,
+          type: "Zona - Cancelada",
+          time: DateTime.now(),
+          video: null,
+          listVideosPresigned: null,
+          groupBy: prefs.getIdZoneGroup);
+      const HiveData().saveLogsHistorialBD(mov);
       gotoHome();
     } else {
       showSaveAlert(context, Constant.info, Constant.codeError);

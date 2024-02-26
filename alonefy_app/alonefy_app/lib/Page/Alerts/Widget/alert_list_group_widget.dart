@@ -116,9 +116,17 @@ class _AlertListWidgetState extends State<AlertListWidget> {
     final indexTemp = date.value.keys.toList().indexOf(alertType);
 
     setState(() {
-      isExpanded = !isExpanded;
-      selectedCellIndex = isExpanded ? indexTemp : -1;
-      dateRow = isExpanded ? date.key : "";
+      if (selectedCellIndex == indexTemp && isExpanded) {
+        // Si la celda ya está expandida, ciérrala
+        isExpanded = false;
+        selectedCellIndex = -1;
+        dateRow = "";
+      } else {
+        // Si la celda no está expandida, ábrela y cierra las demás
+        isExpanded = true;
+        selectedCellIndex = indexTemp;
+        dateRow = date.key;
+      }
     });
   }
 

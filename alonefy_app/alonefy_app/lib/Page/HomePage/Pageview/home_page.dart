@@ -93,6 +93,13 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   }
 
   @override
+  @override
+  void didUpdateWidget(HomePage oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    prefs.refreshData();
+  }
+
+  @override
   void didChangeAppLifecycleState(AppLifecycleState state) async {
     setState(
       () {

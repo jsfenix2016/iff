@@ -89,6 +89,7 @@ class RedirectViewNotifier with ChangeNotifier {
         prefs.setUserFree = false;
         var premiumController = Get.put(PremiumController());
         premiumController.updatePremiumAPI(true);
+        mainController.refreshHome();
         Navigator.of(_storedContext!).pop();
       }
     });
@@ -142,7 +143,7 @@ class RedirectViewNotifier with ChangeNotifier {
     await inicializeHiveBD();
     await prefs.initPrefs();
     prefs.setEnableTimer = true;
-
+    prefs.setAlertPointRed = true;
     if (data.containsValue(Constant.inactive) ||
         data.containsValue(Constant.drop)) {
       if (data.containsValue(Constant.inactive)) {

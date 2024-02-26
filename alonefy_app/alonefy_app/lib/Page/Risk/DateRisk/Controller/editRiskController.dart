@@ -10,6 +10,7 @@ import 'package:ifeelefine/Data/hive_constant_adapterInit.dart';
 import 'package:ifeelefine/Data/hive_data.dart';
 import 'package:ifeelefine/Model/ApiRest/AlertApi.dart';
 import 'package:ifeelefine/Model/contactRiskBD.dart';
+import 'package:ifeelefine/Model/historialbd.dart';
 import 'package:ifeelefine/Page/Alerts/Service/alerts_service.dart';
 import 'package:ifeelefine/Page/Disamble/Controller/disambleController.dart';
 import 'package:ifeelefine/Page/Geolocator/Controller/configGeolocatorController.dart';
@@ -48,6 +49,14 @@ class EditRiskController extends GetxController {
       mov.id = alertApi.id;
     }
     await const HiveData().saveUserPositionBD(mov);
+    HistorialBD hist = HistorialBD(
+        id: mov.id,
+        type: mov.type,
+        time: mov.time,
+        photoDate: [],
+        groupBy: mov.groupBy);
+
+    const HiveData().saveLogsHistorialBD(hist);
   }
 
   Future<bool> saveContactRisk(

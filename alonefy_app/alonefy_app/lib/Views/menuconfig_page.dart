@@ -286,6 +286,7 @@ class _MenuConfigurationPageState extends State<MenuConfigurationPage> {
                   _prefs.setUserFree = false;
                   var premiumController = Get.put(PremiumController());
                   premiumController.updatePremiumAPI(true);
+                  mainController.refreshHome();
                   Future.sync(
                     () => Navigator.push(
                       context,
@@ -481,6 +482,7 @@ class _MenuConfigurationPageState extends State<MenuConfigurationPage> {
               _prefs.setUserPremium = true;
               var premiumController = Get.put(PremiumController());
               premiumController.updatePremiumAPI(true);
+              mainController.refreshHome();
               setState(() {});
             }
           });

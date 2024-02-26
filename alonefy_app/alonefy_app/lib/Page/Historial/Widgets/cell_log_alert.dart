@@ -2,11 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ifeelefine/Common/colorsPalette.dart';
 import 'package:ifeelefine/Common/utils.dart';
+import 'package:ifeelefine/Model/historialbd.dart';
 import 'package:ifeelefine/Model/logAlertsBD.dart';
 
 class CellLogAlerts extends StatefulWidget {
   const CellLogAlerts({super.key, required this.logAlert});
-  final LogAlertsBD logAlert;
+  final HistorialBD logAlert;
   @override
   State<CellLogAlerts> createState() => _CellLogAlertsState();
 }

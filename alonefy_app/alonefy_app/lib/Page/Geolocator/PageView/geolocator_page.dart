@@ -227,6 +227,7 @@ class _InitGeolocatorState extends State<InitGeolocator> {
                 await _checkPermission();
                 getCurrentPosition();
                 refreshMenu('configGeo');
+                mainController.refreshHome();
               }
             });
             return;

@@ -263,7 +263,16 @@ class _RestoreMyConfigPageState extends State<RestoreMyConfigPage> {
                                     _isRestoreInProgress = false;
                                   });
                                   if (result) {
-                                    Get.offAll(const HomePage());
+                                    prefs.saveLastScreenRoute("home");
+                                    await prefs.refreshData();
+                                    setState(() {
+                                      showSaveAlertWithAction(
+                                          context,
+                                          Constant.info,
+                                          Constant.restoredCorrectly.tr, () {
+                                        Get.offAll(const HomePage());
+                                      });
+                                    });
                                   }
                                 },
                               ),

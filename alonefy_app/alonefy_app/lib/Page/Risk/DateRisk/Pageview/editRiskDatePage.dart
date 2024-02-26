@@ -927,6 +927,7 @@ class _EditRiskPageState extends State<EditRiskPage> {
                                               setState(() {});
                                               await editVC
                                                   .checkPermission(context);
+                                              mainController.refreshHome();
                                               getCurrentPosition();
                                             }
                                           });

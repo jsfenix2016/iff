@@ -271,6 +271,7 @@ class _FallActivationConfigPageState extends State<FallActivationConfigPage> {
                 _prefs.setUserFree = false;
                 var premiumController = Get.put(PremiumController());
                 premiumController.updatePremiumAPI(true);
+                mainController.refreshHome();
                 setState(() {});
               }
             },
@@ -320,7 +321,7 @@ class _FallActivationConfigPageState extends State<FallActivationConfigPage> {
           _prefs.setUserFree = false;
           var premiumController = Get.put(PremiumController());
           premiumController.updatePremiumAPI(true);
-
+          mainController.refreshHome();
           saveChange();
         }
       });

@@ -49,6 +49,7 @@ class _PushAlertPageState extends State<PushAlertPage> {
   @override
   void initState() {
     super.initState();
+    _prefs.refreshData();
     checkpremium();
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,

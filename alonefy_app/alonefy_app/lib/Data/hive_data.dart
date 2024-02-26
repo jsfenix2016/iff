@@ -4,6 +4,7 @@ import 'package:ifeelefine/Data/hive_constant_adapterInit.dart';
 
 import 'package:ifeelefine/Model/activitydaybd.dart';
 import 'package:ifeelefine/Model/contact.dart';
+import 'package:ifeelefine/Model/historialbd.dart';
 import 'package:ifeelefine/Model/logActivityBd.dart';
 import 'package:ifeelefine/Model/restdaybd.dart';
 import 'package:ifeelefine/Model/useMobilbd.dart';
@@ -205,19 +206,19 @@ class HiveData {
   //   }
   // }
 
-  Future<List<LogAlertsBD>> get listHistorialLogbd async {
-    final Box<LogAlertsBD> box =
-        await Hive.openBox<LogAlertsBD>('listLogsHistorial');
+  Future<List<HistorialBD>> get listHistorialLogbd async {
+    final Box<HistorialBD> box =
+        await Hive.openBox<HistorialBD>('LogsHistorialBD');
 
     var listContact = box.values.toList();
 
     return listContact;
   }
 
-  Future<int> deleteListLogHistorial(List<LogAlertsBD> listAlerts) async {
+  Future<int> deleteListLogHistorial(List<HistorialBD> listAlerts) async {
     try {
-      final Box<LogAlertsBD> box =
-          await Hive.openBox<LogAlertsBD>('listLogsHistorial');
+      final Box<HistorialBD> box =
+          await Hive.openBox<HistorialBD>('LogsHistorialBD');
 
       for (var element in listAlerts) {
         box.delete(element.key);
@@ -229,30 +230,16 @@ class HiveData {
     }
   }
 
-  Future<int> saveLogsHistorialBD(LogAlertsBD user) async {
+  Future<int> saveLogsHistorialBD(HistorialBD user) async {
     try {
-      final Box<LogAlertsBD> box =
-          await Hive.openBox<LogAlertsBD>('UserPositionBD');
+      final Box<HistorialBD> box =
+          await Hive.openBox<HistorialBD>('LogsHistorialBD');
 
       box.add(user);
       return 0;
     } catch (error) {
       return -1;
     }
-  }
-
-  Future<int> saveListLogsHistorial(List<dynamic> activities) async {
-    Box<dynamic> box = await Hive.openBox<dynamic>('listLogsHistorial');
-
-    for (var element in box.values) {
-      box.delete(element.key);
-    }
-
-    for (ActivityDayBD element in activities) {
-      box.add(element);
-    }
-
-    return 0;
   }
 
   Future<int> deleteListAlerts(List<LogAlertsBD> listAlerts) async {

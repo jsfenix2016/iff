@@ -206,7 +206,8 @@ Future<void> main() async {
   _prefs.setNameZone = await locateZone();
 
   user = await mainController.getUserData();
-
+  // _prefs.setUserFree = true;
+  // _prefs.setUserPremium = false;
   if (user != null && user!.idUser != '-1') {
     var userApi = await GetUserController().getUser(
         user!.telephone.contains('+34')

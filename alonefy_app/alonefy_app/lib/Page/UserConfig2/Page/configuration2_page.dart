@@ -446,7 +446,7 @@ class _UserConfigPageState2 extends State<UserConfigPage2> {
               _prefs.setUserFree = false;
               var premiumController = Get.put(PremiumController());
               premiumController.updatePremiumAPI(true);
-
+              mainController.refreshHome();
               Get.off(
                 () => UseMobilePage(userbd: userbd!),
               );

@@ -6,6 +6,7 @@ import 'package:ifeelefine/Common/Constant.dart';
 import 'package:ifeelefine/Page/Premium/Controller/premium_controller.dart';
 import 'package:ifeelefine/Page/Premium/PageView/premium_page.dart';
 import 'package:ifeelefine/Provider/prefencesUser.dart';
+import 'package:ifeelefine/main.dart';
 
 class TimerCallSendSmsModel {
   late String call;
@@ -97,6 +98,7 @@ class _SelectTimerCallSendSMSState extends State<SelectTimerCallSendSMS> {
                         prefs.setUserFree = false;
                         var premiumController = Get.put(PremiumController());
                         premiumController.updatePremiumAPI(true);
+                        mainController.refreshHome();
                         setState(() {});
                       }
                     },
@@ -235,6 +237,7 @@ class _SelectTimerCallSendSMSState extends State<SelectTimerCallSendSMS> {
                     prefs.setUserPremium = true;
                     var premiumController = Get.put(PremiumController());
                     premiumController.updatePremiumAPI(true);
+                    mainController.refreshHome();
                     setState(() {});
                   }
                 });

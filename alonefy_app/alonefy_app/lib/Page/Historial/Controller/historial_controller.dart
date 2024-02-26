@@ -5,6 +5,7 @@ import 'package:ifeelefine/Data/hiveRisk_data.dart';
 import 'package:ifeelefine/Data/hive_data.dart';
 import 'package:ifeelefine/Model/contactRiskBD.dart';
 import 'package:ifeelefine/Model/contactZoneRiskBD.dart';
+import 'package:ifeelefine/Model/historialbd.dart';
 import 'package:ifeelefine/Model/logActivity.dart';
 
 import 'package:ifeelefine/Model/logAlertsBD.dart';
@@ -16,7 +17,8 @@ class HistorialController extends GetxController {
   List<LogActivity> activities = [];
   List<String> datetimes = [];
 
-  Future<int> deleteAlerts(BuildContext context, List<LogAlertsBD> time) async {
+  Future<int> deleteAlertsHistorial(
+      BuildContext context, List<HistorialBD> time) async {
     return await const HiveData().deleteListLogHistorial(time);
   }
 
@@ -73,24 +75,24 @@ class HistorialController extends GetxController {
     final Map<String, List<dynamic>> groupedAlerts = {};
 
     final List<dynamic> tempDynamic = [];
-    final List<LogAlertsBD> box = await const HiveData().getAlerts();
+    final List<HistorialBD> box = await const HiveData().listHistorialLogbd;
 
     List<ContactRiskBD> dateRisk = await const HiveDataRisk().getcontactRiskbd;
     List<ContactZoneRiskBD> zoneRisk =
         await const HiveDataRisk().getcontactZoneRiskbd;
 
-    void addTempDynamic(LogAlertsBD alert) {
+    void addTempDynamic(HistorialBD alert) {
       tempDynamic.add(alert);
     }
 
     void addDateRisk(DateTime dateTime, int id, String type) {
       final tempAct =
-          LogAlertsBD(id: id, time: dateTime, type: type, groupBy: '2');
+          HistorialBD(id: id, time: dateTime, type: type, groupBy: '2');
       addTempDynamic(tempAct);
     }
 
     void addZoneRisk(DateTime dateTime, ContactZoneRiskBD contact) {
-      final tempAct = LogAlertsBD(
+      final tempAct = HistorialBD(
           id: (contact.id),
           time: dateTime,
           type: "Zona",
@@ -135,7 +137,7 @@ class HistorialController extends GetxController {
 
     if (activities.isNotEmpty) {
       for (var activityItem in activities) {
-        final tempAct = LogAlertsBD(
+        final tempAct = HistorialBD(
           id: activityItem.key,
           time: activityItem.time,
           type: activityItem.movementType,
@@ -151,8 +153,8 @@ class HistorialController extends GetxController {
     }
 
     if (box.isNotEmpty) {
-      final List<LogAlertsBD> allMovTime = [];
-      final List<LogAlertsBD> allMov = [];
+      final List<HistorialBD> allMovTime = [];
+      final List<HistorialBD> allMov = [];
 
       for (var element in box) {
         allMovTime.add(element);
@@ -166,21 +168,30 @@ class HistorialController extends GetxController {
         allMov.add(element);
       }
 
-      final temp = removeDuplicates(allMov);
+      final temp = removeDuplicatesHistorial(allMov);
       temp.forEach((element) {
         addTempDynamic(element);
       });
     }
 
     // Formatea las fechas para que coincidan con el formato de agrupación
+    // Formatea las fechas para que coincidan con el formato de agrupación (día y hora completa)
     groupedAlerts.addAll(groupBy(
       tempDynamic,
-      (product) => DateFormat('dd-MM-yyyy').format(product.time),
+      (product) => DateFormat('dd-MM-yyyy')
+          .format(product.time), // Utilizar formato de día y hora completa
     ));
 
-    // Ordena los grupos por fecha en orden descendente
+    // Ordena los grupos por fecha en orden ascendente
     groupedAlerts.forEach((key, group) {
-      group.sort((a, b) => b.time.compareTo(a.time));
+      // Ordena las alertas dentro de cada grupo por hora y minutos del día (sin tener en cuenta la fecha)
+      group.sort((a, b) {
+        if (a.time.hour != b.time.hour) {
+          return b.time.hour.compareTo(a.time.hour);
+        } else {
+          return b.time.minute.compareTo(a.time.minute);
+        }
+      });
     });
 
     // Ordena los grupos por fecha en orden descendente
@@ -201,6 +212,10 @@ class HistorialController extends GetxController {
   Future<void> convertDateTimeToString(DateTime time) async {
     var datetime = await dateTimeToString(time);
     datetimes.add(datetime);
+  }
+
+  List<HistorialBD> removeDuplicatesHistorial(List<HistorialBD> originalList) {
+    return originalList.toSet().toList();
   }
 
   List<LogAlertsBD> removeDuplicates(List<LogAlertsBD> originalList) {

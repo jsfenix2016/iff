@@ -86,7 +86,7 @@ class _FallActivationPageState extends State<FallActivationPage> {
                 var premiumController = Get.put(PremiumController());
                 premiumController.updatePremiumAPI(true);
                 refreshMenu("fallActivation");
-
+                mainController.refreshHome();
                 setState(() {});
               }
             });

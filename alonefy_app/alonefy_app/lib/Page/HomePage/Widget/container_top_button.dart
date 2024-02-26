@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ifeelefine/Common/colorsPalette.dart';
+import 'package:ifeelefine/Page/Disamble/Controller/disambleController.dart';
 
 import 'package:ifeelefine/Provider/prefencesUser.dart';
 
@@ -77,6 +78,8 @@ class _ContainerTopButtonState extends State<ContainerTopButton> {
               iconSize: 40,
               color: ColorPalette.principal,
               onPressed: () {
+                prefs.setAlertPointRed = false;
+                setState(() {});
                 widget.goToAlert(true);
               },
               icon: Container(
@@ -96,7 +99,7 @@ class _ContainerTopButtonState extends State<ContainerTopButton> {
             right: 20,
             top: 18,
             child: Visibility(
-              visible: widget.getNotificationType != "",
+              visible: prefs.getAlertPointRed,
               child: Container(
                 decoration: const BoxDecoration(
                     borderRadius: BorderRadius.all(Radius.circular(

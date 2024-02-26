@@ -24,6 +24,7 @@ import 'package:ifeelefine/Provider/prefencesUser.dart';
 import 'package:ifeelefine/Utils/Widgets/elevateButtonCustomBorder.dart';
 import 'package:ifeelefine/Utils/Widgets/selectTimerCallSendSMS.dart';
 import 'package:ifeelefine/Utils/Widgets/widgedContact.dart';
+import 'package:ifeelefine/main.dart';
 
 import 'package:notification_center/notification_center.dart';
 import 'package:slidable_button/slidable_button.dart';
@@ -117,6 +118,7 @@ class _ContactListState extends State<ContactList> {
                   _prefs.setUserFree = false;
                   var premiumController = Get.put(PremiumController());
                   premiumController.updatePremiumAPI(true);
+                  mainController.refreshHome();
                   setState(() {});
                 }
               },

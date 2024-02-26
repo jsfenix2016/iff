@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import 'package:ifeelefine/Data/hive_data.dart';
+import 'package:ifeelefine/Model/historialbd.dart';
 import 'package:ifeelefine/Model/logAlertsBD.dart';
 import 'package:ifeelefine/Page/Alerts/Service/alerts_service.dart';
 
@@ -84,6 +85,14 @@ class AlertsController extends GetxController {
             groupBy: alert.groupBy);
 
         await const HiveData().saveUserPositionBD(alertBD);
+        HistorialBD hist = HistorialBD(
+            id: alertBD.id,
+            type: alertBD.type,
+            time: alertBD.time,
+            photoDate: [],
+            groupBy: alertBD.groupBy);
+
+        const HiveData().saveLogsHistorialBD(hist);
       }
     }
   }

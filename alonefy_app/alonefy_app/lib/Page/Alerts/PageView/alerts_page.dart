@@ -29,6 +29,7 @@ class _AlertsPageState extends State<AlertsPage> {
 
   RxMap<String, Map<String, List<LogAlertsBD>>> newGroup =
       RxMap<String, Map<String, List<LogAlertsBD>>>();
+
   Future<void> getLog() async {
     newGroup = await alertsVC.getAllMov2();
     newGroup.values;
