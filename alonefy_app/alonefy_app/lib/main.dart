@@ -1047,13 +1047,18 @@ class _MyAppState extends State<MyApp> {
 }
 
 void sendLocation() async {
-  if (_prefs.getAcceptedSendLocation == PreferencePermission.allow) {
-    var locationenabled =
-        await PermissionService.requestPermission(Permission.location);
-    if (locationenabled) {}
+  if (_prefs.getAcceptedSendLocation == PreferencePermission.allow &&
+      prefs.getUserPremium) {
     var position = await determinePosition();
     _locationController.sendLocation(
         position.latitude.toString(), position.longitude.toString());
+    // var locationenabled = await requestPermission(Permission.location);
+    // PermissionStatus status = await Permission.location.request();
+    // var locationenabled =
+    //     await PermissionService.requestPermission(Permission.location);
+    // if (status.isGranted) {
+
+    // }
   }
 }
 
