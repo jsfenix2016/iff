@@ -6,6 +6,8 @@ class Constant {
   static const urlTerms = 'https://alertfriends.app/politica_privacidad/';
   static const personalInformation = 'Datos personales';
   static const selectGender = 'Seleccione el género';
+  static const notGenderSelect = "Prefiero no decir";
+  static const otherGender = "Otro/a";
   static const selectCity = 'Seleccione la provincia';
   static const maritalStatus = 'Estado civil';
   static const styleLive = 'Modo de vida';

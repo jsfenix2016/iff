@@ -210,8 +210,9 @@ class _UserConfigPageState2 extends State<UserConfigPage2> {
                       mensaje: Constant.selectGender,
                       isVisible: true,
                       onChanged: (value) {
-                        user?.gender =
-                            value == "Prefiero no decir" ? "Otro/a" : value;
+                        user?.gender = value == Constant.notGenderSelect
+                            ? Constant.otherGender
+                            : value;
                         print(user?.gender);
                       },
                     ),
@@ -415,8 +416,9 @@ class _UserConfigPageState2 extends State<UserConfigPage2> {
     userbd!.city = user!.city;
     userbd!.styleLife = user!.styleLife;
     userbd!.maritalStatus = user!.maritalStatus;
-    userbd!.gender =
-        user!.gender == "Prefiero no decir" ? "Otro/a" : user!.gender;
+    userbd!.gender = user!.gender == Constant.notGenderSelect
+        ? Constant.otherGender
+        : user!.gender;
     userbd!.country = user!.country;
     bool isupdate = await userConfigVC.updateUserDate(userbd!);
 

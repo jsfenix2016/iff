@@ -385,7 +385,7 @@ class _EditZoneRiskPageState extends State<EditZoneRiskPage> {
                                   wordSpacing: 1,
                                   letterSpacing: 1,
                                   fontWeight: FontWeight.w700,
-                                  color: Color.fromRGBO(222, 222, 222, 1),
+                                  color: const Color.fromRGBO(222, 222, 222, 1),
                                 ),
                               ),
                             ),

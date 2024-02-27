@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:get/get.dart';
+import 'package:ifeelefine/Common/Constant.dart';
 import 'package:ifeelefine/Common/initialize_models_bd.dart';
 import 'package:ifeelefine/Common/utils.dart';
 import 'package:ifeelefine/Data/hive_data.dart';
@@ -161,7 +162,9 @@ class EditConfigController extends GetxController {
           lastname: user.lastname,
           email: user.email,
           telephone: user.telephone,
-          gender: user.gender == "Prefiero no decir" ? "Otro/a" : user.gender,
+          gender: user.gender == Constant.notGenderSelect
+              ? Constant.otherGender
+              : user.gender,
           maritalStatus: user.maritalStatus,
           styleLife: user.styleLife,
           pathImage: user.pathImage,

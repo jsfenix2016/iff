@@ -110,8 +110,9 @@ class _UserConfigPageState2 extends State<UserConfigPage2> {
                 mensaje: Constant.selectGender,
                 isVisible: true,
                 onChanged: (value) {
-                  user?.gender =
-                      value == "Prefiero no decir" ? "Otro/a" : value;
+                  user?.gender = value == Constant.notGenderSelect
+                      ? Constant.otherGender
+                      : value;
                 },
               ),
               const SizedBox(height: 10),

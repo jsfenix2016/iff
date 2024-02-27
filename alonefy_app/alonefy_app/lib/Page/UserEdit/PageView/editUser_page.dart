@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:flutter/gestures.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ifeelefine/Common/Constant.dart';
 import 'package:ifeelefine/Common/button_style_custom.dart';
@@ -20,8 +19,9 @@ import 'package:ifeelefine/Common/manager_alerts.dart';
 
 import 'package:country_state_city_picker/model/select_status_model.dart'
     as StatusModel;
+import 'package:ifeelefine/Page/UserEdit/widgets/dropdown_button.dart';
+import 'package:ifeelefine/Page/UserEdit/widgets/generic_textform.dart';
 import 'package:ifeelefine/Utils/Widgets/loading_page.dart';
-import 'package:ifeelefine/main.dart';
 
 class UserEditPage extends StatefulWidget {
   const UserEditPage({super.key});
@@ -74,20 +74,14 @@ class _UserEditPageState extends State<UserEditPage> {
     user = await editVC.getUserDate();
     ages = await editVC.getAgeVC();
     _country = await getCounty();
-    // await getAllState();
-    // _states.addAll(await editVC.getState());
+
     var country = user!.country.split(" ").last;
     try {
       indexCountry = _country.indexWhere((item) => item == country);
     } catch (e) {
       print(e);
     }
-    // if (indexCountry == -1) {
-    //   for (Country i in countryres.length) {
-    //     if (countryres[i] == country) {}
-    //   }
-    //   indexCountry;
-    // }
+
     selectCountry = user!.country;
     selectState = user!.city;
 
@@ -222,244 +216,85 @@ class _UserEditPageState extends State<UserEditPage> {
                   children: <Widget>[
                     const SizedBox(height: 20),
                     Text(
-                      "V. 1.0.40",
+                      "V. 1.0.41",
                       style: textForTitleApp(),
                     ),
                     const SizedBox(height: 20),
                     Column(
                       children: <Widget>[
                         const SizedBox(height: 10),
-                        genericTxt((user == null) ? "" : user!.name,
-                            Constant.namePlaceholder, (value) {
-                          user?.name = value;
-                        }),
+                        GenericText(
+                          text: (user == null) ? "" : user!.name,
+                          labeltext: Constant.namePlaceholder,
+                          onChanged: (value) {
+                            user?.name = value;
+                          },
+                        ),
                         const SizedBox(height: 10),
-                        genericTxt((user == null) ? "" : user!.lastname,
-                            Constant.lastnamePlaceholder, (value) {
-                          user?.lastname = value;
-                        }),
+                        GenericText(
+                          text: (user == null) ? "" : user!.lastname,
+                          labeltext: Constant.lastnamePlaceholder,
+                          onChanged: (value) {
+                            user?.lastname = value;
+                          },
+                        ),
                         const SizedBox(height: 10),
                         _telefono(""),
                         const SizedBox(height: 10),
-                        genericTxt(
-                            (user == null) ? "" : user!.email, Constant.email,
-                            (value) {
-                          user?.email = value;
-                        }),
-                        const SizedBox(height: 10),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: DecoratedBox(
-                            decoration: BoxDecoration(
-                              border: Border.all(
-                                  color: ColorPalette.principal,
-                                  width: 1,
-                                  style: BorderStyle.none),
-                            ),
-                            child: SizedBox(
-                              height: 52,
-                              child: DropdownButton<String?>(
-                                dropdownColor: Colors.brown,
-                                underline: Container(
-                                  height: 1,
-                                  color: ColorPalette.principal,
-                                ),
-                                hint: Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Text(
-                                    (user != null && user!.gender != "")
-                                        ? user!.gender == "Otro/a"
-                                            ? "Prefiero no decir"
-                                            : user!.gender
-                                        : Constant.selectGender == "Otro/a"
-                                            ? "Prefiero no decir"
-                                            : user!.gender,
-                                    style: textNormal16White(),
-                                  ),
-                                ),
-                                iconEnabledColor: ColorPalette.principal, //Ico
-                                value: Constant.gender[0],
-                                isExpanded: true,
-                                items: Constant.gender.keys
-                                    .toList()
-                                    .map(
-                                      (e) => DropdownMenuItem<String>(
-                                        value: Constant.gender[e] == "Otro/a"
-                                            ? "Prefiero no decir"
-                                            : Constant.gender[e],
-                                        child: Text(
-                                          Constant.gender[e] == "Otro/a"
-                                              ? "Prefiero no decir"
-                                              : Constant.gender[e] ?? "",
-                                          style: textNormal16White(),
-                                        ),
-                                      ),
-                                    )
-                                    .toList(),
-                                onChanged: (v) {
-                                  user!.gender = v.toString();
-                                  setState(() {});
-                                },
-                              ),
-                            ),
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: DecoratedBox(
-                            decoration: BoxDecoration(
-                              border: Border.all(
-                                  color: ColorPalette.principal,
-                                  width: 1,
-                                  style: BorderStyle.none),
-                            ),
-                            child: SizedBox(
-                              height: 52,
-                              child: DropdownButton<String?>(
-                                dropdownColor: Colors.brown,
-                                underline: Container(
-                                  height: 1,
-                                  color: ColorPalette.principal,
-                                ),
-                                hint: Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Text(
-                                    (user != null && user!.maritalStatus != "")
-                                        ? user!.maritalStatus
-                                        : Constant.maritalStatus,
-                                    style: textNormal16White(),
-                                  ),
-                                ),
-                                iconEnabledColor: ColorPalette.principal, //Ico
-                                value: Constant.maritalState[0],
-                                isExpanded: true,
-                                items: Constant.maritalState.keys
-                                    .toList()
-                                    .map(
-                                      (e) => DropdownMenuItem<String>(
-                                        value: Constant.maritalState[e],
-                                        child: Text(
-                                          Constant.maritalState[e] ?? "",
-                                          style: textNormal16White(),
-                                        ),
-                                      ),
-                                    )
-                                    .toList(),
-                                onChanged: (v) {
-                                  // userbd!.gender = v.toString();
-                                  user!.maritalStatus = v.toString();
-                                  setState(() {});
-                                },
-                              ),
-                            ),
-                          ),
+                        GenericText(
+                          text: (user == null) ? "" : user!.email,
+                          labeltext: Constant.email,
+                          onChanged: (value) {
+                            user?.email = value;
+                          },
                         ),
                         const SizedBox(height: 10),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: DecoratedBox(
-                            decoration: BoxDecoration(
-                              border: Border.all(
-                                  color: ColorPalette.principal,
-                                  width: 1,
-                                  style: BorderStyle.none),
-                            ),
-                            child: SizedBox(
-                              height: 52,
-                              child: DropdownButton<String?>(
-                                dropdownColor: Colors.brown,
-                                key: const Key("styleLife"),
-                                underline: Container(
-                                  height: 1,
-                                  color: ColorPalette.principal,
-                                ),
-                                hint: Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Text(
-                                    (user != null && user!.styleLife != "")
-                                        ? user!.styleLife
-                                        : Constant.styleLive,
-                                    style: textNormal16White(),
-                                  ),
-                                ),
-                                iconEnabledColor: ColorPalette.principal, //Ico
-                                value: Constant.lifeStyle[0],
-                                isExpanded: true,
-                                items: Constant.lifeStyle.keys
-                                    .toList()
-                                    .map(
-                                      (e) => DropdownMenuItem<String>(
-                                        value: Constant.lifeStyle[e],
-                                        child: Text(
-                                          Constant.lifeStyle[e] ?? "",
-                                          style: textNormal16White(),
-                                        ),
-                                      ),
-                                    )
-                                    .toList(),
-                                onChanged: (v) {
-                                  // userbd!.gender = v.toString();
-                                  user!.styleLife = v.toString();
-                                  setState(() {});
-                                },
-                              ),
-                            ),
-                          ),
+                        DropdownButtonListString(
+                          list: Constant.gender,
+                          onChanged: (String value) {
+                            user!.gender = value.toString();
+                            setState(() {});
+                          },
+                          textTemp: (user != null && user!.gender != "")
+                              ? user!.gender == Constant.otherGender
+                                  ? Constant.notGenderSelect
+                                  : user!.gender
+                              : Constant.selectGender == Constant.otherGender
+                                  ? Constant.notGenderSelect
+                                  : user!.gender,
                         ),
                         const SizedBox(height: 10),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: DecoratedBox(
-                            decoration: BoxDecoration(
-                              border: Border.all(
-                                  color: ColorPalette.principal,
-                                  width: 1,
-                                  style: BorderStyle.none),
-                            ),
-                            child: SizedBox(
-                              height: 52,
-                              child: DropdownButton<String?>(
-                                dropdownColor: Colors.brown,
-                                key: const Key("age"),
-                                underline: Container(
-                                  height: 1,
-                                  color: ColorPalette.principal,
-                                ),
-                                hint: Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Text(
-                                    (user != null && user!.age != "")
-                                        ? user!.age
-                                        : Constant.age,
-                                    style: textNormal16White(),
-                                  ),
-                                ),
-
-                                iconEnabledColor: ColorPalette.principal, //Ico
-                                value: ages[0],
-                                isExpanded: true,
-                                items: ages.keys
-                                    .toList()
-                                    .map(
-                                      (e) => DropdownMenuItem<String>(
-                                        value: ages[e],
-                                        child: Padding(
-                                          padding: const EdgeInsets.all(8.0),
-                                          child: Text(
-                                            ages[e] ?? "",
-                                            style: textNormal16White(),
-                                          ),
-                                        ),
-                                      ),
-                                    )
-                                    .toList(),
-                                onChanged: (v) {
-                                  user!.age = v.toString();
-                                  setState(() {});
-                                },
-                              ),
-                            ),
-                          ),
+                        DropdownButtonListString(
+                          list: Constant.maritalState,
+                          onChanged: (String value) {
+                            user!.maritalStatus = value.toString();
+                            setState(() {});
+                          },
+                          textTemp: (user != null && user!.maritalStatus != "")
+                              ? user!.maritalStatus
+                              : Constant.maritalStatus,
+                        ),
+                        const SizedBox(height: 10),
+                        DropdownButtonListString(
+                          list: Constant.lifeStyle,
+                          onChanged: (String value) {
+                            user!.styleLife = value.toString();
+                            setState(() {});
+                          },
+                          textTemp: (user != null && user!.styleLife != "")
+                              ? user!.styleLife
+                              : Constant.styleLive,
+                        ),
+                        const SizedBox(height: 10),
+                        DropdownButtonListString(
+                          list: ages,
+                          onChanged: (String value) {
+                            user!.age = value.toString();
+                            setState(() {});
+                          },
+                          textTemp: (user != null && user!.age != "")
+                              ? user!.age
+                              : Constant.age,
                         ),
                         Padding(
                           padding: const EdgeInsets.all(8.0),
@@ -618,45 +453,6 @@ class _UserEditPageState extends State<UserEditPage> {
             ),
           ),
         ),
-      ),
-    );
-  }
-
-  Widget genericTxt(
-      String text, String labeltext, Function(String value) onChanged) {
-    return Padding(
-      padding: const EdgeInsets.only(left: 5.0, right: 5.0),
-      child: TextFormField(
-        cursorColor: Colors.white,
-        onChanged: (valor) {
-          onChanged(valor);
-        },
-        readOnly: labeltext.contains(Constant.email) ? true : false,
-        autofocus: false,
-        key: Key(text),
-        initialValue: text,
-        textCapitalization: TextCapitalization.sentences,
-        decoration: InputDecoration(
-          filled: false,
-          hintText: text,
-          labelText: labeltext,
-          suffixIcon: labeltext.contains(Constant.email)
-              ? null
-              : const Icon(Icons.edit, color: ColorPalette.principal),
-          focusedBorder: const UnderlineInputBorder(
-            borderSide: BorderSide(color: ColorPalette.principal),
-          ),
-          enabledBorder: const UnderlineInputBorder(
-            borderSide: BorderSide(
-                width: 1, color: ColorPalette.principal), //<-- SEE HERE
-          ),
-          hintStyle: textNormal16White(),
-          labelStyle: textNormal16White(),
-        ),
-        style: textNormal16White(),
-        onSaved: (value) => {
-          onChanged(value!),
-        },
       ),
     );
   }
