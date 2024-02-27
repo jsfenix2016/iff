@@ -163,7 +163,7 @@ class Constant {
   static const String saveImageAvatar = "Se guardó la imagen correctamente";
 
   static const String errorGeneric = "Hubo un error, intente mas tarde";
-  static const String restoredCorrectly = "Se restauro correctamente";
+  static const String restoredCorrectly = "Se restauró correctamente";
 
   static const String errorGenericConextion =
       "Se ha producido un error. Por favor, verifique su conexión a internet e inténtelo de nuevo";

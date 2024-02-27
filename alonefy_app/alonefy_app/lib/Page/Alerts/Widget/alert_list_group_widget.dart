@@ -33,6 +33,8 @@ class AlertListWidget extends StatefulWidget {
 
 class _AlertListWidgetState extends State<AlertListWidget> {
   // late List<LogAlertsBD> listLog;
+  Map<String, List<int>> expandedCellIndicesMap = {};
+
   int selectedCellIndex = -1;
   bool isExpanded = false;
   String dateRow = "";
@@ -112,20 +114,19 @@ class _AlertListWidgetState extends State<AlertListWidget> {
   }
 
   void toggleExpansion(int indexGroup, String alertType) {
-    final date = widget.groupedAlerts.entries.elementAt(indexGroup);
-    final indexTemp = date.value.keys.toList().indexOf(alertType);
+    final dateEntry = widget.groupedAlerts.entries.elementAt(indexGroup);
+    final indexTemp = dateEntry.value.keys.toList().indexOf(alertType);
+    final key = dateEntry.key;
 
     setState(() {
-      if (selectedCellIndex == indexTemp && isExpanded) {
-        // Si la celda ya está expandida, ciérrala
-        isExpanded = false;
-        selectedCellIndex = -1;
-        dateRow = "";
+      if (expandedCellIndicesMap.containsKey(key)) {
+        if (expandedCellIndicesMap[key]!.contains(indexTemp)) {
+          expandedCellIndicesMap[key]!.remove(indexTemp);
+        } else {
+          expandedCellIndicesMap[key]!.add(indexTemp);
+        }
       } else {
-        // Si la celda no está expandida, ábrela y cierra las demás
-        isExpanded = true;
-        selectedCellIndex = indexTemp;
-        dateRow = date.key;
+        expandedCellIndicesMap[key] = [indexTemp];
       }
     });
   }
@@ -169,19 +170,17 @@ class _AlertListWidgetState extends State<AlertListWidget> {
                   for (var alertType in alertTypes.keys.toList()) ...[
                     CellExpand(
                       listalertTypes: alertTypes[alertType]!,
-                      onCancel: (bool) {
+                      onCancel: (bool value) {
                         cancelNotify();
                       },
                       onExpand: (bool) =>
                           toggleExpansion(indexGroup, alertType),
-                      isExpand: isExpanded &&
-                          selectedCellIndex ==
-                              alertTypes.keys.toList().indexOf(alertType) &&
-                          dateRow == date,
-                      showLine: isExpanded &&
-                          selectedCellIndex ==
-                              alertTypes.keys.toList().indexOf(alertType) &&
-                          dateRow == date,
+                      isExpand: expandedCellIndicesMap.containsKey(date) &&
+                          expandedCellIndicesMap[date]!.contains(
+                              alertTypes.keys.toList().indexOf(alertType)),
+                      showLine: expandedCellIndicesMap.containsKey(date) &&
+                          expandedCellIndicesMap[date]!.contains(
+                              alertTypes.keys.toList().indexOf(alertType)),
                     ),
                   ],
                   const SizedBox(

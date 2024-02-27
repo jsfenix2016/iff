@@ -12,6 +12,7 @@ import 'package:ifeelefine/Page/Disamble/Controller/disambleController.dart';
 import 'package:ifeelefine/Page/Risk/ZoneRisk/Service/zone_risk_service.dart';
 import 'package:ifeelefine/Model/logAlertsBD.dart';
 import 'package:ifeelefine/main.dart';
+import 'package:intl/intl.dart';
 import 'package:uuid/uuid.dart';
 import '../../../../../Controllers/mainController.dart';
 import '../../../../../Model/ApiRest/ZoneRiskApi.dart';
@@ -54,6 +55,9 @@ class EditZoneController extends GetxController {
       final MainController mainController = Get.put(MainController());
       var user = await mainController.getUserData();
       var con = ZoneRiskApi.fromZoneRisk(contact, user.telephone);
+
+      con.createDate = contact.createDate;
+
       var zoneRiskApiResponse =
           await ZoneRiskService().updateZoneRisk(con, contact.id);
 

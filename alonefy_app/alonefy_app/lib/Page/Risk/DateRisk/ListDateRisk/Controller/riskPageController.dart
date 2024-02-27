@@ -14,6 +14,14 @@ class RiskController extends GetxController {
     try {
       contactList.value = await const HiveDataRisk().getcontactRiskbd;
 
+      contactList.sort((a, b) {
+        if (a.createDate.hour != b.createDate.hour) {
+          return b.createDate.hour.compareTo(a.createDate.hour);
+        } else {
+          return b.createDate.minute.compareTo(a.createDate.minute);
+        }
+      });
+
       return contactList;
     } catch (error) {
       return contactList;
@@ -62,7 +70,7 @@ class RiskController extends GetxController {
       print(temp.isFinishTime);
       var c = await const HiveDataRisk().getContactRiskBD(temp.id);
       c!.isFinishTime = false;
-      c!.isActived = true;
+      c.isActived = true;
       c.isprogrammed = false;
       var ct = await const HiveDataRisk().updateContactRisk(c);
     }

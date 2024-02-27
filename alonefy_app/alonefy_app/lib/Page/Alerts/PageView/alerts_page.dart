@@ -40,11 +40,8 @@ class _AlertsPageState extends State<AlertsPage> {
 
   Future<void> deleteForDayMov(
       BuildContext context, List<LogAlertsBD> listLog) async {
-    // groupedProducts.value = {};
-
     var req = await alertsVC.deleteAlerts(context, listLog);
     if (req == 0) {
-      // NotificationCenter().notify('getAlerts');
       setState(() {});
       getLog();
     }

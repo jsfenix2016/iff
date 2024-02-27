@@ -14,6 +14,7 @@ import '../../../Model/ApiRest/AlertApi.dart';
 class AlertsController extends GetxController {
   RxMap<String, List<LogAlertsBD>> contactList =
       <String, List<LogAlertsBD>>{}.obs;
+
   Future<int> deleteAlerts(
       BuildContext context, List<LogAlertsBD> listAlerts) async {
     for (var logAlert in listAlerts) {
@@ -66,7 +67,7 @@ class AlertsController extends GetxController {
       }
     }
     groupedAlerts.value = groupedProducts;
-    // contactList.value = groupedProducts;
+
     return groupedAlerts;
   }
 

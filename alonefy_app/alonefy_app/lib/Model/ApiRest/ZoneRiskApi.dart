@@ -37,9 +37,9 @@ class ZoneRiskApi {
     // photo = contactZoneRiskBD.photo.toString();
     name = contactZoneRiskBD.name;
     customContactPhoneNumber = contactZoneRiskBD.phones;
-    customContactWhatsappNotification = contactZoneRiskBD.sendWhatsappContact;
+    customContactWhatsappNotification = contactZoneRiskBD.sendWhatsapp;
     customContactVoiceNotification = contactZoneRiskBD.callme;
-    notifyPredefinedContacts = contactZoneRiskBD.sendWhatsapp;
+    notifyPredefinedContacts = contactZoneRiskBD.sendWhatsappContact;
     sendlocation = contactZoneRiskBD.sendLocation;
   }
 

@@ -30,7 +30,7 @@ class ZoneRiskService {
       var zoneRiskJson = zoneRiskApi.toJson();
       var zoneRiskUpdate = <String, dynamic>{
         "id": id,
-        "name": zoneRiskApi.name
+        "name": zoneRiskApi.name,
       };
       zoneRiskJson.addAll(zoneRiskUpdate);
       var json = jsonEncode(zoneRiskJson);

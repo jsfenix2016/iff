@@ -6,7 +6,7 @@ import 'package:ifeelefine/Common/notificationService.dart';
 import 'package:ifeelefine/Common/text_style_font.dart';
 import 'package:ifeelefine/Common/utils.dart';
 import 'package:ifeelefine/Controllers/mainController.dart';
-import 'package:ifeelefine/Data/hiveRisk_data.dart';
+
 import 'package:ifeelefine/Model/contactRiskBD.dart';
 import 'package:ifeelefine/Page/Risk/DateRisk/ListDateRisk/Controller/riskPageController.dart';
 import 'package:ifeelefine/Page/Risk/DateRisk/ListDateRisk/Widget/list_contact_risk.dart';
@@ -16,7 +16,7 @@ import 'package:flutter/material.dart';
 import 'package:ifeelefine/Page/UserConfig/PageView/userconfig_page.dart';
 import 'package:ifeelefine/Utils/Widgets/elevatedButtonFilling.dart';
 import 'package:ifeelefine/Views/space_heidht_custom.dart';
-import 'package:ifeelefine/main.dart';
+
 import 'package:notification_center/notification_center.dart';
 import 'package:ifeelefine/Common/decoration_custom.dart';
 
