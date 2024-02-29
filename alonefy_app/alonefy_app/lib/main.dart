@@ -951,6 +951,8 @@ void accelerometer() {
 
             if (_logRudeMovementTimer >= _logRudeMovementTimerRefresh) {
               print('Movimiento brusco');
+              mainController.saveActivityLog(DateTime.now(),
+                      "Movimiento brusco", Uuid().v4().toString());
               mainController.saveDrop();
               _logRudeMovementTimer = 0;
             }
