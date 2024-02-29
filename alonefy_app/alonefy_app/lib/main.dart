@@ -592,6 +592,7 @@ void onDidReceiveBackgroundNotificationResponse(
         MainService().sendAlertToContactImmediately(taskIdList);
         prefs.setNotificationType = "";
         mainController.refreshHome();
+        mainController.refreshAlerts();
         return;
       }
 
@@ -616,13 +617,14 @@ void onDidReceiveBackgroundNotificationResponse(
 
         if (notificationResponse.payload!.contains("Drop_")) {
           mainController.saveUserLog(
-              "Caida cancelada", DateTime.now(), prefs.getIdDropGroup);
+              "Caida - cancelada", DateTime.now(), prefs.getIdDropGroup);
         }
 
         MainService().cancelAllNotifications(taskIdList);
         // await flutterLocalNotificationsPlugin.cancel(100);
         prefs.setNotificationType = "";
         mainController.refreshHome();
+        mainController.refreshAlerts();
         return;
       }
       if (notificationResponse.actionId != null &&
@@ -653,6 +655,7 @@ void onDidReceiveBackgroundNotificationResponse(
         MainService().sendAlertToContactImmediately(taskIdList);
         prefs.setNotificationType = "";
         mainController.refreshHome();
+        mainController.refreshAlerts();
         return;
       }
       if (notificationResponse.actionId != null &&
@@ -685,12 +688,7 @@ void onDidReceiveBackgroundNotificationResponse(
         MainService().cancelAllNotifications(taskIdList);
         prefs.setNotificationType = "";
         mainController.refreshHome();
-        try {
-          NotificationCenter().notify('refreshView');
-        } catch (e) {
-          print(e);
-        }
-
+        mainController.refreshAlerts();
         return;
       }
       if (notificationResponse.actionId!.contains("premium")) {
@@ -748,12 +746,8 @@ void onDidReceiveBackgroundNotificationResponse(
 
         prefs.setNotificationType = "";
         mainController.refreshHome();
+        mainController.refreshAlerts();
 
-        try {
-          NotificationCenter().notify('refreshView');
-        } catch (e) {
-          print(e);
-        }
         return Future.value();
       }
 

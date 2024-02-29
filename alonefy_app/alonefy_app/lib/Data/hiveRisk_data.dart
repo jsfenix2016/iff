@@ -119,9 +119,7 @@ class HiveDataRisk {
   Future<void> deleteAllContactRisk() async {
     Box<ContactRiskBD> box = await Hive.openBox<ContactRiskBD>('contactriskbd');
 
-    for (var element in box.values) {
-      box.delete(element);
-    }
+    await box.clear(); // Esto borrará todos los datos en la caja 'useMobil'
   }
 
   ///ZONE RISK
@@ -238,8 +236,6 @@ class HiveDataRisk {
     Box<ContactZoneRiskBD> box =
         await Hive.openBox<ContactZoneRiskBD>('ContactZoneRiskBD');
 
-    for (var element in box.values) {
-      box.delete(element);
-    }
+    await box.clear(); // Esto borrará todos los datos en la caja 'useMobil'
   }
 }

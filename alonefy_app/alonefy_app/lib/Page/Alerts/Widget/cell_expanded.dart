@@ -53,15 +53,19 @@ class CellExpand extends StatelessWidget {
                 Positioned(
                   top: 0,
                   right: 0,
-                  child: IconButton(
-                      iconSize: 35,
-                      onPressed: () {
-                        onExpand(isExpand);
-                      },
-                      icon: Icon(
-                        isExpand ? Icons.arrow_drop_up : Icons.arrow_drop_down,
-                        color: Colors.white,
-                      )),
+                  child: listalertTypes.length > 1
+                      ? IconButton(
+                          iconSize: 35,
+                          onPressed: () {
+                            onExpand(isExpand);
+                          },
+                          icon: Icon(
+                            isExpand
+                                ? Icons.arrow_drop_up
+                                : Icons.arrow_drop_down,
+                            color: Colors.white,
+                          ))
+                      : const SizedBox.shrink(),
                 ),
                 ListView.builder(
                   physics: const NeverScrollableScrollPhysics(),

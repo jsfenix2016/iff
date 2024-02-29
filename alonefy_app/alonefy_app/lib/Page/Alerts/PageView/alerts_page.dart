@@ -9,6 +9,7 @@ import 'package:ifeelefine/Page/Alerts/Controller/alertsController.dart';
 import 'package:ifeelefine/Page/Alerts/Widget/alert_list_group_widget.dart';
 
 import 'package:ifeelefine/Utils/Widgets/loading_page.dart';
+import 'package:ifeelefine/main.dart';
 
 import 'package:notification_center/notification_center.dart';
 
@@ -97,12 +98,8 @@ class _AlertsPageState extends State<AlertsPage> {
                       },
                       onRefresh: (bool value) {
                         alertsVC.update();
+                        mainController.refreshHome();
 
-                        try {
-                          NotificationCenter().notify('refreshView');
-                        } catch (e) {
-                          print(e);
-                        }
                         setState(() {});
                       },
                     );

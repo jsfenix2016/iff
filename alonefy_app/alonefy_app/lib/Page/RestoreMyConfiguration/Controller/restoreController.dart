@@ -49,6 +49,23 @@ class RestoreController extends GetxController {
       if (isRunning) {
         service.invoke("stopService");
       }
+
+      user = await mainController.getUserData();
+
+      if (user != null && user!.idUser != '-1') {
+        var userApi = await GetUserController().getUser(
+            user!.telephone.contains('+34')
+                ? user!.telephone.replaceAll("+34", "")
+                : user!.telephone);
+        name.value = user!.name;
+
+        if (userApi != null && userApi.idUser != user!.idUser) {
+          await RestoreController().deleteAllData();
+
+          user = null;
+        }
+      }
+
       _saveUserFromAPI(userApi);
       _saveTimeUseMobile(userApi.inactivityTimes);
       _saveRestDays(userApi.sleepHours);
@@ -259,6 +276,7 @@ class RestoreController extends GetxController {
     _deletePremium();
     _deleteDesactivateAlertFriend();
     _deleteNotificationAudio();
+    _deleteAllHistorial();
   }
 
   void _deleteUsers() async {
@@ -293,6 +311,10 @@ class RestoreController extends GetxController {
   void _deleteTermsAndConditions() async {
     _prefs.setAceptedTerms = false;
     _prefs.setAceptedSendSMS = false;
+    _prefs.setlistConfigPage = [];
+    _prefs.setUserFree = true;
+    _prefs.setUserPremium = false;
+    _prefs.setAlertPointRed = false;
   }
 
   void _deleteLocation() async {
@@ -313,6 +335,10 @@ class RestoreController extends GetxController {
 
   void _deleteContactRisk() async {
     await const HiveDataRisk().deleteAllContactRisk();
+  }
+
+  void _deleteAllHistorial() async {
+    await const HiveData().deleteAllLogHistorial();
   }
 
   void _deleteOnboarding() async {
