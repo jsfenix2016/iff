@@ -1,32 +1,22 @@
 import 'dart:async';
-
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
-
 import 'package:ifeelefine/Common/Constant.dart';
 import 'package:ifeelefine/Common/colorsPalette.dart';
 import 'package:ifeelefine/Common/idleLogic.dart';
-import 'package:ifeelefine/Common/utils.dart';
-
 import 'package:ifeelefine/Controllers/mainController.dart';
-
 import 'package:ifeelefine/Data/hive_constant_adapterInit.dart';
-
 import 'package:ifeelefine/Model/contactRiskBD.dart';
-
 import 'package:ifeelefine/Page/Premium/Controller/premium_controller.dart';
 import 'package:ifeelefine/Page/Premium/PageView/premium_moths_free.dart';
 import 'package:ifeelefine/Page/Premium/PageView/premium_page.dart';
 import 'package:ifeelefine/Page/Risk/DateRisk/Controller/editRiskController.dart';
 import 'package:ifeelefine/Page/Risk/DateRisk/Pageview/cancelDatePage.dart';
-
 import 'package:ifeelefine/Provider/prefencesUser.dart';
 import 'package:ifeelefine/Views/help_page.dart';
-
 import 'package:ifeelefine/main.dart';
-import 'package:notification_center/notification_center.dart';
 import 'package:uuid/uuid.dart';
 
 PreferenceUser prefs = PreferenceUser();

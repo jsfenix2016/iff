@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:google_fonts/google_fonts.dart';
+
 import 'package:hive/hive.dart';
 import 'package:ifeelefine/Common/colorsPalette.dart';
 import 'package:ifeelefine/Common/decoration_custom.dart';
@@ -9,7 +9,6 @@ import 'package:ifeelefine/Common/text_style_font.dart';
 import 'package:ifeelefine/Common/utils.dart';
 import 'package:ifeelefine/Model/logActivity.dart';
 import 'package:ifeelefine/Page/LogActivity/Controller/logActivity_controller.dart';
-import 'package:ifeelefine/main.dart';
 import 'package:intl/intl.dart';
 
 class LogActivityPage extends StatefulWidget {

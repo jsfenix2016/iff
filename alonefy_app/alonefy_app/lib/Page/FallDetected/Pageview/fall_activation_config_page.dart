@@ -10,21 +10,15 @@ import 'package:ifeelefine/Common/text_style_font.dart';
 import 'package:ifeelefine/Common/utils.dart';
 import 'package:ifeelefine/Page/FallDetected/Controller/fall_detectedController.dart';
 import 'package:ifeelefine/Page/Premium/Controller/premium_controller.dart';
-
 import 'package:ifeelefine/Provider/prefencesUser.dart';
 import 'package:ifeelefine/main.dart';
-import 'package:notification_center/notification_center.dart';
-
 import 'package:slidable_button/slidable_button.dart';
-
 import '../../Premium/PageView/premium_page.dart';
 import 'package:ifeelefine/Common/decoration_custom.dart';
 
 class FallActivationConfigPage extends StatefulWidget {
   /// Creates a new GeolocatorWidget.
   const FallActivationConfigPage({Key? key}) : super(key: key);
-
-  /// Utility method to create a page with the Baseflow templating.
 
   @override
   State<FallActivationConfigPage> createState() =>

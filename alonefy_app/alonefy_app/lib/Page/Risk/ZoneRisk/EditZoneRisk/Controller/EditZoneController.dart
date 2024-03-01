@@ -5,15 +5,14 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:ifeelefine/Data/hiveRisk_data.dart';
 import 'package:ifeelefine/Data/hive_constant_adapterInit.dart';
-import 'package:ifeelefine/Data/hive_data.dart';
+
 import 'package:ifeelefine/Model/contactZoneRiskBD.dart';
 import 'package:ifeelefine/Model/videopresignedbd.dart';
-import 'package:ifeelefine/Page/Disamble/Controller/disambleController.dart';
+
 import 'package:ifeelefine/Page/Risk/ZoneRisk/Service/zone_risk_service.dart';
-import 'package:ifeelefine/Model/logAlertsBD.dart';
+
 import 'package:ifeelefine/main.dart';
-import 'package:intl/intl.dart';
-import 'package:uuid/uuid.dart';
+
 import '../../../../../Controllers/mainController.dart';
 import '../../../../../Model/ApiRest/ZoneRiskApi.dart';
 

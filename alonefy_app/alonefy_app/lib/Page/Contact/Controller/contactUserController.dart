@@ -8,7 +8,6 @@ import 'package:ifeelefine/Data/hive_constant_adapterInit.dart';
 import 'package:ifeelefine/Data/hive_data.dart';
 import 'package:ifeelefine/Model/ApiRest/ContactApi.dart';
 import 'package:ifeelefine/Model/contact.dart';
-
 import 'package:ifeelefine/Page/Contact/Service/contactService.dart';
 import 'package:ifeelefine/main.dart';
 import 'package:notification_center/notification_center.dart';
@@ -173,17 +172,6 @@ class ContactUserController extends GetxController {
 
   Future<bool> deleteContact(ContactBD contact) async {
     await const HiveData().deleteUserContact(contact);
-
-    // final MainController mainController = Get.put(MainController());
-    // var user = await mainController.getUserData();
-
-    // var response = await contactServ.deleteContact(
-    //     user.telephone.contains('+34')
-    //         ? user.telephone.replaceAll("+34", "").replaceAll(" ", "")
-    //         : user.telephone.replaceAll(" ", ""),
-    //     contact.phones.contains('+34')
-    //         ? contact.phones.replaceAll("+34", "").replaceAll(" ", "")
-    //         : contact.phones.replaceAll(" ", ""));
 
     return true;
   }

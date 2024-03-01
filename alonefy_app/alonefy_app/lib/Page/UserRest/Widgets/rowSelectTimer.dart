@@ -2,9 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ifeelefine/Common/Constant.dart';
-import 'package:ifeelefine/Common/utils.dart';
+
 import 'package:ifeelefine/Model/restday.dart';
-import 'package:intl/intl.dart';
 
 class RowSelectTimer extends StatefulWidget {
   const RowSelectTimer(
@@ -37,6 +36,8 @@ class _RowSelectTimerState extends State<RowSelectTimer> {
   String minutesPicker2 = "00";
 
   Map<String, String> minutes = {};
+  late final DateTime initialDateTime = DateTime.now();
+
   @override
   void initState() {
     restDay = RestDay();
@@ -65,36 +66,10 @@ class _RowSelectTimerState extends State<RowSelectTimer> {
     super.initState();
   }
 
-  // @override
-  // void didUpdateWidget(covariant RowSelectTimer oldWidget) {
-  //   // TODO: implement didUpdateWidget
-
-  //   var time1 = widget.timeLblPM.contains(" ")
-  //       ? widget.timeLblPM.split(" ")[1].split(":")
-  //       : widget.timeLblPM.split(":");
-  //   var time2 = widget.timeLblAM.contains(" ")
-  //       ? widget.timeLblAM.split(" ")[1].split(":")
-  //       : widget.timeLblAM.split(":");
-  //   hoursPicker2 = time1[0];
-  //   minutesPicker2 = time1[1];
-  //   hoursPicker1 = time2[0];
-  //   minutesPicker1 = time2[1];
-
-  //   hoursPositionPicker1 = int.parse(hoursPicker1);
-
-  //   minutesPositionPicker1 = int.parse(minutesPicker1);
-  //   hoursPositionPicker2 = int.parse(hoursPicker2);
-
-  //   minutesPositionPicker2 = int.parse(minutesPicker2);
-  //   super.didUpdateWidget(oldWidget);
-  // }
-
   String _formatDateTime(DateTime dateTime) {
     // Personaliza el formato de la fecha y hora según tus necesidades
     return "${dateTime.hour.toString().padLeft(2, '0')}:${dateTime.minute.toString().padLeft(2, '0')}";
   }
-
-  late final DateTime initialDateTime = DateTime.now();
 
   Widget getFutureColumnPicker(
       int initialPosition1, int initialPosition2, int pickerId) {
@@ -177,11 +152,7 @@ class _RowSelectTimerState extends State<RowSelectTimer> {
           }
           if (pickerId == 0) {
             restDay.timeWakeup = "$hoursPicker1:$minutesPicker1:00";
-            // restDay.timeWakeup =
-            //     "${initialDateTime.year}-${initialDateTime.month}-${initialDateTime.day} $hoursPicker1:$minutesPicker1";
           } else {
-            // restDay.timeSleep =
-            //     "${initialDateTime.year}-${initialDateTime.month}-${initialDateTime.day} $hoursPicker2:$minutesPicker2";
             restDay.timeSleep = "$hoursPicker2:$minutesPicker2:00";
           }
           widget.onChanged(restDay);

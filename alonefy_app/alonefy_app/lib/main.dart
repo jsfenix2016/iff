@@ -9,61 +9,36 @@ import 'package:flutter/services.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:flutter_contacts/contact.dart';
 import 'package:flutter_timezone/flutter_timezone.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:ifeelefine/Common/initialize_models_bd.dart';
 import 'package:ifeelefine/Data/hiveRisk_data.dart';
 import 'package:ifeelefine/Model/contact.dart';
 import 'package:ifeelefine/Model/contactRiskBD.dart';
 import 'package:ifeelefine/Model/recived_notification.dart';
-import 'package:ifeelefine/Page/Alerts/Controller/alertsController.dart';
-import 'package:ifeelefine/Page/HomePage/Pageview/home_page.dart';
-
 import 'package:ifeelefine/Page/Risk/DateRisk/Controller/editRiskController.dart';
 import 'package:ifeelefine/Page/Risk/DateRisk/ListDateRisk/Controller/riskPageController.dart';
-import 'package:ifeelefine/Page/UseMobil/PageView/configurationUseMobile_page.dart';
-import 'package:ifeelefine/Page/UserConfig2/Page/configuration2_page.dart';
-
 import 'package:ifeelefine/Views/menuconfig_page.dart';
-import 'package:notification_center/notification_center.dart';
-
-import 'package:permission_handler/permission_handler.dart';
-
 import 'package:sensors_plus/sensors_plus.dart';
-
 import 'package:geolocator/geolocator.dart';
 import 'package:ifeelefine/Common/notificationService.dart';
 import 'package:ifeelefine/Controllers/mainController.dart';
 import 'package:ifeelefine/Data/hive_constant_adapterInit.dart';
-
 import 'package:ifeelefine/Model/userbd.dart';
-
 import 'package:ifeelefine/Page/RestoreMyConfiguration/Controller/restoreController.dart';
-
 import 'package:ifeelefine/Services/mainService.dart';
-
 import 'package:ifeelefine/Common/utils.dart';
-
 import 'package:ifeelefine/Provider/prefencesUser.dart';
 import 'package:ifeelefine/Routes/routes.dart';
-
 import 'package:flutter/material.dart';
-
 import 'package:flutter_background_service_android/flutter_background_service_android.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
-
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:timezone/src/date_time.dart';
 import 'package:uuid/uuid.dart';
-
 import 'Common/Firebase/firebaseManager.dart';
-
 import 'Page/Geolocator/Controller/configGeolocatorController.dart';
-
 import 'Page/Premium/Controller/premium_controller.dart';
-
 import 'Page/UserEdit/Controller/getUserController.dart';
-
 import 'package:timezone/data/latest.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 
@@ -945,8 +920,8 @@ void accelerometer() {
 
             if (_logRudeMovementTimer >= _logRudeMovementTimerRefresh) {
               print('Movimiento brusco');
-              mainController.saveActivityLog(DateTime.now(),
-                      "Movimiento brusco", Uuid().v4().toString());
+              mainController.saveActivityLog(
+                  DateTime.now(), "Movimiento brusco", Uuid().v4().toString());
               mainController.saveDrop();
               _logRudeMovementTimer = 0;
             }

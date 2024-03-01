@@ -17,21 +17,15 @@ import 'package:ifeelefine/Page/PreviewActivitiesFilteredByDate/PageView/preview
 import 'package:ifeelefine/Page/UseMobil/Controller/useMobileController.dart';
 
 import 'package:ifeelefine/Provider/prefencesUser.dart';
-
 import 'package:ifeelefine/Utils/Widgets/elevatedButtonFilling.dart';
 import 'package:ifeelefine/Utils/Widgets/widgetLogo.dart';
-
 import 'package:ifeelefine/Common/decoration_custom.dart';
 import 'package:ifeelefine/main.dart';
-import 'package:notification_center/notification_center.dart';
-
 import 'package:slidable_button/slidable_button.dart';
 
 class FallActivationPage extends StatefulWidget {
   /// Creates a new GeolocatorWidget.
   const FallActivationPage({Key? key}) : super(key: key);
-
-  /// Utility method to create a page with the Baseflow templating.
 
   @override
   State<FallActivationPage> createState() => _FallActivationPageState();
@@ -144,7 +138,7 @@ class _FallActivationPageState extends State<FallActivationPage> {
         // Aquí puedes ejecutar acciones personalizadas antes de volver atrás
         // Por ejemplo, mostrar un diálogo de confirmación
         if (isMenu) {
-          Get.off(PreviewActivitiesByDate(
+          Get.off(const PreviewActivitiesByDate(
             isMenu: false,
           ));
         }

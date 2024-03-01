@@ -2,35 +2,23 @@ import 'dart:io';
 
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/cupertino.dart';
-
-import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-
-import 'package:flutter_system_ringtones/flutter_system_ringtones_platform_interface.dart';
-
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ifeelefine/Common/Constant.dart';
 import 'package:ifeelefine/Common/colorsPalette.dart';
-
 import 'package:ifeelefine/Common/notificationService.dart';
 import 'package:ifeelefine/Common/text_style_font.dart';
 import 'package:ifeelefine/Common/utils.dart';
 import 'package:ifeelefine/Page/UserConfig/Controller/userConfigController.dart';
 import 'package:ifeelefine/Model/user.dart';
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-
-import 'package:ifeelefine/main.dart';
 import 'package:notification_center/notification_center.dart';
 import 'package:permission_handler/permission_handler.dart';
-
 import '../Provider/prefencesUser.dart';
 import 'package:ifeelefine/Common/decoration_custom.dart';
 import 'package:flutter/services.dart' show MethodChannel;
 import 'package:flutter_system_ringtones/flutter_system_ringtones.dart';
-
-final _prefs = PreferenceUser();
 
 class RingTonePage extends StatefulWidget {
   const RingTonePage({super.key});
@@ -42,7 +30,7 @@ class RingTonePage extends StatefulWidget {
 class _RingTonePageState extends State<RingTonePage>
     with WidgetsBindingObserver {
   final UserConfigCOntroller userVC = Get.put(UserConfigCOntroller());
-
+  final _prefs = PreferenceUser();
   bool isCheck = false;
 
   late User user;

@@ -247,10 +247,6 @@ class _ListWeekDayState extends State<ListWeekDay> {
         // ignore: use_build_context_synchronously
         timeLblPM = time.format(context);
       }
-
-      for (var element in _selectedDays) {}
-
-      for (var element in tempDicRest) {}
     }
   }
 
@@ -275,20 +271,6 @@ class _ListWeekDayState extends State<ListWeekDay> {
         timeLblAM = time.format(context);
         // timeLblAM = _timeC.text;
       }
-      for (var element in _selectedDays) {
-        // tempDicRest.removeAt(element.id);
-        // RestDayBD restDay = RestDayBD(
-        //     id: element.id,
-        //     day: element.day,
-        //     timeSleep: timeLblAM,
-        //     timeWakeup: timeLblPM);
-        // tempDicRest.add(restDay);
-      }
-      // RestDayBD restDay = RestDayBD(
-      //     day: _ListDay[indexSelect],
-      //     timeSleep: timeLblAM,
-      //     timeWakeup: timeLblPM);
-      // tempDicRest.add(restDay);
 
       setState(() {});
     }

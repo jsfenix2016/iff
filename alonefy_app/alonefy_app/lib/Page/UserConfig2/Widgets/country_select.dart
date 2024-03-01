@@ -1,10 +1,6 @@
 import 'package:flutter/material.dart';
-
 import 'package:ifeelefine/Common/decoration_custom.dart';
 import 'package:ifeelefine/Common/text_style_font.dart';
-
-import 'package:country_state_city_picker/model/select_status_model.dart'
-    as StatusModel;
 
 class CountryListScreen extends StatefulWidget {
   final List<String> countries;

@@ -2,27 +2,19 @@ import 'package:get/get.dart';
 import 'package:ifeelefine/Common/Constant.dart';
 import 'package:ifeelefine/Common/colorsPalette.dart';
 import 'package:ifeelefine/Common/manager_alerts.dart';
-
 import 'package:ifeelefine/Common/notificationService.dart';
 import 'package:ifeelefine/Common/text_style_font.dart';
 import 'package:ifeelefine/Common/utils.dart';
-
 import 'package:ifeelefine/Controllers/mainController.dart';
-
 import 'package:ifeelefine/Model/contactZoneRiskBD.dart';
-
 import 'package:ifeelefine/Page/Risk/ZoneRisk/EditZoneRisk/PageView/EditZoneRisk.dart';
 import 'package:ifeelefine/Page/Risk/ZoneRisk/ListContactZoneRisk/Controller/listContactZoneController.dart';
 import 'package:ifeelefine/Page/Risk/ZoneRisk/PushAlert/PageView/pushAlert.dart';
-
 import 'package:flutter/material.dart';
-
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ifeelefine/Page/UserConfig/PageView/userconfig_page.dart';
-
 import 'package:ifeelefine/Utils/Widgets/elevatedButtonFilling.dart';
 import 'package:ifeelefine/Views/space_heidht_custom.dart';
-
 import 'package:notification_center/notification_center.dart';
 import 'package:ifeelefine/Common/decoration_custom.dart';
 
@@ -47,35 +39,11 @@ class _ZoneRiskPageState extends State<ZoneRiskPage> {
 
     super.initState();
     starTap();
-    redirectCancel();
   }
 
   Future refreshListZoneRisk() async {
     riskVC.update();
     setState(() {});
-  }
-
-  void redirectCancel() async {
-    print(prefs.getIsSelectContactRisk);
-    if (prefs.getIsSelectContactRisk != -1) {
-      var resp = await riskVC.getContactsZoneRisk();
-      int indexSelect =
-          resp.indexWhere((item) => item.id == prefs.getIsSelectContactRisk);
-      if (indexSelect != -1) {
-        var contactSelect = resp[indexSelect];
-      }
-
-      // Future.delayed(const Duration(seconds: 3), () async {
-      //   await Navigator.push(
-      //     context,
-      //     MaterialPageRoute(
-      //       builder: (context) => CancelAlertPage(
-      //           contactRisk: contactSelect,
-      //           taskdIds: prefs.getlistTaskIdsCancel),
-      //     ),
-      //   );
-      // });
-    }
   }
 
   Future<List<ContactZoneRiskBD>> getListZoneRisk() async {

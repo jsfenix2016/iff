@@ -15,14 +15,13 @@ import 'package:ifeelefine/Page/PreviewActivitiesFilteredByDate/PageView/preview
 import 'package:ifeelefine/Page/UserRest/Controller/userRestController.dart';
 import 'package:ifeelefine/Page/UserRest/Widgets/rowSelectTimer.dart';
 import 'package:ifeelefine/Page/UserRest/Widgets/row_buttons_when_menu.dart';
-import 'package:ifeelefine/Provider/prefencesUser.dart';
+
 import 'package:ifeelefine/Utils/Widgets/elevateButtonCustomBorder.dart';
 import 'package:ifeelefine/Utils/Widgets/elevatedButtonFilling.dart';
 import 'package:ifeelefine/Utils/Widgets/listDayweekCustom.dart';
 import 'package:collection/collection.dart';
 import 'package:ifeelefine/Utils/Widgets/widgetLogo.dart';
 import 'package:ifeelefine/Common/decoration_custom.dart';
-import 'package:ifeelefine/main.dart';
 
 class PreviewRestTimePage extends StatefulWidget {
   const PreviewRestTimePage({super.key, required this.isMenu});

@@ -10,12 +10,12 @@ import 'package:ifeelefine/Page/PreviewActivitiesFilteredByDate/PageView/preview
 import 'package:ifeelefine/Page/UserRest/Controller/userRestController.dart';
 import 'package:flutter/material.dart';
 import 'package:ifeelefine/Page/UserRest/Widgets/rowSelectTimer.dart';
-import 'package:ifeelefine/Provider/prefencesUser.dart';
+
 import 'package:ifeelefine/Utils/Widgets/elevatedButtonFilling.dart';
 import 'package:ifeelefine/Utils/Widgets/listDayweekCustom.dart';
 import 'package:ifeelefine/Utils/Widgets/widgetLogo.dart';
 import 'package:ifeelefine/Common/decoration_custom.dart';
-import 'package:ifeelefine/main.dart';
+
 import 'package:collection/collection.dart';
 
 class UserRestPage extends StatefulWidget {
@@ -27,7 +27,7 @@ class UserRestPage extends StatefulWidget {
 
 class _UserRestPageState extends State<UserRestPage> {
   final UserRestController userRestVC = Get.put(UserRestController());
-  final PreferenceUser _prefs = PreferenceUser();
+
   late String timeLblAM = "00:00:00"; //AM
   late String timeLblPM = "00:00:00"; //PM
 

@@ -1,16 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ifeelefine/Common/Constant.dart';
-
 import 'package:ifeelefine/Common/utils.dart';
 import 'package:ifeelefine/Data/hive_data.dart';
 import 'package:ifeelefine/Model/useMobilbd.dart';
 import 'package:ifeelefine/Page/EditUseMobil/Service/editUseMobilService.dart';
-import 'package:ifeelefine/Provider/prefencesUser.dart';
 import 'package:ifeelefine/main.dart';
-
 import '../../../Controllers/mainController.dart';
-
 import '../../../Model/ApiRest/UseMobilApi.dart';
 
 class EditUseMobilController extends GetxController {

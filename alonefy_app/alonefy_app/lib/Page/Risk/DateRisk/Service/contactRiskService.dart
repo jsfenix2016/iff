@@ -1,11 +1,8 @@
 import 'dart:convert';
 import 'dart:typed_data';
-import 'package:http_parser/http_parser.dart';
-
 import 'package:http/http.dart' as http;
 import 'package:ifeelefine/Common/Constant.dart';
 import 'package:ifeelefine/Model/ApiRest/ContactRiskApi.dart';
-
 import '../../../../Utils/MimeType/mime_type.dart';
 
 class ContactRiskService {

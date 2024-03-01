@@ -1,6 +1,5 @@
 import 'package:grouped_list/grouped_list.dart';
 import 'package:ifeelefine/Common/Constant.dart';
-import 'package:ifeelefine/Common/colorsPalette.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ifeelefine/Common/text_style_font.dart';
@@ -13,7 +12,6 @@ import 'package:ifeelefine/Utils/Widgets/containerTextEditAndTime.dart';
 import 'package:collection/collection.dart';
 import 'package:ifeelefine/Utils/Widgets/elevatedButtonFilling.dart';
 import 'package:ifeelefine/Common/decoration_custom.dart';
-import 'package:ifeelefine/main.dart';
 
 class PreviewInactivityPage extends StatefulWidget {
   const PreviewInactivityPage({super.key});
@@ -69,10 +67,6 @@ class _PreviewInactivityPageState extends State<PreviewInactivityPage> {
     return ElevateButtonFilling(
       showIcon: false,
       onChanged: (value) async {
-        // Navigator.push(
-        //   context,
-        //   MaterialPageRoute(builder: (context) => const FallActivationPage()),
-        // );
         Get.offAll(const FallActivationPage());
       },
       mensaje: Constant.nextTxt,
@@ -90,7 +84,7 @@ class _PreviewInactivityPageState extends State<PreviewInactivityPage> {
       appBar: AppBar(
         backgroundColor: Colors.brown,
         title: Text(
-          "Prvisualizar actividades",
+          "Previsualizar actividades",
           style: textForTitleApp(),
         ),
       ),

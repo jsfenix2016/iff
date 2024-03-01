@@ -690,7 +690,7 @@ class _EditZoneRiskPageState extends State<EditZoneRiskPage> {
                                               mainController.refreshHome();
                                             }
                                           });
-                                          ;
+
                                           return;
                                         }
                                         sendLocation = value;

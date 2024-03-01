@@ -8,13 +8,12 @@ import 'package:ifeelefine/Common/manager_alerts.dart';
 import 'package:ifeelefine/Common/notificationService.dart';
 import 'package:ifeelefine/Common/text_style_font.dart';
 import 'package:ifeelefine/Common/utils.dart';
-import 'package:ifeelefine/Page/Contact/Notice/Controller/contactNoticeController.dart';
 
 import 'package:ifeelefine/Page/HomePage/Controller/homeController.dart';
 import 'package:ifeelefine/Page/HomePage/Widget/avatar_content.dart';
 import 'package:ifeelefine/Page/HomePage/Widget/container_top_button.dart';
 import 'package:ifeelefine/Page/HomePage/Widget/customNavbar.dart';
-import 'package:ifeelefine/Page/Risk/DateRisk/ListDateRisk/Controller/riskPageController.dart';
+
 import 'package:ifeelefine/Page/Risk/DateRisk/Pageview/cancelDatePage.dart';
 
 import 'package:ifeelefine/Page/Risk/ZoneRisk/ListContactZoneRisk/Controller/listContactZoneController.dart';
@@ -22,20 +21,13 @@ import 'package:ifeelefine/Page/Risk/ZoneRisk/ListContactZoneRisk/Controller/lis
 import 'package:ifeelefine/Page/UserConfig/Controller/userConfigController.dart';
 import 'package:ifeelefine/Model/user.dart';
 import 'package:ifeelefine/Model/userbd.dart';
-import 'package:ifeelefine/Model/logAlertsBD.dart';
 import 'package:ifeelefine/Provider/prefencesUser.dart';
-
 import 'package:ifeelefine/Page/Alerts/PageView/alerts_page.dart';
-
 import 'package:ifeelefine/Utils/Widgets/widgetLogo.dart';
 import 'package:ifeelefine/Views/help_page.dart';
-import 'package:ifeelefine/Views/menu_controller.dart';
-
 import 'package:ifeelefine/Views/menuconfig_page.dart';
-
 import 'package:flutter/material.dart';
 import 'package:ifeelefine/main.dart';
-
 import 'package:notification_center/notification_center.dart';
 import 'package:ifeelefine/Common/decoration_custom.dart';
 import 'package:permission_handler/permission_handler.dart';

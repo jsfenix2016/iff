@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ifeelefine/Common/Constant.dart';
 import 'package:ifeelefine/Common/colorsPalette.dart';
-import 'package:ifeelefine/Common/utils.dart';
-import 'package:ifeelefine/Model/restdaybd.dart';
 import 'package:ifeelefine/Model/useMobilbd.dart';
 
 class ListWeekDayCustom<T> extends StatefulWidget {

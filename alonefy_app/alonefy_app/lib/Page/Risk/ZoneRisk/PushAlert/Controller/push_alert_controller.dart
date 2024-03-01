@@ -1,8 +1,8 @@
 import 'dart:async';
 import 'dart:io';
 import 'dart:isolate';
-import 'dart:typed_data';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:gallery_saver/gallery_saver.dart';
 import 'package:get/get.dart';
@@ -11,8 +11,7 @@ import 'package:ifeelefine/Data/hive_data.dart';
 import 'package:ifeelefine/Model/ApiRest/ZoneRiskApi.dart';
 import 'package:ifeelefine/Model/contactZoneRiskBD.dart';
 import 'package:ifeelefine/Model/historialbd.dart';
-import 'package:ifeelefine/Model/logAlertsBD.dart';
-import 'package:ifeelefine/Model/userbd.dart';
+
 import 'package:ifeelefine/Model/videopresignedbd.dart';
 import 'package:ifeelefine/Page/Risk/ZoneRisk/CancelAlert/PageView/cancelAlert.dart';
 import 'package:ifeelefine/Page/Risk/ZoneRisk/Service/zone_risk_service.dart';
@@ -26,7 +25,7 @@ class PushAlertController extends GetxController {
   RootIsolateToken rootIsolateToken = RootIsolateToken.instance!;
   Future<void> saveActivityLog(ContactZoneRiskBD contact) async {
     PreferenceUser prefs = PreferenceUser();
-    var uuid = Uuid().v4();
+    var uuid = const Uuid().v4();
     HistorialBD mov = HistorialBD(
         id: 0,
         type: "Zona - Iniciada",
@@ -154,7 +153,7 @@ class PushAlertController extends GetxController {
     var zonaTemp = await const HiveDataRisk().getcontactZoneRiskbdID(contact);
     if (path.isNotEmpty) {
       // _saveVideoInBackground(path);
-      print(contact.createDate);
+
       zonaTemp.video = await convertImageData(path);
       VideoPresignedBD tempPre = VideoPresignedBD(
           modified: zonaTemp.createDate.toString(),
@@ -186,7 +185,9 @@ class PushAlertController extends GetxController {
     }
 
     receivePort.listen((data) {
-      print('Mensaje del isolate: $data');
+      if (kDebugMode) {
+        print('Mensaje del isolate: $data');
+      }
     });
 
     prefs.setSelectContactRisk = contact.id;

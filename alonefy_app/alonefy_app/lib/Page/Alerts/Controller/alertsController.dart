@@ -1,14 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-
 import 'package:ifeelefine/Data/hive_data.dart';
 import 'package:ifeelefine/Model/historialbd.dart';
 import 'package:ifeelefine/Model/logAlertsBD.dart';
 import 'package:ifeelefine/Page/Alerts/Service/alerts_service.dart';
-
 import 'package:intl/intl.dart';
-import 'package:collection/collection.dart';
-
 import '../../../Model/ApiRest/AlertApi.dart';
 
 class AlertsController extends GetxController {

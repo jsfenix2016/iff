@@ -7,7 +7,7 @@ import 'package:ifeelefine/Model/restday.dart';
 import 'package:ifeelefine/Model/restdaybd.dart';
 import 'package:ifeelefine/Model/userbd.dart';
 import 'package:ifeelefine/Page/UserRest/Service/userRestService.dart';
-import 'package:ifeelefine/Provider/prefencesUser.dart';
+
 import 'package:jiffy/jiffy.dart';
 
 import '../../../Common/Constant.dart';
@@ -124,10 +124,6 @@ class UserRestController extends GetxController {
           day: Constant.tempMapDayReverseApi[userRestApi.dayOfWeek]!,
           timeWakeup: userRestApi.wakeUpHour,
           timeSleep: userRestApi.retireHour,
-          // timeWakeup: await _convertDateTimeToStringTime(
-          //     userRestApi.wakeUpHour.toLocal()),
-          // timeSleep: await _convertDateTimeToStringTime(
-          //     userRestApi.retireHour.toLocal()),
           selection: userRestApi.index,
           isSelect: userRestApi.isSelect);
 

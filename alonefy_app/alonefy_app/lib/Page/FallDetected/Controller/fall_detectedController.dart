@@ -4,10 +4,8 @@ import 'package:ifeelefine/Common/Constant.dart';
 import 'package:ifeelefine/Common/manager_alerts.dart';
 import 'package:ifeelefine/Common/utils.dart';
 import 'package:ifeelefine/Page/FallDetected/Service/fallService.dart';
-import 'package:ifeelefine/Page/TermsAndConditions/PageView/conditionGeneral_page.dart';
 import 'package:ifeelefine/Provider/prefencesUser.dart';
 import 'package:ifeelefine/Views/contact_page.dart';
-
 import '../../../Controllers/mainController.dart';
 
 final _prefs = PreferenceUser();

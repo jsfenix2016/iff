@@ -2,11 +2,8 @@ import 'dart:collection';
 
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:grouped_list/grouped_list.dart';
-
 import 'package:ifeelefine/Common/Constant.dart';
 import 'package:ifeelefine/Common/button_style_custom.dart';
-import 'package:ifeelefine/Common/colorsPalette.dart';
 import 'package:ifeelefine/Common/text_style_font.dart';
 import 'package:ifeelefine/Common/utils.dart';
 import 'package:ifeelefine/Model/activityDay.dart';
@@ -21,7 +18,6 @@ import 'package:flutter/material.dart';
 import 'package:collection/collection.dart';
 import 'package:ifeelefine/Utils/Widgets/elevatedButtonFilling.dart';
 import 'package:ifeelefine/Common/decoration_custom.dart';
-import 'package:ifeelefine/main.dart';
 
 class UserInactivityPage extends StatefulWidget {
   const UserInactivityPage({super.key});
