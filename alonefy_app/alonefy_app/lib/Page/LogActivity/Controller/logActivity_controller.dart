@@ -14,7 +14,21 @@ class LogActivityController extends GetxController {
       List<LogActivity> activities = [];
       for (var activityBD in activitiesBD) {
         var activity = await convertLogActivityToBD(activityBD);
-        activities.add(activity);
+
+        // Verificar si ya existe un elemento con la misma fecha y tipo de movimiento
+        bool isDuplicate = activities.any((existingActivity) =>
+            existingActivity.dateTime.day == activity.dateTime.day &&
+            existingActivity.dateTime.month == activity.dateTime.month &&
+            existingActivity.dateTime.year == activity.dateTime.year &&
+            existingActivity.dateTime.hour == activity.dateTime.hour &&
+            existingActivity.dateTime.minute == activity.dateTime.minute &&
+            existingActivity.dateTime.second == activity.dateTime.second &&
+            existingActivity.movementType == activity.movementType);
+
+        // Si no es un duplicado, agregarlo a la lista
+        if (!isDuplicate) {
+          activities.add(activity);
+        }
       }
 
       return activities;

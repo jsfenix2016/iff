@@ -238,4 +238,19 @@ class HiveDataRisk {
 
     await box.clear(); // Esto borrará todos los datos en la caja 'useMobil'
   }
+
+  Future<void> deleteAllZoneRisk() async {
+    try {
+      Box<ContactZoneRiskBD> box =
+          await Hive.openBox<ContactZoneRiskBD>('ContactZoneRiskBD');
+
+      await box.clear();
+
+      final Box<VideoPresignedBD> boxv =
+          await Hive.openBox<VideoPresignedBD>('VideoZoneRiskBD');
+      await boxv.clear();
+    } catch (error) {
+      print(error);
+    } // Esto borrará todos los datos en la caja 'useMobil'
+  }
 }

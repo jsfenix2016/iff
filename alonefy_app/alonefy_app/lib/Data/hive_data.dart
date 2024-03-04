@@ -62,11 +62,9 @@ class HiveData {
   Future<bool> deleteUsers() async {
     Box<UserBD> box = await Hive.openBox<UserBD>('userBD');
 
-    await box.clear();
     try {
       // Esto borrará todos los datos en la caja 'useMobil'
-
-      await Hive.deleteFromDisk();
+      await box.clear();
       return true;
     } catch (error) {
       return false;
@@ -216,6 +214,18 @@ class HiveData {
     var listContact = box.values.toList();
 
     return listContact;
+  }
+
+  Future<void> deleteAll() async {
+    try {
+      final Box<HistorialBD> box =
+          await Hive.openBox<HistorialBD>('LogsHistorialBD');
+      await box.clear();
+      final Box<ContactBD> boxCon = await Hive.openBox<ContactBD>('contactBD');
+      await boxCon.clear();
+    } catch (error) {
+      print(error);
+    }
   }
 
   Future<void> deleteAllLogHistorial() async {

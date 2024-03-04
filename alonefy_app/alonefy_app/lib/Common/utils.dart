@@ -81,40 +81,36 @@ void starTap() {
   });
 }
 
-void refreshMenu(String menu) async {
-  List<String>? temp = [];
+Future<void> refreshMenu(String menu) async {
+  List<String>? temp = await _prefs.getlistConfigPage;
 
-  temp = await _prefs.getlistConfigPage;
-  if (temp!.isEmpty) {
-    temp.add(menu);
-  } else {
-    for (var element in temp) {
-      if (element.contains(menu) == false) {
-        temp.insert(0, menu);
-        print(menu);
-        break;
-      }
+  // Verifica si la lista temporal está vacía o si el menú ya está presente
+  if (temp == null || temp.isEmpty || !temp.contains(menu)) {
+    // Crea una nueva lista con el menú al principio y los elementos restantes de temp
+    List<String> updatedList = [menu, ...temp ?? []];
+
+    _prefs.setlistConfigPage = updatedList;
+
+    try {
+      mainController.refreshHome();
+      NotificationCenter().notify('refreshMenu');
+    } catch (e) {
+      print(e);
     }
-  }
-  _prefs.setlistConfigPage = temp;
-  try {
-    mainController.refreshHome();
-    NotificationCenter().notify('refreshMenu');
-  } catch (e) {
-    print(e);
-  }
-  try {
-    NotificationCenter().notify('refreshView');
-  } catch (e) {
-    print(e);
+    try {
+      NotificationCenter().notify('refreshView');
+    } catch (e) {
+      print(e);
+    }
   }
 }
 
 Future<List<MenuConfigModel>> validateConfig() async {
+  await _prefs.refreshData();
   List<String>? temp = await _prefs.getlistConfigPage;
 
   if (temp!.isEmpty) {
-    return permissionStatusI;
+    return listMenuOptions;
   }
 
   for (var element in temp) {
@@ -149,7 +145,7 @@ Future<List<MenuConfigModel>> validateConfig() async {
     }
   }
 
-  permissionStatusI = [
+  listMenuOptions = [
     MenuConfigModel("Configurar tus datos", 'assets/images/VectorUser.png', 22,
         19.25, menuConfig[0]),
     MenuConfigModel("Configurar tiempo de sueño",
@@ -178,7 +174,7 @@ Future<List<MenuConfigModel>> validateConfig() async {
     //     'assets/images/Group 1102.png', 22, 22.08),
   ];
 
-  var contieneTrue = permissionStatusI.any((element) => element.config == true);
+  var contieneTrue = listMenuOptions.any((element) => element.config == true);
 
   // Verifica el resultado
   if (contieneTrue) {
@@ -189,7 +185,7 @@ Future<List<MenuConfigModel>> validateConfig() async {
     _prefs.config = true;
   }
 
-  return permissionStatusI;
+  return listMenuOptions;
 }
 
 void diveceInfo() async {

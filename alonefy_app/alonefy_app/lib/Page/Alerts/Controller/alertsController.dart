@@ -46,10 +46,6 @@ class AlertsController extends GetxController {
 
       final dateKey = dateTime1.toString();
       final typeKey = alert.groupBy;
-      print(typeKey);
-      print(dateKey);
-      print('idGroup: ${alert.id}');
-      print('type: ${alert.type}');
 
       if (alert.type.contains("Movimiento rudo") ||
           alert.type.contains("Caida")) {

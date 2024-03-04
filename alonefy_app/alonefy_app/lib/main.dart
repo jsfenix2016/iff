@@ -110,7 +110,7 @@ List<bool> menuConfig = [
   false
 ];
 
-List<MenuConfigModel> permissionStatusI = [
+List<MenuConfigModel> listMenuOptions = [
   MenuConfigModel(
       "Configurar tus datos", 'assets/images/VectorUser.png', 22, 19.25, true),
   MenuConfigModel("Configurar tiempo de sueño", 'assets/images/EllipseMenu.png',
@@ -807,25 +807,6 @@ void onStart(ServiceInstance service) async {
       if (service is AndroidServiceInstance) {
         if (await service.isForegroundService()) {
           if (isMovRude) {}
-
-          // flutterLocalNotificationsPlugin.show(
-          //   888,
-          //   'COOL SERVICE',
-          //   'Awesome ${DateTime.now()}',
-          //   const NotificationDetails(
-          //     android: AndroidNotificationDetails(
-          //         'my_foreground', 'MY FOREGROUND SERVICE',
-          //         icon: 'ic_bg_service_small',
-          //         ongoing: true,
-          //         importance: Importance.high),
-          //   ),
-          // );
-
-          // // if you don't using custom notification, uncomment this
-          // service.setForegroundNotificationInfo(
-          //   title: "My App Service",
-          //   content: "Updated at ${DateTime.now()}",
-          // );
         }
       }
     }
@@ -841,30 +822,6 @@ void onStart(ServiceInstance service) async {
         _prefs.setDisambleTimeIFF = "";
       }
     }
-
-    // Timer.periodic(const Duration(seconds: 1), (timer) async {
-    //   if (Platform.isAndroid) {
-    //     if (service is AndroidServiceInstance) {
-    //       if (await service.isForegroundService()) {
-    //         var timerTemp = timeRevert - 1;
-    //         // flutterLocalNotificationsPlugin.show(
-    //         //   888,
-    //         //   'COOL SERVICE',
-    //         //   'Awesome ${timerTemp}',
-    //         //   const NotificationDetails(
-    //         //     android: AndroidNotificationDetails(
-    //         //         'my_foreground', 'MY FOREGROUND SERVICE',
-    //         //         icon: 'ic_bg_service_small',
-    //         //         ongoing: false,
-    //         //         priority: Priority.high,
-    //         //         importance: Importance.high,
-    //         //         playSound: false),
-    //         //   ),
-    //         // );
-    //       }
-    //     }
-    //   }
-    // });
 
     if (increaceUpdateFirebase >= timeUpdateFirebase) {
       updateFirebaseToken();
@@ -911,17 +868,17 @@ void accelerometer() {
           if (accelerationMagnitude > 45) {
             isMovRude = true;
             print("2 -> $accelerationMagnitude");
-
-            if (_prefs.getEnableIFF == false ||
-                _prefs.getUseMobilConfig == false ||
+            if (_prefs.getEnableIFF == false) return;
+            mainController.saveActivityLog(DateTime.now(), "Movimiento brusco",
+                const Uuid().v4().toString());
+            if (_prefs.getUseMobilConfig == false ||
                 _prefs.getDetectedFall == false ||
                 _prefs.getUserPremium == false ||
                 _prefs.getUserFree) return;
 
             if (_logRudeMovementTimer >= _logRudeMovementTimerRefresh) {
               print('Movimiento brusco');
-              mainController.saveActivityLog(
-                  DateTime.now(), "Movimiento brusco", Uuid().v4().toString());
+
               mainController.saveDrop();
               _logRudeMovementTimer = 0;
             }
@@ -1023,13 +980,6 @@ void sendLocation() async {
     var position = await determinePosition();
     _locationController.sendLocation(
         position.latitude.toString(), position.longitude.toString());
-    // var locationenabled = await requestPermission(Permission.location);
-    // PermissionStatus status = await Permission.location.request();
-    // var locationenabled =
-    //     await PermissionService.requestPermission(Permission.location);
-    // if (status.isGranted) {
-
-    // }
   }
 }
 

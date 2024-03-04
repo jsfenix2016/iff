@@ -60,7 +60,7 @@ class _MenuConfigurationPageState extends State<MenuConfigurationPage> {
   var menuVC = Get.put(MenuControllerLateral());
   @override
   void initState() {
-    print(permissionStatusI);
+    print(listMenuOptions);
     super.initState();
     NotificationCenter().subscribe('refreshMenu', _refreshMenu);
     // _prefs.setlistConfigPage = addList;
@@ -353,7 +353,7 @@ class _MenuConfigurationPageState extends State<MenuConfigurationPage> {
                   Padding(
                     padding: const EdgeInsets.fromLTRB(0, 50, 0, 100),
                     child: ListView.builder(
-                      itemCount: permissionStatusI.length,
+                      itemCount: listMenuOptions.length,
                       itemBuilder: (context, index) {
                         return GestureDetector(
                           onTap: () {
@@ -378,15 +378,12 @@ class _MenuConfigurationPageState extends State<MenuConfigurationPage> {
                                         padding:
                                             const EdgeInsets.only(left: 8.0),
                                         child: Container(
-                                          height:
-                                              permissionStatusI[index].heigth,
-                                          width:
-                                              permissionStatusI[index].weigth,
+                                          height: listMenuOptions[index].heigth,
+                                          width: listMenuOptions[index].weigth,
                                           decoration: BoxDecoration(
                                             image: DecorationImage(
                                               image: AssetImage(
-                                                  permissionStatusI[index]
-                                                      .icon),
+                                                  listMenuOptions[index].icon),
                                               fit: BoxFit.fill,
                                             ),
                                             color: Colors.transparent,
@@ -399,15 +396,14 @@ class _MenuConfigurationPageState extends State<MenuConfigurationPage> {
                                       Expanded(
                                         flex: 1,
                                         child: Text(
-                                          permissionStatusI[index].name,
+                                          listMenuOptions[index].name,
                                           maxLines: 2,
                                           textAlign: TextAlign.left,
                                           style: textNormal16White(),
                                         ),
                                       ),
                                       Visibility(
-                                        visible:
-                                            permissionStatusI[index].config,
+                                        visible: listMenuOptions[index].config,
                                         child: ClipRRect(
                                           borderRadius: const BorderRadius.all(
                                               Radius.circular(50)),

@@ -7,7 +7,7 @@ class MenuControllerLateral extends GetxController {
   RxList<MenuConfigModel> menuList = <MenuConfigModel>[].obs;
 
   Future<RxList<MenuConfigModel>> refreshMenu() async {
-    menuList.value = permissionStatusI;
+    menuList.value = listMenuOptions;
     return menuList;
   }
 }

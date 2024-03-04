@@ -36,6 +36,11 @@ class _LogActivityPageState extends State<LogActivityPage> {
     getActivities();
   }
 
+  @override
+  void didUpdateWidget(LogActivityPage oldWidget) {
+    super.didUpdateWidget(oldWidget);
+  }
+
   Future<void> getActivities() async {
     await Hive.close();
     _activities = await controller.getActivities();
@@ -57,40 +62,42 @@ class _LogActivityPageState extends State<LogActivityPage> {
   Widget build(BuildContext context) {
     final Size size = MediaQuery.of(context).size;
 
-    return Scaffold(
-      backgroundColor: Colors.black,
-      extendBodyBehindAppBar: false,
-      key: scaffoldKey,
-      appBar: AppBar(
-        iconTheme: const IconThemeData(
-          color: Colors.white, //change your color here
+    return GetBuilder<LogActivityController>(builder: (contextT) {
+      return Scaffold(
+        backgroundColor: Colors.black,
+        extendBodyBehindAppBar: false,
+        key: scaffoldKey,
+        appBar: AppBar(
+          iconTheme: const IconThemeData(
+            color: Colors.white, //change your color here
+          ),
+          backgroundColor: Colors.brown,
+          title: Text(
+            "Actividad",
+            style: textForTitleApp(),
+          ),
         ),
-        backgroundColor: Colors.brown,
-        title: Text(
-          "Actividad",
-          style: textForTitleApp(),
-        ),
-      ),
-      body: MediaQuery(
-        data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
-        child: Container(
-          decoration: decorationCustom2(),
-          width: size.width,
-          height: size.height,
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(8, 32, 8, 32),
-            child: ListView.builder(
-              shrinkWrap: true,
-              scrollDirection: Axis.vertical,
-              itemCount: _activities.length,
-              itemBuilder: (context, index) {
-                return getItem(index);
-              },
+        body: MediaQuery(
+          data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
+          child: Container(
+            decoration: decorationCustom2(),
+            width: size.width,
+            height: size.height,
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(8, 32, 8, 32),
+              child: ListView.builder(
+                shrinkWrap: true,
+                scrollDirection: Axis.vertical,
+                itemCount: _activities.length,
+                itemBuilder: (context, index) {
+                  return getItem(index);
+                },
+              ),
             ),
           ),
         ),
-      ),
-    );
+      );
+    });
   }
 
   Widget getItem(int index) {

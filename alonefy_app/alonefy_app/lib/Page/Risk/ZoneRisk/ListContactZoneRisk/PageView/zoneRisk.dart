@@ -43,7 +43,6 @@ class _ZoneRiskPageState extends State<ZoneRiskPage> {
 
   Future refreshListZoneRisk() async {
     riskVC.update();
-    setState(() {});
   }
 
   Future<List<ContactZoneRiskBD>> getListZoneRisk() async {

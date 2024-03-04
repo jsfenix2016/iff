@@ -6,6 +6,7 @@ import 'package:ifeelefine/Common/Firebase/firebaseManager.dart';
 import 'package:ifeelefine/Common/manager_alerts.dart';
 import 'package:ifeelefine/Common/notificationService.dart';
 import 'package:ifeelefine/Common/utils.dart';
+import 'package:ifeelefine/Data/hive_constant_adapterInit.dart';
 import 'package:ifeelefine/Page/Contact/Controller/contactUserController.dart';
 
 import 'package:ifeelefine/Data/hiveRisk_data.dart';
@@ -50,21 +51,8 @@ class RestoreController extends GetxController {
         service.invoke("stopService");
       }
 
-      user = await mainController.getUserData();
-
-      if (user != null && user!.idUser != '-1') {
-        var userApi = await GetUserController().getUser(
-            user!.telephone.contains('+34')
-                ? user!.telephone.replaceAll("+34", "")
-                : user!.telephone);
-        name.value = user!.name;
-
-        if (userApi != null && userApi.idUser != user!.idUser) {
-          await RestoreController().deleteAllData();
-
-          user = null;
-        }
-      }
+      await RestoreController().deleteAllData();
+      mainController.refreshHome();
 
       _saveUserFromAPI(userApi);
       _saveTimeUseMobile(userApi.inactivityTimes);
@@ -76,25 +64,33 @@ class RestoreController extends GetxController {
       _saveLogAlerts(userApi.logAlert);
       _saveTermsAndConditions(userApi);
       _saveFall(userApi);
-
+      await _prefs.initPrefs();
+      _prefs.setUserPremium = true;
+      _prefs.setUserFree = false;
       Map<String, Permission> permissions = _getActivePermissions(userApi);
       if (permissions.isNotEmpty) {
         await _requestPermissions(permissions, userApi);
       }
 
       _saveConfig();
-      _prefs.setUserPremium = true;
-      _prefs.setUserFree = false;
+
       _prefs.setEnableIFF = userApi.currentlyDeactivated;
       _prefs.setDisambleIFF =
           convertDateTimeToDisamble(userApi.deactivatedUntil);
       _prefs.setDisambleTimeIFF = userApi.deactivatedUntil.toString();
-
+      await refreshMenu("useMobil");
+      await refreshMenu("restDay");
+      await refreshMenu("previewActivity");
+      if (_prefs.getAcceptedSendLocation == PreferencePermission.allow) {
+        refreshMenu("configGeo");
+      }
       Future.sync(
         () => {
           activateService(),
+          mainController.refreshHome(),
         },
       );
+
       return true;
     } else {
       Future.sync(
@@ -152,7 +148,7 @@ class RestoreController extends GetxController {
 
       await EditUserService().updateUser(userBD);
 
-      refreshMenu("config2");
+      await refreshMenu("config2");
       await onActionSelected("get_apns_token");
 
       try {
@@ -165,25 +161,21 @@ class RestoreController extends GetxController {
 
   Future<void> _saveTimeUseMobile(List<UseMobilApi> useMobilApiList) async {
     await EditUseMobilController().saveUseMobilFromApi(useMobilApiList);
-    if (prefs.getUserPremium) {
-      refreshMenu("useMobil");
-    }
   }
 
   Future<void> _saveRestDays(List<UserRestApi> userRestApiList) async {
     await UserRestController().saveFromApi(userRestApiList);
-    refreshMenu("restDay");
   }
 
   Future<void> _saveActivities(
       List<ActivityDayApiResponse> activitiesApi) async {
     await AddActivityController().saveFromApi(activitiesApi);
-    if (activitiesApi.isNotEmpty) {
-      refreshMenu("previewActivity");
-    }
+    // if (activitiesApi.isNotEmpty) {
+    //   await refreshMenu("previewActivity");
+    // }
   }
 
-  Future<void> _saveFall(UserApi? userApi) async {
+  void _saveFall(UserApi? userApi) {
     if (userApi != null) {
       _prefs.setDetectedFall = userApi.activateFalls;
       _prefs.setFallTime = minutesToString(userApi.fallTime);
@@ -199,7 +191,7 @@ class RestoreController extends GetxController {
       () async {
         await ContactUserController().saveFromApi(contactsApi);
         if (contactsApi.isNotEmpty) {
-          refreshMenu("addContact");
+          await refreshMenu("addContact");
         }
       },
     );
@@ -256,18 +248,21 @@ class RestoreController extends GetxController {
   }
 
   Future deleteAllData() async {
+    _deleteTermsAndConditions();
     _deleteUsers();
+    _deleteAllZoneRisk();
+    _deleteAllHistorial();
     _deleteUseMobile();
     _deleteRestDays();
     _deleteActivities();
     _deleteFall();
     _deleteContacts();
-    _deleteTermsAndConditions();
+
     _deleteLocation();
-    _deleteLogActivities();
-    _deleteLogAlerts();
-    _deleteContactZoneRisk();
-    _deleteContactRisk();
+    // _deleteLogActivities();
+    // _deleteLogAlerts();
+    // _deleteContactZoneRisk();
+    // _deleteContactRisk();
     _deleteOnboarding();
     _deleteFirstConfig();
     _deleteConfig();
@@ -276,7 +271,6 @@ class RestoreController extends GetxController {
     _deletePremium();
     _deleteDesactivateAlertFriend();
     _deleteNotificationAudio();
-    _deleteAllHistorial();
   }
 
   void _deleteUsers() async {
@@ -312,8 +306,6 @@ class RestoreController extends GetxController {
     _prefs.setAceptedTerms = false;
     _prefs.setAceptedSendSMS = false;
     _prefs.setlistConfigPage = [];
-    _prefs.setUserFree = true;
-    _prefs.setUserPremium = false;
     _prefs.setAlertPointRed = false;
   }
 
@@ -321,24 +313,28 @@ class RestoreController extends GetxController {
     _prefs.setAcceptedSendLocation = PreferencePermission.noAccepted;
   }
 
-  void _deleteLogActivities() async {
-    await const HiveData().deleteAllLogActivities();
+  // void _deleteLogActivities() async {
+  //   await const HiveData().deleteAllLogActivities();
+  // }
+
+  // void _deleteLogAlerts() async {
+  //   await const HiveData().deleteAllAlerts();
+  // }
+
+  void _deleteAllZoneRisk() async {
+    await const HiveDataRisk().deleteAllZoneRisk();
   }
 
-  void _deleteLogAlerts() async {
-    await const HiveData().deleteAllAlerts();
-  }
+  // void _deleteContactZoneRisk() async {
+  //   await const HiveDataRisk().deleteAllContactZoneRisk();
+  // }
 
-  void _deleteContactZoneRisk() async {
-    await const HiveDataRisk().deleteAllContactZoneRisk();
-  }
-
-  void _deleteContactRisk() async {
-    await const HiveDataRisk().deleteAllContactRisk();
-  }
+  // void _deleteContactRisk() async {
+  //   await const HiveDataRisk().deleteAllContactRisk();
+  // }
 
   void _deleteAllHistorial() async {
-    await const HiveData().deleteAllLogHistorial();
+    await const HiveData().deleteAll();
   }
 
   void _deleteOnboarding() async {
@@ -411,9 +407,6 @@ class RestoreController extends GetxController {
               _prefs.setAcceptedContacts = preferencePermission;
               break;
             case 'location':
-              if (preferencePermission == PreferencePermission.allow) {
-                refreshMenu("configGeo");
-              }
               _prefs.setAcceptedSendLocation = preferencePermission;
               break;
             case 'scheduleExactAlarm':

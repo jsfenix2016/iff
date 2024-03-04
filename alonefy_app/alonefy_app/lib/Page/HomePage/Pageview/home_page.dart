@@ -139,7 +139,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
 
   Future getUserData() async {
     await _prefs.initPrefs();
-    permissionStatusI = await validateConfig();
+    listMenuOptions = await validateConfig();
     user = await userVC.getUserDate();
     if (user != null) {
       user = user;
@@ -227,7 +227,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                           color: Colors.transparent,
                           child: GetBuilder<HomeController>(
                               builder: (contextTemp) {
-                            notCofingAll = permissionStatusI
+                            notCofingAll = listMenuOptions
                                 .any((element) => element.config);
 
                             return ContainerTopButton(

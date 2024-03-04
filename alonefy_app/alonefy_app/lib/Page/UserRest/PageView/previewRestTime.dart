@@ -51,7 +51,7 @@ class _PreviewRestTimePageState extends State<PreviewRestTimePage> {
     getInactivity();
     // if (!widget.isMenu) _prefs.saveLastScreenRoute("previewRestDay");
     super.initState();
-
+    refreshMenu('restDay');
     starTap();
   }
 

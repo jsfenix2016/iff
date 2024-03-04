@@ -10,6 +10,7 @@ import 'package:ifeelefine/Common/utils.dart';
 import 'package:ifeelefine/Page/HomePage/Pageview/home_page.dart';
 
 import 'package:ifeelefine/Page/RestoreMyConfiguration/Controller/restoreController.dart';
+import 'package:ifeelefine/main.dart';
 
 import '../../../Common/colorsPalette.dart';
 
@@ -265,6 +266,7 @@ class _RestoreMyConfigPageState extends State<RestoreMyConfigPage> {
                                   if (result) {
                                     prefs.saveLastScreenRoute("home");
                                     await prefs.refreshData();
+
                                     setState(() {
                                       showSaveAlertWithAction(
                                           context,

@@ -20,9 +20,12 @@ import 'package:ifeelefine/Page/Historial/Controller/historial_controller.dart';
 import 'package:ifeelefine/Page/HomePage/Controller/homeController.dart';
 import 'package:ifeelefine/Page/LogActivity/Controller/logActivity_controller.dart';
 import 'package:ifeelefine/Page/Risk/DateRisk/ListDateRisk/Controller/riskPageController.dart';
+import 'package:ifeelefine/Page/Risk/ZoneRisk/EditZoneRisk/Controller/EditZoneController.dart';
+import 'package:ifeelefine/Page/Risk/ZoneRisk/ListContactZoneRisk/Controller/listContactZoneController.dart';
 import 'package:ifeelefine/Services/mainService.dart';
 import 'package:ifeelefine/main.dart';
 import 'package:notification_center/notification_center.dart';
+import 'package:uuid/uuid.dart';
 
 class MainController extends GetxController {
   final MainService contactServ = Get.put(MainService());
@@ -109,6 +112,19 @@ class MainController extends GetxController {
 
     await logActivityController.saveLogActivity(activityBD);
     await logActivityController.saveLastMovement();
+
+    LogActivityController? controller;
+    try {
+      controller = Get.find<LogActivityController>();
+    } catch (e) {
+      // Si Get.find lanza un error, eso significa que el controlador no está en el árbol de widgets.
+      // En ese caso, usamos Get.put para agregar el controlador al árbol de widgets.
+      controller = Get.put(LogActivityController());
+    }
+    if (controller != null) {
+      controller.update();
+    }
+
     print(" ----timerSendDropNotification.cancel----");
   }
 
@@ -121,6 +137,9 @@ class MainController extends GetxController {
       var user = await getUserData();
       print("cancelado el timer");
       MainService().saveDrop(user);
+      var newUuid = const Uuid().v4().toString();
+
+      mainController.saveActivityLog(DateTime.now(), "Caida", newUuid);
       timerSendDropNotification.cancel();
     });
   }
@@ -145,7 +164,10 @@ class MainController extends GetxController {
       }
     }
     refreshAlerts();
+    refreshContactNotify();
     refreshHistorial();
+    refreshRiskList();
+    refreshRiskZoneList();
   }
 
   void refreshHistorial() {
@@ -208,6 +230,29 @@ class MainController extends GetxController {
 // Ahora, puedes utilizar riskVC normalmente sabiendo que está disponible.
     if (riskVC != null) {
       riskVC.update();
+    }
+  }
+
+  void refreshRiskZoneList() {
+    ListContactZoneController? riskZoneListVC;
+    try {
+      riskZoneListVC = Get.find<ListContactZoneController>();
+    } catch (e) {
+      // Si Get.find lanza un error, eso significa que el controlador no está en el árbol de widgets.
+      // En ese caso, usamos Get.put para agregar el controlador al árbol de widgets.
+      riskZoneListVC = Get.put(ListContactZoneController());
+    }
+
+// Ahora, puedes utilizar riskVC normalmente sabiendo que está disponible.
+    if (riskZoneListVC != null) {
+      riskZoneListVC.update();
+      try {
+        NotificationCenter().notify('getContactZoneRisk');
+      } catch (e) {
+        // Si Get.find lanza un error, eso significa que el controlador no está en el árbol de widgets.
+        // En ese caso, usamos Get.put para agregar el controlador al árbol de widgets.
+        print(e);
+      }
     }
   }
 
