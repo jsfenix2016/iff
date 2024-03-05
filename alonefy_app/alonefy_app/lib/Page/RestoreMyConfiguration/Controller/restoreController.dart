@@ -27,6 +27,7 @@ import 'package:ifeelefine/Provider/prefencesUser.dart';
 import 'package:ifeelefine/main.dart';
 import 'package:notification_center/notification_center.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:uuid/uuid.dart';
 
 import '../../../Data/hive_data.dart';
 import '../../../Model/ApiRest/AlertApi.dart';
@@ -128,7 +129,10 @@ class RestoreController extends GetxController {
         if (mime != null) {
           extension = extensionFromMime(mime);
         }
-        pathImage = await saveImageFromUrl(bytes, 'user_profile.$extension');
+
+        var uuid = const Uuid();
+        String newUuid = uuid.v4();
+        pathImage = await saveImageFromUrl(bytes, 'user_profile_$newUuid.$extension');
       }
 
       var userBD = GetUserController().userApiToUserBD(userApi, pathImage);
