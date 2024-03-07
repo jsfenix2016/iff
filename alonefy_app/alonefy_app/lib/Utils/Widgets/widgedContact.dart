@@ -51,7 +51,6 @@ class WidgetContact extends StatelessWidget {
   }
 
   void expandContact() {
-    print("object");
     if (isExpanded) {
       onExpanded(false);
     } else {

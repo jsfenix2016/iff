@@ -63,7 +63,7 @@ class _WidgetColumnOnboardingState extends State<WidgetColumnOnboarding> {
                   width: constraints.maxWidth,
                   child: Padding(
                     padding:
-                        const EdgeInsets.only(top: 80.0, left: 44, right: 44),
+                        const EdgeInsets.only(top: 80.0, left: 40, right: 40),
                     child: Text(
                       widget.title,
                       textAlign: TextAlign.center,

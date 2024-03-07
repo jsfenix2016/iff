@@ -258,7 +258,7 @@ class HiveData {
       final Box<HistorialBD> box =
           await Hive.openBox<HistorialBD>('LogsHistorialBD');
 
-      box.add(user);
+      await box.add(user);
       return 0;
     } catch (error) {
       return -1;
@@ -308,7 +308,7 @@ class HiveData {
       final Box<LogAlertsBD> box =
           await Hive.openBox<LogAlertsBD>('UserPositionBD');
 
-      box.add(user);
+      await box.add(user);
       return 0;
     } catch (error) {
       return -1;

@@ -6,18 +6,14 @@ import 'package:ifeelefine/Model/ApiRest/AlertApi.dart';
 import '../../../Common/Constant.dart';
 
 class AlertsService {
-
   Future<AlertApi?> saveAlert(AlertApi alertApi) async {
-
     try {
       var json = jsonEncode(alertApi);
 
       var response = await http.post(
-              Uri.parse(
-                  "${Constant.baseApi}/v1/logAlert"),
-                  headers: Constant.headers,
-                  body: json
-          );
+          Uri.parse("${Constant.baseApi}/v1/logAlert"),
+          headers: Constant.headers,
+          body: json);
 
       if (response.statusCode == 200) {
         return AlertApi.fromJson(jsonDecode(response.body));
@@ -30,16 +26,13 @@ class AlertsService {
   }
 
   Future<bool> updateAlert(AlertApi alertApi, int id) async {
-
     try {
       var json = jsonEncode(alertApi);
 
       var response = await http.put(
-              Uri.parse(
-                  "${Constant.baseApi}/v1/logAlert/$id"),
-                  headers: Constant.headers,
-                  body: json
-          );
+          Uri.parse("${Constant.baseApi}/v1/logAlert/$id"),
+          headers: Constant.headers,
+          body: json);
 
       return response.statusCode == 200;
     } catch (e) {
@@ -48,16 +41,13 @@ class AlertsService {
   }
 
   Future<void> deleteAlert(int id) async {
-
     try {
       var response = await http.delete(
-              Uri.parse(
-                  "${Constant.baseApi}/v1/logAlert/$id"),
-                  headers: Constant.headers,
-                  body: json
-          );
+          Uri.parse("${Constant.baseApi}/v1/logAlert/$id"),
+          headers: Constant.headers);
 
       var status = response.statusCode;
+      print(status);
     } catch (e) {
       print(e);
     }

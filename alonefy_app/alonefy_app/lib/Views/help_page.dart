@@ -75,8 +75,11 @@ class _HelpPageState extends State<HelpPage> {
                           "Inactividad - hubo actividad ",
                           DateTime.now(),
                           prefs.getIdInactiveGroup);
+                      prefs.setIdInactiveGroup = "";
                       MainService().cancelAllNotifications(taskIdList);
+                      mainController.refreshHome();
                       prefs.saveLastScreenRoute("home");
+
                       Get.offAll(const HomePage());
                     },
                     child: Container(

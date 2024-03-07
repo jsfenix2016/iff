@@ -2,7 +2,6 @@ import 'package:get/get.dart';
 import 'package:ifeelefine/Common/Constant.dart';
 import 'package:ifeelefine/Common/colorsPalette.dart';
 import 'package:ifeelefine/Common/notificationService.dart';
-import 'package:ifeelefine/Common/utils.dart';
 
 import 'package:ifeelefine/Page/Alternative/Pageview/alternative_page.dart';
 

@@ -244,7 +244,6 @@ class _HistorialPageState extends State<HistorialPage> {
                                             var temp = key;
                                             print(temp);
                                             // deleteForDayMov(context, temp);
-                                            print("object");
                                           },
                                           icon: const Icon(
                                             Icons.close,

@@ -111,21 +111,43 @@ class RedirectViewNotifier with ChangeNotifier {
   }
 
   static void createlogInactividad(String typeAction) {
-    var uuid = const Uuid();
-    String newUuid = uuid.v4();
-    final mainController = Get.put(MainController());
-    mainController.saveUserLog(typeAction, DateTime.now(), newUuid);
-    prefs.setIdInactiveGroup = newUuid;
+    String newUuid = const Uuid().v4();
+    // final mainController = Get.put(MainController());
+
+    prefs.refreshData();
+    MainController? mainController;
+    try {
+      mainController = Get.find<MainController>();
+    } catch (e) {
+      // Si Get.find lanza un error, eso significa que el controlador no está en el árbol de widgets.
+      // En ese caso, usamos Get.put para agregar el controlador al árbol de widgets.
+      mainController = Get.put(MainController());
+    }
+    // Ahora, puedes utilizar riskVC normalmente sabiendo que está disponible.
+    if (mainController != null) {
+      prefs.setNotificationType = "Inactividad";
+      mainController.saveUserLog(typeAction, DateTime.now(), newUuid);
+      prefs.setIdInactiveGroup = newUuid;
+    }
   }
 
   static void createLogDrop(String typeAction) {
     var uuid = const Uuid();
     String newUuid = uuid.v4();
-    final mainController = Get.put(MainController());
-    mainController.saveUserLog(typeAction, DateTime.now(), newUuid);
-
-    prefs.setIdDropGroup = newUuid;
-    prefs.setEnableTimerDrop = true;
+    MainController? mainController;
+    try {
+      mainController = Get.find<MainController>();
+    } catch (e) {
+      // Si Get.find lanza un error, eso significa que el controlador no está en el árbol de widgets.
+      // En ese caso, usamos Get.put para agregar el controlador al árbol de widgets.
+      mainController = Get.put(MainController());
+    }
+    // Ahora, puedes utilizar riskVC normalmente sabiendo que está disponible.
+    if (mainController != null) {
+      mainController.saveUserLog(typeAction, DateTime.now(), newUuid);
+      prefs.setIdDropGroup = newUuid;
+      prefs.setEnableTimerDrop = true;
+    }
   }
 
   static Future<void> manageNotifications(RemoteMessage message) async {
@@ -139,7 +161,6 @@ class RedirectViewNotifier with ChangeNotifier {
       if (data.containsValue(Constant.inactive)) {
         createlogInactividad("Inactividad");
         showHelpNotification(message);
-        prefs.setNotificationType = "Inactividad";
       } else {
         createLogDrop("Caida");
         prefs.setNotificationType = "Caida";
@@ -204,7 +225,6 @@ class RedirectViewNotifier with ChangeNotifier {
       showTestNotification(message);
     }
 
-    mainController.refreshAlerts();
     mainController.refreshHome();
   }
 

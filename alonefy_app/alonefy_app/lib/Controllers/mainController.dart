@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter_contacts/contact.dart';
 import 'package:get/get.dart';
 import 'package:ifeelefine/Common/initialize_models_bd.dart';
@@ -66,20 +67,30 @@ class MainController extends GetxController {
     LogAlertsBD mov =
         LogAlertsBD(id: -1, type: messaje, time: time, groupBy: group);
 
-    final MainController mainController = Get.put(MainController());
-    user = await mainController.getUserData();
-
-    var alertApi = await AlertsService()
-        .saveAlert(AlertApi.fromAlert(mov, user!.telephone));
-
-    if (alertApi != null) {
-      mov.id = alertApi.id;
+    MainController? controller;
+    try {
+      controller = Get.find<MainController>();
+    } catch (e) {
+      // Si Get.find lanza un error, eso significa que el controlador no está en el árbol de widgets.
+      // En ese caso, usamos Get.put para agregar el controlador al árbol de widgets.
+      controller = Get.put(MainController());
     }
-    const HiveData().saveUserPositionBD(mov);
-    HistorialBD hist = HistorialBD(
-        id: mov.id, type: mov.type, time: mov.time, groupBy: mov.groupBy);
+    if (controller != null) {
+      user = await mainController.getUserData();
 
-    const HiveData().saveLogsHistorialBD(hist);
+      var alertApi = await AlertsService()
+          .saveAlert(AlertApi.fromAlert(mov, user!.telephone));
+
+      if (alertApi != null) {
+        mov.id = alertApi.id;
+      }
+      const HiveData().saveUserPositionBD(mov);
+      HistorialBD hist = HistorialBD(
+          id: mov.id, type: mov.type, time: mov.time, groupBy: mov.groupBy);
+
+      const HiveData().saveLogsHistorialBD(hist);
+      controller.refreshHome();
+    }
   }
 
   Future<void> saveUserRiskLog(LogAlertsBD alert) async {
@@ -125,7 +136,7 @@ class MainController extends GetxController {
       controller.update();
     }
 
-    print(" ----timerSendDropNotification.cancel----");
+    print(" ----movimiento normal - timerSendDropNotification.cancel----");
   }
 
   Future<void> saveDrop() async {

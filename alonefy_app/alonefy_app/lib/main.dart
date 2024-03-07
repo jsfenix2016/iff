@@ -155,7 +155,8 @@ bool isCancelZone = true;
 
 int secondsRemaining = 30; //5 minutes = 300 seconds
 const platform = MethodChannel('custom_notification');
-int accelerometerMoveNormal = 10;
+int accelerometerMoveNormal = 11;
+int moveDrop = 45;
 Timer? timerCancelZone;
 StreamController<int> controllerTimer = StreamController<int>.broadcast();
 Stream subscription = Stream.periodic(const Duration(hours: 1));
@@ -213,8 +214,9 @@ Future<void> main() async {
   final deviceInfo = DeviceInfoPlugin();
   final androidInfo = await deviceInfo.androidInfo;
 
-  if (androidInfo.brand == 'samsung' && androidInfo.model.contains("SM-G")) {
-    accelerometerMoveNormal = 15;
+  if (androidInfo.brand == 'samsung') {
+    accelerometerMoveNormal = 12;
+    moveDrop = 25;
   }
   runApp(
     GetMaterialApp(
@@ -404,12 +406,11 @@ void onDidReceiveBackgroundNotificationResponse(
     NotificationResponse notificationResponse) async {
   await inicializeHiveBD();
   await prefs.initPrefs();
-  var aid = Uuid().v4().toString();
+  var aid = const Uuid().v4().toString();
   mainController.saveActivityLog(DateTime.now(), "Movimiento normal", aid);
   _logRudeMovementTimer = 0;
 
   cancelTimersNotify();
-  mainController.refreshHome();
 
   await flutterLocalNotificationsPlugin.cancel(notificationResponse.id!);
 
@@ -480,11 +481,13 @@ void onDidReceiveBackgroundNotificationResponse(
         if (notificationResponse.payload!.contains("Inactived_")) {
           mainController.saveUserLog("Inactividad - solicito ayuda",
               DateTime.now(), prefs.getIdInactiveGroup);
+          prefs.setIdInactiveGroup = "";
         }
 
         if (notificationResponse.payload!.contains("Drop_")) {
           mainController.saveUserLog(
               "Caida  - solicito ayuda", DateTime.now(), prefs.getIdDropGroup);
+          prefs.setIdDropGroup = "";
         }
 
         MainService().cancelAllNotifications(taskIdList);
@@ -525,6 +528,7 @@ void onDidReceiveBackgroundNotificationResponse(
           if (tempcontact.id != -1) {
             await erisk.updateContactRisk(tempcontact);
           }
+          mainController.refreshHome();
 
           return;
         }
@@ -538,8 +542,6 @@ void onDidReceiveBackgroundNotificationResponse(
         }
 
         await flutterLocalNotificationsPlugin.cancel(notificationResponse.id!);
-        prefs.setNotificationType = "";
-        mainController.refreshHome();
       }
 
       break;
@@ -557,17 +559,19 @@ void onDidReceiveBackgroundNotificationResponse(
         if (notificationResponse.payload!.contains("Inactived_")) {
           mainController.saveUserLog("Inactividad - solicito ayuda",
               DateTime.now(), prefs.getIdInactiveGroup);
+          prefs.setIdInactiveGroup = "";
         }
 
         if (notificationResponse.payload!.contains("Drop_")) {
           mainController.saveUserLog(
               "Caida  - solicito ayuda", DateTime.now(), prefs.getIdDropGroup);
+          prefs.setIdDropGroup = "";
         }
         cancelTimersNotify();
         MainService().sendAlertToContactImmediately(taskIdList);
         prefs.setNotificationType = "";
         mainController.refreshHome();
-        mainController.refreshAlerts();
+
         return;
       }
 
@@ -588,6 +592,7 @@ void onDidReceiveBackgroundNotificationResponse(
         if (notificationResponse.payload!.contains("Inactived_")) {
           mainController.saveUserLog("Inactividad - Actividad detectada ",
               DateTime.now(), prefs.getIdInactiveGroup);
+          prefs.setIdInactiveGroup = "";
         }
 
         if (notificationResponse.payload!.contains("Drop_")) {
@@ -599,8 +604,8 @@ void onDidReceiveBackgroundNotificationResponse(
         // await flutterLocalNotificationsPlugin.cancel(100);
         prefs.setNotificationType = "";
         mainController.refreshHome();
-        mainController.refreshAlerts();
-        return;
+
+        return Future.value();
       }
       if (notificationResponse.actionId != null &&
           notificationResponse.actionId!.contains("dateHelp")) {
@@ -630,8 +635,8 @@ void onDidReceiveBackgroundNotificationResponse(
         MainService().sendAlertToContactImmediately(taskIdList);
         prefs.setNotificationType = "";
         mainController.refreshHome();
-        mainController.refreshAlerts();
-        return;
+
+        return Future.value();
       }
       if (notificationResponse.actionId != null &&
           notificationResponse.actionId!.contains("DateRisk")) {
@@ -663,7 +668,7 @@ void onDidReceiveBackgroundNotificationResponse(
         MainService().cancelAllNotifications(taskIdList);
         prefs.setNotificationType = "";
         mainController.refreshHome();
-        mainController.refreshAlerts();
+
         return;
       }
       if (notificationResponse.actionId!.contains("premium")) {
@@ -716,12 +721,12 @@ void onDidReceiveBackgroundNotificationResponse(
         if (notificationResponse.payload!.contains("Inactived_")) {
           mainController.saveUserLog("Inactividad -  estoy bien",
               DateTime.now(), prefs.getIdDropGroup);
+          prefs.setIdInactiveGroup = "";
           MainService().cancelAllNotifications(taskIdList);
         }
 
         prefs.setNotificationType = "";
         mainController.refreshHome();
-        mainController.refreshAlerts();
 
         return Future.value();
       }
@@ -865,7 +870,7 @@ void accelerometer() {
           double accelerationMagnitude =
               sqrt(event.x * event.x + event.y * event.y + event.z * event.z);
 
-          if (accelerationMagnitude > 45) {
+          if (accelerationMagnitude > moveDrop) {
             isMovRude = true;
             print("2 -> $accelerationMagnitude");
             if (_prefs.getEnableIFF == false) return;
@@ -873,8 +878,7 @@ void accelerometer() {
                 const Uuid().v4().toString());
             if (_prefs.getUseMobilConfig == false ||
                 _prefs.getDetectedFall == false ||
-                _prefs.getUserPremium == false ||
-                _prefs.getUserFree) return;
+                _prefs.getUserPremium == false) return;
 
             if (_logRudeMovementTimer >= _logRudeMovementTimerRefresh) {
               print('Movimiento brusco');
