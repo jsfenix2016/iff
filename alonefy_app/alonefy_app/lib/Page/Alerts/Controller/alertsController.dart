@@ -33,7 +33,6 @@ class AlertsController extends GetxController {
       //sorting in descending order
       return b.time.compareTo(a.time);
     });
-
     temp = removeDuplicates(box);
 
     // Inicializa la estructura del mapa anidado
@@ -64,7 +63,12 @@ class AlertsController extends GetxController {
   }
 
   List<LogAlertsBD> removeDuplicates(List<LogAlertsBD> originalList) {
-    return originalList.toSet().toList();
+    Set<String> auxList = {};
+    originalList.removeWhere((element) {
+      final key = '${element.id}_${element.time}';
+      return !auxList.add(key);
+    });
+    return originalList;
   }
 
   Future<void> saveFromApi(List<AlertApi> alerts) async {
