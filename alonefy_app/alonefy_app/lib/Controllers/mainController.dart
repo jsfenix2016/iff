@@ -174,11 +174,12 @@ class MainController extends GetxController {
         print(e);
       }
     }
-    refreshAlerts();
+
     refreshContactNotify();
     refreshHistorial();
     refreshRiskList();
     refreshRiskZoneList();
+    refreshAlerts();
   }
 
   void refreshHistorial() {
@@ -194,7 +195,6 @@ class MainController extends GetxController {
     if (hVC != null) {
       hVC.update();
     }
-    refreshAlerts();
   }
 
   void refreshContactNotify() {
@@ -209,7 +209,6 @@ class MainController extends GetxController {
     // Ahora, puedes utilizar riskVC normalmente sabiendo que está disponible.
     if (contactNotiVC != null) {
       contactNotiVC.update();
-      refreshAlerts();
     }
   }
 

@@ -173,6 +173,7 @@ class RedirectViewNotifier with ChangeNotifier {
         mainController.saveUserLog("Inactividad - No respondió la notificación",
             DateTime.now(), prefs.getIdInactiveGroup);
         prefs.setNotificationType = "Inactividad";
+        await flutterLocalNotificationsPlugin.cancel(0);
       } else {
         final mainController = Get.put(MainController());
         prefs.setNotificationType = "Caida";

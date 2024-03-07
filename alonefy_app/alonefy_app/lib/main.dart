@@ -5,6 +5,7 @@ import 'dart:math';
 import 'dart:ui';
 
 import 'package:device_info_plus/device_info_plus.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:flutter_contacts/contact.dart';
@@ -156,7 +157,7 @@ bool isCancelZone = true;
 int secondsRemaining = 30; //5 minutes = 300 seconds
 const platform = MethodChannel('custom_notification');
 int accelerometerMoveNormal = 11;
-int moveDrop = 45;
+int moveDrop = 42;
 Timer? timerCancelZone;
 StreamController<int> controllerTimer = StreamController<int>.broadcast();
 Stream subscription = Stream.periodic(const Duration(hours: 1));
@@ -481,13 +482,11 @@ void onDidReceiveBackgroundNotificationResponse(
         if (notificationResponse.payload!.contains("Inactived_")) {
           mainController.saveUserLog("Inactividad - solicito ayuda",
               DateTime.now(), prefs.getIdInactiveGroup);
-          prefs.setIdInactiveGroup = "";
         }
 
         if (notificationResponse.payload!.contains("Drop_")) {
           mainController.saveUserLog(
               "Caida  - solicito ayuda", DateTime.now(), prefs.getIdDropGroup);
-          prefs.setIdDropGroup = "";
         }
 
         MainService().cancelAllNotifications(taskIdList);
@@ -559,7 +558,6 @@ void onDidReceiveBackgroundNotificationResponse(
         if (notificationResponse.payload!.contains("Inactived_")) {
           mainController.saveUserLog("Inactividad - solicito ayuda",
               DateTime.now(), prefs.getIdInactiveGroup);
-          prefs.setIdInactiveGroup = "";
         }
 
         if (notificationResponse.payload!.contains("Drop_")) {
@@ -592,7 +590,7 @@ void onDidReceiveBackgroundNotificationResponse(
         if (notificationResponse.payload!.contains("Inactived_")) {
           mainController.saveUserLog("Inactividad - Actividad detectada ",
               DateTime.now(), prefs.getIdInactiveGroup);
-          prefs.setIdInactiveGroup = "";
+          await flutterLocalNotificationsPlugin.cancel(0);
         }
 
         if (notificationResponse.payload!.contains("Drop_")) {
@@ -720,8 +718,8 @@ void onDidReceiveBackgroundNotificationResponse(
 
         if (notificationResponse.payload!.contains("Inactived_")) {
           mainController.saveUserLog("Inactividad -  estoy bien",
-              DateTime.now(), prefs.getIdDropGroup);
-          prefs.setIdInactiveGroup = "";
+              DateTime.now(), prefs.getIdDateGroup);
+
           MainService().cancelAllNotifications(taskIdList);
         }
 
@@ -872,7 +870,7 @@ void accelerometer() {
 
           if (accelerationMagnitude > moveDrop) {
             isMovRude = true;
-            print("2 -> $accelerationMagnitude");
+
             if (_prefs.getEnableIFF == false) return;
             mainController.saveActivityLog(DateTime.now(), "Movimiento brusco",
                 const Uuid().v4().toString());
@@ -881,7 +879,9 @@ void accelerometer() {
                 _prefs.getUserPremium == false) return;
 
             if (_logRudeMovementTimer >= _logRudeMovementTimerRefresh) {
-              print('Movimiento brusco');
+              if (kDebugMode) {
+                print('Movimiento brusco');
+              }
 
               mainController.saveDrop();
               _logRudeMovementTimer = 0;
@@ -896,7 +896,7 @@ void accelerometer() {
               return;
             }
 
-            if (accelerationMagnitude < 45 &&
+            if (accelerationMagnitude < moveDrop &&
                 accelerationMagnitude > accelerometerMoveNormal) {
               _prefs.refreshData();
               if (_prefs.getEnableIFF &&

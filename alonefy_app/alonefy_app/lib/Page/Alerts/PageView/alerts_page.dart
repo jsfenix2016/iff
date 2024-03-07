@@ -53,7 +53,7 @@ class _AlertsPageState extends State<AlertsPage> {
     }
   }
 
-  Future<void> onRefresh(bool value) async{
+  Future<void> onRefresh(bool value) async {
     alertsVC.update();
     mainController.refreshHome();
     setState(() {});
@@ -108,8 +108,8 @@ class _AlertsPageState extends State<AlertsPage> {
           DateTime.now(), _prefs.getIdInactiveGroup);
     }
     if (_prefs.getNotificationType.toString().contains('Caida')) {
-      await mainController.saveUserLog("Caida - Actividad detectada ", DateTime.now(),
-          _prefs.getIdDropGroup);
+      await mainController.saveUserLog("Caida - Actividad detectada ",
+          DateTime.now(), _prefs.getIdDropGroup);
     }
     _prefs.setEnableTimer = false;
     _prefs.setEnableTimerDrop = false;
@@ -121,7 +121,6 @@ class _AlertsPageState extends State<AlertsPage> {
     onRefresh(true);
     getLog();
   }
-
 
   @override
   void initState() {

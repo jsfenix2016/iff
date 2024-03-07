@@ -216,7 +216,7 @@ class _UserEditPageState extends State<UserEditPage> {
                   children: <Widget>[
                     const SizedBox(height: 20),
                     Text(
-                      "V. 1.0.48",
+                      "V. 1.0.51",
                       style: textForTitleApp(),
                     ),
                     const SizedBox(height: 20),

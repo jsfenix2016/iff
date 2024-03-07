@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ifeelefine/Data/hive_data.dart';
@@ -46,20 +48,65 @@ class AlertsController extends GetxController {
       final dateKey = dateTime1.toString();
       final typeKey = alert.groupBy;
 
-      if (alert.type.contains("Movimiento rudo") ||
-          alert.type.contains("Caida")) {
-        groupedProducts.putIfAbsent(dateKey, () => {});
-        groupedProducts[dateKey]!.putIfAbsent(typeKey, () => []);
-        groupedProducts[dateKey]![typeKey]!.add(alert);
-      } else {
-        groupedProducts.putIfAbsent(dateKey, () => {});
-        groupedProducts[dateKey]!.putIfAbsent(typeKey, () => []);
-        groupedProducts[dateKey]![typeKey]!.add(alert);
-      }
+      groupedProducts.putIfAbsent(dateKey, () => {});
+      groupedProducts[dateKey]!.putIfAbsent(typeKey, () => []);
+      groupedProducts[dateKey]![typeKey]!.add(alert);
     }
-    groupedAlerts.value = groupedProducts;
 
-    return groupedAlerts;
+    // Crear un nuevo mapa ordenado
+    RxMap<String, Map<String, List<LogAlertsBD>>> sortedGroupedAlerts =
+        RxMap<String, Map<String, List<LogAlertsBD>>>();
+
+// Iterar sobre cada grupo
+    groupedProducts.forEach((dateKey, value) {
+      // Crear un nuevo mapa para este grupo
+      Map<String, List<LogAlertsBD>> sortedGroup = {};
+
+      // Iterar sobre cada identificador en el grupo
+      value.forEach((key, alerts) {
+        // Ordenar las alertas en orden descendente por fecha y hora
+        // alerts.sort((a, b) => b.time.compareTo(a.time));
+        alerts.sort((a, b) {
+          if (a.time.hour != b.time.hour) {
+            return b.time.hour.compareTo(a.time.hour);
+          } else {
+            return b.time.minute.compareTo(a.time.minute);
+          }
+        });
+        // Agregar el identificador con las alertas ordenadas al nuevo mapa
+        sortedGroup[key] = alerts;
+      });
+
+      // Ordenar los identificadores en el grupo según la alerta más reciente
+      var sortedKeys = sortedGroup.keys.toList()
+        ..sort((a, b) {
+          var latestTimeA = sortedGroup[a]!.isEmpty
+              ? DateTime(1900)
+              : sortedGroup[a]!.first.time;
+          var latestTimeB = sortedGroup[b]!.isEmpty
+              ? DateTime(1900)
+              : sortedGroup[b]!.first.time;
+
+          if (latestTimeA.hour != latestTimeB.hour) {
+            return latestTimeB.hour.compareTo(latestTimeA.hour);
+          } else {
+            return latestTimeB.minute.compareTo(latestTimeA.minute);
+          } // Orden descendente
+        });
+
+      // Crear un nuevo mapa ordenado para este grupo
+      Map<String, List<LogAlertsBD>> sortedGroupOrdered = {};
+
+      // Iterar sobre los identificadores ordenados y agregarlos al nuevo mapa ordenado
+      for (var key in sortedKeys) {
+        sortedGroupOrdered[key] = sortedGroup[key]!;
+      }
+
+      // Agregar el grupo ordenado al nuevo mapa principal ordenado
+      sortedGroupedAlerts[dateKey] = sortedGroupOrdered;
+    });
+
+    return sortedGroupedAlerts;
   }
 
   List<LogAlertsBD> removeDuplicates(List<LogAlertsBD> originalList) {

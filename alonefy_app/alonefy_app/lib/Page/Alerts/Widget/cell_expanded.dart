@@ -90,7 +90,8 @@ class CellExpand extends StatelessWidget {
                             indexAlert < listAlerts.length - 1,
                         visibilyButton:
                             typeTemp == _prefs.getNotificationType &&
-                                indexAlert == listAlerts.length - 1,
+                                indexAlert == listAlerts.length - 1 &&
+                                !typeNotifyList.contains('-'),
                         heightCell: typeNotifyList.contains('-')
                             ? 80
                             : _prefs.getNotificationType.isNotEmpty
