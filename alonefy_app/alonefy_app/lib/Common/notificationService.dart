@@ -298,7 +298,7 @@ class RedirectViewNotifier with ChangeNotifier {
         titleColor: Colors.red,
         icon:
             const DrawableResourceAndroidBitmap('@mipmap/logo_alertfriends_v2'),
-        showsUserInterface: false,
+        showsUserInterface: true,
         cancelNotification: false,
       ),
       AndroidNotificationAction(
@@ -307,7 +307,7 @@ class RedirectViewNotifier with ChangeNotifier {
         titleColor: Colors.green,
         icon:
             const DrawableResourceAndroidBitmap('@mipmap/logo_alertfriends_v2'),
-        showsUserInterface: false,
+        showsUserInterface: true,
         cancelNotification: false,
       ),
     ];
