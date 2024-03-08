@@ -22,6 +22,7 @@ class HelpPage extends StatefulWidget {
 class _HelpPageState extends State<HelpPage> {
   PreferenceUser prefs = PreferenceUser();
   List<String> taskIdList = [];
+  late Map<String, dynamic> arguments;
   @override
   void initState() {
     super.initState();
@@ -40,6 +41,10 @@ class _HelpPageState extends State<HelpPage> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
+    arguments = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+    final preferences = arguments['type'] == 'INACTIVITY' ?
+      prefs.getIdInactiveGroup : prefs.getIdDropGroup;
+
     return Scaffold(
       backgroundColor: Colors.black,
       body: MediaQuery(
@@ -72,9 +77,11 @@ class _HelpPageState extends State<HelpPage> {
                   child: GestureDetector(
                     onTap: () async {
                       mainController.saveUserLog(
-                          "Inactividad - hubo actividad ",
+                        arguments['type'] == 'INACTIVITY' ? 
+                          "Inactividad - hubo actividad " : 
+                          "Caida - hubo actividad ",
                           DateTime.now(),
-                          prefs.getIdInactiveGroup);
+                          preferences);
 
                       MainService().cancelAllNotifications(taskIdList);
                       mainController.refreshHome();
@@ -122,11 +129,16 @@ class _HelpPageState extends State<HelpPage> {
                   height: 40,
                 ),
                 GestureDetector(
-                  onTap: () {
-                    mainController.saveUserLog("Inactividad - solicito ayuda ",
-                        DateTime.now(), prefs.getIdInactiveGroup);
+                  onTap: () async {
+                    mainController.saveUserLog(
+                      arguments['type'] == 'INACTIVITY' ? 
+                        "Inactividad - solicito ayuda " :
+                        "Caida - solicito ayuda ",
+                      DateTime.now(), preferences);
                     MainService().sendAlertToContactImmediately(taskIdList);
-
+                    if (arguments['id'] != null ) {
+                      await flutterLocalNotificationsPlugin.cancel(arguments['id']);
+                    }
                     prefs.saveLastScreenRoute("home");
                     Get.offAll(const HomePage());
                   },

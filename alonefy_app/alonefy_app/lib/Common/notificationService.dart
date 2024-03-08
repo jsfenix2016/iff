@@ -37,7 +37,14 @@ class RedirectViewNotifier with ChangeNotifier {
     if (_storedContext != null) {
       Navigator.push(
         _storedContext!,
-        MaterialPageRoute(builder: (context) => const HelpPage()),
+        MaterialPageRoute(
+          builder: (context) => const HelpPage(),
+          settings: RouteSettings(
+            arguments:  {
+              'type': response != null && response.payload!.contains("Drop_") ? 'DROP' : 'INACTIVITY',
+              'id': response?.id
+            }
+          )),
       );
     }
   }
