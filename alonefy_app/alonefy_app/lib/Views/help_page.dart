@@ -78,7 +78,7 @@ class _HelpPageState extends State<HelpPage> {
                 Center(
                   child: GestureDetector(
                     onTap: () async {
-                      mainController.saveUserLog(
+                      mainController.saveNotificationBackground(
                         arguments['type'] == 'INACTIVITY' ? 
                           "Inactividad - hubo actividad " : 
                           "Caida - hubo actividad ",
@@ -132,7 +132,7 @@ class _HelpPageState extends State<HelpPage> {
                 ),
                 GestureDetector(
                   onTap: () async {
-                    mainController.saveUserLog(
+                    mainController.saveNotificationBackground(
                       arguments['type'] == 'INACTIVITY' ? 
                         "Inactividad - solicito ayuda " :
                         "Caida - solicito ayuda ",

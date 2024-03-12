@@ -26,7 +26,9 @@ Future<void> initializeFirebase() async {
   await Firebase.initializeApp();
   // await FirebaseMessaging.instance.getInitialMessage();
   onActionSelected("get_apns_token");
-  FirebaseMessaging.onMessage.listen(showFlutterNotification);
+  FirebaseMessaging.onMessage.listen(showFlutterNotification).onData((data) {
+    showFlutterNotification(data);
+  });
 
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 

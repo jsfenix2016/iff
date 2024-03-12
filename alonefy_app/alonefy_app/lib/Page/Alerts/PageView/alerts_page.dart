@@ -69,9 +69,10 @@ class _AlertsPageState extends State<AlertsPage> {
         Map<String, dynamic> notificationMap = jsonDecode(notification);
         var msg = notificationMap['message'];
         var time = DateTime.parse(notificationMap['time']);
+        var group = notificationMap['group'];
         var log = await mainController.getAlertBy(msg, time);
         if (!log) {
-          await mainController.saveUserLog(msg, time, notificationMap['group']);
+          await mainController.saveUserLog(msg, time, group);
         }
       }
       _prefs.setNotificationsToSave = [];
