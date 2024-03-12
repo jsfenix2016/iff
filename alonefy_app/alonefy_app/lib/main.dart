@@ -412,6 +412,7 @@ void onDidReceiveBackgroundNotificationResponse(
   _logRudeMovementTimer = 0;
 
   cancelTimersNotify();
+  await prefs.refreshData();
 
   await flutterLocalNotificationsPlugin.cancel(notificationResponse.id!);
 
@@ -552,16 +553,16 @@ void onDidReceiveBackgroundNotificationResponse(
         var taskIdList = getTaskIdList(taskIds);
 
         if (notificationResponse.payload!.contains("DateRisk_")) {
-          mainController.saveUserLog(
+          await mainController.saveUserLog(
               "Cita - solicito ayuda", DateTime.now(), prefs.getIdDateGroup);
         }
         if (notificationResponse.payload!.contains("Inactived_")) {
-          mainController.saveUserLog("Inactividad - solicito ayuda",
+          await mainController.saveUserLog("Inactividad - solicito ayuda",
               DateTime.now(), prefs.getIdInactiveGroup);
         }
 
         if (notificationResponse.payload!.contains("Drop_")) {
-          mainController.saveUserLog(
+          await mainController.saveUserLog(
               "Caida  - solicito ayuda", DateTime.now(), prefs.getIdDropGroup);
           prefs.setIdDropGroup = "";
         }
@@ -588,14 +589,16 @@ void onDidReceiveBackgroundNotificationResponse(
         }
 
         if (notificationResponse.payload!.contains("Inactived_")) {
-          mainController.saveUserLog("Inactividad - Actividad detectada ",
+          await mainController.saveUserLog("Inactividad - Actividad detectada ",
               DateTime.now(), prefs.getIdInactiveGroup);
           await flutterLocalNotificationsPlugin.cancel(0);
+          prefs.setIdInactiveGroup = "";
         }
 
         if (notificationResponse.payload!.contains("Drop_")) {
-          mainController.saveUserLog(
+         await mainController.saveUserLog(
               "Caida - cancelada", DateTime.now(), prefs.getIdDropGroup);
+          prefs.setIdDropGroup = "";
         }
 
         MainService().cancelAllNotifications(taskIdList);
@@ -615,17 +618,17 @@ void onDidReceiveBackgroundNotificationResponse(
             notificationResponse.actionId!.length);
 
         if (notificationResponse.payload!.contains("Inactived_")) {
-          mainController.saveUserLog("Inactividad - solicito ayuda",
+          await mainController.saveUserLog("Inactividad - solicito ayuda",
               DateTime.now(), prefs.getIdInactiveGroup);
         }
 
         if (notificationResponse.payload!.contains("Drop_")) {
-          mainController.saveUserLog(
+          await mainController.saveUserLog(
               "Caida - solicito ayuda", DateTime.now(), prefs.getIdDropGroup);
         }
 
         if (notificationResponse.payload!.contains("DateRisk_")) {
-          mainController.saveUserLog(
+          await mainController.saveUserLog(
               "Cita - solicito ayuda", DateTime.now(), prefs.getIdDateGroup);
         }
 

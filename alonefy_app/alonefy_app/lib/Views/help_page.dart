@@ -41,7 +41,9 @@ class _HelpPageState extends State<HelpPage> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    arguments = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+    final args = ModalRoute.of(context)?.settings.arguments;
+    arguments = args != null ? args as Map<String, dynamic> : {};
+
     final preferences = arguments['type'] == 'INACTIVITY' ?
       prefs.getIdInactiveGroup : prefs.getIdDropGroup;
 

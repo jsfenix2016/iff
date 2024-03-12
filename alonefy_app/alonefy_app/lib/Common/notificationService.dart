@@ -42,7 +42,7 @@ class RedirectViewNotifier with ChangeNotifier {
           settings: RouteSettings(
             arguments:  {
               'type': response != null && response.payload!.contains("Drop_") ? 'DROP' : 'INACTIVITY',
-              'id': response?.id
+              'id': response != null && response.id != null ? response.id : '-1'
             }
           )),
       );
@@ -163,6 +163,7 @@ class RedirectViewNotifier with ChangeNotifier {
     await prefs.initPrefs();
     prefs.setEnableTimer = true;
     prefs.setAlertPointRed = true;
+    await prefs.refreshData();
     if (data.containsValue(Constant.inactive) ||
         data.containsValue(Constant.drop)) {
       if (data.containsValue(Constant.inactive)) {
