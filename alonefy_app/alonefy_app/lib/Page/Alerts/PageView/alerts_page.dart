@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ifeelefine/Common/decoration_custom.dart';
@@ -58,6 +60,30 @@ class _AlertsPageState extends State<AlertsPage> {
     mainController.refreshHome();
     setState(() {});
   }
+
+    Future<void> validateNotificationsBg() async {
+    await _prefs.refreshData();
+    List<String> notificationsBg = _prefs.getNotificationsToSave;
+    if (notificationsBg.isNotEmpty) {
+      for (String notification in notificationsBg) {
+        Map<String, dynamic> notificationMap = jsonDecode(notification);
+        var msg = notificationMap['message'];
+        var time = DateTime.parse(notificationMap['time']);
+        var log = await mainController.getAlertBy(msg, time);
+        if (!log) {
+          await mainController.saveUserLog(msg, time, notificationMap['group']);
+        }
+      }
+      _prefs.setNotificationsToSave = [];
+      await _prefs.refreshData();
+    } else {
+      print("no hay notificaciones por guardar!!!!!!");
+    }
+
+    getLog();
+    starTap();
+  }
+
 
   Future<void> cancelNotify() async {
     List<String> listTaskIds = _prefs.getlistTaskIdsCancel;
@@ -124,8 +150,9 @@ class _AlertsPageState extends State<AlertsPage> {
 
   @override
   void initState() {
-    getLog();
-    starTap();
+    // getLog();
+    // starTap();
+    validateNotificationsBg();
     super.initState();
   }
 

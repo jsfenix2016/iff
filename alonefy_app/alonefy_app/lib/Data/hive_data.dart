@@ -320,6 +320,16 @@ class HiveData {
     return box.values.toList();
   }
 
+  Future<bool> getExistAlert(String type, DateTime time) async {
+    await inicializeHiveBD();
+    final Box<LogAlertsBD> box = await Hive.openBox<LogAlertsBD>('UserPositionBD');
+    List<LogAlertsBD> logs = box.values.toList();
+    
+    int index = logs.indexWhere((element) => element.time == time && element.type == type);
+    return index > -1;
+
+  }
+
   Future<void> deleteAllAlerts() async {
     Box<LogAlertsBD> box = await Hive.openBox<LogAlertsBD>('UserPositionBD');
 

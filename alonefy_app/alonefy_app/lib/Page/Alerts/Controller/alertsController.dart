@@ -25,9 +25,6 @@ class AlertsController extends GetxController {
   Future<RxMap<String, Map<String, List<LogAlertsBD>>>> getAllMov2() async {
     Map<String, Map<String, List<LogAlertsBD>>> groupedProducts = {};
 
-    RxMap<String, Map<String, List<LogAlertsBD>>> groupedAlerts =
-        RxMap<String, Map<String, List<LogAlertsBD>>>();
-
     List<LogAlertsBD> temp = [];
     List<LogAlertsBD> box = await const HiveData().getAlerts();
 

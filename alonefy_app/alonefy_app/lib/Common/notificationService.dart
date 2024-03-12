@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -133,7 +134,8 @@ class RedirectViewNotifier with ChangeNotifier {
     // Ahora, puedes utilizar riskVC normalmente sabiendo que está disponible.
     if (mainController != null) {
       prefs.setNotificationType = "Inactividad";
-      mainController.saveUserLog(typeAction, DateTime.now(), newUuid);
+      // mainController.saveUserLog(typeAction, DateTime.now(), newUuid);
+      mainController.saveNotificationBackground(typeAction, DateTime.now(), newUuid);
       prefs.setIdInactiveGroup = newUuid;
     }
   }
@@ -151,7 +153,8 @@ class RedirectViewNotifier with ChangeNotifier {
     }
     // Ahora, puedes utilizar riskVC normalmente sabiendo que está disponible.
     if (mainController != null) {
-      mainController.saveUserLog(typeAction, DateTime.now(), newUuid);
+      // mainController.saveUserLog(typeAction, DateTime.now(), newUuid);
+      mainController.saveNotificationBackground(typeAction, DateTime.now(), newUuid);
       prefs.setIdDropGroup = newUuid;
       prefs.setEnableTimerDrop = true;
     }
@@ -185,8 +188,10 @@ class RedirectViewNotifier with ChangeNotifier {
       } else {
         final mainController = Get.put(MainController());
         prefs.setNotificationType = "Caida";
-        mainController.saveUserLog("Caida - No respondió la notificación",
+        mainController.saveNotificationBackground("Caida - No respondió la notificación",
             DateTime.now(), prefs.getIdDropGroup);
+        // mainController.saveUserLog("Caida - No respondió la notificación",
+        //     DateTime.now(), prefs.getIdDropGroup);
       }
       getNewNotification(message);
     } else if (data.containsValue(Constant.startRiskDate) ||

@@ -500,6 +500,14 @@ class PreferenceUser {
     _prefs.setString('NameZone', name);
   }
 
+  get getNotificationsToSave {
+    return _prefs.getStringList('NotificationsToSave') ?? [];
+  }
+
+  set setNotificationsToSave(List<String> notifications) {
+    _prefs.setStringList('NotificationsToSave', notifications);
+  }
+
   void resetToDefault() {
     onboarding = false;
     firstConfig = false;

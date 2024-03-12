@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_contacts/contact.dart';
@@ -60,6 +61,13 @@ class MainController extends GetxController {
       return true;
     }
     return false;
+  }
+
+  Future<bool> getAlertBy(String messaje, DateTime time) async {
+    await inicializeHiveBD();
+    bool exist = await const HiveData().getExistAlert(messaje, time);
+
+    return exist;
   }
 
   Future<void> saveUserLog(String messaje, DateTime time, String group) async {
@@ -141,7 +149,6 @@ class MainController extends GetxController {
 
   Future<void> saveDrop() async {
     var duration = Duration(minutes: stringTimeToInt(prefs.getFallTime));
-    print("getFallTime - ${stringTimeToInt(prefs.getFallTime)}");
     timerSendDropNotification = Timer(duration, () async {
       await inicializeHiveBD();
 
@@ -268,5 +275,23 @@ class MainController extends GetxController {
 
   void refreshContactList(List<Contact> contacts) {
     contactlist = contacts;
+  }
+
+
+void saveNotificationBackground(String message, DateTime time, String group) async {
+    await prefs.refreshData();
+    Map<String, dynamic> notification = {
+      'message': message,
+      'time': time.toIso8601String(),
+      'group': group
+    };
+
+    String jsonString = jsonEncode(notification);
+    final notifications = await prefs.getNotificationsToSave;
+    print("saveNotificationBackground notifications BEFORE: ${notifications.toString()}");
+    notifications.add(jsonString);
+    print("saveNotificationBackground notifications AFTER: ${notifications.toString()}");
+    prefs.setNotificationsToSave = notifications;
+    await prefs.refreshData();
   }
 }
