@@ -537,6 +537,7 @@ class PreferenceUser {
     setStartDateTimeDisambleIFF = '';
     setDisambleIFFForActivity = 5;
     setNotificationAudio = '';
+    setNotificationsToSave = [];
     // Restablecer otras variables según sea necesario
   }
 }
